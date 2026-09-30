@@ -145,7 +145,7 @@ impl ContractDefinitionStruct {
             let position = builder.allocate(variable_size)?;
             items.push(StorageItem {
                 node_id,
-                label: state_variable.ir_node.name.unparse().to_string(),
+                name: state_variable.ir_node.name.unparse().to_string(),
                 slot: position.slot,
                 offset: position.offset,
                 type_id: variable_type_id,

@@ -324,79 +324,98 @@ impl SemanticContext {
     }
 
     pub fn type_internal_name(&self, type_id: TypeId) -> String {
+        let mut name = String::new();
+        self.write_type_internal_name(type_id, &mut name);
+        name
+    }
+
+    fn write_type_internal_name(&self, type_id: TypeId, out: &mut String) {
         match self.types.get_type_by_id(type_id) {
-            Type::Address(_) => "address".to_string(),
+            Type::Address(_) => out.push_str("address"),
             Type::Array(ArrayType { element_type, .. }) => {
-                format!(
-                    "{element}[]",
-                    element = self.type_internal_name(*element_type)
-                )
+                self.write_type_internal_name(*element_type, out);
+                out.push_str("[]");
             }
             Type::ArraySlice(ArraySliceType { array_type_id }) => {
-                format!("{} slice", self.type_internal_name(*array_type_id))
+                self.write_type_internal_name(*array_type_id, out);
+                out.push_str(" slice");
             }
-            Type::Boolean => "bool".to_string(),
-            Type::ByteArray(ByteArrayType { width }) => format!("bytes{width}"),
-            Type::Bytes(_) => "bytes".to_string(),
+            Type::Boolean => out.push_str("bool"),
+            Type::ByteArray(ByteArrayType { width }) => write!(out, "bytes{width}").unwrap(),
+            Type::Bytes(_) => out.push_str("bytes"),
             Type::FixedPointNumber(FixedPointNumberType {
                 is_signed,
                 bits,
                 decimal_places,
-            }) => format!(
+            }) => write!(
+                out,
                 "{prefix}{bits}x{decimal_places}",
                 prefix = if *is_signed { "fixed" } else { "ufixed" },
-            ),
+            )
+            .unwrap(),
             Type::FixedSizeArray(FixedSizeArrayType {
                 element_type, size, ..
             }) => {
-                format!(
-                    "{element}[{size}]",
-                    element = self.type_internal_name(*element_type),
-                )
+                self.write_type_internal_name(*element_type, out);
+                write!(out, "[{size}]").unwrap();
             }
-            Type::Function(_) => "function".to_string(),
-            Type::Integer(IntegerType { is_signed, bits }) => format!(
+            Type::Function(_) => out.push_str("function"),
+            Type::Integer(IntegerType { is_signed, bits }) => write!(
+                out,
                 "{prefix}{bits}",
                 prefix = if *is_signed { "int" } else { "uint" }
-            ),
-            Type::Literal(_) => "literal".to_string(),
+            )
+            .unwrap(),
+            Type::Literal(_) => out.push_str("literal"),
             Type::Mapping(MappingType {
                 key_type_id,
                 value_type_id,
-            }) => format!(
-                "mapping({key_type} => {value_type})",
-                key_type = self.type_internal_name(*key_type_id),
-                value_type = self.type_internal_name(*value_type_id)
-            ),
-            Type::String(_) => "string".to_string(),
-            Type::Tuple(TupleType { types }) => format!(
-                "({types})",
-                types = types
-                    .iter()
-                    .map(|type_id| self.type_internal_name(*type_id))
-                    .collect::<Vec<_>>()
-                    .join(",")
-            ),
+            }) => {
+                out.push_str("mapping(");
+                self.write_type_internal_name(*key_type_id, out);
+                out.push_str(" => ");
+                self.write_type_internal_name(*value_type_id, out);
+                out.push(')');
+            }
+            Type::String(_) => out.push_str("string"),
+            Type::Tuple(TupleType { types }) => {
+                out.push('(');
+                for (index, type_id) in types.iter().enumerate() {
+                    if index > 0 {
+                        out.push(',');
+                    }
+                    self.write_type_internal_name(*type_id, out);
+                }
+                out.push(')');
+            }
             Type::Contract(ContractType { definition_id })
             | Type::Enum(EnumType { definition_id })
             | Type::Interface(InterfaceType { definition_id })
             | Type::Library(LibraryType { definition_id })
             | Type::Struct(StructType { definition_id, .. })
             | Type::UserDefinedValue(UserDefinedValueType { definition_id }) => {
-                self.definition_canonical_name(*definition_id)
+                self.write_definition_canonical_name(*definition_id, out);
             }
             Type::Error(ErrorType { definition_id }) => {
-                format!("error({})", self.definition_canonical_name(*definition_id))
+                out.push_str("error(");
+                self.write_definition_canonical_name(*definition_id, out);
+                out.push(')');
             }
             Type::Event(EventType { definition_id }) => {
-                format!("event({})", self.definition_canonical_name(*definition_id))
+                out.push_str("event(");
+                self.write_definition_canonical_name(*definition_id, out);
+                out.push(')');
             }
             // Meta-types print in solc's `type(T)` notation.
             Type::MetaType(MetaType { type_id }) => {
-                format!("type({})", self.type_internal_name(*type_id))
+                out.push_str("type(");
+                self.write_type_internal_name(*type_id, out);
+                out.push(')');
             }
             Type::UserMetaType(UserMetaType { definition_id }) => {
-                format!("type({})", self.definition_canonical_name(*definition_id))
+                out.push_str("type(");
+                self.write_definition_canonical_name(*definition_id, out);
+                out.push(')');
             }
         }
     }
@@ -452,7 +471,7 @@ impl SemanticContext {
                 out.push_str("struct ");
                 self.write_definition_canonical_name(*definition_id, out);
             }
-            _ => out.push_str(&self.type_internal_name(type_id)),
+            _ => self.write_type_internal_name(type_id, out),
         }
     }
 

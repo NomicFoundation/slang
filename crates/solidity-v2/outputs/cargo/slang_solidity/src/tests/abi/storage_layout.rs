@@ -67,7 +67,7 @@ macro_rules! assert_layout_item_eq {
         let item_type = $layout
             .storage_type(item.type_id())
             .expect("the item's type is in the table");
-        assert_eq!(item.label(), $name);
+        assert_eq!(item.name(), $name);
         assert_eq!(item_type.label(), $type);
         assert_eq!(item.slot(), $slot);
         assert_eq!(item.offset(), $offset);
@@ -421,7 +421,7 @@ fn test_type_names_match_solc_labels() {
             let item_type = layout
                 .storage_type(item.type_id())
                 .expect("the item's type is in the table");
-            (item.label(), item_type.label())
+            (item.name(), item_type.label())
         })
         .collect();
 
@@ -575,7 +575,7 @@ fn test_storage_types_share_member_and_variable_types() {
     let abi = contract.compute_abi().expect("can compute ABI");
     let layout = abi.storage_layout();
     let nodes = &layout.items()[3];
-    assert_eq!(nodes.label(), "nodes");
+    assert_eq!(nodes.name(), "nodes");
 
     let root_type = layout
         .storage_type(layout.items()[0].type_id())

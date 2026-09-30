@@ -172,7 +172,7 @@ impl core::marker::Copy for slang_solidity_v2_ast::abi::NotAnAbiType
 impl core::marker::StructuralPartialEq for slang_solidity_v2_ast::abi::NotAnAbiType
 pub struct slang_solidity_v2_ast::abi::StorageItem
 impl slang_solidity_v2_ast::abi::StorageItem
-pub fn slang_solidity_v2_ast::abi::StorageItem::label(&self) -> &str
+pub fn slang_solidity_v2_ast::abi::StorageItem::name(&self) -> &str
 pub fn slang_solidity_v2_ast::abi::StorageItem::node_id(&self) -> slang_solidity_v2_common::nodes::NodeId
 pub fn slang_solidity_v2_ast::abi::StorageItem::offset(&self) -> usize
 pub fn slang_solidity_v2_ast::abi::StorageItem::slot(&self) -> ruint::aliases::U256
