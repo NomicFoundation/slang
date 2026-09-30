@@ -1,0 +1,8 @@
+{
+  "expected_solc_divergence": [
+    {
+      "specifier": { "type": "Range", "from": "0.8.13", "till": "0.8.31" },
+      "reason": "slang deprecates the comment, in favor of the 'memory-safe' flag, on every version with the flag, but solc only from 0.8.31."
+    }
+  ]
+}
