@@ -411,7 +411,7 @@ impl StorageLayout {
 #[derive(Clone, Debug, Eq, PartialEq)]
 pub struct StorageItem {
     node_id: NodeId,
-    label: String,
+    name: String,
     slot: U256,
     offset: usize,
     type_id: TypeId,
@@ -422,8 +422,9 @@ impl StorageItem {
         self.node_id
     }
 
-    pub fn label(&self) -> &str {
-        &self.label
+    /// The state variable's name.
+    pub fn name(&self) -> &str {
+        &self.name
     }
 
     pub fn slot(&self) -> U256 {
