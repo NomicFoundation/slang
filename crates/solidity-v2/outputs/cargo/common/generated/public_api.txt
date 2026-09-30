@@ -1642,6 +1642,7 @@ pub slang_solidity_v2_common::diagnostics::kinds::structure::StructureDiagnostic
 pub slang_solidity_v2_common::diagnostics::kinds::structure::StructureDiagnosticKind::UnimplementedFunctionWithModifiers(slang_solidity_v2_common::diagnostics::kinds::structure::UnimplementedFunctionWithModifiers)
 pub slang_solidity_v2_common::diagnostics::kinds::structure::StructureDiagnosticKind::UnimplementedModifierMustBeVirtual(slang_solidity_v2_common::diagnostics::kinds::structure::UnimplementedModifierMustBeVirtual)
 pub slang_solidity_v2_common::diagnostics::kinds::structure::StructureDiagnosticKind::UninitializedConstant(slang_solidity_v2_common::diagnostics::kinds::structure::UninitializedConstant)
+pub slang_solidity_v2_common::diagnostics::kinds::structure::StructureDiagnosticKind::UnrecognizedAssemblyNatSpec(slang_solidity_v2_common::diagnostics::kinds::structure::UnrecognizedAssemblyNatSpec)
 pub slang_solidity_v2_common::diagnostics::kinds::structure::StructureDiagnosticKind::UsingForFunctionsWithWildcard(slang_solidity_v2_common::diagnostics::kinds::structure::UsingForFunctionsWithWildcard)
 pub slang_solidity_v2_common::diagnostics::kinds::structure::StructureDiagnosticKind::UsingForWildcardAtFileLevel(slang_solidity_v2_common::diagnostics::kinds::structure::UsingForWildcardAtFileLevel)
 pub slang_solidity_v2_common::diagnostics::kinds::structure::StructureDiagnosticKind::VariableDeclarationNotInBlock(slang_solidity_v2_common::diagnostics::kinds::structure::VariableDeclarationNotInBlock)
@@ -1770,6 +1771,8 @@ impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::structure
 pub fn slang_solidity_v2_common::diagnostics::kinds::structure::StructureDiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::structure::UnimplementedModifierMustBeVirtual) -> Self
 impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::structure::UninitializedConstant> for slang_solidity_v2_common::diagnostics::kinds::structure::StructureDiagnosticKind
 pub fn slang_solidity_v2_common::diagnostics::kinds::structure::StructureDiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::structure::UninitializedConstant) -> Self
+impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::structure::UnrecognizedAssemblyNatSpec> for slang_solidity_v2_common::diagnostics::kinds::structure::StructureDiagnosticKind
+pub fn slang_solidity_v2_common::diagnostics::kinds::structure::StructureDiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::structure::UnrecognizedAssemblyNatSpec) -> Self
 impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::structure::UsingForFunctionsWithWildcard> for slang_solidity_v2_common::diagnostics::kinds::structure::StructureDiagnosticKind
 pub fn slang_solidity_v2_common::diagnostics::kinds::structure::StructureDiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::structure::UsingForFunctionsWithWildcard) -> Self
 impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::structure::UsingForWildcardAtFileLevel> for slang_solidity_v2_common::diagnostics::kinds::structure::StructureDiagnosticKind
@@ -2868,6 +2871,25 @@ impl slang_solidity_v2_common::diagnostics::DiagnosticExtensions for slang_solid
 pub fn slang_solidity_v2_common::diagnostics::kinds::structure::UninitializedConstant::code(&self) -> &'static str
 pub fn slang_solidity_v2_common::diagnostics::kinds::structure::UninitializedConstant::message(&self) -> alloc::string::String
 pub fn slang_solidity_v2_common::diagnostics::kinds::structure::UninitializedConstant::severity(&self) -> slang_solidity_v2_common::diagnostics::DiagnosticSeverity
+pub struct slang_solidity_v2_common::diagnostics::kinds::structure::UnrecognizedAssemblyNatSpec
+impl core::clone::Clone for slang_solidity_v2_common::diagnostics::kinds::structure::UnrecognizedAssemblyNatSpec
+pub fn slang_solidity_v2_common::diagnostics::kinds::structure::UnrecognizedAssemblyNatSpec::clone(&self) -> slang_solidity_v2_common::diagnostics::kinds::structure::UnrecognizedAssemblyNatSpec
+impl core::cmp::Eq for slang_solidity_v2_common::diagnostics::kinds::structure::UnrecognizedAssemblyNatSpec
+impl core::cmp::PartialEq for slang_solidity_v2_common::diagnostics::kinds::structure::UnrecognizedAssemblyNatSpec
+pub fn slang_solidity_v2_common::diagnostics::kinds::structure::UnrecognizedAssemblyNatSpec::eq(&self, &slang_solidity_v2_common::diagnostics::kinds::structure::UnrecognizedAssemblyNatSpec) -> bool
+impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::structure::UnrecognizedAssemblyNatSpec> for slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind
+pub fn slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::structure::UnrecognizedAssemblyNatSpec) -> Self
+impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::structure::UnrecognizedAssemblyNatSpec> for slang_solidity_v2_common::diagnostics::kinds::structure::StructureDiagnosticKind
+pub fn slang_solidity_v2_common::diagnostics::kinds::structure::StructureDiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::structure::UnrecognizedAssemblyNatSpec) -> Self
+impl core::fmt::Debug for slang_solidity_v2_common::diagnostics::kinds::structure::UnrecognizedAssemblyNatSpec
+pub fn slang_solidity_v2_common::diagnostics::kinds::structure::UnrecognizedAssemblyNatSpec::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::StructuralPartialEq for slang_solidity_v2_common::diagnostics::kinds::structure::UnrecognizedAssemblyNatSpec
+impl serde_core::ser::Serialize for slang_solidity_v2_common::diagnostics::kinds::structure::UnrecognizedAssemblyNatSpec
+pub fn slang_solidity_v2_common::diagnostics::kinds::structure::UnrecognizedAssemblyNatSpec::serialize<__S>(&self, __S) -> core::result::Result<<__S as serde_core::ser::Serializer>::Ok, <__S as serde_core::ser::Serializer>::Error> where __S: serde_core::ser::Serializer
+impl slang_solidity_v2_common::diagnostics::DiagnosticExtensions for slang_solidity_v2_common::diagnostics::kinds::structure::UnrecognizedAssemblyNatSpec
+pub fn slang_solidity_v2_common::diagnostics::kinds::structure::UnrecognizedAssemblyNatSpec::code(&self) -> &'static str
+pub fn slang_solidity_v2_common::diagnostics::kinds::structure::UnrecognizedAssemblyNatSpec::message(&self) -> alloc::string::String
+pub fn slang_solidity_v2_common::diagnostics::kinds::structure::UnrecognizedAssemblyNatSpec::severity(&self) -> slang_solidity_v2_common::diagnostics::DiagnosticSeverity
 pub struct slang_solidity_v2_common::diagnostics::kinds::structure::UsingForFunctionsWithWildcard
 impl core::clone::Clone for slang_solidity_v2_common::diagnostics::kinds::structure::UsingForFunctionsWithWildcard
 pub fn slang_solidity_v2_common::diagnostics::kinds::structure::UsingForFunctionsWithWildcard::clone(&self) -> slang_solidity_v2_common::diagnostics::kinds::structure::UsingForFunctionsWithWildcard
@@ -4302,6 +4324,8 @@ impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::structure
 pub fn slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::structure::UnimplementedModifierMustBeVirtual) -> Self
 impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::structure::UninitializedConstant> for slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind
 pub fn slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::structure::UninitializedConstant) -> Self
+impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::structure::UnrecognizedAssemblyNatSpec> for slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind
+pub fn slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::structure::UnrecognizedAssemblyNatSpec) -> Self
 impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::structure::UsingForFunctionsWithWildcard> for slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind
 pub fn slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::structure::UsingForFunctionsWithWildcard) -> Self
 impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::structure::UsingForWildcardAtFileLevel> for slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind
@@ -4968,6 +4992,10 @@ impl slang_solidity_v2_common::diagnostics::DiagnosticExtensions for slang_solid
 pub fn slang_solidity_v2_common::diagnostics::kinds::structure::UninitializedConstant::code(&self) -> &'static str
 pub fn slang_solidity_v2_common::diagnostics::kinds::structure::UninitializedConstant::message(&self) -> alloc::string::String
 pub fn slang_solidity_v2_common::diagnostics::kinds::structure::UninitializedConstant::severity(&self) -> slang_solidity_v2_common::diagnostics::DiagnosticSeverity
+impl slang_solidity_v2_common::diagnostics::DiagnosticExtensions for slang_solidity_v2_common::diagnostics::kinds::structure::UnrecognizedAssemblyNatSpec
+pub fn slang_solidity_v2_common::diagnostics::kinds::structure::UnrecognizedAssemblyNatSpec::code(&self) -> &'static str
+pub fn slang_solidity_v2_common::diagnostics::kinds::structure::UnrecognizedAssemblyNatSpec::message(&self) -> alloc::string::String
+pub fn slang_solidity_v2_common::diagnostics::kinds::structure::UnrecognizedAssemblyNatSpec::severity(&self) -> slang_solidity_v2_common::diagnostics::DiagnosticSeverity
 impl slang_solidity_v2_common::diagnostics::DiagnosticExtensions for slang_solidity_v2_common::diagnostics::kinds::structure::UsingForFunctionsWithWildcard
 pub fn slang_solidity_v2_common::diagnostics::kinds::structure::UsingForFunctionsWithWildcard::code(&self) -> &'static str
 pub fn slang_solidity_v2_common::diagnostics::kinds::structure::UsingForFunctionsWithWildcard::message(&self) -> alloc::string::String
