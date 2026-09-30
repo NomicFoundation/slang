@@ -29,6 +29,17 @@ impl LexemeKind {
             {% endfor %}
         )
     }
+
+    /// Whether the lexeme is a `NatSpec` comment.
+    pub fn is_natspec_comment(&self) -> bool {
+        matches!(
+            self,
+            {% for kind in model.parser.lexer.natspec_comment_lexeme_kinds -%}
+                Self::{{ kind }}
+                {% if not loop.last %} | {% endif %}
+            {% endfor %}
+        )
+    }
 }
 
 #[allow(clippy::too_many_lines)]
