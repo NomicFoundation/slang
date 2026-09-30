@@ -11,7 +11,9 @@ use slang_solidity_v2_common::collections::Map;
 use slang_solidity_v2_common::files::FileId;
 use slang_solidity_v2_common::nodes::NodeId;
 use slang_solidity_v2_semantic::context::SemanticContext;
-pub use slang_solidity_v2_semantic::context::{StorageMember, StorageSize, StorageTypeKind};
+pub use slang_solidity_v2_semantic::context::{
+    StorageMember, StoragePosition, StorageSize, StorageTypeKind,
+};
 use slang_solidity_v2_semantic::types::{FunctionTypeMutability, TypeId};
 
 pub use self::types::{AbiType, NotAnAbiType, TupleComponent};

@@ -3,6 +3,7 @@
 pub mod slang_solidity_v2_ast
 pub mod slang_solidity_v2_ast::abi
 pub use slang_solidity_v2_ast::abi::StorageMember
+pub use slang_solidity_v2_ast::abi::StoragePosition
 pub use slang_solidity_v2_ast::abi::StorageSize
 pub use slang_solidity_v2_ast::abi::StorageTypeKind
 pub enum slang_solidity_v2_ast::abi::AbiEntry
