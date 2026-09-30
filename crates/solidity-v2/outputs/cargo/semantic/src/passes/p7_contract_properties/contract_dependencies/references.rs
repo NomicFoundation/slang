@@ -1,6 +1,6 @@
 use std::sync::Arc;
 
-use slang_solidity_v2_common::collections::{Map, OrderedSet, Set};
+use slang_solidity_v2_common::collections::{Map, OrderedSet, Set, SortedSet};
 use slang_solidity_v2_common::nodes::NodeId;
 use slang_solidity_v2_ir::ir;
 use slang_solidity_v2_ir::ir::NodeIdentity;
@@ -43,9 +43,9 @@ pub(super) struct UnitReferences {
     /// Errors this unit reverts with, by `revert E(...)` or a call `E(...)`
     /// as in `require(c, E(...))`. A reference that is not a call, eg.
     /// `E.selector`, does not count.
-    pub(super) errors: OrderedSet<NodeId>,
+    pub(super) errors: SortedSet<NodeId>,
     /// Events this unit emits.
-    pub(super) events: OrderedSet<NodeId>,
+    pub(super) events: SortedSet<NodeId>,
 }
 
 /// Collects every unit's references.
@@ -63,8 +63,8 @@ pub(super) fn collect(
             contracts: Vec::new(),
             calls: OrderedSet::default(),
             indirect_calls: OrderedSet::default(),
-            errors: OrderedSet::default(),
-            events: OrderedSet::default(),
+            errors: SortedSet::default(),
+            events: SortedSet::default(),
             direct_callees: Set::default(),
         };
         visit_code_unit(unit, &mut collector);
@@ -140,8 +140,8 @@ struct ReferenceCollector<'a> {
     // reported when several paths reach the same dependency.
     calls: OrderedSet<CallableReference>,
     indirect_calls: OrderedSet<CallableReference>,
-    errors: OrderedSet<NodeId>,
-    events: OrderedSet<NodeId>,
+    errors: SortedSet<NodeId>,
+    events: SortedSet<NodeId>,
     // Callee expression node ids. A function referenced outside this set
     // has its value taken instead of being called.
     direct_callees: Set<NodeId>,
@@ -366,7 +366,7 @@ impl ReferenceCollector<'_> {
         }
     }
 
-    /// The error or event a `revert` or `emit` statement, or a call, names.
+    /// The error or event a `revert` or `emit` statement names.
     fn named_definition(&self, name: &ir::Identifier) -> Option<&Definition> {
         let Resolution::Definition(definition_id) = self.resolved_reference(name)? else {
             return None;
@@ -374,14 +374,11 @@ impl ReferenceCollector<'_> {
         self.binder.find_definition_by_id(definition_id)
     }
 
-    fn collect_error_call(&mut self, callee: &ir::Expression) {
-        let name = match callee {
-            ir::Expression::Identifier(identifier) => identifier,
-            ir::Expression::MemberAccessExpression(member_access) => &member_access.member,
-            _ => return,
-        };
-        if let Some(Definition::Error(error)) = self.named_definition(name) {
-            self.errors.insert(error.ir_node.id());
+    fn collect_error_call(&mut self, node: &ir::FunctionCallExpression) {
+        if let Typing::Resolved(type_id) = self.binder.node_typing(node.id())
+            && let Type::Error(error) = self.types.get_type_by_id(*type_id)
+        {
+            self.errors.insert(error.definition_id);
         }
     }
 
@@ -455,7 +452,7 @@ impl Visitor for ReferenceCollector<'_> {
         if let Some(callee_id) = node.operand.node_id() {
             self.direct_callees.insert(callee_id);
         }
-        self.collect_error_call(&node.operand);
+        self.collect_error_call(node);
         true
     }
 
