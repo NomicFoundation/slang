@@ -2,7 +2,7 @@ use std::fmt::Write;
 use std::ops::Range;
 
 pub use contract_data::ContractReference;
-pub(crate) use contract_data::{ContractData, ContractLinearisations, UsedErrorsAndEvents};
+pub(crate) use contract_data::{ContractData, ContractLinearisations};
 pub use dispatch::VirtualTarget;
 pub(crate) use file_node_mapper::FileNodeMapper;
 use ruint::aliases::U256;
@@ -241,33 +241,15 @@ impl SemanticContext {
     /// through `revert E(...)` or a call `E(...)`, from its creation code or
     /// any code its deployed entry points reach, in first-reached order. They
     /// can be declared anywhere, eg. in a library or at file level. Empty for
-    /// an interface or a definition that reaches none. Computed for the whole
-    /// program on the first call, unless the program references a contract's
-    /// bytecode and analysis already did.
+    /// an interface or a definition that reaches none.
     pub fn used_errors(&self, definition_id: NodeId) -> &[ir::ErrorDefinition] {
-        self.used_errors_and_events()
-            .errors
-            .get(&definition_id)
-            .map_or(&[], Vec::as_slice)
+        self.contract_data.used_errors(definition_id)
     }
 
     /// The same for the events the given contract's or library's code can
     /// emit.
     pub fn used_events(&self, definition_id: NodeId) -> &[ir::EventDefinition] {
-        self.used_errors_and_events()
-            .events
-            .get(&definition_id)
-            .map_or(&[], Vec::as_slice)
-    }
-
-    fn used_errors_and_events(&self) -> &UsedErrorsAndEvents {
-        self.contract_data.used_errors_and_events(|| {
-            p7_contract_properties::used_errors_and_events(
-                &self.binder,
-                &self.contract_data,
-                &self.types,
-            )
-        })
+        self.contract_data.used_events(definition_id)
     }
 
     /// Returns the pre-computed list of state variables visible in the given

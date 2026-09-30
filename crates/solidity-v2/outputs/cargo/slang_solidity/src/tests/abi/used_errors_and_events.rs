@@ -81,14 +81,3 @@ fn a_derived_contract_adds_what_its_overrides_reach() {
         ]
     );
 }
-
-/// A program creating a contract gets its errors and events from the analysis that finds the
-/// bytecode dependencies, the others on the first request.
-#[test]
-fn a_program_creating_a_contract_lists_them_too() {
-    let unit = super::ReachedWithContractReference::build_compilation_unit();
-    assert_eq!(
-        errors_and_events(&contract_abi(&unit, "Factory")),
-        ["error FromFactory", "event Deployed"]
-    );
-}

@@ -8,7 +8,7 @@ use slang_solidity_v2_ir::ir;
 use super::references::{CallableReference, UnitReferences};
 use crate::binder::{Binder, Definition};
 use crate::context::dispatch::{function_target, modifier_target, super_target};
-use crate::context::{ContractData, ContractReference, UsedErrorsAndEvents};
+use crate::context::{ContractData, ContractReference};
 use crate::passes::common::Overridable;
 use crate::types::TypeRegistry;
 
@@ -27,7 +27,8 @@ type IndirectCalls = OrderedSet<NodeId>;
 pub(super) struct ContractDependencies {
     pub(super) creation: DependencyMap,
     pub(super) deployed: DependencyMap,
-    pub(super) used_errors_and_events: UsedErrorsAndEvents,
+    pub(super) used_errors: SortedMap<NodeId, Vec<ir::ErrorDefinition>>,
+    pub(super) used_events: SortedMap<NodeId, Vec<ir::EventDefinition>>,
 }
 
 /// Computes the creation and deployed bytecode dependency maps of every
@@ -41,7 +42,8 @@ pub(super) fn build(
 ) -> ContractDependencies {
     let mut creation_dependencies = DependencyMap::default();
     let mut deployed_dependencies = DependencyMap::default();
-    let mut used = UsedErrorsAndEvents::default();
+    let mut used_errors = SortedMap::default();
+    let mut used_events = SortedMap::default();
     for (definition_id, definition) in binder.definitions() {
         let mut collector = DependencyCollector {
             binder,
@@ -74,18 +76,19 @@ pub(super) fn build(
         if !collector.errors.is_empty() {
             let errors = collector.errors.iter();
             let errors = errors.map(|id| error_definition(binder, *id)).collect();
-            used.errors.insert(*definition_id, errors);
+            used_errors.insert(*definition_id, errors);
         }
         if !collector.events.is_empty() {
             let events = collector.events.iter();
             let events = events.map(|id| event_definition(binder, *id)).collect();
-            used.events.insert(*definition_id, events);
+            used_events.insert(*definition_id, events);
         }
     }
     ContractDependencies {
         creation: creation_dependencies,
         deployed: deployed_dependencies,
-        used_errors_and_events: used,
+        used_errors,
+        used_events,
     }
 }
 

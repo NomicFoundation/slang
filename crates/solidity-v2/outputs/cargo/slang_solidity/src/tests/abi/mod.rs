@@ -244,20 +244,3 @@ contract B is A {
 }
 "#,
 );
-
-define_fixture!(
-    ReachedWithContractReference,
-    file: "main.sol", r#"
-pragma solidity ^0.8.27;
-error FromFactory();
-event Deployed(address child);
-contract Child {}
-contract Factory {
-    function make() external returns (Child child) {
-        child = new Child();
-        if (address(child) == address(0)) revert FromFactory();
-        emit Deployed(address(child));
-    }
-}
-"#,
-);
