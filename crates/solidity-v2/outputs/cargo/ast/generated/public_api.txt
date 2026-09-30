@@ -2,7 +2,9 @@
 
 pub mod slang_solidity_v2_ast
 pub mod slang_solidity_v2_ast::abi
+pub use slang_solidity_v2_ast::abi::StorageMember
 pub use slang_solidity_v2_ast::abi::StorageSize
+pub use slang_solidity_v2_ast::abi::StorageTypeKind
 pub enum slang_solidity_v2_ast::abi::AbiEntry
 pub slang_solidity_v2_ast::abi::AbiEntry::Constructor(slang_solidity_v2_ast::abi::AbiConstructor)
 pub slang_solidity_v2_ast::abi::AbiEntry::Error(slang_solidity_v2_ast::abi::AbiError)
@@ -63,26 +65,6 @@ pub fn slang_solidity_v2_ast::abi::AbiType::fmt(&self, &mut core::fmt::Formatter
 impl core::hash::Hash for slang_solidity_v2_ast::abi::AbiType
 pub fn slang_solidity_v2_ast::abi::AbiType::hash<__H: core::hash::Hasher>(&self, &mut __H)
 impl core::marker::StructuralPartialEq for slang_solidity_v2_ast::abi::AbiType
-pub enum slang_solidity_v2_ast::abi::StorageTypeKind
-pub slang_solidity_v2_ast::abi::StorageTypeKind::Bytes
-pub slang_solidity_v2_ast::abi::StorageTypeKind::DynamicArray
-pub slang_solidity_v2_ast::abi::StorageTypeKind::DynamicArray::element: slang_solidity_v2_semantic::types::TypeId
-pub slang_solidity_v2_ast::abi::StorageTypeKind::FixedSizeArray
-pub slang_solidity_v2_ast::abi::StorageTypeKind::FixedSizeArray::element: slang_solidity_v2_semantic::types::TypeId
-pub slang_solidity_v2_ast::abi::StorageTypeKind::Mapping
-pub slang_solidity_v2_ast::abi::StorageTypeKind::Mapping::key: slang_solidity_v2_semantic::types::TypeId
-pub slang_solidity_v2_ast::abi::StorageTypeKind::Mapping::value: slang_solidity_v2_semantic::types::TypeId
-pub slang_solidity_v2_ast::abi::StorageTypeKind::Struct
-pub slang_solidity_v2_ast::abi::StorageTypeKind::Struct::members: alloc::vec::Vec<slang_solidity_v2_ast::abi::StorageItem>
-pub slang_solidity_v2_ast::abi::StorageTypeKind::Value
-impl core::clone::Clone for slang_solidity_v2_ast::abi::StorageTypeKind
-pub fn slang_solidity_v2_ast::abi::StorageTypeKind::clone(&self) -> slang_solidity_v2_ast::abi::StorageTypeKind
-impl core::cmp::Eq for slang_solidity_v2_ast::abi::StorageTypeKind
-impl core::cmp::PartialEq for slang_solidity_v2_ast::abi::StorageTypeKind
-pub fn slang_solidity_v2_ast::abi::StorageTypeKind::eq(&self, &slang_solidity_v2_ast::abi::StorageTypeKind) -> bool
-impl core::fmt::Debug for slang_solidity_v2_ast::abi::StorageTypeKind
-pub fn slang_solidity_v2_ast::abi::StorageTypeKind::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
-impl core::marker::StructuralPartialEq for slang_solidity_v2_ast::abi::StorageTypeKind
 pub struct slang_solidity_v2_ast::abi::AbiConstructor
 impl slang_solidity_v2_ast::abi::AbiConstructor
 pub fn slang_solidity_v2_ast::abi::AbiConstructor::inputs(&self) -> &[slang_solidity_v2_ast::abi::AbiParameter]
@@ -201,7 +183,7 @@ impl core::fmt::Debug for slang_solidity_v2_ast::abi::StorageLayout
 pub fn slang_solidity_v2_ast::abi::StorageLayout::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
 pub struct slang_solidity_v2_ast::abi::StorageType
 impl slang_solidity_v2_ast::abi::StorageType
-pub fn slang_solidity_v2_ast::abi::StorageType::kind(&self) -> &slang_solidity_v2_ast::abi::StorageTypeKind
+pub fn slang_solidity_v2_ast::abi::StorageType::kind(&self) -> &slang_solidity_v2_semantic::context::storage_layout::StorageTypeKind
 pub fn slang_solidity_v2_ast::abi::StorageType::label(&self) -> &str
 pub fn slang_solidity_v2_ast::abi::StorageType::size(&self) -> slang_solidity_v2_semantic::context::storage_layout::StorageSize
 pub fn slang_solidity_v2_ast::abi::StorageType::type_id(&self) -> slang_solidity_v2_semantic::types::TypeId

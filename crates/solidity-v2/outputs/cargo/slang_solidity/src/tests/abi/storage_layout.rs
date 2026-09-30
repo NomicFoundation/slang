@@ -474,10 +474,10 @@ fn describe_storage_types(layout: &abi::StorageLayout) -> Vec<String> {
                     .map(|member| {
                         format!(
                             "{} at {}+{}: {}",
-                            member.label(),
-                            member.slot(),
-                            member.offset(),
-                            label_of(member.type_id())
+                            member.name,
+                            member.position.slot,
+                            member.position.offset,
+                            label_of(member.type_id)
                         )
                     })
                     .collect();
@@ -572,8 +572,8 @@ fn test_storage_types_share_member_and_variable_types() {
         panic!("`root` is a struct");
     };
     let children = &members[2];
-    assert_eq!(children.label(), "children");
-    assert_eq!(children.type_id(), nodes.type_id());
+    assert_eq!(children.name, "children");
+    assert_eq!(children.type_id, nodes.type_id());
 }
 
 // The size is exact, even where a byte count would not fit a `uint256`.

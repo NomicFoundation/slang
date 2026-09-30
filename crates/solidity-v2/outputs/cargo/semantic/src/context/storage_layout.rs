@@ -24,13 +24,15 @@ pub struct StoragePosition {
 
 /// How a type is laid out in storage: its size, and how its contents are
 /// arranged. Every `TypeId` it refers to is the type as it is in storage, so
-/// a struct member and a state variable of the same type share one.
+/// a struct member and a state variable of the same type share one, and is
+/// described in the same type table.
 #[derive(Clone, Debug, Eq, PartialEq)]
 pub struct StorageTypeLayout {
     pub size: StorageSize,
     pub kind: StorageTypeKind,
 }
 
+/// How a type's contents are arranged in storage.
 #[derive(Clone, Debug, Eq, PartialEq)]
 pub enum StorageTypeKind {
     /// A value type, stored in place.
@@ -50,10 +52,11 @@ pub enum StorageTypeKind {
     Struct { members: Vec<StorageMember> },
 }
 
-/// A struct member's position, relative to the start of the struct.
+/// A struct member, and its position relative to the start of the struct.
 #[derive(Clone, Debug, Eq, PartialEq)]
 pub struct StorageMember {
     pub node_id: NodeId,
+    pub name: String,
     pub type_id: TypeId,
     pub position: StoragePosition,
 }
