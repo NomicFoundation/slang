@@ -10,8 +10,10 @@ use slang_solidity_v2_cst::structured_cst::nodes::{
 };
 
 use crate::lexer::{LexemeKind, Lexer};
+use crate::parser::natspec_comments::NatSpecComments;
 use crate::parser::validation::validate_syntax_version;
 
+mod natspec_comments;
 mod parser_helpers;
 mod validation;
 
@@ -67,7 +69,11 @@ pub struct Parser;
 
 impl Parser {
     pub fn parse(file_id: &FileId, source: &str, language_version: LanguageVersion) -> ParseOutput {
-        let lexer = Lexer::new(source, language_version);
+        let mut natspec_comments = NatSpecComments::default();
+        let tokens = TokenStream {
+            lexer: Lexer::new(source, language_version),
+            natspec_comments: &mut natspec_comments,
+        };
         let parser = grammar::SourceUnitParser::new();
 
         let mut ctx = GrammarCtx {
@@ -77,7 +83,7 @@ impl Parser {
             language_version,
         };
 
-        let source_unit = match parser.parse(&mut ctx, lexer) {
+        let source_unit = match parser.parse(&mut ctx, tokens) {
             Ok(source_unit) => {
                 // Most validation happens during the 'CompilationUnit' building, but this specific
                 // check is done here to make sure that other 'Parser' users can still be informed of any
@@ -159,16 +165,33 @@ fn convert_parse_error(
     }
 }
 
-/// Iterate over the lexemes and their offsets
+/// The lexemes fed to the parser, with their offsets.
 ///
-/// TODO(v2): This iterator skips all trivia, we'll want to include it in
-/// future versions
-impl Iterator for Lexer<'_> {
+/// Trivia is skipped, but `NatSpec` comments are recorded with the token they document.
+///
+/// TODO(v2): Include the trivia in future versions
+struct TokenStream<'source, 'comments> {
+    lexer: Lexer<'source>,
+    natspec_comments: &'comments mut NatSpecComments,
+}
+
+impl Iterator for TokenStream<'_, '_> {
     type Item = Result<(usize, LexemeKind, usize), ()>;
 
     fn next(&mut self) -> Option<Self::Item> {
-        while let Some(lexeme) = self.next_lexeme() {
+        // Kept lean for LALRPOP's parsing loop: the pending comment is stored in
+        // `NatSpecComments` rather than in a local, and only a bool tracks whether this call saw one.
+        let mut after_natspec_comment = false;
+
+        while let Some(lexeme) = self.lexer.next_lexeme() {
+            if lexeme.kind.is_natspec_comment() {
+                self.natspec_comments.push(lexeme.range.clone());
+                after_natspec_comment = true;
+            }
             if !lexeme.kind.is_trivia() {
+                if after_natspec_comment {
+                    self.natspec_comments.document(lexeme.range.start);
+                }
                 return Some(Ok((lexeme.range.start, lexeme.kind, lexeme.range.end)));
             }
         }
