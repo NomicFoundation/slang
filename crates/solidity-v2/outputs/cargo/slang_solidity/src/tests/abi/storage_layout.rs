@@ -1,6 +1,6 @@
 use ruint::uint;
 
-use crate::abi::{self, StorageSize, StorageType, StorageTypeKind};
+use crate::abi::{self, StorageKind, StorageSize, StorageType, StorageTypeKind};
 use crate::ast::TypeId;
 use crate::define_fixture;
 
@@ -62,11 +62,15 @@ contract F layout at erc7201("example.main") {
 );
 
 macro_rules! assert_layout_item_eq {
-    ($item:expr, $name:expr, $slot:expr, $offset:expr, $type:expr) => {
-        assert_eq!($item.label(), $name);
-        assert_eq!($item.type_name(), $type);
-        assert_eq!($item.slot(), $slot);
-        assert_eq!($item.offset(), $offset);
+    ($layout:ident[$index:expr], $name:expr, $slot:expr, $offset:expr, $type:expr) => {
+        let item = &$layout.items()[$index];
+        let item_type = $layout
+            .storage_type(item.type_id())
+            .expect("the item's type is in the table");
+        assert_eq!(item.label(), $name);
+        assert_eq!(item_type.label(), $type);
+        assert_eq!(item.slot(), $slot);
+        assert_eq!(item.offset(), $offset);
     };
 }
 
@@ -79,9 +83,9 @@ fn test_storage_layout() {
         .next()
         .expect("contract can be found");
     let counter_abi = counter.compute_abi().expect("can compute ABI");
-    let layout = counter_abi.storage_layout().items();
+    let layout = counter_abi.storage_layout();
 
-    assert_eq!(layout.len(), 12);
+    assert_eq!(layout.items().len(), 12);
 
     assert_layout_item_eq!(layout[0], "a", uint!(0_U256), 0, "uint256");
     assert_layout_item_eq!(layout[1], "e", uint!(1_U256), 0, "uint8[]");
@@ -102,8 +106,8 @@ fn test_storage_layout() {
     assert_layout_item_eq!(layout[10], "t", uint!(9_U256), 0, "struct T[2]");
     assert_layout_item_eq!(layout[11], "o", uint!(13_U256), 0, "bytes5");
 
-    let transient_layout = counter_abi.transient_storage_layout().items();
-    assert!(transient_layout.is_empty());
+    let transient_layout = counter_abi.transient_storage_layout();
+    assert!(transient_layout.items().is_empty());
 }
 
 #[test]
@@ -115,9 +119,9 @@ fn test_transient_and_custom_storage_layout() {
         .next()
         .expect("contract can be found");
     let d_abi = d_contract.compute_abi().expect("can compute ABI");
-    let d_layout = d_abi.storage_layout().items();
+    let d_layout = d_abi.storage_layout();
 
-    assert_eq!(d_layout.len(), 2);
+    assert_eq!(d_layout.items().len(), 2);
     assert_layout_item_eq!(d_layout[0], "a", 42, 0, "uint256");
     assert_layout_item_eq!(d_layout[1], "p", 43, 0, "uint256");
 
@@ -126,14 +130,14 @@ fn test_transient_and_custom_storage_layout() {
         .next()
         .expect("contract can be found");
     let e_abi = e_contract.compute_abi().expect("can compute ABI");
-    let e_layout = e_abi.storage_layout().items();
-    let e_transient_layout = e_abi.transient_storage_layout().items();
+    let e_layout = e_abi.storage_layout();
+    let e_transient_layout = e_abi.transient_storage_layout();
 
-    assert_eq!(e_layout.len(), 2);
+    assert_eq!(e_layout.items().len(), 2);
     assert_layout_item_eq!(e_layout[0], "q", 20, 0, "int8");
     assert_layout_item_eq!(e_layout[1], "r", 20, 1, "bytes5");
 
-    assert_eq!(e_transient_layout.len(), 2);
+    assert_eq!(e_transient_layout.items().len(), 2);
     assert_layout_item_eq!(e_transient_layout[0], "qt", 0, 0, "int8");
     assert_layout_item_eq!(e_transient_layout[1], "rt", 0, 1, "bytes5");
 }
@@ -170,9 +174,9 @@ fn test_struct_members_packing_into_a_full_slot_occupy_one_slot() {
         .next()
         .expect("contract can be found");
     let g_abi = g_contract.compute_abi().expect("can compute ABI");
-    let layout = g_abi.storage_layout().items();
+    let layout = g_abi.storage_layout();
 
-    assert_eq!(layout.len(), 2);
+    assert_eq!(layout.items().len(), 2);
     assert_layout_item_eq!(layout[0], "s", uint!(0_U256), 0, "struct PerfectFit");
     assert_layout_item_eq!(layout[1], "tail", uint!(1_U256), 0, "uint256");
 }
@@ -186,13 +190,13 @@ fn test_erc7201_storage_layout() {
         .next()
         .expect("contract can be found");
     let f_abi = f_contract.compute_abi().expect("can compute ABI");
-    let f_layout = f_abi.storage_layout().items();
+    let f_layout = f_abi.storage_layout();
 
     // EIP-7201 test vector: `erc7201("example.main")` →
     // 0x183a6125c38840424c4a85fa12bab2ab606c4b6d0e7cc73c0c06ba5300eab500.
     let base_slot = uint!(0x183a6125c38840424c4a85fa12bab2ab606c4b6d0e7cc73c0c06ba5300eab500_U256);
 
-    assert_eq!(f_layout.len(), 2);
+    assert_eq!(f_layout.items().len(), 2);
     assert_layout_item_eq!(f_layout[0], "u", base_slot, 0, "uint256");
     assert_layout_item_eq!(f_layout[1], "v", base_slot + uint!(1_U256), 0, "uint256");
 }
@@ -219,9 +223,9 @@ fn test_huge_array_shifts_following_slot() {
         .next()
         .expect("contract can be found");
     let abi = contract.compute_abi().expect("can compute ABI");
-    let layout = abi.storage_layout().items();
+    let layout = abi.storage_layout();
 
-    assert_eq!(layout.len(), 3);
+    assert_eq!(layout.items().len(), 3);
     assert_layout_item_eq!(layout[0], "a", uint!(0_U256), 0, "uint256");
     assert_layout_item_eq!(
         layout[1],
@@ -252,9 +256,9 @@ fn test_max_length_array_lays_out() {
         .next()
         .expect("contract can be found");
     let abi = contract.compute_abi().expect("can compute ABI");
-    let layout = abi.storage_layout().items();
+    let layout = abi.storage_layout();
 
-    assert_eq!(layout.len(), 1);
+    assert_eq!(layout.items().len(), 1);
     assert_layout_item_eq!(
         layout[0],
         "x",
@@ -363,9 +367,9 @@ fn test_nested_struct_lays_out_under_its_qualified_name() {
         .next()
         .expect("contract can be found");
     let contract_abi = contract.compute_abi().expect("can compute ABI");
-    let layout = contract_abi.storage_layout().items();
+    let layout = contract_abi.storage_layout();
 
-    assert_eq!(layout.len(), 1);
+    assert_eq!(layout.items().len(), 1);
     assert_layout_item_eq!(layout[0], "nested", uint!(0_U256), 0, "struct C.Inner");
 }
 
@@ -409,11 +413,16 @@ fn test_type_names_match_solc_labels() {
         .next()
         .expect("contract can be found");
     let contract_abi = contract.compute_abi().expect("can compute ABI");
-    let type_names: Vec<_> = contract_abi
-        .storage_layout()
+    let layout = contract_abi.storage_layout();
+    let type_names: Vec<_> = layout
         .items()
         .iter()
-        .map(|item| (item.label(), item.type_name()))
+        .map(|item| {
+            let item_type = layout
+                .storage_type(item.type_id())
+                .expect("the item's type is in the table");
+            (item.label(), item_type.label())
+        })
         .collect();
 
     assert_eq!(
@@ -442,7 +451,8 @@ fn test_type_names_match_solc_labels() {
 }
 
 /// Renders a layout's types table as `label: size, kind` lines, naming the
-/// types each entry refers to by their labels.
+/// types each entry refers to by their labels, sorted since the table has no
+/// order.
 fn describe_storage_types(layout: &abi::StorageLayout) -> Vec<String> {
     let label_of = |type_id: TypeId| {
         layout
@@ -486,12 +496,14 @@ fn describe_storage_types(layout: &abi::StorageLayout) -> Vec<String> {
         };
         format!("{}: {size}, {kind}", storage_type.label())
     };
-    layout.types().iter().map(describe).collect()
+    let mut lines: Vec<_> = layout.types().map(describe).collect();
+    lines.sort();
+    lines
 }
 
-// Expected entries are solc 0.8.36's `types` for each layout of this source, in
-// the order they are first reached. solc also keeps a mapping's `string` and
-// `bytes` keys apart from the storage ones, so each spelling appears twice.
+// Expected entries are solc 0.8.36's `types` for each layout of this source.
+// solc also keeps a mapping's `string` and `bytes` keys apart from the storage
+// ones, so each spelling appears twice.
 define_fixture!(
     StorageTypes,
     file: "main.sol", r#"
@@ -528,27 +540,27 @@ fn test_storage_types_table() {
     assert_eq!(
         describe_storage_types(abi.storage_layout()),
         [
+            "bytes: 1 slots, bytes",
+            "bytes: 1 slots, bytes",
+            "function () external: 24 bytes, value",
+            "mapping(bytes => uint8): 1 slots, mapping from bytes to uint8",
+            "mapping(bytes => uint8)[2]: 2 slots, fixed-size array of mapping(bytes => uint8)",
+            "mapping(string => struct Types.Node): 1 slots, mapping from string to struct Types.Node",
+            "string: 1 slots, bytes",
+            "string: 1 slots, bytes",
             "struct Types.Node: 5 slots, struct { name at 0+0: string, data at 1+0: bytes, \
              children at 2+0: struct Types.Node[], byName at 3+0: mapping(string => struct Types.Node), \
              callback at 4+0: function () external, tag at 4+24: uint8 }",
-            "mapping(bytes => uint8)[2]: 2 slots, fixed-size array of mapping(bytes => uint8)",
-            "uint8[3][]: 1 slots, dynamic array of uint8[3]",
             "struct Types.Node[]: 1 slots, dynamic array of struct Types.Node",
-            "string: 1 slots, bytes",
-            "bytes: 1 slots, bytes",
-            "mapping(string => struct Types.Node): 1 slots, mapping from string to struct Types.Node",
-            "function () external: 24 bytes, value",
             "uint8: 1 bytes, value",
-            "mapping(bytes => uint8): 1 slots, mapping from bytes to uint8",
             "uint8[3]: 1 slots, fixed-size array of uint8",
-            "string: 1 slots, bytes",
-            "bytes: 1 slots, bytes",
+            "uint8[3][]: 1 slots, dynamic array of uint8[3]",
         ]
     );
     // `uint8` is in both tables: each layout describes its own types.
     assert_eq!(
         describe_storage_types(abi.transient_storage_layout()),
-        ["uint8: 1 bytes, value", "uint64: 8 bytes, value"]
+        ["uint64: 8 bytes, value", "uint8: 1 bytes, value"]
     );
 }
 
@@ -611,7 +623,7 @@ fn test_storage_types_leave_out_constants_and_immutables() {
         describe_storage_types(abi.storage_layout()),
         ["uint256: 32 bytes, value"]
     );
-    assert!(abi.transient_storage_layout().types().is_empty());
+    assert_eq!(abi.transient_storage_layout().types().len(), 0);
 }
 
 // The layouts and items computed on their own match the ones in the ABI,
@@ -626,28 +638,19 @@ fn test_storage_layouts_without_the_abi() {
             .expect("contract can be found");
         let abi = contract.compute_abi().expect("can compute ABI");
         let storage_layout = contract
-            .compute_storage_layout()
+            .compute_storage_layout(StorageKind::Persistent)
             .expect("can compute the storage layout");
         let transient_storage_layout = contract
-            .compute_transient_storage_layout()
+            .compute_storage_layout(StorageKind::Transient)
             .expect("can compute the transient storage layout");
-
-        assert_eq!(storage_layout.items(), abi.storage_layout().items());
-        assert_eq!(storage_layout.types(), abi.storage_layout().types());
-        assert_eq!(
-            transient_storage_layout.items(),
-            abi.transient_storage_layout().items()
-        );
-        assert_eq!(
-            transient_storage_layout.types(),
-            abi.transient_storage_layout().types()
-        );
+        assert_eq!(&storage_layout, abi.storage_layout());
+        assert_eq!(&transient_storage_layout, abi.transient_storage_layout());
 
         let storage_items = contract
-            .compute_storage_items()
+            .compute_storage_items(StorageKind::Persistent)
             .expect("can compute the storage items");
         let transient_storage_items = contract
-            .compute_transient_storage_items()
+            .compute_storage_items(StorageKind::Transient)
             .expect("can compute the transient storage items");
         assert_eq!(storage_items, abi.storage_layout().items());
         assert_eq!(
@@ -695,11 +698,11 @@ fn test_storage_types_reached_through_other_files_share_entries() {
         .next()
         .expect("contract can be found");
     let layout = contract
-        .compute_storage_layout()
+        .compute_storage_layout(StorageKind::Persistent)
         .expect("can compute the storage layout");
     let table = describe_storage_types(&layout);
 
-    let mut labels: Vec<_> = layout.types().iter().map(abi::StorageType::label).collect();
+    let mut labels: Vec<_> = layout.types().map(abi::StorageType::label).collect();
     labels.sort_unstable();
     let entries = labels.len();
     labels.dedup();
