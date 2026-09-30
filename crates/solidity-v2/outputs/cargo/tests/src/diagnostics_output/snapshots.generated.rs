@@ -3968,6 +3968,33 @@ mod structure {
         run("structure", "uninitialized_file_level_constant")
     }
 
+    mod unrecognized_assembly_natspec {
+        use super::*;
+
+        #[test]
+        fn empty_comment() -> Result<()> {
+            run("structure/unrecognized_assembly_natspec", "empty_comment")
+        }
+
+        #[test]
+        fn marker() -> Result<()> {
+            run("structure/unrecognized_assembly_natspec", "marker")
+        }
+
+        #[test]
+        fn multi_line_comment() -> Result<()> {
+            run(
+                "structure/unrecognized_assembly_natspec",
+                "multi_line_comment",
+            )
+        }
+
+        #[test]
+        fn other_tags() -> Result<()> {
+            run("structure/unrecognized_assembly_natspec", "other_tags")
+        }
+    }
+
     mod using_for_functions_with_wildcard {
         use super::*;
 
