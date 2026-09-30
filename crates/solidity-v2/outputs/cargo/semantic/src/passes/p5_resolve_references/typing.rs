@@ -690,14 +690,15 @@ impl Pass<'_> {
             return None;
         }
         let element_type = self.types.type_of_array_literal(&item_type_ids)?;
-        Some(
-            self.types
-                .register_type(Type::FixedSizeArray(FixedSizeArrayType {
-                    element_type,
-                    size: U256::from(array.items.len()),
-                    location: DataLocation::Memory,
-                })),
-        )
+        // Reference-typed elements are relocated to memory as well, as solc does.
+        Some(self.types.register_type_with_data_location(
+            Type::FixedSizeArray(FixedSizeArrayType {
+                element_type,
+                size: U256::from(array.items.len()),
+                location: DataLocation::Memory,
+            }),
+            DataLocation::Memory,
+        ))
     }
 
     pub(super) fn type_of_left_typed_binary_operator_expression<F>(

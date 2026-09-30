@@ -746,8 +746,9 @@ impl TypeRegistry {
             // A calldata slice is only ever produced by a range-index
             // expression `a[i:j]`, never written in source as a parameter,
             // struct field, or cast target. Location relocation only runs on
-            // such source-declared types (and elements nested within them, none
-            // of which can be a slice), so a slice never reaches here.
+            // such source-declared types and on array literal elements, whose
+            // mobile type is never a slice (and elements nested within them,
+            // none of which can be a slice), so a slice never reaches here.
             Type::ArraySlice(_) => {
                 unreachable!("array slices are calldata-only and are never relocated")
             }
