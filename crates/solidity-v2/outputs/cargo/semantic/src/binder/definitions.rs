@@ -149,6 +149,7 @@ pub struct StateVariableDefinition {
 #[derive(Debug)]
 pub struct StructDefinition {
     pub ir_node: ir::StructDefinition,
+    pub is_recursive: bool,
 }
 
 #[derive(Debug)]
@@ -506,6 +507,7 @@ impl Definition {
     pub(crate) fn new_struct(ir_node: &ir::StructDefinition) -> Self {
         Self::Struct(StructDefinition {
             ir_node: Arc::clone(ir_node),
+            is_recursive: false,
         })
     }
 
