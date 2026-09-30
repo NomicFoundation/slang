@@ -8,11 +8,11 @@ use std::sync::Arc;
 
 use ruint::aliases::U256;
 use sha3::{Digest, Keccak256};
-use slang_solidity_v2_common::collections::Map;
+use slang_solidity_v2_common::collections::OrderedSet;
 use slang_solidity_v2_common::files::FileId;
 use slang_solidity_v2_common::nodes::NodeId;
 use slang_solidity_v2_semantic::context::SemanticContext;
-pub use slang_solidity_v2_semantic::context::StorageSize;
+pub use slang_solidity_v2_semantic::context::{StorageMember, StorageSize, StorageTypeKind};
 use slang_solidity_v2_semantic::types::{FunctionTypeMutability, TypeId};
 
 pub use self::types::{AbiType, NotAnAbiType, TupleComponent};
@@ -428,20 +428,20 @@ impl fmt::Debug for AbiParameter {
 pub struct StorageLayout {
     items: Vec<StorageItem>,
     types: Vec<StorageType>,
-    type_indices: Map<TypeId, usize>,
+    type_ids: OrderedSet<TypeId>,
 }
 
 impl StorageLayout {
-    /// `type_indices` maps each type's `TypeId` to its index in `types`.
+    /// `type_ids` holds each entry's `TypeId` at the entry's index in `types`.
     pub(crate) fn new(
         items: Vec<StorageItem>,
         types: Vec<StorageType>,
-        type_indices: Map<TypeId, usize>,
+        type_ids: OrderedSet<TypeId>,
     ) -> Self {
         Self {
             items,
             types,
-            type_indices,
+            type_ids,
         }
     }
 
@@ -457,16 +457,15 @@ impl StorageLayout {
     }
 
     /// The entry of [`Self::types`] for `type_id`, as named by a
-    /// [`StorageItem`] or a [`StorageTypeKind`].
+    /// [`StorageItem`] or a [`StorageTypeKind`] of this layout.
     pub fn storage_type(&self, type_id: TypeId) -> Option<&StorageType> {
-        self.type_indices
-            .get(&type_id)
-            .map(|index| &self.types[*index])
+        self.type_ids
+            .get_index_of(&type_id)
+            .map(|index| &self.types[index])
     }
 }
 
-/// A state variable, or a struct member, and where it is stored. A struct
-/// member's slot is relative to the start of the struct.
+/// A state variable, and where it is stored.
 #[derive(Clone, Debug, Eq, PartialEq)]
 pub struct StorageItem {
     node_id: NodeId,
@@ -532,27 +531,6 @@ impl StorageType {
     pub fn kind(&self) -> &StorageTypeKind {
         &self.kind
     }
-}
-
-/// How a type's contents are arranged in storage. Every `TypeId` is a key in
-/// the [`StorageLayout::types`] of the layout it belongs to.
-#[derive(Clone, Debug, Eq, PartialEq)]
-pub enum StorageTypeKind {
-    /// A value type, stored in place.
-    Value,
-    /// A `bytes` or `string`, stored in its slot when short and at the slot's
-    /// hash otherwise.
-    Bytes,
-    /// A dynamic array: its slot holds the length, and the elements start at
-    /// the slot's hash.
-    DynamicArray { element: TypeId },
-    /// A fixed-size array, with its elements stored in place.
-    FixedSizeArray { element: TypeId },
-    /// A mapping: its slot is empty, each value is at the hash of its key and
-    /// the slot.
-    Mapping { key: TypeId, value: TypeId },
-    /// A struct, with its members stored in place, in declaration order.
-    Struct { members: Vec<StorageItem> },
 }
 
 pub fn hash_from_signature(signature: &str) -> [u8; 32] {

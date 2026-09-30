@@ -6,7 +6,7 @@ pub(crate) use contract_data::{ContractData, ContractLinearisations};
 pub use dispatch::VirtualTarget;
 pub(crate) use file_node_mapper::FileNodeMapper;
 use ruint::aliases::U256;
-use slang_solidity_v2_common::collections::{Set, SortedMap};
+use slang_solidity_v2_common::collections::{OrderedSet, Set, SortedMap};
 use slang_solidity_v2_common::diagnostics::DiagnosticCollection;
 use slang_solidity_v2_common::evm_targets::EvmTarget;
 use slang_solidity_v2_common::files::FileId;
@@ -623,7 +623,7 @@ impl SemanticContext {
         &self,
         definition_id: NodeId,
         visited_structs: &mut Set<NodeId>,
-        mut on_member: impl FnMut(NodeId, TypeId, StoragePosition),
+        mut on_member: impl FnMut(&ir::StructMember, TypeId, StoragePosition),
     ) -> Option<U256> {
         // Recursive structs are not valid Solidity, but guard against cycles
         // to avoid unbounded recursion if malformed types reach this point.
@@ -641,15 +641,51 @@ impl SemanticContext {
             let member_type_id = self.binder.node_typing(member.id()).as_type_id()?;
             let member_size = self.storage_size_of_type_id_impl(member_type_id, visited_structs)?;
             let position = builder.allocate(member_size)?;
-            on_member(member.id(), member_type_id, position);
+            on_member(member, member_type_id, position);
         }
         visited_structs.remove(&definition_id);
         builder.slots_used()
     }
 
-    /// How a type in storage is laid out, for a storage layout's type table.
-    /// `None` when the type cannot be stored or overflows storage.
-    pub fn storage_type_layout(&self, type_id: TypeId) -> Option<StorageTypeLayout> {
+    /// The type table of a storage layout: `roots` (the types of its state
+    /// variables) and every type those refer to, in the order first reached,
+    /// with `describe` applied to how each one is laid out. The entry at an
+    /// index describes the type at the same index of the returned set. `None`
+    /// when one of them cannot be stored or overflows storage.
+    pub fn storage_type_table<T>(
+        &self,
+        roots: impl IntoIterator<Item = TypeId>,
+        mut describe: impl FnMut(TypeId, StorageTypeLayout) -> T,
+    ) -> Option<(OrderedSet<TypeId>, Vec<T>)> {
+        let mut type_ids: OrderedSet<TypeId> = roots.into_iter().collect();
+        let mut table = Vec::with_capacity(type_ids.len());
+        let mut index = 0;
+        while let Some(&type_id) = type_ids.get_index(index) {
+            index += 1;
+            let layout = self.storage_type_layout(type_id)?;
+            match &layout.kind {
+                StorageTypeKind::Value | StorageTypeKind::Bytes => {}
+                StorageTypeKind::DynamicArray { element }
+                | StorageTypeKind::FixedSizeArray { element } => {
+                    type_ids.insert(*element);
+                }
+                StorageTypeKind::Mapping { key, value } => {
+                    type_ids.insert(*key);
+                    type_ids.insert(*value);
+                }
+                StorageTypeKind::Struct { members } => {
+                    type_ids.extend(members.iter().map(|member| member.type_id));
+                }
+            }
+            table.push(describe(type_id, layout));
+        }
+        Some((type_ids, table))
+    }
+
+    /// How a type in storage is laid out, as an entry of
+    /// [`Self::storage_type_table`]. `None` when the type cannot be stored or
+    /// overflows storage.
+    fn storage_type_layout(&self, type_id: TypeId) -> Option<StorageTypeLayout> {
         let kind = match self.types.get_type_by_id(type_id) {
             Type::Struct(StructType { definition_id, .. }) => {
                 let Definition::Struct(struct_definition) =
@@ -661,9 +697,10 @@ impl SemanticContext {
                 let slots = self.lay_out_struct_members(
                     *definition_id,
                     &mut Set::default(),
-                    |node_id, type_id, position| {
+                    |member, type_id, position| {
                         members.push(StorageMember {
-                            node_id,
+                            node_id: member.id(),
+                            name: member.name.unparse().to_string(),
                             type_id: self.types.storage_type_id(type_id),
                             position,
                         });
