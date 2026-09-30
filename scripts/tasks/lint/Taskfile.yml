@@ -73,7 +73,7 @@ tasks:
   "markdown-lint":
     desc: "Check for violations in Markdown files."
     cmds:
-      - "scripts/tasks/_utils/list-files.sh ':(glob)**/*.md' | scripts/tasks/_utils/xargs-batch.sh markdownlint --dot {{if not (env `CI`)}}--fix{{end}}"
+      - "scripts/tasks/_utils/list-files.sh ':(glob)**/*.md' | scripts/tasks/_utils/xargs-batch.sh markdownlint-cli2 {{if not (env `CI`)}}--fix{{end}} --"
 
   "shellcheck":
     desc: "Check for violations in Bash files."

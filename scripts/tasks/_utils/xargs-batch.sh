@@ -7,7 +7,7 @@ set -euo pipefail
 # split into batches that stay well under the maximum command line length, and
 # fanned out over all available cores.
 #
-# Usage: list-files.sh ':(glob)**/*.md' | xargs-batch.sh markdownlint --dot
+# Usage: list-files.sh ':(glob)**/*.md' | xargs-batch.sh markdownlint-cli2 --
 #
 
 readonly BATCH_SIZE=50
