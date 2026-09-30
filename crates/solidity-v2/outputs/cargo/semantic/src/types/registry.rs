@@ -647,24 +647,31 @@ impl TypeRegistry {
         self.externalized_function_types.get(&type_id).copied()
     }
 
-    // Registers the `Storage` form of an `Inherited`-location struct member type,
-    // remembering the pair for `storage_type_id`.
-    pub(crate) fn register_storage_relocation(&mut self, type_id: TypeId) {
+    // Registers the `Storage` form of a struct member type reachable from a state
+    // variable, remembering the pair for `storage_type_id`, and returns it. A type
+    // without an `Inherited` location is its own storage form.
+    pub(crate) fn register_storage_relocation(&mut self, type_id: TypeId) -> TypeId {
         if !self.get_type_by_id(type_id).is_inherited_location() {
-            return;
+            return type_id;
         }
         let storage_type_id =
             self.register_type_id_with_data_location(type_id, DataLocation::Storage);
         self.storage_relocations.insert(type_id, storage_type_id);
+        storage_type_id
     }
 
     /// The type a struct member of type `type_id` has in storage: its `Storage`
     /// form when it is an `Inherited`-location type, else `type_id` itself.
+    /// Only members of structs reachable from a state variable have one.
     pub(crate) fn storage_type_id(&self, type_id: TypeId) -> TypeId {
-        self.storage_relocations
-            .get(&type_id)
-            .copied()
-            .unwrap_or(type_id)
+        if let Some(storage_type_id) = self.storage_relocations.get(&type_id) {
+            return *storage_type_id;
+        }
+        debug_assert!(
+            !self.get_type_by_id(type_id).is_inherited_location(),
+            "struct member type {type_id:?} is not reachable from a state variable",
+        );
+        type_id
     }
 
     // Marks a function type as partially applied:
