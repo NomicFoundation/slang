@@ -263,10 +263,12 @@ language_v2_macros::compile!(Language(
                             ),
                             Trivia(
                                 name = PragmaSingleLineComment,
+                                category = RegularComment,
                                 scanner = Sequence([Atom("//"), ZeroOrMore(Not(['\r', '\n']))])
                             ),
                             Trivia(
                                 name = PragmaMultiLineComment,
+                                category = RegularComment,
                                 // https://stackoverflow.com/a/36328890
                                 scanner = Sequence([
                                     Atom("/*"),
@@ -282,6 +284,7 @@ language_v2_macros::compile!(Language(
                             ),
                             Trivia(
                                 name = PragmaSingleLineNatSpecComment,
+                                category = NatSpecComment,
                                 // Match consecutive `///` lines, each line keeps its line break, except for the last line of the file.
                                 scanner = Sequence([
                                     Atom("///"),
@@ -300,6 +303,7 @@ language_v2_macros::compile!(Language(
                             ),
                             Trivia(
                                 name = PragmaMultiLineNatSpecComment,
+                                category = NatSpecComment,
                                 // https://stackoverflow.com/a/36328890
                                 scanner = Sequence([
                                     Atom("/**"),
@@ -1543,10 +1547,12 @@ language_v2_macros::compile!(Language(
                                 ),
                                 Trivia(
                                     name = SingleLineComment,
+                                    category = RegularComment,
                                     scanner = Sequence([Atom("//"), ZeroOrMore(Not(['\r', '\n']))])
                                 ),
                                 Trivia(
                                     name = MultiLineComment,
+                                    category = RegularComment,
                                     // https://stackoverflow.com/a/36328890
                                     scanner = Sequence([
                                         Atom("/*"),
@@ -1562,6 +1568,7 @@ language_v2_macros::compile!(Language(
                                 ),
                                 Trivia(
                                     name = SingleLineNatSpecComment,
+                                    category = NatSpecComment,
                                     // Match consecutive `///` lines, each line keeps its line break, except for the last line of the file.
                                     scanner = Sequence([
                                         Atom("///"),
@@ -1580,6 +1587,7 @@ language_v2_macros::compile!(Language(
                                 ),
                                 Trivia(
                                     name = MultiLineNatSpecComment,
+                                    category = NatSpecComment,
                                     // https://stackoverflow.com/a/36328890
                                     scanner = Sequence([
                                         Atom("/**"),
@@ -4458,10 +4466,12 @@ IdentifierPathTailElement: (Period, IdentifierPathElement) = {
                             ),
                             Trivia(
                                 name = YulSingleLineComment,
+                                category = RegularComment,
                                 scanner = Sequence([Atom("//"), ZeroOrMore(Not(['\r', '\n']))])
                             ),
                             Trivia(
                                 name = YulMultiLineComment,
+                                category = RegularComment,
                                 // https://stackoverflow.com/a/36328890
                                 scanner = Sequence([
                                     Atom("/*"),
@@ -4477,6 +4487,7 @@ IdentifierPathTailElement: (Period, IdentifierPathElement) = {
                             ),
                             Trivia(
                                 name = YulSingleLineNatSpecComment,
+                                category = NatSpecComment,
                                 // Match consecutive `///` lines, each line keeps its line break, except for the last line of the file.
                                 scanner = Sequence([
                                     Atom("///"),
@@ -4495,6 +4506,7 @@ IdentifierPathTailElement: (Period, IdentifierPathElement) = {
                             ),
                             Trivia(
                                 name = YulMultiLineNatSpecComment,
+                                category = NatSpecComment,
                                 // https://stackoverflow.com/a/36328890
                                 scanner = Sequence([
                                     Atom("/**"),
