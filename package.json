@@ -15,7 +15,7 @@
     "cspell": "catalog:",
     "jest": "catalog:",
     "markdown-link-check": "catalog:",
-    "markdownlint-cli": "catalog:",
+    "markdownlint-cli2": "catalog:",
     "prettier-plugin-sh": "catalog:",
     "prettier": "catalog:",
     "solc": "catalog:",
