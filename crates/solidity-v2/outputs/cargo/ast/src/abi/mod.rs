@@ -8,7 +8,7 @@ use std::sync::Arc;
 
 use ruint::aliases::U256;
 use sha3::{Digest, Keccak256};
-use slang_solidity_v2_common::collections::OrderedSet;
+use slang_solidity_v2_common::collections::Map;
 use slang_solidity_v2_common::files::FileId;
 use slang_solidity_v2_common::nodes::NodeId;
 use slang_solidity_v2_semantic::context::SemanticContext;
@@ -422,27 +422,25 @@ impl fmt::Debug for AbiParameter {
     }
 }
 
-/// The state variables of one kind of storage, persistent or transient, and
-/// the types they are laid out with.
-#[derive(Clone, Debug, Default)]
+/// Which storage a layout describes: the persistent storage, or the transient
+/// storage that is cleared at the end of each transaction.
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+pub enum StorageKind {
+    Persistent,
+    Transient,
+}
+
+/// The state variables of one kind of storage, and the types they are laid
+/// out with.
+#[derive(Clone, Debug, Default, Eq, PartialEq)]
 pub struct StorageLayout {
     items: Vec<StorageItem>,
-    types: Vec<StorageType>,
-    type_ids: OrderedSet<TypeId>,
+    types: Map<TypeId, StorageType>,
 }
 
 impl StorageLayout {
-    /// `type_ids` holds each entry's `TypeId` at the entry's index in `types`.
-    pub(crate) fn new(
-        items: Vec<StorageItem>,
-        types: Vec<StorageType>,
-        type_ids: OrderedSet<TypeId>,
-    ) -> Self {
-        Self {
-            items,
-            types,
-            type_ids,
-        }
+    pub(crate) fn new(items: Vec<StorageItem>, types: Map<TypeId, StorageType>) -> Self {
+        Self { items, types }
     }
 
     /// The state variables, in the order they are laid out.
@@ -450,18 +448,16 @@ impl StorageLayout {
         &self.items
     }
 
-    /// Every type the items refer to, directly or through another type, in the
-    /// order they are first reached.
-    pub fn types(&self) -> &[StorageType] {
-        &self.types
+    /// Every type the items refer to, directly or through another type, in no
+    /// particular order.
+    pub fn types(&self) -> impl ExactSizeIterator<Item = &StorageType> {
+        self.types.values()
     }
 
     /// The entry of [`Self::types`] for `type_id`, as named by a
     /// [`StorageItem`] or a [`StorageTypeKind`] of this layout.
     pub fn storage_type(&self, type_id: TypeId) -> Option<&StorageType> {
-        self.type_ids
-            .get_index_of(&type_id)
-            .map(|index| &self.types[index])
+        self.types.get(&type_id)
     }
 }
 
@@ -473,7 +469,6 @@ pub struct StorageItem {
     slot: U256,
     offset: usize,
     type_id: TypeId,
-    type_name: Arc<str>,
 }
 
 impl StorageItem {
@@ -493,13 +488,10 @@ impl StorageItem {
         self.offset
     }
 
-    /// The key of the item's type in [`StorageLayout::types`].
+    /// The key of the item's type in [`StorageLayout::types`], which also
+    /// holds its name.
     pub fn type_id(&self) -> TypeId {
         self.type_id
-    }
-
-    pub fn type_name(&self) -> &str {
-        &self.type_name
     }
 }
 
@@ -507,7 +499,7 @@ impl StorageItem {
 #[derive(Clone, Debug, Eq, PartialEq)]
 pub struct StorageType {
     type_id: TypeId,
-    label: Arc<str>,
+    label: String,
     size: StorageSize,
     kind: StorageTypeKind,
 }
@@ -517,7 +509,8 @@ impl StorageType {
         self.type_id
     }
 
-    /// The type's name, as [`StorageItem::type_name`] spells it.
+    /// The type's name as a storage layout spells it, e.g. `struct C.S` or
+    /// `mapping(address => uint256)`.
     pub fn label(&self) -> &str {
         &self.label
     }

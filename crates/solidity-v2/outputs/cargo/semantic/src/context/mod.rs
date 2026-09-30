@@ -6,7 +6,7 @@ pub(crate) use contract_data::{ContractData, ContractLinearisations};
 pub use dispatch::VirtualTarget;
 pub(crate) use file_node_mapper::FileNodeMapper;
 use ruint::aliases::U256;
-use slang_solidity_v2_common::collections::{OrderedSet, Set, SortedMap};
+use slang_solidity_v2_common::collections::{Map, Set, SortedMap};
 use slang_solidity_v2_common::diagnostics::DiagnosticCollection;
 use slang_solidity_v2_common::evm_targets::EvmTarget;
 use slang_solidity_v2_common::files::FileId;
@@ -19,7 +19,7 @@ pub use storage_layout::{
     StorageTypeLayout,
 };
 
-use crate::binder::{Binder, BinderCapacities, Definition, Reference};
+use crate::binder::{Binder, BinderCapacities, Definition, Reference, StructDefinition};
 use crate::passes::{
     p1_collect_definitions, p2_linearise_contracts, p3_type_definitions, p4_compute_linearisations,
     p5_resolve_references, p6_resolve_yul, p7_contract_properties, p8_code_analysis,
@@ -413,9 +413,7 @@ impl SemanticContext {
         name
     }
 
-    /// Appends [`Self::type_abi_internal_name`] to `out`, to reuse one buffer
-    /// across many names.
-    pub fn write_type_abi_internal_name(&self, type_id: TypeId, out: &mut String) {
+    fn write_type_abi_internal_name(&self, type_id: TypeId, out: &mut String) {
         match self.types.get_type_by_id(type_id) {
             Type::Address(address) if address.is_payable => out.push_str("address payable"),
             Type::Array(ArrayType { element_type, .. }) => {
@@ -595,9 +593,15 @@ impl SemanticContext {
                     Some(Bytes(8))
                 }
             }
-            Type::Struct(StructType { definition_id, .. }) => self
-                .lay_out_struct_members(*definition_id, visited_structs, |_, _, _| {})
-                .map(Slots),
+            Type::Struct(StructType { definition_id, .. }) => {
+                let Definition::Struct(struct_definition) =
+                    self.binder.find_definition_by_id(*definition_id)?
+                else {
+                    return None;
+                };
+                self.lay_out_struct_members(struct_definition, visited_structs, |_, _, _| {})
+                    .map(Slots)
+            }
             Type::UserDefinedValue(UserDefinedValueType { definition_id }) => self
                 .storage_size_of_type_id_impl(
                     self.user_defined_value_target_type_id(*definition_id)?,
@@ -615,27 +619,23 @@ impl SemanticContext {
         }
     }
 
-    /// Positions each member of the struct `definition_id` from slot 0, passing
-    /// it to `on_member` with its declared type, and returns the
-    /// number of slots the struct occupies. `None` when the struct is
-    /// recursive, a member has no storage size, or it overflows storage.
+    /// Positions each member of `struct_definition` from slot 0, passing it to
+    /// `on_member` with its declared type, and returns the number of slots the
+    /// struct occupies. `None` when the struct is recursive, a member has no
+    /// storage size, or it overflows storage.
     fn lay_out_struct_members(
         &self,
-        definition_id: NodeId,
+        struct_definition: &StructDefinition,
         visited_structs: &mut Set<NodeId>,
         mut on_member: impl FnMut(&ir::StructMember, TypeId, StoragePosition),
     ) -> Option<U256> {
         // Recursive structs are not valid Solidity, but guard against cycles
         // to avoid unbounded recursion if malformed types reach this point.
         // Such recursion should already have been reported by the recursive-struct analysis.
+        let definition_id = struct_definition.ir_node.id();
         if !visited_structs.insert(definition_id) {
             return None;
         }
-        let Definition::Struct(struct_definition) =
-            self.binder.find_definition_by_id(definition_id)?
-        else {
-            return None;
-        };
         let mut builder = StorageLayoutBuilder::new(U256::ZERO);
         for member in struct_definition.ir_node.members.iter() {
             let member_type_id = self.binder.node_typing(member.id()).as_type_id()?;
@@ -648,38 +648,52 @@ impl SemanticContext {
     }
 
     /// The type table of a storage layout: `roots` (the types of its state
-    /// variables) and every type those refer to, in the order first reached,
-    /// with `describe` applied to how each one is laid out. The entry at an
-    /// index describes the type at the same index of the returned set. `None`
-    /// when one of them cannot be stored or overflows storage.
+    /// variables) and every type those refer to, each with `describe` applied
+    /// to how it is laid out. `None` when one of them cannot be stored or
+    /// overflows storage.
     pub fn storage_type_table<T>(
         &self,
         roots: impl IntoIterator<Item = TypeId>,
         mut describe: impl FnMut(TypeId, StorageTypeLayout) -> T,
-    ) -> Option<(OrderedSet<TypeId>, Vec<T>)> {
-        let mut type_ids: OrderedSet<TypeId> = roots.into_iter().collect();
-        let mut table = Vec::with_capacity(type_ids.len());
-        let mut index = 0;
-        while let Some(&type_id) = type_ids.get_index(index) {
-            index += 1;
-            let layout = self.storage_type_layout(type_id)?;
-            match &layout.kind {
-                StorageTypeKind::Value | StorageTypeKind::Bytes => {}
-                StorageTypeKind::DynamicArray { element }
-                | StorageTypeKind::FixedSizeArray { element } => {
-                    type_ids.insert(*element);
-                }
-                StorageTypeKind::Mapping { key, value } => {
-                    type_ids.insert(*key);
-                    type_ids.insert(*value);
-                }
-                StorageTypeKind::Struct { members } => {
-                    type_ids.extend(members.iter().map(|member| member.type_id));
-                }
-            }
-            table.push(describe(type_id, layout));
+    ) -> Option<Map<TypeId, T>> {
+        let mut table = Map::default();
+        for type_id in roots {
+            self.add_to_storage_type_table(type_id, &mut table, &mut describe)?;
         }
-        Some((type_ids, table))
+        Some(table)
+    }
+
+    /// Adds `type_id` to `table`, then every type it refers to that `table`
+    /// does not have yet. Checking `table` first also stops at recursive
+    /// structs, which refer back to themselves through a mapping or an array.
+    fn add_to_storage_type_table<T>(
+        &self,
+        type_id: TypeId,
+        table: &mut Map<TypeId, T>,
+        describe: &mut impl FnMut(TypeId, StorageTypeLayout) -> T,
+    ) -> Option<()> {
+        if table.contains_key(&type_id) {
+            return Some(());
+        }
+        let layout = self.storage_type_layout(type_id)?;
+        // `describe` takes the layout, so keep what it refers to first. Only a
+        // struct refers to more than two types.
+        let (first, second, member_type_ids) = match &layout.kind {
+            StorageTypeKind::Value | StorageTypeKind::Bytes => (None, None, Vec::new()),
+            StorageTypeKind::DynamicArray { element }
+            | StorageTypeKind::FixedSizeArray { element } => (Some(*element), None, Vec::new()),
+            StorageTypeKind::Mapping { key, value } => (Some(*key), Some(*value), Vec::new()),
+            StorageTypeKind::Struct { members } => (
+                None,
+                None,
+                members.iter().map(|member| member.type_id).collect(),
+            ),
+        };
+        table.insert(type_id, describe(type_id, layout));
+        for referenced_type_id in first.into_iter().chain(second).chain(member_type_ids) {
+            self.add_to_storage_type_table(referenced_type_id, table, describe)?;
+        }
+        Some(())
     }
 
     /// How a type in storage is laid out, as an entry of
@@ -695,7 +709,7 @@ impl SemanticContext {
                 };
                 let mut members = Vec::with_capacity(struct_definition.ir_node.members.len());
                 let slots = self.lay_out_struct_members(
-                    *definition_id,
+                    struct_definition,
                     &mut Set::default(),
                     |member, type_id, position| {
                         members.push(StorageMember {
@@ -727,7 +741,27 @@ impl SemanticContext {
                 key: *key_type_id,
                 value: *value_type_id,
             },
-            _ => StorageTypeKind::Value,
+            Type::Address(_)
+            | Type::Boolean
+            | Type::ByteArray(_)
+            | Type::Contract(_)
+            | Type::Enum(_)
+            | Type::FixedPointNumber(_)
+            | Type::Function(_)
+            | Type::Integer(_)
+            | Type::Interface(_)
+            | Type::UserDefinedValue(_) => StorageTypeKind::Value,
+
+            // None of these can be stored. They should never reach a storage
+            // layout, but describe nothing if they do.
+            Type::ArraySlice(_)
+            | Type::Error(_)
+            | Type::Event(_)
+            | Type::Library(_)
+            | Type::Literal(_)
+            | Type::MetaType(_)
+            | Type::Tuple(_)
+            | Type::UserMetaType(_) => return None,
         };
         Some(StorageTypeLayout {
             size: self.storage_size_of_type_id(type_id)?,

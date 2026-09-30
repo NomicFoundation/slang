@@ -1,13 +1,10 @@
-use std::sync::Arc;
-
 use ruint::aliases::U256;
-use slang_solidity_v2_common::collections::{Map, Set};
+use slang_solidity_v2_common::collections::Set;
 use slang_solidity_v2_ir::ir;
 use slang_solidity_v2_semantic::binder;
-use slang_solidity_v2_semantic::context::{SemanticContext, StorageLayoutBuilder};
-use slang_solidity_v2_semantic::types::TypeId;
+use slang_solidity_v2_semantic::context::StorageLayoutBuilder;
 
-use crate::abi::{ContractAbi, StorageItem, StorageLayout, StorageType};
+use crate::abi::{ContractAbi, StorageItem, StorageKind, StorageLayout, StorageType};
 use crate::ast::{ContractDefinitionStruct, StateVariableDefinition, StateVariableMutability};
 
 impl ContractDefinitionStruct {
@@ -78,51 +75,19 @@ impl ContractDefinitionStruct {
         Some(interface_id)
     }
 
-    /// The layout of the persistent state variables over the contract's
-    /// hierarchy, as in [`ContractAbi::storage_layout`], without computing the
-    /// rest of the ABI.
-    pub fn compute_storage_layout(&self) -> Option<StorageLayout> {
-        let mut type_names = StorageTypeNames::new(&self.semantic);
-        let items = self.lay_out_state_variables(
-            false,
-            &self.linearised_state_variables(),
-            &mut type_names,
-        )?;
-        self.describe_storage_layout(items, &mut type_names)
-    }
-
-    /// The layout of the transient state variables over the contract's
-    /// hierarchy, as in [`ContractAbi::transient_storage_layout`], without
-    /// computing the rest of the ABI.
-    pub fn compute_transient_storage_layout(&self) -> Option<StorageLayout> {
-        let mut type_names = StorageTypeNames::new(&self.semantic);
-        let items = self.lay_out_state_variables(
-            true,
-            &self.linearised_state_variables(),
-            &mut type_names,
-        )?;
-        self.describe_storage_layout(items, &mut type_names)
+    /// The layout of the `kind` state variables over the contract's
+    /// hierarchy, as in [`ContractAbi::storage_layout`] and
+    /// [`ContractAbi::transient_storage_layout`], without computing the rest
+    /// of the ABI.
+    pub fn compute_storage_layout(&self, kind: StorageKind) -> Option<StorageLayout> {
+        let items = self.lay_out_state_variables(kind, &self.linearised_state_variables())?;
+        self.describe_storage_layout(items)
     }
 
     /// The items of [`Self::compute_storage_layout`], without describing their
     /// types, for callers that only need each variable's slot and offset.
-    pub fn compute_storage_items(&self) -> Option<Vec<StorageItem>> {
-        self.lay_out_state_variables(
-            false,
-            &self.linearised_state_variables(),
-            &mut StorageTypeNames::new(&self.semantic),
-        )
-    }
-
-    /// The items of [`Self::compute_transient_storage_layout`], without
-    /// describing their types, for callers that only need each variable's slot
-    /// and offset.
-    pub fn compute_transient_storage_items(&self) -> Option<Vec<StorageItem>> {
-        self.lay_out_state_variables(
-            true,
-            &self.linearised_state_variables(),
-            &mut StorageTypeNames::new(&self.semantic),
-        )
+    pub fn compute_storage_items(&self, kind: StorageKind) -> Option<Vec<StorageItem>> {
+        self.lay_out_state_variables(kind, &self.linearised_state_variables())
     }
 
     /// Retrieves the custom base slot for this contract, if specified. This is
@@ -139,39 +104,35 @@ impl ContractDefinitionStruct {
         definition.base_slot
     }
 
-    /// Computes the layouts of both permanent and transient state variables,
-    /// sharing the type names between them.
+    /// Computes the layouts of both the persistent and the transient state
+    /// variables, linearising them once.
     fn compute_storage_layouts(&self) -> Option<(StorageLayout, StorageLayout)> {
         let state_variables = self.linearised_state_variables();
-        let mut type_names = StorageTypeNames::new(&self.semantic);
-        let items = self.lay_out_state_variables(false, &state_variables, &mut type_names)?;
-        let storage_layout = self.describe_storage_layout(items, &mut type_names)?;
+        let items = self.lay_out_state_variables(StorageKind::Persistent, &state_variables)?;
         let transient_items =
-            self.lay_out_state_variables(true, &state_variables, &mut type_names)?;
-        let transient_storage_layout =
-            self.describe_storage_layout(transient_items, &mut type_names)?;
-        Some((storage_layout, transient_storage_layout))
+            self.lay_out_state_variables(StorageKind::Transient, &state_variables)?;
+        Some((
+            self.describe_storage_layout(items)?,
+            self.describe_storage_layout(transient_items)?,
+        ))
     }
 
-    /// Lays out the `transient` state variables, or else the persistent ones,
-    /// of `state_variables`.
+    /// Lays out the `kind` state variables of `state_variables`.
     fn lay_out_state_variables(
         &self,
-        transient: bool,
+        kind: StorageKind,
         state_variables: &[StateVariableDefinition],
-        type_names: &mut StorageTypeNames<'_>,
     ) -> Option<Vec<StorageItem>> {
         // TODO(validation) SDR[2]: it is an error if any contract in the hierarchy
         // other than the leaf has a custom offset layout
-        let base_slot = if transient {
-            U256::ZERO
-        } else {
-            self.base_slot().unwrap_or(U256::ZERO)
+        let base_slot = match kind {
+            StorageKind::Persistent => self.base_slot().unwrap_or(U256::ZERO),
+            StorageKind::Transient => U256::ZERO,
         };
         let variables = state_variables.iter().filter(|state_variable| {
             match state_variable.attributes().mutability() {
-                StateVariableMutability::Mutable => !transient,
-                StateVariableMutability::Transient => transient,
+                StateVariableMutability::Mutable => kind == StorageKind::Persistent,
+                StateVariableMutability::Transient => kind == StorageKind::Transient,
                 StateVariableMutability::Constant | StateVariableMutability::Immutable => false,
             }
         });
@@ -182,66 +143,28 @@ impl ContractDefinitionStruct {
             let variable_type_id = self.semantic.binder().node_typing(node_id).as_type_id()?;
             let variable_size = self.semantic.storage_size_of_type_id(variable_type_id)?;
             let position = builder.allocate(variable_size)?;
-
-            let label = state_variable.ir_node.name.unparse().to_string();
-            let type_name = type_names.get(variable_type_id);
             items.push(StorageItem {
                 node_id,
-                label,
+                label: state_variable.ir_node.name.unparse().to_string(),
                 slot: position.slot,
                 offset: position.offset,
                 type_id: variable_type_id,
-                type_name,
             });
         }
         Some(items)
     }
 
     /// Completes `items` into a layout with the table of their types.
-    fn describe_storage_layout(
-        &self,
-        items: Vec<StorageItem>,
-        type_names: &mut StorageTypeNames<'_>,
-    ) -> Option<StorageLayout> {
-        let (type_ids, types) = self.semantic.storage_type_table(
+    fn describe_storage_layout(&self, items: Vec<StorageItem>) -> Option<StorageLayout> {
+        let types = self.semantic.storage_type_table(
             items.iter().map(|item| item.type_id),
             |type_id, layout| StorageType {
                 type_id,
-                label: type_names.get(type_id),
+                label: self.semantic.type_abi_internal_name(type_id),
                 size: layout.size,
                 kind: layout.kind,
             },
         )?;
-        Some(StorageLayout::new(items, types, type_ids))
-    }
-}
-
-/// Spells each storage type once per contract, sharing the name between the
-/// items, struct members and table entries that use it.
-struct StorageTypeNames<'a> {
-    semantic: &'a SemanticContext,
-    names: Map<TypeId, Arc<str>>,
-    buffer: String,
-}
-
-impl<'a> StorageTypeNames<'a> {
-    fn new(semantic: &'a SemanticContext) -> Self {
-        Self {
-            semantic,
-            names: Map::default(),
-            buffer: String::new(),
-        }
-    }
-
-    fn get(&mut self, type_id: TypeId) -> Arc<str> {
-        if let Some(name) = self.names.get(&type_id) {
-            return Arc::clone(name);
-        }
-        self.buffer.clear();
-        self.semantic
-            .write_type_abi_internal_name(type_id, &mut self.buffer);
-        let name: Arc<str> = Arc::from(self.buffer.as_str());
-        self.names.insert(type_id, Arc::clone(&name));
-        name
+        Some(StorageLayout::new(items, types))
     }
 }
