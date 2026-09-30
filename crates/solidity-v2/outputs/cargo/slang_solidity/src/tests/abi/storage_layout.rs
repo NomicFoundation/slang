@@ -656,3 +656,52 @@ fn test_storage_layouts_without_the_abi() {
         );
     }
 }
+
+// Structs declared in another file and reached only through a base contract's
+// variable, a nested member, a fixed-size array and a mapping value still name
+// one entry per type.
+define_fixture!(
+    ImportedStorageTypes,
+    file: "types.sol", r#"
+pragma solidity *;
+struct Inner {
+    string name;
+    uint8[] tags;
+}
+struct Outer {
+    Inner[2] pair;
+    mapping(uint256 => Inner) byId;
+}
+"#,
+    file: "main.sol", r#"
+pragma solidity *;
+import {Inner, Outer} from "types.sol";
+
+contract Base {
+    Outer internal outer;
+}
+
+contract Derived is Base {
+    Inner[] extra;
+}
+"#,
+);
+
+#[test]
+fn test_storage_types_reached_through_other_files_share_entries() {
+    let unit = ImportedStorageTypes::build_compilation_unit();
+    let contract = unit
+        .find_contract_by_name("Derived")
+        .next()
+        .expect("contract can be found");
+    let layout = contract
+        .compute_storage_layout()
+        .expect("can compute the storage layout");
+    let table = describe_storage_types(&layout);
+
+    let mut labels: Vec<_> = layout.types().iter().map(abi::StorageType::label).collect();
+    labels.sort_unstable();
+    let entries = labels.len();
+    labels.dedup();
+    assert_eq!(labels.len(), entries, "one entry per type: {table:#?}");
+}

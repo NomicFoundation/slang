@@ -616,7 +616,7 @@ impl SemanticContext {
     }
 
     /// Positions each member of the struct `definition_id` from slot 0, passing
-    /// it to `on_member` with its type as it is in storage, and returns the
+    /// it to `on_member` with its declared type, and returns the
     /// number of slots the struct occupies. `None` when the struct is
     /// recursive, a member has no storage size, or it overflows storage.
     fn lay_out_struct_members(
@@ -641,11 +641,7 @@ impl SemanticContext {
             let member_type_id = self.binder.node_typing(member.id()).as_type_id()?;
             let member_size = self.storage_size_of_type_id_impl(member_type_id, visited_structs)?;
             let position = builder.allocate(member_size)?;
-            on_member(
-                member.id(),
-                self.types.storage_type_id(member_type_id),
-                position,
-            );
+            on_member(member.id(), member_type_id, position);
         }
         visited_structs.remove(&definition_id);
         builder.slots_used()
@@ -668,7 +664,7 @@ impl SemanticContext {
                     |node_id, type_id, position| {
                         members.push(StorageMember {
                             node_id,
-                            type_id,
+                            type_id: self.types.storage_type_id(type_id),
                             position,
                         });
                     },
