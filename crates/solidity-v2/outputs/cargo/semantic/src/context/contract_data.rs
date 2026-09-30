@@ -56,7 +56,7 @@ pub(crate) struct ContractData {
     /// The same for the deployed code.
     deployed_bytecode_dependencies: SortedMap<NodeId, SortedMap<NodeId, ContractReference>>,
     /// For each contract and library, the errors its code can revert with,
-    /// in first-reached order.
+    /// each once, in a stable order.
     used_errors: SortedMap<NodeId, Vec<ir::ErrorDefinition>>,
     /// The same for the events its code can emit.
     used_events: SortedMap<NodeId, Vec<ir::EventDefinition>>,

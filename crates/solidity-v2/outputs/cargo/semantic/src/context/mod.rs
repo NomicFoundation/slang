@@ -239,9 +239,9 @@ impl SemanticContext {
 
     /// The errors the given contract's or library's code can revert with,
     /// through `revert E(...)` or a call `E(...)`, from its creation code or
-    /// any code its deployed entry points reach, in first-reached order. They
-    /// can be declared anywhere, eg. in a library or at file level. Empty for
-    /// an interface or a definition that reaches none.
+    /// any code its deployed entry points reach, each once, in a stable order.
+    /// They can be declared anywhere, eg. in a library or at file level. Empty
+    /// for an interface or a definition that reaches none.
     pub fn used_errors(&self, definition_id: NodeId) -> &[ir::ErrorDefinition] {
         self.contract_data.used_errors(definition_id)
     }

@@ -116,7 +116,7 @@ struct DependencyCollector<'a> {
     contract_id: NodeId,
     /// Targets of the virtual and super references resolved so far.
     resolved_callables: Map<CallableReference, NodeId>,
-    /// Errors and events reached by any walk so far, in first-reached order.
+    /// Errors and events reached by any walk so far, each once.
     errors: OrderedSet<NodeId>,
     events: OrderedSet<NodeId>,
 }
