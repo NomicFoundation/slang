@@ -1,0 +1,16 @@
+version: "3"
+
+includes:
+  cargo: "./cargo/Taskfile.yml"
+  codegen: "./codegen/Taskfile.yml"
+  npm: "./npm/Taskfile.yml"
+  public-api: "./public-api/Taskfile.yml"
+
+tasks:
+  "default":
+    desc: "Run all checks."
+    cmds:
+      - task: "codegen"
+      - task: "cargo"
+      - task: "npm"
+      - task: "public-api"

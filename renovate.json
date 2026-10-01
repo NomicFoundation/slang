@@ -54,7 +54,7 @@
       "enabled": false
     },
     {
-      "description": "typescript: 7.0 is the native-port rewrite, and our toolchain's ecosystem hasn't caught up. typedoc's peer range tops out at 6.0.x (no stable TS7 release exists — only 1.0.0-dev prereleases) and ts-jest 29 declares '>=4.3 <7'. TS7 restructured the typescript package's own .d.ts surface, so typedoc's declarations no longer resolve and `infra check npm` fails with hundreds of TS2694/TS2305 errors. Stay on 6.x until typedoc and ts-jest ship TS7-compatible releases. See PR #2041.",
+      "description": "typescript: 7.0 is the native-port rewrite, and our toolchain's ecosystem hasn't caught up. typedoc's peer range tops out at 6.0.x (no stable TS7 release exists — only 1.0.0-dev prereleases) and ts-jest 29 declares '>=4.3 <7'. TS7 restructured the typescript package's own .d.ts surface, so typedoc's declarations no longer resolve and `task check:npm` fails with hundreds of TS2694/TS2305 errors. Stay on 6.x until typedoc and ts-jest ship TS7-compatible releases. See PR #2041.",
       "matchPackageNames": ["typescript"],
       "matchManagers": ["npm"],
       "allowedVersions": "<7"

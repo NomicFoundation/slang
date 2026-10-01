@@ -1,0 +1,11 @@
+version: "3"
+
+vars:
+  CARGO_CI_FLAGS:
+    sh: "scripts/tasks/_utils/rustflags.sh"
+
+tasks:
+  "default":
+    desc: "Run 'cargo check' for all crates, features, and targets."
+    cmds:
+      - "cargo check --workspace --all-features --all-targets {{.CARGO_CI_FLAGS}}"

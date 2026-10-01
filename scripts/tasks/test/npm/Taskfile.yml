@@ -3,6 +3,8 @@ version: "3"
 tasks:
   "default":
     desc: "Run 'jest' tests for all NPM packages."
+    deps:
+      - "::check:npm"
     cmds:
       # 'NODE_OPTIONS' turns on ESM support (our tests are ESM), and 'NODE_NO_WARNINGS'
       # silences the experimental-feature warning it prints (too much noise).

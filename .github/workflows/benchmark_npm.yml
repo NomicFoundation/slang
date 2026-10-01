@@ -60,8 +60,8 @@ jobs:
           setup-tools: "cargo npm"
           sfw-optional: "true"
 
-      - name: "infra check npm"
-        run: "${SFW_PREFIX:-} ./scripts/bin/infra check npm"
+      - name: "task check:npm"
+        run: "${SFW_PREFIX:-} ./bin/task check:npm"
 
       - name: "Smoke Test > infra perf npm --smoke"
         if: "${{ github.event_name == 'pull_request' && !contains(github.event.pull_request.labels.*.name, 'ci:perf') }}"
