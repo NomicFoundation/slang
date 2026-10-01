@@ -5,6 +5,7 @@ use slang_solidity_v2_common::diagnostics::kinds::syntax::{UnexpectedEof, Unexpe
 use slang_solidity_v2_common::files::FileId;
 use slang_solidity_v2_common::terminals::TerminalKind;
 use slang_solidity_v2_common::versions::LanguageVersion;
+use slang_solidity_v2_cst::structured_cst::natspec::attach_natspec;
 use slang_solidity_v2_cst::structured_cst::nodes::{
     SourceUnit, new_source_unit, new_source_unit_members,
 };
@@ -15,6 +16,8 @@ use crate::parser::validation::validate_syntax_version;
 
 mod natspec_comments;
 mod parser_helpers;
+#[cfg(test)]
+mod tests;
 mod validation;
 
 lalrpop_mod!(
@@ -84,7 +87,14 @@ impl Parser {
         };
 
         let source_unit = match parser.parse(&mut ctx, tokens) {
-            Ok(source_unit) => {
+            Ok(mut source_unit) => {
+                if !natspec_comments.is_empty() {
+                    // Attach the NatSpec comments to the nodes they document
+                    attach_natspec(&mut source_unit, &|start| {
+                        natspec_comments.documenting(start)
+                    });
+                }
+
                 // Most validation happens during the 'CompilationUnit' building, but this specific
                 // check is done here to make sure that other 'Parser' users can still be informed of any
                 // inconsistency between the source unit and the expected syntax version.

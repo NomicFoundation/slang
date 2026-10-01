@@ -16,6 +16,7 @@ use serde::Serialize;
 use serde::ser::SerializeMap;
 
 use super::builder::StructuredCstModelBuilder;
+use super::documentable_descendants::compute_has_documentable_descendant;
 use super::versioned_descendants::compute_has_versioned_descendant;
 
 #[derive(Default, Serialize)]
@@ -37,6 +38,10 @@ pub struct StructuredCstModel {
 
     /// Whether each nonterminal has any version-gated descendants (transitively).
     pub has_versioned_descendant: BTreeMap<model::Identifier, bool>,
+
+    /// Whether each nonterminal is documentable by `NatSpec` comments, or has any documentable
+    /// descendants (transitively).
+    pub has_documentable_descendant: BTreeMap<model::Identifier, bool>,
 }
 
 #[derive(Clone, Serialize)]
@@ -124,6 +129,7 @@ impl StructuredCstModel {
     pub fn from_language(language: &model::Language) -> Self {
         let builder = StructuredCstModelBuilder::create(language);
         let has_versioned_descendant = compute_has_versioned_descendant(&builder);
+        let has_documentable_descendant = compute_has_documentable_descendant(&builder);
 
         Self {
             terminals: builder.terminals,
@@ -131,6 +137,7 @@ impl StructuredCstModel {
             choices: builder.choices,
             collections: builder.collections,
             has_versioned_descendant,
+            has_documentable_descendant,
         }
     }
 }

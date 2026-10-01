@@ -60,13 +60,14 @@ impl NatSpecComments {
         });
     }
 
+    /// Whether no comment documents anything.
+    pub(crate) fn is_empty(&self) -> bool {
+        self.comments.is_empty()
+    }
+
     /// The `NatSpec` comment documenting the node starting at `start`, if any.
     ///
     /// It doesn't matter what kind of node it is.
-    #[expect(
-        dead_code,
-        reason = "PROTOTYPE: used to attach the comments to the CST, in the next rev"
-    )]
     pub(crate) fn documenting(&self, start: usize) -> Option<NatSpec> {
         let index = self
             .comments

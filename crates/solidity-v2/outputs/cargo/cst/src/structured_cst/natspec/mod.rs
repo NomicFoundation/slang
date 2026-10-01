@@ -4,6 +4,11 @@
 
 use std::ops::Range;
 
+pub use self::walk::attach_natspec;
+
+#[path = "walk.generated.rs"]
+mod walk;
+
 /// A `NatSpec` comment's range: either a single `/** ... */` comment, or consecutive `///` lines.
 #[derive(Clone, Debug, PartialEq)]
 pub struct NatSpec {
