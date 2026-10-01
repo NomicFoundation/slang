@@ -11,6 +11,10 @@ use crate::model::{Field, Identifier, ParserOptions, VersionSpecifier};
 pub struct StructItem {
     pub name: Identifier,
 
+    /// Whether a `NatSpec` comment can document the node, `false` if unset
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub documentable: Option<bool>,
+
     /// Whether the struct is enabled
     #[serde(skip_serializing_if = "Option::is_none")]
     pub enabled: Option<VersionSpecifier>,
@@ -27,4 +31,11 @@ pub struct StructItem {
 
     #[serde(skip_serializing_if = "Option::is_none")]
     pub parser_options: Option<ParserOptions>,
+}
+
+impl StructItem {
+    /// Whether a `NatSpec` comment can document the node.
+    pub fn is_documentable(&self) -> bool {
+        self.documentable.unwrap_or(false)
+    }
 }

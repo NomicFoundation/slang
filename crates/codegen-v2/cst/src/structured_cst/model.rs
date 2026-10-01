@@ -43,6 +43,8 @@ pub struct StructuredCstModel {
 pub struct Sequence {
     pub fields: Vec<Field>,
     pub enabled: model::VersionSpecifier,
+    /// Whether a `NatSpec` comment can document the node.
+    pub is_documentable: bool,
 }
 
 #[derive(Clone, Eq, PartialEq, Ord, PartialOrd)]

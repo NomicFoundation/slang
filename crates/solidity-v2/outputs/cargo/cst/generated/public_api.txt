@@ -2,6 +2,16 @@
 
 pub mod slang_solidity_v2_cst
 pub mod slang_solidity_v2_cst::structured_cst
+pub mod slang_solidity_v2_cst::structured_cst::natspec
+pub struct slang_solidity_v2_cst::structured_cst::natspec::NatSpec
+pub slang_solidity_v2_cst::structured_cst::natspec::NatSpec::range: core::ops::range::Range<usize>
+impl core::clone::Clone for slang_solidity_v2_cst::structured_cst::natspec::NatSpec
+pub fn slang_solidity_v2_cst::structured_cst::natspec::NatSpec::clone(&self) -> slang_solidity_v2_cst::structured_cst::natspec::NatSpec
+impl core::cmp::PartialEq for slang_solidity_v2_cst::structured_cst::natspec::NatSpec
+pub fn slang_solidity_v2_cst::structured_cst::natspec::NatSpec::eq(&self, &slang_solidity_v2_cst::structured_cst::natspec::NatSpec) -> bool
+impl core::fmt::Debug for slang_solidity_v2_cst::structured_cst::natspec::NatSpec
+pub fn slang_solidity_v2_cst::structured_cst::natspec::NatSpec::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::StructuralPartialEq for slang_solidity_v2_cst::structured_cst::natspec::NatSpec
 pub mod slang_solidity_v2_cst::structured_cst::nodes
 pub enum slang_solidity_v2_cst::structured_cst::nodes::AbicoderVersion
 pub slang_solidity_v2_cst::structured_cst::nodes::AbicoderVersion::AbicoderV1Keyword(slang_solidity_v2_cst::structured_cst::nodes::AbicoderV1Keyword)
@@ -853,6 +863,7 @@ pub slang_solidity_v2_cst::structured_cst::nodes::AssemblyStatementStruct::assem
 pub slang_solidity_v2_cst::structured_cst::nodes::AssemblyStatementStruct::body: slang_solidity_v2_cst::structured_cst::nodes::YulBlock
 pub slang_solidity_v2_cst::structured_cst::nodes::AssemblyStatementStruct::flags: core::option::Option<slang_solidity_v2_cst::structured_cst::nodes::YulFlagsDeclaration>
 pub slang_solidity_v2_cst::structured_cst::nodes::AssemblyStatementStruct::label: core::option::Option<slang_solidity_v2_cst::structured_cst::nodes::YulStringLiteral>
+pub slang_solidity_v2_cst::structured_cst::nodes::AssemblyStatementStruct::natspec: core::option::Option<slang_solidity_v2_cst::structured_cst::natspec::NatSpec>
 impl core::cmp::PartialEq for slang_solidity_v2_cst::structured_cst::nodes::AssemblyStatementStruct
 pub fn slang_solidity_v2_cst::structured_cst::nodes::AssemblyStatementStruct::eq(&self, &slang_solidity_v2_cst::structured_cst::nodes::AssemblyStatementStruct) -> bool
 impl core::fmt::Debug for slang_solidity_v2_cst::structured_cst::nodes::AssemblyStatementStruct
@@ -1209,6 +1220,7 @@ pub struct slang_solidity_v2_cst::structured_cst::nodes::ConstantDefinitionStruc
 pub slang_solidity_v2_cst::structured_cst::nodes::ConstantDefinitionStruct::constant_keyword: slang_solidity_v2_cst::structured_cst::nodes::ConstantKeyword
 pub slang_solidity_v2_cst::structured_cst::nodes::ConstantDefinitionStruct::equal: slang_solidity_v2_cst::structured_cst::nodes::Equal
 pub slang_solidity_v2_cst::structured_cst::nodes::ConstantDefinitionStruct::name: slang_solidity_v2_cst::structured_cst::nodes::Identifier
+pub slang_solidity_v2_cst::structured_cst::nodes::ConstantDefinitionStruct::natspec: core::option::Option<slang_solidity_v2_cst::structured_cst::natspec::NatSpec>
 pub slang_solidity_v2_cst::structured_cst::nodes::ConstantDefinitionStruct::semicolon: slang_solidity_v2_cst::structured_cst::nodes::Semicolon
 pub slang_solidity_v2_cst::structured_cst::nodes::ConstantDefinitionStruct::type_name: slang_solidity_v2_cst::structured_cst::nodes::TypeName
 pub slang_solidity_v2_cst::structured_cst::nodes::ConstantDefinitionStruct::value: slang_solidity_v2_cst::structured_cst::nodes::Expression
@@ -1241,6 +1253,7 @@ pub struct slang_solidity_v2_cst::structured_cst::nodes::ConstructorDefinitionSt
 pub slang_solidity_v2_cst::structured_cst::nodes::ConstructorDefinitionStruct::attributes: slang_solidity_v2_cst::structured_cst::nodes::ConstructorAttributes
 pub slang_solidity_v2_cst::structured_cst::nodes::ConstructorDefinitionStruct::body: slang_solidity_v2_cst::structured_cst::nodes::Block
 pub slang_solidity_v2_cst::structured_cst::nodes::ConstructorDefinitionStruct::constructor_keyword: slang_solidity_v2_cst::structured_cst::nodes::ConstructorKeyword
+pub slang_solidity_v2_cst::structured_cst::nodes::ConstructorDefinitionStruct::natspec: core::option::Option<slang_solidity_v2_cst::structured_cst::natspec::NatSpec>
 pub slang_solidity_v2_cst::structured_cst::nodes::ConstructorDefinitionStruct::parameters: slang_solidity_v2_cst::structured_cst::nodes::ParametersDeclaration
 impl core::cmp::PartialEq for slang_solidity_v2_cst::structured_cst::nodes::ConstructorDefinitionStruct
 pub fn slang_solidity_v2_cst::structured_cst::nodes::ConstructorDefinitionStruct::eq(&self, &slang_solidity_v2_cst::structured_cst::nodes::ConstructorDefinitionStruct) -> bool
@@ -1283,6 +1296,7 @@ pub slang_solidity_v2_cst::structured_cst::nodes::ContractDefinitionStruct::clos
 pub slang_solidity_v2_cst::structured_cst::nodes::ContractDefinitionStruct::contract_keyword: slang_solidity_v2_cst::structured_cst::nodes::ContractKeyword
 pub slang_solidity_v2_cst::structured_cst::nodes::ContractDefinitionStruct::members: slang_solidity_v2_cst::structured_cst::nodes::ContractMembers
 pub slang_solidity_v2_cst::structured_cst::nodes::ContractDefinitionStruct::name: slang_solidity_v2_cst::structured_cst::nodes::Identifier
+pub slang_solidity_v2_cst::structured_cst::nodes::ContractDefinitionStruct::natspec: core::option::Option<slang_solidity_v2_cst::structured_cst::natspec::NatSpec>
 pub slang_solidity_v2_cst::structured_cst::nodes::ContractDefinitionStruct::open_brace: slang_solidity_v2_cst::structured_cst::nodes::OpenBrace
 pub slang_solidity_v2_cst::structured_cst::nodes::ContractDefinitionStruct::specifiers: slang_solidity_v2_cst::structured_cst::nodes::ContractSpecifiers
 impl core::cmp::PartialEq for slang_solidity_v2_cst::structured_cst::nodes::ContractDefinitionStruct
@@ -1452,6 +1466,7 @@ pub slang_solidity_v2_cst::structured_cst::nodes::EnumDefinitionStruct::close_br
 pub slang_solidity_v2_cst::structured_cst::nodes::EnumDefinitionStruct::enum_keyword: slang_solidity_v2_cst::structured_cst::nodes::EnumKeyword
 pub slang_solidity_v2_cst::structured_cst::nodes::EnumDefinitionStruct::members: slang_solidity_v2_cst::structured_cst::nodes::EnumMembers
 pub slang_solidity_v2_cst::structured_cst::nodes::EnumDefinitionStruct::name: slang_solidity_v2_cst::structured_cst::nodes::Identifier
+pub slang_solidity_v2_cst::structured_cst::nodes::EnumDefinitionStruct::natspec: core::option::Option<slang_solidity_v2_cst::structured_cst::natspec::NatSpec>
 pub slang_solidity_v2_cst::structured_cst::nodes::EnumDefinitionStruct::open_brace: slang_solidity_v2_cst::structured_cst::nodes::OpenBrace
 impl core::cmp::PartialEq for slang_solidity_v2_cst::structured_cst::nodes::EnumDefinitionStruct
 pub fn slang_solidity_v2_cst::structured_cst::nodes::EnumDefinitionStruct::eq(&self, &slang_solidity_v2_cst::structured_cst::nodes::EnumDefinitionStruct) -> bool
@@ -1520,6 +1535,7 @@ pub struct slang_solidity_v2_cst::structured_cst::nodes::ErrorDefinitionStruct
 pub slang_solidity_v2_cst::structured_cst::nodes::ErrorDefinitionStruct::error_keyword: slang_solidity_v2_cst::structured_cst::nodes::ErrorKeyword
 pub slang_solidity_v2_cst::structured_cst::nodes::ErrorDefinitionStruct::members: slang_solidity_v2_cst::structured_cst::nodes::ErrorParametersDeclaration
 pub slang_solidity_v2_cst::structured_cst::nodes::ErrorDefinitionStruct::name: slang_solidity_v2_cst::structured_cst::nodes::Identifier
+pub slang_solidity_v2_cst::structured_cst::nodes::ErrorDefinitionStruct::natspec: core::option::Option<slang_solidity_v2_cst::structured_cst::natspec::NatSpec>
 pub slang_solidity_v2_cst::structured_cst::nodes::ErrorDefinitionStruct::semicolon: slang_solidity_v2_cst::structured_cst::nodes::Semicolon
 impl core::cmp::PartialEq for slang_solidity_v2_cst::structured_cst::nodes::ErrorDefinitionStruct
 pub fn slang_solidity_v2_cst::structured_cst::nodes::ErrorDefinitionStruct::eq(&self, &slang_solidity_v2_cst::structured_cst::nodes::ErrorDefinitionStruct) -> bool
@@ -1580,6 +1596,7 @@ pub struct slang_solidity_v2_cst::structured_cst::nodes::EventDefinitionStruct
 pub slang_solidity_v2_cst::structured_cst::nodes::EventDefinitionStruct::anonymous_keyword: core::option::Option<slang_solidity_v2_cst::structured_cst::nodes::AnonymousKeyword>
 pub slang_solidity_v2_cst::structured_cst::nodes::EventDefinitionStruct::event_keyword: slang_solidity_v2_cst::structured_cst::nodes::EventKeyword
 pub slang_solidity_v2_cst::structured_cst::nodes::EventDefinitionStruct::name: slang_solidity_v2_cst::structured_cst::nodes::Identifier
+pub slang_solidity_v2_cst::structured_cst::nodes::EventDefinitionStruct::natspec: core::option::Option<slang_solidity_v2_cst::structured_cst::natspec::NatSpec>
 pub slang_solidity_v2_cst::structured_cst::nodes::EventDefinitionStruct::parameters: slang_solidity_v2_cst::structured_cst::nodes::EventParametersDeclaration
 pub slang_solidity_v2_cst::structured_cst::nodes::EventDefinitionStruct::semicolon: slang_solidity_v2_cst::structured_cst::nodes::Semicolon
 impl core::cmp::PartialEq for slang_solidity_v2_cst::structured_cst::nodes::EventDefinitionStruct
@@ -1691,6 +1708,7 @@ pub struct slang_solidity_v2_cst::structured_cst::nodes::FallbackFunctionDefinit
 pub slang_solidity_v2_cst::structured_cst::nodes::FallbackFunctionDefinitionStruct::attributes: slang_solidity_v2_cst::structured_cst::nodes::FallbackFunctionAttributes
 pub slang_solidity_v2_cst::structured_cst::nodes::FallbackFunctionDefinitionStruct::body: slang_solidity_v2_cst::structured_cst::nodes::FunctionBody
 pub slang_solidity_v2_cst::structured_cst::nodes::FallbackFunctionDefinitionStruct::fallback_keyword: slang_solidity_v2_cst::structured_cst::nodes::FallbackKeyword
+pub slang_solidity_v2_cst::structured_cst::nodes::FallbackFunctionDefinitionStruct::natspec: core::option::Option<slang_solidity_v2_cst::structured_cst::natspec::NatSpec>
 pub slang_solidity_v2_cst::structured_cst::nodes::FallbackFunctionDefinitionStruct::parameters: slang_solidity_v2_cst::structured_cst::nodes::ParametersDeclaration
 pub slang_solidity_v2_cst::structured_cst::nodes::FallbackFunctionDefinitionStruct::returns: core::option::Option<slang_solidity_v2_cst::structured_cst::nodes::ReturnsDeclaration>
 impl core::cmp::PartialEq for slang_solidity_v2_cst::structured_cst::nodes::FallbackFunctionDefinitionStruct
@@ -1793,6 +1811,7 @@ pub slang_solidity_v2_cst::structured_cst::nodes::FunctionDefinitionStruct::attr
 pub slang_solidity_v2_cst::structured_cst::nodes::FunctionDefinitionStruct::body: slang_solidity_v2_cst::structured_cst::nodes::FunctionBody
 pub slang_solidity_v2_cst::structured_cst::nodes::FunctionDefinitionStruct::function_keyword: slang_solidity_v2_cst::structured_cst::nodes::FunctionKeyword
 pub slang_solidity_v2_cst::structured_cst::nodes::FunctionDefinitionStruct::name: slang_solidity_v2_cst::structured_cst::nodes::FunctionName
+pub slang_solidity_v2_cst::structured_cst::nodes::FunctionDefinitionStruct::natspec: core::option::Option<slang_solidity_v2_cst::structured_cst::natspec::NatSpec>
 pub slang_solidity_v2_cst::structured_cst::nodes::FunctionDefinitionStruct::parameters: slang_solidity_v2_cst::structured_cst::nodes::ParametersDeclaration
 pub slang_solidity_v2_cst::structured_cst::nodes::FunctionDefinitionStruct::returns: core::option::Option<slang_solidity_v2_cst::structured_cst::nodes::ReturnsDeclaration>
 impl core::cmp::PartialEq for slang_solidity_v2_cst::structured_cst::nodes::FunctionDefinitionStruct
@@ -2184,6 +2203,7 @@ pub slang_solidity_v2_cst::structured_cst::nodes::InterfaceDefinitionStruct::inh
 pub slang_solidity_v2_cst::structured_cst::nodes::InterfaceDefinitionStruct::interface_keyword: slang_solidity_v2_cst::structured_cst::nodes::InterfaceKeyword
 pub slang_solidity_v2_cst::structured_cst::nodes::InterfaceDefinitionStruct::members: slang_solidity_v2_cst::structured_cst::nodes::InterfaceMembers
 pub slang_solidity_v2_cst::structured_cst::nodes::InterfaceDefinitionStruct::name: slang_solidity_v2_cst::structured_cst::nodes::Identifier
+pub slang_solidity_v2_cst::structured_cst::nodes::InterfaceDefinitionStruct::natspec: core::option::Option<slang_solidity_v2_cst::structured_cst::natspec::NatSpec>
 pub slang_solidity_v2_cst::structured_cst::nodes::InterfaceDefinitionStruct::open_brace: slang_solidity_v2_cst::structured_cst::nodes::OpenBrace
 impl core::cmp::PartialEq for slang_solidity_v2_cst::structured_cst::nodes::InterfaceDefinitionStruct
 pub fn slang_solidity_v2_cst::structured_cst::nodes::InterfaceDefinitionStruct::eq(&self, &slang_solidity_v2_cst::structured_cst::nodes::InterfaceDefinitionStruct) -> bool
@@ -2287,6 +2307,7 @@ pub slang_solidity_v2_cst::structured_cst::nodes::LibraryDefinitionStruct::close
 pub slang_solidity_v2_cst::structured_cst::nodes::LibraryDefinitionStruct::library_keyword: slang_solidity_v2_cst::structured_cst::nodes::LibraryKeyword
 pub slang_solidity_v2_cst::structured_cst::nodes::LibraryDefinitionStruct::members: slang_solidity_v2_cst::structured_cst::nodes::LibraryMembers
 pub slang_solidity_v2_cst::structured_cst::nodes::LibraryDefinitionStruct::name: slang_solidity_v2_cst::structured_cst::nodes::Identifier
+pub slang_solidity_v2_cst::structured_cst::nodes::LibraryDefinitionStruct::natspec: core::option::Option<slang_solidity_v2_cst::structured_cst::natspec::NatSpec>
 pub slang_solidity_v2_cst::structured_cst::nodes::LibraryDefinitionStruct::open_brace: slang_solidity_v2_cst::structured_cst::nodes::OpenBrace
 impl core::cmp::PartialEq for slang_solidity_v2_cst::structured_cst::nodes::LibraryDefinitionStruct
 pub fn slang_solidity_v2_cst::structured_cst::nodes::LibraryDefinitionStruct::eq(&self, &slang_solidity_v2_cst::structured_cst::nodes::LibraryDefinitionStruct) -> bool
@@ -2444,6 +2465,7 @@ pub slang_solidity_v2_cst::structured_cst::nodes::ModifierDefinitionStruct::attr
 pub slang_solidity_v2_cst::structured_cst::nodes::ModifierDefinitionStruct::body: slang_solidity_v2_cst::structured_cst::nodes::FunctionBody
 pub slang_solidity_v2_cst::structured_cst::nodes::ModifierDefinitionStruct::modifier_keyword: slang_solidity_v2_cst::structured_cst::nodes::ModifierKeyword
 pub slang_solidity_v2_cst::structured_cst::nodes::ModifierDefinitionStruct::name: slang_solidity_v2_cst::structured_cst::nodes::Identifier
+pub slang_solidity_v2_cst::structured_cst::nodes::ModifierDefinitionStruct::natspec: core::option::Option<slang_solidity_v2_cst::structured_cst::natspec::NatSpec>
 pub slang_solidity_v2_cst::structured_cst::nodes::ModifierDefinitionStruct::parameters: core::option::Option<slang_solidity_v2_cst::structured_cst::nodes::ParametersDeclaration>
 impl core::cmp::PartialEq for slang_solidity_v2_cst::structured_cst::nodes::ModifierDefinitionStruct
 pub fn slang_solidity_v2_cst::structured_cst::nodes::ModifierDefinitionStruct::eq(&self, &slang_solidity_v2_cst::structured_cst::nodes::ModifierDefinitionStruct) -> bool
@@ -3027,6 +3049,7 @@ pub fn slang_solidity_v2_cst::structured_cst::nodes::ReceiveFunctionAttributes::
 pub struct slang_solidity_v2_cst::structured_cst::nodes::ReceiveFunctionDefinitionStruct
 pub slang_solidity_v2_cst::structured_cst::nodes::ReceiveFunctionDefinitionStruct::attributes: slang_solidity_v2_cst::structured_cst::nodes::ReceiveFunctionAttributes
 pub slang_solidity_v2_cst::structured_cst::nodes::ReceiveFunctionDefinitionStruct::body: slang_solidity_v2_cst::structured_cst::nodes::FunctionBody
+pub slang_solidity_v2_cst::structured_cst::nodes::ReceiveFunctionDefinitionStruct::natspec: core::option::Option<slang_solidity_v2_cst::structured_cst::natspec::NatSpec>
 pub slang_solidity_v2_cst::structured_cst::nodes::ReceiveFunctionDefinitionStruct::parameters: slang_solidity_v2_cst::structured_cst::nodes::ParametersDeclaration
 pub slang_solidity_v2_cst::structured_cst::nodes::ReceiveFunctionDefinitionStruct::receive_keyword: slang_solidity_v2_cst::structured_cst::nodes::ReceiveKeyword
 impl core::cmp::PartialEq for slang_solidity_v2_cst::structured_cst::nodes::ReceiveFunctionDefinitionStruct
@@ -3246,6 +3269,7 @@ pub fn slang_solidity_v2_cst::structured_cst::nodes::StateVariableAttributes::ca
 pub struct slang_solidity_v2_cst::structured_cst::nodes::StateVariableDefinitionStruct
 pub slang_solidity_v2_cst::structured_cst::nodes::StateVariableDefinitionStruct::attributes: slang_solidity_v2_cst::structured_cst::nodes::StateVariableAttributes
 pub slang_solidity_v2_cst::structured_cst::nodes::StateVariableDefinitionStruct::name: slang_solidity_v2_cst::structured_cst::nodes::Identifier
+pub slang_solidity_v2_cst::structured_cst::nodes::StateVariableDefinitionStruct::natspec: core::option::Option<slang_solidity_v2_cst::structured_cst::natspec::NatSpec>
 pub slang_solidity_v2_cst::structured_cst::nodes::StateVariableDefinitionStruct::semicolon: slang_solidity_v2_cst::structured_cst::nodes::Semicolon
 pub slang_solidity_v2_cst::structured_cst::nodes::StateVariableDefinitionStruct::type_name: slang_solidity_v2_cst::structured_cst::nodes::TypeName
 pub slang_solidity_v2_cst::structured_cst::nodes::StateVariableDefinitionStruct::value: core::option::Option<slang_solidity_v2_cst::structured_cst::nodes::StateVariableDefinitionValue>
@@ -3335,6 +3359,7 @@ pub struct slang_solidity_v2_cst::structured_cst::nodes::StructDefinitionStruct
 pub slang_solidity_v2_cst::structured_cst::nodes::StructDefinitionStruct::close_brace: slang_solidity_v2_cst::structured_cst::nodes::CloseBrace
 pub slang_solidity_v2_cst::structured_cst::nodes::StructDefinitionStruct::members: slang_solidity_v2_cst::structured_cst::nodes::StructMembers
 pub slang_solidity_v2_cst::structured_cst::nodes::StructDefinitionStruct::name: slang_solidity_v2_cst::structured_cst::nodes::Identifier
+pub slang_solidity_v2_cst::structured_cst::nodes::StructDefinitionStruct::natspec: core::option::Option<slang_solidity_v2_cst::structured_cst::natspec::NatSpec>
 pub slang_solidity_v2_cst::structured_cst::nodes::StructDefinitionStruct::open_brace: slang_solidity_v2_cst::structured_cst::nodes::OpenBrace
 pub slang_solidity_v2_cst::structured_cst::nodes::StructDefinitionStruct::struct_keyword: slang_solidity_v2_cst::structured_cst::nodes::StructKeyword
 impl core::cmp::PartialEq for slang_solidity_v2_cst::structured_cst::nodes::StructDefinitionStruct
