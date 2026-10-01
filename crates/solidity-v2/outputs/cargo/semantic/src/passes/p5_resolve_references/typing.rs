@@ -1492,9 +1492,17 @@ impl Pass<'_> {
             .expect("hex literal must parse to an integer")
             .to_biguint()
             .expect("hex literal must be non-negative");
-        // Each pair of hex digits is one byte (with odd digit counts rounded up).
-        let bytes = digits.div_ceil(2).max(1);
-        Some(LiteralKind::HexInteger { value, bytes })
+        // Each pair of hex digits is one byte. An odd digit count spans no
+        // whole number of bytes, so the literal is a plain integer.
+        if digits % 2 == 1 {
+            return Some(LiteralKind::Integer {
+                value: value.into(),
+            });
+        }
+        Some(LiteralKind::HexInteger {
+            value,
+            bytes: digits / 2,
+        })
     }
 }
 

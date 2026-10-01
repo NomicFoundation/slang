@@ -176,8 +176,9 @@ pub enum LiteralKind {
     Integer {
         value: BigInt,
     },
-    /// A hex-source integer literal. Carries the parsed value plus the
-    /// source-text byte width (number of hex digits / 2, rounded up). The
+    /// A hex-source integer literal with an even number of digits. Carries the
+    /// parsed value plus the source-text byte width (number of hex digits / 2).
+    /// Odd-length hex literals are typed as plain `Integer` instead. The
     /// width is what determines convertibility with `bytesN` and is preserved
     /// distinctly from the value because `0x0012` and `0x12` share value `18`
     /// but convert to `bytes2` and `bytes1` respectively. The value is

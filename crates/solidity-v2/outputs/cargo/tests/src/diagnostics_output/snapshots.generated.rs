@@ -5223,6 +5223,14 @@ mod type_system {
         }
 
         #[test]
+        fn odd_length_hex_literal_to_fixed_bytes() -> Result<()> {
+            run(
+                "type_system/explicit_conversion_not_allowed",
+                "odd_length_hex_literal_to_fixed_bytes",
+            )
+        }
+
+        #[test]
         fn payable_address_to_fixed_bytes() -> Result<()> {
             run(
                 "type_system/explicit_conversion_not_allowed",

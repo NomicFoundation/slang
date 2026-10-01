@@ -1,0 +1,11 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 1
+
+[TypeError 9640] Error: Explicit type conversion not allowed from "int_const 291" to "bytes2".
+   ╭─[input.sol:7:17]
+   │
+ 7 │         return (bytes2(0x123), bytes2(0x0123));
+   │                 ──────┬──────  
+   │                       ╰──────── Error occurred here.
+───╯
