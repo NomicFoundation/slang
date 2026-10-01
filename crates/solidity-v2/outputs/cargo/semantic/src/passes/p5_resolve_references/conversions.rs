@@ -29,8 +29,10 @@ impl Pass<'_> {
         let to_type = self.types.get_type_by_id(to_type_id);
 
         match self.types.get_type_by_id(from_type_id) {
+            // Before 0.8.5 a calldata slice only converts implicitly.
             Type::ArraySlice(ArraySliceType { array_type_id }) => {
-                self.explicitly_convertible_to(*array_type_id, to_type_id)
+                self.types.language_version() >= LanguageVersion::V0_8_5
+                    && self.explicitly_convertible_to(*array_type_id, to_type_id)
             }
 
             Type::Address(AddressType { is_payable }) => {

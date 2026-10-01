@@ -4999,6 +4999,14 @@ mod type_system {
         }
 
         #[test]
+        fn calldata_slice_to_string() -> Result<()> {
+            run(
+                "type_system/explicit_conversion_not_allowed",
+                "calldata_slice_to_string",
+            )
+        }
+
+        #[test]
         fn contract_type_name_to_address() -> Result<()> {
             run(
                 "type_system/explicit_conversion_not_allowed",
