@@ -55,6 +55,11 @@ pub(crate) struct ContractData {
     creation_bytecode_dependencies: SortedMap<NodeId, SortedMap<NodeId, ContractReference>>,
     /// The same for the deployed code.
     deployed_bytecode_dependencies: SortedMap<NodeId, SortedMap<NodeId, ContractReference>>,
+    /// For each contract and library, the errors its code can revert with,
+    /// each once, in a stable order.
+    used_errors: SortedMap<NodeId, Vec<ir::ErrorDefinition>>,
+    /// The same for the events its code can emit.
+    used_events: SortedMap<NodeId, Vec<ir::EventDefinition>>,
 }
 
 impl ContractData {
@@ -67,6 +72,8 @@ impl ContractData {
             linearisations: data,
             creation_bytecode_dependencies: SortedMap::default(),
             deployed_bytecode_dependencies: SortedMap::default(),
+            used_errors: SortedMap::default(),
+            used_events: SortedMap::default(),
         }
     }
 
@@ -77,6 +84,27 @@ impl ContractData {
     ) {
         self.creation_bytecode_dependencies = creation;
         self.deployed_bytecode_dependencies = deployed;
+    }
+
+    pub(crate) fn set_used_errors_and_events(
+        &mut self,
+        errors: SortedMap<NodeId, Vec<ir::ErrorDefinition>>,
+        events: SortedMap<NodeId, Vec<ir::EventDefinition>>,
+    ) {
+        self.used_errors = errors;
+        self.used_events = events;
+    }
+
+    pub(crate) fn used_errors(&self, definition_id: NodeId) -> &[ir::ErrorDefinition] {
+        self.used_errors
+            .get(&definition_id)
+            .map_or(&[], Vec::as_slice)
+    }
+
+    pub(crate) fn used_events(&self, definition_id: NodeId) -> &[ir::EventDefinition] {
+        self.used_events
+            .get(&definition_id)
+            .map_or(&[], Vec::as_slice)
     }
 
     /// For each contract, the contracts that its creation code embeds.

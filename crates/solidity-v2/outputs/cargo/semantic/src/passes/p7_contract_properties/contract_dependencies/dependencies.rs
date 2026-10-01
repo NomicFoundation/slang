@@ -1,4 +1,5 @@
 use std::collections::VecDeque;
+use std::sync::Arc;
 
 use slang_solidity_v2_common::collections::{Map, OrderedSet, Set, SortedMap};
 use slang_solidity_v2_common::nodes::NodeId;
@@ -21,14 +22,18 @@ pub(super) type DependencyMap = SortedMap<NodeId, Dependencies>;
 /// Resolved targets of the indirect calls seen during a walk.
 type IndirectCalls = OrderedSet<NodeId>;
 
-/// The per-phase bytecode dependencies of every contract and library.
+/// The per-phase bytecode dependencies of every contract and library, and
+/// the errors and events their code can revert with or emit.
 pub(super) struct ContractDependencies {
     pub(super) creation: DependencyMap,
     pub(super) deployed: DependencyMap,
+    pub(super) used_errors: SortedMap<NodeId, Vec<ir::ErrorDefinition>>,
+    pub(super) used_events: SortedMap<NodeId, Vec<ir::EventDefinition>>,
 }
 
 /// Computes the creation and deployed bytecode dependency maps of every
-/// contract and library. Libraries only have deployed dependencies.
+/// contract and library, and the errors and events reached from either
+/// phase. Libraries only have deployed code.
 pub(super) fn build(
     binder: &Binder,
     contract_data: &ContractData,
@@ -37,6 +42,8 @@ pub(super) fn build(
 ) -> ContractDependencies {
     let mut creation_dependencies = DependencyMap::default();
     let mut deployed_dependencies = DependencyMap::default();
+    let mut used_errors = SortedMap::default();
+    let mut used_events = SortedMap::default();
     for (definition_id, definition) in binder.definitions() {
         let mut collector = DependencyCollector {
             binder,
@@ -45,6 +52,8 @@ pub(super) fn build(
             unit_references,
             contract_id: *definition_id,
             resolved_callables: Map::default(),
+            errors: OrderedSet::default(),
+            events: OrderedSet::default(),
         };
         let (creation, deployed) = match definition {
             Definition::Contract(_) => {
@@ -64,10 +73,36 @@ pub(super) fn build(
         if !deployed.is_empty() {
             deployed_dependencies.insert(*definition_id, deployed);
         }
+        if !collector.errors.is_empty() {
+            let errors = collector.errors.iter();
+            let errors = errors.map(|id| error_definition(binder, *id)).collect();
+            used_errors.insert(*definition_id, errors);
+        }
+        if !collector.events.is_empty() {
+            let events = collector.events.iter();
+            let events = events.map(|id| event_definition(binder, *id)).collect();
+            used_events.insert(*definition_id, events);
+        }
     }
     ContractDependencies {
         creation: creation_dependencies,
         deployed: deployed_dependencies,
+        used_errors,
+        used_events,
+    }
+}
+
+fn error_definition(binder: &Binder, id: NodeId) -> ir::ErrorDefinition {
+    match binder.find_definition_by_id(id) {
+        Some(Definition::Error(error)) => Arc::clone(&error.ir_node),
+        _ => unreachable!("a collected error is an error definition"),
+    }
+}
+
+fn event_definition(binder: &Binder, id: NodeId) -> ir::EventDefinition {
+    match binder.find_definition_by_id(id) {
+        Some(Definition::Event(event)) => Arc::clone(&event.ir_node),
+        _ => unreachable!("a collected event is an event definition"),
     }
 }
 
@@ -81,6 +116,9 @@ struct DependencyCollector<'a> {
     contract_id: NodeId,
     /// Targets of the virtual and super references resolved so far.
     resolved_callables: Map<CallableReference, NodeId>,
+    /// Errors and events reached by any walk so far, each once.
+    errors: OrderedSet<NodeId>,
+    events: OrderedSet<NodeId>,
 }
 
 impl DependencyCollector<'_> {
@@ -213,6 +251,8 @@ impl DependencyCollector<'_> {
             let Some(unit) = self.unit_references.get(&unit_id) else {
                 continue;
             };
+            self.errors.extend(unit.errors.iter().copied());
+            self.events.extend(unit.events.iter().copied());
             for (target, reference) in &unit.contracts {
                 // The first reference to each dependency wins.
                 dependencies

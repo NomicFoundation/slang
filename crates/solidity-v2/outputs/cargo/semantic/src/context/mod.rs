@@ -237,6 +237,21 @@ impl SemanticContext {
         self.contract_data.contract_dependencies()
     }
 
+    /// The errors the given contract's or library's code can revert with,
+    /// through `revert E(...)` or a call `E(...)`, from its creation code or
+    /// any code its deployed entry points reach, each once, in a stable order.
+    /// They can be declared anywhere, eg. in a library or at file level. Empty
+    /// for an interface or a definition that reaches none.
+    pub fn used_errors(&self, definition_id: NodeId) -> &[ir::ErrorDefinition] {
+        self.contract_data.used_errors(definition_id)
+    }
+
+    /// The same for the events the given contract's or library's code can
+    /// emit.
+    pub fn used_events(&self, definition_id: NodeId) -> &[ir::EventDefinition] {
+        self.contract_data.used_events(definition_id)
+    }
+
     /// Returns the pre-computed list of state variables visible in the given
     /// contract's hierarchy, in storage-layout order (most-base first, then
     /// each contract's own variables), empty for an interface. `contract_id`
