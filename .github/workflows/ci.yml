@@ -52,8 +52,8 @@ jobs:
       # Run all CI steps in order: _SLANG_INFRA_CI_STEPS_ORDERED_ (keep in sync)
       #
 
-      - name: "infra check"
-        run: "${SFW_PREFIX:-} ./scripts/bin/infra check"
+      - name: "task check"
+        run: "${SFW_PREFIX:-} ./bin/task check"
 
       - name: "task test"
         run: "./bin/task test"

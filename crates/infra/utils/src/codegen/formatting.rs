@@ -18,6 +18,7 @@ pub fn format_source_file(file_path: &Path, contents: &str) -> Result<String> {
 }
 
 pub fn generate_header(file_path: &Path) -> Option<String> {
+    // __GENERATED_FILE_HEADER__ (keep in sync)
     let warning_line = "This file is generated automatically by infrastructure scripts. Please don't edit by hand.";
 
     Some(match (file_path.unwrap_name(), file_path.unwrap_ext()) {

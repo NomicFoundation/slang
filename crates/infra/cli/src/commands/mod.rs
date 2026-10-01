@@ -36,9 +36,7 @@ pub enum AppCommand {
     ///
     /// Running this command without any args will setup everything.
     Setup(SetupController),
-    /// Run codegen checks, and makes sure source files are up to date.
-    ///
-    /// Running this command without any args will check everything.
+    /// Report the 'task' command that runs checks instead.
     Check(CheckController),
     /// Report the 'task' command that runs unit tests instead.
     Test(TestController),
@@ -68,7 +66,7 @@ impl AppCommand {
     pub fn execute(&self) -> Result<()> {
         match self {
             AppCommand::Setup(controller) => controller.execute()?,
-            AppCommand::Check(controller) => controller.execute()?,
+            AppCommand::Check(_) => CheckController::execute(),
             AppCommand::Test(_) => TestController::execute(),
             AppCommand::Lint(_) => LintController::execute()?,
             AppCommand::Ci(controller) => controller.execute()?,

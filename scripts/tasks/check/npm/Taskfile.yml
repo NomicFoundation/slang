@@ -1,0 +1,152 @@
+version: "3"
+
+vars:
+  CARGO_CI_FLAGS:
+    sh: "scripts/tasks/_utils/rustflags.sh"
+
+  CARGO_PROFILE_DIR: '{{if env "CI"}}release{{else}}debug{{end}}'
+
+  # __WASM_BUILD_TARGET__ (keep in sync)
+  WASM_TARGET: "wasm32-wasip2"
+
+  # __GENERATED_FILE_HEADER__ (keep in sync)
+  GENERATED_FILE_HEADER: "// This file is generated automatically by infrastructure scripts. Please don't edit by hand."
+
+  V1_COMPONENT: "solidity_cargo_wasm"
+  V1_RUNTIME_DIR: "{{.ROOT_DIR}}/crates/solidity/outputs/cargo/wasm/src"
+  V1_PACKAGE_DIR: "{{.ROOT_DIR}}/crates/solidity/outputs/npm/package"
+  V1_CARGO_OUT_DIR: "{{.ROOT_DIR}}/target/{{.WASM_TARGET}}/{{.CARGO_PROFILE_DIR}}"
+
+tasks:
+  "default":
+    desc: "Build the NPM packages, and check their sources for any type errors."
+    deps:
+      - "build-wasm"
+    cmds:
+      - "tsc --build tsconfig.json"
+
+  "build-wasm":
+    desc: "Build the WASM component of every NPM package, and install its bindings into the package sources."
+    internal: true
+    deps:
+      - "build-wasm:v1"
+
+  "build-wasm:v1":
+    desc: "Build the WASM component of the V1 NPM package."
+    internal: true
+    cmds:
+      - task: "build-wasm:v1:compile"
+      - task: "build-wasm:v1:bindings"
+      - task: "build-wasm:v1:compile-sources"
+
+  "build-wasm:v1:compile":
+    desc: "Compile the V1 Rust sources into a WASI component."
+    internal: true
+    cmds:
+      - >-
+        cargo build
+        --target {{.WASM_TARGET}}
+        --package {{.V1_COMPONENT}}
+        --all-features
+        --config 'build.rustflags = ["-Crelocation-model=static"]'
+        {{.CARGO_CI_FLAGS}}
+
+  "build-wasm:v1:bindings":
+    desc: "Generate the JS bindings and type definitions of the V1 component, into the NPM package sources."
+    internal: true
+    sources:
+      - "{{.TASKFILE}}"
+      - "{{.V1_CARGO_OUT_DIR}}/{{.V1_COMPONENT}}.wasm"
+      - "{{.V1_RUNTIME_DIR}}/config.json"
+      - "{{.V1_RUNTIME_DIR}}/interface/**/*"
+      - "pnpm-lock.yaml"
+      - ".prettierrc"
+    generates:
+      - "{{.V1_PACKAGE_DIR}}/wasm/generated/*.js"
+      - "{{.V1_PACKAGE_DIR}}/wasm/generated/*.wasm"
+      - "{{.V1_PACKAGE_DIR}}/wasm/generated/**/*.d.ts"
+    cmds:
+      # Everything below writes straight into the package, starting from an empty directory,
+      # so a run never builds on the output of a previous one (or prepends a header twice).
+      - "rm -rf '{{.V1_PACKAGE_DIR}}/wasm/generated'"
+
+      # Transpile using our 'slang-jco' fork, with optimizations enabled:
+      #
+      # --base64-cutoff 0               : disable inlining core Wasm binaries as base64
+      # --no-namespaced-exports         : disable namespaced exports for typescript compatibility
+      # --no-typescript                 : skip TypeScript generation, as it is generated from WIT by the 'slang-jco types' command below.
+      # --valid-lifting-optimization    : optimize component binary validations assuming all lifted values are valid
+      # --debuginfo                     : include debug information in the output, for full panic stack traces
+      - >-
+        slang-jco transpile "{{.V1_CARGO_OUT_DIR}}/{{.V1_COMPONENT}}.wasm"
+        --name "{{.V1_COMPONENT}}.component"
+        --configuration-file "{{.V1_RUNTIME_DIR}}/config.json"
+        --out-dir "{{.V1_PACKAGE_DIR}}/wasm/generated"
+        --base64-cutoff 0
+        --no-namespaced-exports
+        --no-typescript
+        --valid-lifting-optimization
+        --optimize -- --optimize-level 4 --debuginfo
+
+      # The type definitions come from the WIT definitions, rather than the component:
+      - >-
+        slang-jco types "{{.V1_RUNTIME_DIR}}/interface"
+        --name "{{.V1_COMPONENT}}.component"
+        --configuration-file "{{.V1_RUNTIME_DIR}}/config.json"
+        --out-dir "{{.V1_PACKAGE_DIR}}/wasm/generated"
+
+      # Verify that only the expected files are present in the generated directory,
+      # and add the generated-file header to the '.d.ts' files.
+      - |
+        generated="{{.V1_PACKAGE_DIR}}/wasm/generated"
+
+        unexpected="$(find "${generated}" -type f ! -name "*.js" ! -name "*.d.ts" ! -name "*.wasm")"
+
+        if [[ -n "${unexpected}" ]]; then
+          echo >&2 "Unexpected file types in the 'jco' output:"
+          echo >&2 "${unexpected}"
+          echo >&2 "Update the selectors in '{{.TASKFILE}}' if needed."
+          exit 1
+        fi
+
+        # The '.js'/'.wasm' files are git-ignored build artifacts, while the '.d.ts'
+        # files are checked in, so they carry the usual generated-file header:
+        find "${generated}" -type f -name "*.d.ts" | while read -r file; do
+          { echo "{{.GENERATED_FILE_HEADER}}"; echo; cat "${file}"; } > "${file}.tmp"
+          mv "${file}.tmp" "${file}"
+        done
+
+      # Format the generated type definitions:
+      - 'prettier --log-level "warn" --write "{{.V1_PACKAGE_DIR}}/wasm/generated/**/*.d.ts"'
+
+      # In CI, fail if the '.d.ts' files checked into git are out of date:
+      - |
+        generated="{{.V1_PACKAGE_DIR}}/wasm/generated"
+
+        if [[ -n "${CI:-}" && -n "$(git status --porcelain -- "${generated}")" ]]; then
+          echo >&2 "Generated files under '${generated}' are out of date:"
+          git status --short -- "${generated}" >&2
+          git --no-pager diff -- "${generated}" >&2
+          echo >&2 "Run 'task check:npm' locally, and commit the result."
+          exit 1
+        fi
+
+  "build-wasm:v1:compile-sources":
+    desc: "Compile the V1 package sources into the output its 'package.json' exports point at."
+    internal: true
+    sources:
+      - "{{.TASKFILE}}"
+      - "pnpm-lock.yaml"
+      - "tsconfig.json"
+      - "{{.V1_PACKAGE_DIR}}/package.json"
+      - "{{.V1_PACKAGE_DIR}}/tsconfig.json"
+      - "{{.V1_PACKAGE_DIR}}/src/**/*"
+      - "{{.V1_PACKAGE_DIR}}/wasm/**/*.d.mts"
+      - "{{.V1_PACKAGE_DIR}}/wasm/**/*.d.ts"
+    generates:
+      - "{{.V1_PACKAGE_DIR}}/target/**/*.mjs"
+      - "{{.V1_PACKAGE_DIR}}/target/**/*.d.mts"
+      - "{{.V1_PACKAGE_DIR}}/target/**/*.map"
+    cmds:
+      - "rm -rf '{{.V1_PACKAGE_DIR}}/target'"
+      - 'tsc --build "{{.V1_PACKAGE_DIR}}/tsconfig.json"'

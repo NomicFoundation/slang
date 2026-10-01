@@ -4,12 +4,12 @@
     {
       "label": "Regenerate Jinja Templates",
       "dependsOrder": "sequence",
-      "dependsOn": ["Run 'infra check codegen'", "Run Rust Analyzer Checks"]
+      "dependsOn": ["Run 'task check:codegen'", "Run Rust Analyzer Checks"]
     },
     {
-      "label": "Run 'infra check codegen'",
-      "command": "${workspaceFolder}/scripts/bin/infra",
-      "args": ["check", "codegen"],
+      "label": "Run 'task check:codegen'",
+      "command": "${workspaceFolder}/bin/task",
+      "args": ["check:codegen"],
       "presentation": {
         "reveal": "silent",
         "clear": true

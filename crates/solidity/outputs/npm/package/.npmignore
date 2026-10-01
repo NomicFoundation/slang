@@ -1,10 +1,14 @@
 # Ignore Everything:
 **/**
 
-# Except:
+# But keep:
 !target/**
 !wasm/**
+!src/**/*.mts
 !CHANGELOG.md
 !LICENSE
 !package.json
 !README.md
+
+# Regardless, ignore the type checker's build state:
+target/tsc/**
