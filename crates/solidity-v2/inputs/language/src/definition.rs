@@ -1649,6 +1649,7 @@ language_v2_macros::compile!(Language(
                             items = [
                                 Struct(
                                     name = ContractDefinition,
+                                    documentable = true,
                                     fields = (
                                         abstract_keyword = Optional(
                                             reference = AbstractKeyword
@@ -1804,6 +1805,7 @@ BracedContractMembers: (OpenBrace, ContractMembers, CloseBrace) = {
                             items = [
                                 Struct(
                                     name = InterfaceDefinition,
+                                    documentable = true,
                                     fields = (
                                         interface_keyword = Required(InterfaceKeyword),
                                         name = Required(Identifier),
@@ -1825,6 +1827,7 @@ BracedContractMembers: (OpenBrace, ContractMembers, CloseBrace) = {
                             items = [
                                 Struct(
                                     name = LibraryDefinition,
+                                    documentable = true,
                                     fields = (
                                         library_keyword = Required(LibraryKeyword),
                                         name = Required(Identifier),
@@ -1845,6 +1848,7 @@ BracedContractMembers: (OpenBrace, ContractMembers, CloseBrace) = {
                             items = [
                                 Struct(
                                     name = StructDefinition,
+                                    documentable = true,
                                     fields = (
                                         struct_keyword = Required(StructKeyword),
                                         name = Required(Identifier),
@@ -1873,6 +1877,7 @@ BracedContractMembers: (OpenBrace, ContractMembers, CloseBrace) = {
                             items = [
                                 Struct(
                                     name = EnumDefinition,
+                                    documentable = true,
                                     fields = (
                                         enum_keyword = Required(EnumKeyword),
                                         name = Required(Identifier),
@@ -1893,6 +1898,7 @@ BracedContractMembers: (OpenBrace, ContractMembers, CloseBrace) = {
                             title = "Constants",
                             items = [Struct(
                                 name = ConstantDefinition,
+                                documentable = true,
                                 fields = (
                                     type_name = Required(TypeName),
                                     constant_keyword = Required(ConstantKeyword),
@@ -1908,6 +1914,7 @@ BracedContractMembers: (OpenBrace, ContractMembers, CloseBrace) = {
                             items = [
                                 Struct(
                                     name = StateVariableDefinition,
+                                    documentable = true,
                                     fields = (
                                         type_name = Required(TypeName),
                                         attributes = Required(StateVariableAttributes),
@@ -2018,6 +2025,7 @@ SpecialStateVariableAttribute: StateVariableAttribute = {
                             items = [
                                 Struct(
                                     name = FunctionDefinition,
+                                    documentable = true,
                                     fields = (
                                         function_keyword = Required(FunctionKeyword),
                                         name = Required(FunctionName),
@@ -2113,6 +2121,7 @@ SpecialStateVariableAttribute: StateVariableAttribute = {
                                 ),
                                 Struct(
                                     name = ConstructorDefinition,
+                                    documentable = true,
                                     fields = (
                                         constructor_keyword = Required(ConstructorKeyword),
                                         parameters = Required(ParametersDeclaration),
@@ -2136,6 +2145,7 @@ SpecialStateVariableAttribute: StateVariableAttribute = {
                                 ),
                                 Struct(
                                     name = FallbackFunctionDefinition,
+                                    documentable = true,
                                     fields = (
                                         fallback_keyword = Required(FallbackKeyword),
                                         parameters = Required(ParametersDeclaration),
@@ -2163,6 +2173,7 @@ SpecialStateVariableAttribute: StateVariableAttribute = {
                                 ),
                                 Struct(
                                     name = ReceiveFunctionDefinition,
+                                    documentable = true,
                                     fields = (
                                         receive_keyword = Required(ReceiveKeyword),
                                         parameters = Required(ParametersDeclaration),
@@ -2192,6 +2203,7 @@ SpecialStateVariableAttribute: StateVariableAttribute = {
                             items = [
                                 Struct(
                                     name = ModifierDefinition,
+                                    documentable = true,
                                     fields = (
                                         modifier_keyword = Required(ModifierKeyword),
                                         name = Required(Identifier),
@@ -2226,6 +2238,7 @@ SpecialStateVariableAttribute: StateVariableAttribute = {
                             items = [
                                 Struct(
                                     name = EventDefinition,
+                                    documentable = true,
                                     fields = (
                                         event_keyword = Required(EventKeyword),
                                         name = Required(Identifier),
@@ -2277,6 +2290,7 @@ SpecialStateVariableAttribute: StateVariableAttribute = {
                             items = [
                                 Struct(
                                     name = ErrorDefinition,
+                                    documentable = true,
                                     enabled = From("0.8.4"),
                                     fields = (
                                         error_keyword = Required(ErrorKeyword),
@@ -2636,6 +2650,7 @@ IdentifierPathNoRevert: parser_helpers::SeparatedIdentifierPath = {
                                 ),
                                 Struct(
                                     name = AssemblyStatement,
+                                    documentable = true,
                                     switch_lexical_context = Yul,
                                     fields = (
                                         assembly_keyword = Required(AssemblyKeyword),

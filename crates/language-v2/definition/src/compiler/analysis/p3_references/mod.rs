@@ -86,6 +86,7 @@ fn check_struct(
 ) {
     let SpannedStructItem {
         name,
+        documentable: _,
         enabled,
         switch_lexical_context,
         fields,

@@ -11,6 +11,8 @@
 
 use std::ops::Range;
 
+use crate::structured_cst::natspec::NatSpec;
+
 // TODO(v2):
 // - (perf) don't use terminals that are not needed
 // - (feat) visitor/traversal/serializer
@@ -160,6 +162,7 @@ pub struct AssemblyStatementStruct {
     pub label: Option<YulStringLiteral>,
     pub flags: Option<YulFlagsDeclaration>,
     pub body: YulBlock,
+    pub natspec: Option<NatSpec>,
 }
 
 pub fn new_assembly_statement(
@@ -173,6 +176,7 @@ pub fn new_assembly_statement(
         label,
         flags,
         body,
+        natspec: None,
     })
 }
 
@@ -389,6 +393,7 @@ pub struct ConstantDefinitionStruct {
     pub equal: Equal,
     pub value: Expression,
     pub semicolon: Semicolon,
+    pub natspec: Option<NatSpec>,
 }
 
 pub fn new_constant_definition(
@@ -406,6 +411,7 @@ pub fn new_constant_definition(
         equal,
         value,
         semicolon,
+        natspec: None,
     })
 }
 
@@ -417,6 +423,7 @@ pub struct ConstructorDefinitionStruct {
     pub parameters: ParametersDeclaration,
     pub attributes: ConstructorAttributes,
     pub body: Block,
+    pub natspec: Option<NatSpec>,
 }
 
 pub fn new_constructor_definition(
@@ -430,6 +437,7 @@ pub fn new_constructor_definition(
         parameters,
         attributes,
         body,
+        natspec: None,
     })
 }
 
@@ -462,6 +470,7 @@ pub struct ContractDefinitionStruct {
     pub open_brace: OpenBrace,
     pub members: ContractMembers,
     pub close_brace: CloseBrace,
+    pub natspec: Option<NatSpec>,
 }
 
 pub fn new_contract_definition(
@@ -481,6 +490,7 @@ pub fn new_contract_definition(
         open_brace,
         members,
         close_brace,
+        natspec: None,
     })
 }
 
@@ -577,6 +587,7 @@ pub struct EnumDefinitionStruct {
     pub open_brace: OpenBrace,
     pub members: EnumMembers,
     pub close_brace: CloseBrace,
+    pub natspec: Option<NatSpec>,
 }
 
 pub fn new_enum_definition(
@@ -592,6 +603,7 @@ pub fn new_enum_definition(
         open_brace,
         members,
         close_brace,
+        natspec: None,
     })
 }
 
@@ -624,6 +636,7 @@ pub struct ErrorDefinitionStruct {
     pub name: Identifier,
     pub members: ErrorParametersDeclaration,
     pub semicolon: Semicolon,
+    pub natspec: Option<NatSpec>,
 }
 
 pub fn new_error_definition(
@@ -637,6 +650,7 @@ pub fn new_error_definition(
         name,
         members,
         semicolon,
+        natspec: None,
     })
 }
 
@@ -682,6 +696,7 @@ pub struct EventDefinitionStruct {
     pub parameters: EventParametersDeclaration,
     pub anonymous_keyword: Option<AnonymousKeyword>,
     pub semicolon: Semicolon,
+    pub natspec: Option<NatSpec>,
 }
 
 pub fn new_event_definition(
@@ -697,6 +712,7 @@ pub fn new_event_definition(
         parameters,
         anonymous_keyword,
         semicolon,
+        natspec: None,
     })
 }
 
@@ -808,6 +824,7 @@ pub struct FallbackFunctionDefinitionStruct {
     pub attributes: FallbackFunctionAttributes,
     pub returns: Option<ReturnsDeclaration>,
     pub body: FunctionBody,
+    pub natspec: Option<NatSpec>,
 }
 
 pub fn new_fallback_function_definition(
@@ -823,6 +840,7 @@ pub fn new_fallback_function_definition(
         attributes,
         returns,
         body,
+        natspec: None,
     })
 }
 
@@ -884,6 +902,7 @@ pub struct FunctionDefinitionStruct {
     pub attributes: FunctionAttributes,
     pub returns: Option<ReturnsDeclaration>,
     pub body: FunctionBody,
+    pub natspec: Option<NatSpec>,
 }
 
 pub fn new_function_definition(
@@ -901,6 +920,7 @@ pub fn new_function_definition(
         attributes,
         returns,
         body,
+        natspec: None,
     })
 }
 
@@ -1150,6 +1170,7 @@ pub struct InterfaceDefinitionStruct {
     pub open_brace: OpenBrace,
     pub members: InterfaceMembers,
     pub close_brace: CloseBrace,
+    pub natspec: Option<NatSpec>,
 }
 
 pub fn new_interface_definition(
@@ -1167,6 +1188,7 @@ pub fn new_interface_definition(
         open_brace,
         members,
         close_brace,
+        natspec: None,
     })
 }
 
@@ -1179,6 +1201,7 @@ pub struct LibraryDefinitionStruct {
     pub open_brace: OpenBrace,
     pub members: LibraryMembers,
     pub close_brace: CloseBrace,
+    pub natspec: Option<NatSpec>,
 }
 
 pub fn new_library_definition(
@@ -1194,6 +1217,7 @@ pub fn new_library_definition(
         open_brace,
         members,
         close_brace,
+        natspec: None,
     })
 }
 
@@ -1281,6 +1305,7 @@ pub struct ModifierDefinitionStruct {
     pub parameters: Option<ParametersDeclaration>,
     pub attributes: ModifierAttributes,
     pub body: FunctionBody,
+    pub natspec: Option<NatSpec>,
 }
 
 pub fn new_modifier_definition(
@@ -1296,6 +1321,7 @@ pub fn new_modifier_definition(
         parameters,
         attributes,
         body,
+        natspec: None,
     })
 }
 
@@ -1666,6 +1692,7 @@ pub struct ReceiveFunctionDefinitionStruct {
     pub parameters: ParametersDeclaration,
     pub attributes: ReceiveFunctionAttributes,
     pub body: FunctionBody,
+    pub natspec: Option<NatSpec>,
 }
 
 pub fn new_receive_function_definition(
@@ -1679,6 +1706,7 @@ pub fn new_receive_function_definition(
         parameters,
         attributes,
         body,
+        natspec: None,
     })
 }
 
@@ -1801,6 +1829,7 @@ pub struct StateVariableDefinitionStruct {
     pub name: Identifier,
     pub value: Option<StateVariableDefinitionValue>,
     pub semicolon: Semicolon,
+    pub natspec: Option<NatSpec>,
 }
 
 pub fn new_state_variable_definition(
@@ -1816,6 +1845,7 @@ pub fn new_state_variable_definition(
         name,
         value,
         semicolon,
+        natspec: None,
     })
 }
 
@@ -1864,6 +1894,7 @@ pub struct StructDefinitionStruct {
     pub open_brace: OpenBrace,
     pub members: StructMembers,
     pub close_brace: CloseBrace,
+    pub natspec: Option<NatSpec>,
 }
 
 pub fn new_struct_definition(
@@ -1879,6 +1910,7 @@ pub fn new_struct_definition(
         open_brace,
         members,
         close_brace,
+        natspec: None,
     })
 }
 
