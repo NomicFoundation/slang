@@ -321,6 +321,48 @@ fn test_oversized_array_of_struct_has_no_layout() {
     assert!(contract.compute_abi().is_none());
 }
 
+// `Big` overflows storage, but `Big[]` itself occupies one slot. The items can
+// still be laid out; the types table cannot describe `Big`, so there is no
+// layout nor ABI.
+define_fixture!(
+    OversizedStructBehindDynamicArray,
+    file: "main.sol", r#"
+pragma solidity *;
+struct Big {
+    uint256[2 ** 255] a;
+    uint256[2 ** 255] b;
+}
+
+contract C {
+    Big[] xs;
+}
+"#,
+);
+
+#[test]
+fn test_oversized_struct_behind_dynamic_array_has_items_but_no_layout() {
+    let unit = OversizedStructBehindDynamicArray::build_compilation_unit();
+    let contract = unit
+        .find_contract_by_name("C")
+        .next()
+        .expect("contract can be found");
+
+    let items = contract
+        .compute_storage_items(StorageKind::Persistent)
+        .expect("can compute the storage items");
+    assert_eq!(items.len(), 1);
+    assert_eq!(items[0].name(), "xs");
+    assert_eq!(items[0].slot(), uint!(0_U256));
+    assert_eq!(items[0].offset(), 0);
+
+    assert!(
+        contract
+            .compute_storage_layout(StorageKind::Persistent)
+            .is_none()
+    );
+    assert!(contract.compute_abi().is_none());
+}
+
 // A custom base slot pushes the layout past the end of storage. `x` spans
 // `2**256 - 1` slots from base slot 1, reaching `2**256`, so no layout exists.
 define_fixture!(
