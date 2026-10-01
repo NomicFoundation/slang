@@ -115,14 +115,6 @@ impl Number {
         }
     }
 
-    /// Whether the value converts to a fixed-point type without truncation:
-    /// scaled by `10^decimal_places`, it must be an integer within `bits`.
-    pub(crate) fn fits_fixed_point(&self, signed: bool, bits: u32, decimal_places: u32) -> bool {
-        let scaled =
-            self.to_rational() * BigRational::from(BigInt::from(10u32).pow(decimal_places));
-        scaled.is_integer() && integer_literal_fits(&scaled.to_integer(), signed, bits)
-    }
-
     fn to_rational(&self) -> BigRational {
         match self {
             Self::Integer(value) => BigRational::from(value.clone()),
@@ -319,36 +311,48 @@ fn integer_bits_required(value: &BigInt, signed: bool) -> u32 {
     }
 }
 
-/// Returns true if `value` fits in the integer type described by `signed` and
-/// `bits`. Range is `[-2^(bits-1), 2^(bits-1) - 1]` for signed and
-/// `[0, 2^bits - 1]` for unsigned.
-pub(crate) fn integer_literal_fits(value: &BigInt, signed: bool, bits: u32) -> bool {
-    if !signed && value.is_negative() {
+/// Returns true if `value` fits in the `target` integer type. Range is
+/// `[-2^(bits-1), 2^(bits-1) - 1]` for signed and `[0, 2^bits - 1]` for
+/// unsigned.
+pub(crate) fn integer_literal_fits_in(value: &BigInt, target: &IntegerType) -> bool {
+    if !target.is_signed && value.is_negative() {
         return false;
     }
-    integer_bits_required(value, signed) <= bits
+    integer_bits_required(value, target.is_signed) <= target.bits
 }
 
-/// Returns true if every value of the integer type described by `signed` and
-/// `bits` fits in the given fixed-point type, ie. both ends of its range do.
-pub(crate) fn integer_type_fits_fixed_point(
-    signed: bool,
-    bits: u32,
-    fixed_point_type: &FixedPointNumberType,
+/// Whether `value` converts to the `target` fixed-point type without
+/// truncation: scaled by `10^decimal_places`, it must be an integer within
+/// `bits`.
+pub(crate) fn literal_fits_in_fixed_point(value: &Number, target: &FixedPointNumberType) -> bool {
+    let scaled =
+        value.to_rational() * BigRational::from(BigInt::from(10u32).pow(target.decimal_places));
+    scaled.is_integer()
+        && integer_literal_fits_in(
+            &scaled.to_integer(),
+            &IntegerType {
+                is_signed: target.is_signed,
+                bits: target.bits,
+            },
+        )
+}
+
+/// Returns true if every value of the `source` integer type fits in the
+/// `target` fixed-point type, ie. both ends of its range do.
+pub(crate) fn integer_type_fits_in_fixed_point(
+    source: &IntegerType,
+    target: &FixedPointNumberType,
 ) -> bool {
-    let max = (BigInt::one() << (bits - u32::from(signed))) - 1u32;
-    let min = if signed {
+    let IntegerType { is_signed, bits } = *source;
+    let max = (BigInt::one() << (bits - u32::from(is_signed))) - 1u32;
+    let min = if is_signed {
         -(BigInt::one() << (bits - 1))
     } else {
         BigInt::zero()
     };
-    [min, max].into_iter().all(|value| {
-        Number::Integer(value).fits_fixed_point(
-            fixed_point_type.is_signed,
-            fixed_point_type.bits,
-            fixed_point_type.decimal_places,
-        )
-    })
+    [min, max]
+        .into_iter()
+        .all(|value| literal_fits_in_fixed_point(&Number::Integer(value), target))
 }
 
 /// Whether `value` is within the range a Solidity integer type can hold. Those
@@ -357,11 +361,11 @@ pub(crate) fn within_integer_range(value: &BigInt) -> bool {
     integer_bits_required(value, value.is_negative()) <= 256
 }
 
-/// Returns true if the rational `value` lies within the range of the integer
-/// type described by `signed` and `bits`.
-pub(crate) fn rational_literal_fits(value: &BigRational, signed: bool, bits: u32) -> bool {
-    integer_literal_fits(&value.floor().to_integer(), signed, bits)
-        && integer_literal_fits(&value.ceil().to_integer(), signed, bits)
+/// Returns true if the rational `value` lies within the range of the `target`
+/// integer type.
+pub(crate) fn rational_literal_fits_in(value: &BigRational, target: &IntegerType) -> bool {
+    integer_literal_fits_in(&value.floor().to_integer(), target)
+        && integer_literal_fits_in(&value.ceil().to_integer(), target)
 }
 
 pub(crate) fn smallest_integer_type_to_fit(value: &BigInt) -> Option<Type> {
@@ -496,8 +500,8 @@ mod tests {
     use num_bigint::BigInt;
     use num_rational::BigRational;
 
-    use super::{Number, Type, rational_literal_fits, smallest_fixed_point_type_to_fit};
-    use crate::types::FixedPointNumberType;
+    use super::{Number, Type, rational_literal_fits_in, smallest_fixed_point_type_to_fit};
+    use crate::types::{FixedPointNumberType, IntegerType};
 
     fn integer(value: i64) -> Number {
         Number::Integer(BigInt::from(value))
@@ -532,27 +536,57 @@ mod tests {
     }
 
     #[test]
-    fn rational_literal_fits_rejects_out_of_range_before_truncation() {
+    fn rational_literal_fits_in_rejects_out_of_range_before_truncation() {
         // 255.9 truncates toward zero to the in-range 255, but the rational
         // exceeds uint8's max, so it must be rejected — the range check happens
         // before truncation.
         let over_max = BigRational::new(BigInt::from(2559), BigInt::from(10));
-        assert!(!rational_literal_fits(&over_max, false, 8));
+        assert!(!rational_literal_fits_in(
+            &over_max,
+            &IntegerType {
+                is_signed: false,
+                bits: 8
+            }
+        ));
 
         // An in-range fraction is accepted (it truncates toward zero afterwards).
         let in_range = BigRational::new(BigInt::from(1), BigInt::from(2));
-        assert!(rational_literal_fits(&in_range, false, 8));
+        assert!(rational_literal_fits_in(
+            &in_range,
+            &IntegerType {
+                is_signed: false,
+                bits: 8
+            }
+        ));
 
         // Below uint8's min (negative): rejected even though its ceil is 0.
         let below_zero = BigRational::new(BigInt::from(-1), BigInt::from(2));
-        assert!(!rational_literal_fits(&below_zero, false, 8));
+        assert!(!rational_literal_fits_in(
+            &below_zero,
+            &IntegerType {
+                is_signed: false,
+                bits: 8
+            }
+        ));
         // But -0.5 is within int8's range, so signed accepts it.
-        assert!(rational_literal_fits(&below_zero, true, 8));
+        assert!(rational_literal_fits_in(
+            &below_zero,
+            &IntegerType {
+                is_signed: true,
+                bits: 8
+            }
+        ));
 
         // Signed lower bound: -128.5 truncates toward zero to the in-range -128,
         // but the rational is below int8's min, so it is rejected.
         let under_min = BigRational::new(BigInt::from(-1285), BigInt::from(10));
-        assert!(!rational_literal_fits(&under_min, true, 8));
+        assert!(!rational_literal_fits_in(
+            &under_min,
+            &IntegerType {
+                is_signed: true,
+                bits: 8
+            }
+        ));
     }
 
     #[test]

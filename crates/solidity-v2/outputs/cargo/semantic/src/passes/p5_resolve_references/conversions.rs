@@ -132,7 +132,13 @@ impl Pass<'_> {
                 value.is_zero()
                     || (!is_payable
                         && value.as_integer().is_some_and(|value| {
-                            literals::numbers::integer_literal_fits(value, false, 160)
+                            literals::numbers::integer_literal_fits_in(
+                                value,
+                                &IntegerType {
+                                    is_signed: false,
+                                    bits: 160,
+                                },
+                            )
                         }))
             }
             Type::Enum(EnumType { definition_id }) => {

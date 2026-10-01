@@ -7,8 +7,8 @@ use slang_solidity_v2_common::versions::LanguageVersion;
 use super::literals::numbers;
 use super::{
     AddressType, ArraySliceType, ArrayType, ByteArrayType, BytesType, ContractType, DataLocation,
-    FixedPointNumberType, FixedSizeArrayType, FunctionType, FunctionTypeVisibility, IntegerType,
-    InterfaceType, LiteralKind, Number, StringType, StructType, TupleType, Type, TypeId,
+    FixedSizeArrayType, FunctionType, FunctionTypeVisibility, IntegerType, InterfaceType,
+    LiteralKind, Number, StringType, StructType, TupleType, Type, TypeId,
 };
 use crate::types::ImplicitlyConvertible;
 
@@ -217,20 +217,17 @@ impl TypeRegistry {
                 }
             }
 
-            (
-                Type::Integer(IntegerType { is_signed, bits }),
-                Type::FixedPointNumber(fixed_point_type),
-            ) => numbers::integer_type_fits_fixed_point(*is_signed, *bits, fixed_point_type),
+            (Type::Integer(integer_type), Type::FixedPointNumber(fixed_point_type)) => {
+                numbers::integer_type_fits_in_fixed_point(integer_type, fixed_point_type)
+            }
 
-            (
-                Type::Literal(LiteralKind::Integer { value }),
-                Type::Integer(IntegerType { is_signed, bits }),
-            ) => numbers::integer_literal_fits(value, *is_signed, *bits),
+            (Type::Literal(LiteralKind::Integer { value }), Type::Integer(integer_type)) => {
+                numbers::integer_literal_fits_in(value, integer_type)
+            }
 
-            (
-                Type::Literal(LiteralKind::HexInteger { value, .. }),
-                Type::Integer(IntegerType { is_signed, bits }),
-            ) => numbers::integer_literal_fits(&BigInt::from(value.clone()), *is_signed, *bits),
+            (Type::Literal(LiteralKind::HexInteger { value, .. }), Type::Integer(integer_type)) => {
+                numbers::integer_literal_fits_in(&BigInt::from(value.clone()), integer_type)
+            }
 
             // Non-integer rational literals never implicitly convert to an
             // integer type — if a rational reduced to an integer it would have
@@ -243,13 +240,10 @@ impl TypeRegistry {
                     | LiteralKind::HexInteger { .. }
                     | LiteralKind::Rational { .. }),
                 ),
-                Type::FixedPointNumber(FixedPointNumberType {
-                    is_signed,
-                    bits,
-                    decimal_places,
-                }),
-            ) => Number::from_literal_kind(kind)
-                .is_some_and(|value| value.fits_fixed_point(*is_signed, *bits, *decimal_places)),
+                Type::FixedPointNumber(fixed_point_type),
+            ) => Number::from_literal_kind(kind).is_some_and(|value| {
+                numbers::literal_fits_in_fixed_point(&value, fixed_point_type)
+            }),
 
             (Type::Integer(_), Type::Literal(_)) => false,
 
