@@ -3,11 +3,10 @@ use slang_solidity_v2_common::collections::{Set, SortedMap};
 use slang_solidity_v2_common::nodes::NodeId;
 use slang_solidity_v2_ir::ir;
 
-use super::SemanticContext;
-use crate::binder::{Definition, StructDefinition};
+use crate::binder::{Binder, Definition, StructDefinition};
 use crate::types::{
     ArrayType, ByteArrayType, FixedPointNumberType, FixedSizeArrayType, IntegerType, MappingType,
-    StructType, Type, TypeId, UserDefinedValueType,
+    StructType, Type, TypeId, TypeRegistry, UserDefinedValueType,
 };
 
 const SLOT_SIZE: usize = 32;
@@ -154,11 +153,23 @@ impl StorageLayoutBuilder {
     }
 }
 
-impl SemanticContext {
+/// Sizes types in storage, lays out struct members and describes storage
+/// types, from the registered types and definitions alone, so analysis passes
+/// can use it before a [`super::SemanticContext`] exists.
+pub(crate) struct StorageAnalyzer<'a> {
+    binder: &'a Binder,
+    types: &'a TypeRegistry,
+}
+
+impl<'a> StorageAnalyzer<'a> {
+    pub(crate) fn new(binder: &'a Binder, types: &'a TypeRegistry) -> Self {
+        Self { binder, types }
+    }
+
     pub(crate) const ADDRESS_BYTE_SIZE: usize = 20;
     pub(crate) const SELECTOR_SIZE: usize = 4;
 
-    pub fn storage_size_of_type_id(&self, type_id: TypeId) -> Option<StorageSize> {
+    pub(crate) fn storage_size_of_type_id(&self, type_id: TypeId) -> Option<StorageSize> {
         self.storage_size_of_type_id_impl(type_id, &mut Set::default())
     }
 
@@ -215,7 +226,8 @@ impl SemanticContext {
             }
             Type::UserDefinedValue(UserDefinedValueType { definition_id }) => self
                 .storage_size_of_type_id_impl(
-                    self.user_defined_value_target_type_id(*definition_id)?,
+                    self.binder
+                        .user_defined_value_target_type_id(*definition_id)?,
                     visited_structs,
                 ),
 
@@ -262,7 +274,7 @@ impl SemanticContext {
     /// variables) and every type those refer to, each with `describe` applied
     /// to how it is laid out. `None` when one of them cannot be stored or
     /// overflows storage.
-    pub fn storage_type_table<T>(
+    pub(crate) fn storage_type_table<T>(
         &self,
         roots: impl IntoIterator<Item = TypeId>,
         mut describe: impl FnMut(TypeId, StorageTypeLayout) -> T,
