@@ -1839,6 +1839,8 @@ impl slang_solidity_v2_ast::ast::ContractDefinitionStruct
 pub fn slang_solidity_v2_ast::ast::ContractDefinitionStruct::compute_abi(&self) -> core::option::Option<slang_solidity_v2_ast::abi::ContractAbi>
 impl slang_solidity_v2_ast::ast::ContractDefinitionStruct
 pub fn slang_solidity_v2_ast::ast::ContractDefinitionStruct::constructor(&self) -> core::option::Option<slang_solidity_v2_ast::ast::FunctionDefinition>
+pub fn slang_solidity_v2_ast::ast::ContractDefinitionStruct::creation_bytecode_dependencies(&self) -> alloc::vec::Vec<slang_solidity_v2_ast::ast::Definition>
+pub fn slang_solidity_v2_ast::ast::ContractDefinitionStruct::deployed_bytecode_dependencies(&self) -> alloc::vec::Vec<slang_solidity_v2_ast::ast::Definition>
 pub fn slang_solidity_v2_ast::ast::ContractDefinitionStruct::direct_bases(&self) -> alloc::vec::Vec<slang_solidity_v2_ast::ast::ContractBase>
 pub fn slang_solidity_v2_ast::ast::ContractDefinitionStruct::errors(&self) -> alloc::vec::Vec<slang_solidity_v2_ast::ast::ErrorDefinition>
 pub fn slang_solidity_v2_ast::ast::ContractDefinitionStruct::events(&self) -> alloc::vec::Vec<slang_solidity_v2_ast::ast::EventDefinition>
@@ -2821,12 +2823,13 @@ impl slang_solidity_v2_ast::ast::LibraryDefinitionStruct
 pub fn slang_solidity_v2_ast::ast::LibraryDefinitionStruct::as_definition(&self) -> core::option::Option<slang_solidity_v2_ast::ast::Definition>
 pub fn slang_solidity_v2_ast::ast::LibraryDefinitionStruct::references(&self) -> alloc::vec::Vec<slang_solidity_v2_ast::ast::Reference>
 impl slang_solidity_v2_ast::ast::LibraryDefinitionStruct
-pub fn slang_solidity_v2_ast::ast::LibraryDefinitionStruct::compute_abi(&self) -> core::option::Option<slang_solidity_v2_ast::abi::ContractAbi>
-impl slang_solidity_v2_ast::ast::LibraryDefinitionStruct
+pub fn slang_solidity_v2_ast::ast::LibraryDefinitionStruct::bytecode_dependencies(&self) -> alloc::vec::Vec<slang_solidity_v2_ast::ast::Definition>
 pub fn slang_solidity_v2_ast::ast::LibraryDefinitionStruct::functions(&self) -> alloc::vec::Vec<slang_solidity_v2_ast::ast::FunctionDefinition>
 pub fn slang_solidity_v2_ast::ast::LibraryDefinitionStruct::state_variables(&self) -> alloc::vec::Vec<slang_solidity_v2_ast::ast::StateVariableDefinition>
 pub fn slang_solidity_v2_ast::ast::LibraryDefinitionStruct::used_errors(&self) -> alloc::vec::Vec<slang_solidity_v2_ast::ast::ErrorDefinition>
 pub fn slang_solidity_v2_ast::ast::LibraryDefinitionStruct::used_events(&self) -> alloc::vec::Vec<slang_solidity_v2_ast::ast::EventDefinition>
+impl slang_solidity_v2_ast::ast::LibraryDefinitionStruct
+pub fn slang_solidity_v2_ast::ast::LibraryDefinitionStruct::compute_abi(&self) -> core::option::Option<slang_solidity_v2_ast::abi::ContractAbi>
 impl slang_solidity_v2_ast::ast::LibraryDefinitionStruct
 pub fn slang_solidity_v2_ast::ast::LibraryDefinitionStruct::get_file_id(&self) -> &slang_solidity_v2_common::files::FileId
 pub fn slang_solidity_v2_ast::ast::LibraryDefinitionStruct::get_text_range(&self) -> &core::ops::range::Range<usize>
