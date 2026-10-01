@@ -5,7 +5,7 @@
 //! and library, the contracts its creation code and its deployed code
 //! depend on this way, together with the first expression referencing each
 //! dependency. It also records the errors that code can revert with and the
-//! events it can emit, which solc lists in the contract's ABI next to the
+//! events it can emit, to list in the contract's ABI next to the
 //! ones its hierarchy declares.
 //!
 //! Each code unit is walked once, not once per contract.
