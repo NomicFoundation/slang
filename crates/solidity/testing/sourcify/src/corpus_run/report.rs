@@ -5,22 +5,41 @@ use std::collections::BTreeMap;
 use std::fmt::Write;
 
 use super::expected::ExpectedFailures;
-use super::outcome::{Check, Outcome};
+use super::outcome::{Check, Failure, Outcome};
 
 const EXAMPLES: usize = 3;
+/// An issue-tracked entry claiming this many contracts or fewer has to list them, so a
+/// bucket narrows as its bug gets fixed instead of tolerating new contracts.
+const LIST_CONTRACTS_AT: usize = 50;
+
+/// One contract's failure in a bucket.
+pub struct Occurrence {
+    pub contract: String,
+    pub failure: Failure,
+}
 
 #[derive(Default)]
 pub struct Bucket {
-    pub contracts: usize,
+    pub occurrences: Vec<Occurrence>,
     pub diagnostics: usize,
+}
+
+impl Bucket {
+    fn contracts(&self) -> usize {
+        self.occurrences.len()
+    }
+}
+
+#[derive(Default)]
+pub struct Tally {
+    pub contracts: usize,
     pub examples: Vec<String>,
     pub message: String,
 }
 
-impl Bucket {
-    fn add(&mut self, id: &str, count: usize, message: &str) {
+impl Tally {
+    fn add(&mut self, id: &str, message: &str) {
         self.contracts += 1;
-        self.diagnostics += count;
         if self.examples.len() < EXAMPLES {
             self.examples.push(id.to_owned());
         }
@@ -38,11 +57,11 @@ pub struct Summary {
     pub skipped: usize,
     pub panicked: usize,
     pub failed_by_check: BTreeMap<Check, usize>,
-    /// `check:code` -> bucket.
+    /// `check:code` -> every contract failing with that code.
     pub buckets: BTreeMap<String, Bucket>,
-    /// Panic message and location -> bucket.
-    pub panics: BTreeMap<String, Bucket>,
-    pub skips: BTreeMap<String, Bucket>,
+    /// Panic message and location -> contracts.
+    pub panics: BTreeMap<String, Tally>,
+    pub skips: BTreeMap<String, Tally>,
 }
 
 impl Summary {
@@ -53,7 +72,7 @@ impl Summary {
             self.skips
                 .entry(reason.clone())
                 .or_default()
-                .add(&outcome.id, 1, "");
+                .add(&outcome.id, "");
             return;
         }
         if let Some(panic) = &outcome.panic {
@@ -61,7 +80,7 @@ impl Summary {
             self.panics
                 .entry(panic.clone())
                 .or_default()
-                .add(&outcome.id, 1, panic);
+                .add(&outcome.id, panic);
         }
         if outcome.passed() {
             self.passed += 1;
@@ -70,11 +89,12 @@ impl Summary {
         }
         let mut checks_hit = Vec::new();
         for failure in &outcome.failures {
-            self.buckets.entry(failure.key()).or_default().add(
-                &outcome.id,
-                failure.count,
-                &failure.message,
-            );
+            let bucket = self.buckets.entry(failure.key()).or_default();
+            bucket.diagnostics += failure.count;
+            bucket.occurrences.push(Occurrence {
+                contract: outcome.id.clone(),
+                failure: failure.clone(),
+            });
             if !checks_hit.contains(&failure.check) {
                 checks_hit.push(failure.check);
             }
@@ -84,33 +104,58 @@ impl Summary {
         }
     }
 
-    /// Buckets outside the expected list, and expected buckets that no longer fire.
+    /// Every occurrence against the entries: the first matching entry claims it, the
+    /// rest is unexpected; with `stale_check`, an entry that claimed nothing is stale.
     pub fn gate(&self, expected: &ExpectedFailures, stale_check: bool) -> Gate {
-        let expected = expected.by_key();
-        let unexpected = self
-            .buckets
-            .keys()
-            .filter(|key| !expected.contains_key(*key))
-            .cloned()
-            .collect();
-        let stale = if stale_check {
-            expected
-                .keys()
-                .filter(|key| !self.buckets.contains_key(*key))
-                .map(|key| (*key).clone())
-                .collect()
-        } else {
-            Vec::new()
-        };
+        let entries = expected.entries();
+        let mut claimed = vec![0usize; entries.len()];
+        let mut unexpected: BTreeMap<String, Tally> = BTreeMap::new();
+        let mut per_bucket: BTreeMap<String, Vec<(usize, usize)>> = BTreeMap::new();
+        for (key, bucket) in &self.buckets {
+            let mut counts: BTreeMap<usize, usize> = BTreeMap::new();
+            for occurrence in &bucket.occurrences {
+                match entries
+                    .iter()
+                    .position(|entry| entry.matches(&occurrence.contract, &occurrence.failure))
+                {
+                    Some(index) => {
+                        claimed[index] += 1;
+                        *counts.entry(index).or_default() += 1;
+                    }
+                    None => unexpected
+                        .entry(key.clone())
+                        .or_default()
+                        .add(&occurrence.contract, &occurrence.failure.message),
+                }
+            }
+            per_bucket.insert(key.clone(), counts.into_iter().collect());
+        }
+        let (mut stale, mut too_broad) = (Vec::new(), Vec::new());
+        if stale_check {
+            for (entry, claimed) in entries.iter().zip(&claimed) {
+                let label = format!("{} ({})", entry.key(), entry.label());
+                if *claimed == 0 {
+                    stale.push(label);
+                } else if *claimed <= LIST_CONTRACTS_AT
+                    && !entry.deliberate
+                    && entry.contracts.is_empty()
+                {
+                    too_broad.push(format!("{label} claims {claimed}"));
+                }
+            }
+        }
         Gate {
             unexpected,
             stale,
+            too_broad,
             panicked: self.panicked,
+            per_bucket,
         }
     }
 
     pub fn markdown(&self, expected: &ExpectedFailures) -> String {
-        let expected = expected.by_key();
+        let gate = self.gate(expected, false);
+        let entries = expected.entries();
         let mut out = String::new();
         writeln!(out, "| contracts | passed | failed | panicked | skipped |").unwrap();
         writeln!(out, "|---|---|---|---|---|").unwrap();
@@ -142,20 +187,42 @@ impl Summary {
             .unwrap();
             writeln!(out, "|---|---|---|---|---|---|").unwrap();
             let mut buckets: Vec<_> = self.buckets.iter().collect();
-            buckets.sort_by_key(|(_, bucket)| Reverse(bucket.contracts));
+            buckets.sort_by_key(|(_, bucket)| Reverse(bucket.contracts()));
             for (key, bucket) in buckets {
-                let status = match expected.get(key) {
-                    Some(entry) if entry.deliberate => "deliberate".to_owned(),
-                    Some(entry) => format!("yes ({})", entry.issue.as_deref().unwrap_or_default()),
-                    None => "**no**".to_owned(),
+                let mut status: Vec<String> = gate.per_bucket[key]
+                    .iter()
+                    .map(|(index, count)| format!("{} ×{count}", entries[*index].label()))
+                    .collect();
+                // Unexpected contracts are what the reader has to look at, so they take the
+                // example and message columns when there are any.
+                let (examples, message) = if let Some(tally) = gate.unexpected.get(key) {
+                    status.push(format!("**{} unexpected**", tally.contracts));
+                    (tally.examples.clone(), tally.message.clone())
+                } else {
+                    (
+                        bucket
+                            .occurrences
+                            .iter()
+                            .take(EXAMPLES)
+                            .map(|occurrence| occurrence.contract.clone())
+                            .collect(),
+                        bucket.occurrences[0]
+                            .failure
+                            .message
+                            .lines()
+                            .next()
+                            .unwrap_or_default()
+                            .to_owned(),
+                    )
                 };
                 writeln!(
                     out,
-                    "| `{key}` | {} | {} | {status} | {} | {} |",
-                    bucket.contracts,
+                    "| `{key}` | {} | {} | {} | {} | {} |",
+                    bucket.contracts(),
                     bucket.diagnostics,
-                    bucket.examples.join(", "),
-                    bucket.message.replace('|', "\\|")
+                    status.join(", "),
+                    examples.join(", "),
+                    message.replace('|', "\\|")
                 )
                 .unwrap();
             }
@@ -167,13 +234,13 @@ impl Summary {
             writeln!(out).unwrap();
             writeln!(out, "{title}:").unwrap();
             let mut entries: Vec<_> = map.iter().collect();
-            entries.sort_by_key(|(_, bucket)| Reverse(bucket.contracts));
-            for (key, bucket) in entries {
+            entries.sort_by_key(|(_, tally)| Reverse(tally.contracts));
+            for (key, tally) in entries {
                 writeln!(
                     out,
                     "- {} × `{key}` ({})",
-                    bucket.contracts,
-                    bucket.examples.join(", ")
+                    tally.contracts,
+                    tally.examples.join(", ")
                 )
                 .unwrap();
             }
@@ -183,9 +250,14 @@ impl Summary {
 }
 
 pub struct Gate {
-    pub unexpected: Vec<String>,
+    /// `check:code` -> the contracts no entry claims.
+    pub unexpected: BTreeMap<String, Tally>,
     pub stale: Vec<String>,
+    /// Issue-tracked entries small enough to list their contracts, but not doing so.
+    pub too_broad: Vec<String>,
     pub panicked: usize,
+    /// `check:code` -> (entry index, contracts it claimed).
+    pub per_bucket: BTreeMap<String, Vec<(usize, usize)>>,
 }
 
 impl Gate {
@@ -196,14 +268,28 @@ impl Gate {
         }
         if !self.unexpected.is_empty() {
             problems.push(format!(
-                "unexpected failure buckets: {}",
-                self.unexpected.join(", ")
+                "unexpected failures: {}",
+                self.unexpected
+                    .iter()
+                    .map(|(key, tally)| format!(
+                        "{key} ({} contract(s), e.g. {})",
+                        tally.contracts,
+                        tally.examples.join(", ")
+                    ))
+                    .collect::<Vec<_>>()
+                    .join("; ")
             ));
         }
         if !self.stale.is_empty() {
             problems.push(format!(
-                "expected buckets that no longer fail (remove them): {}",
+                "expected entries that no longer match anything (remove them): {}",
                 self.stale.join(", ")
+            ));
+        }
+        if !self.too_broad.is_empty() {
+            problems.push(format!(
+                "expected entries with {LIST_CONTRACTS_AT} contracts or fewer must list them: {}",
+                self.too_broad.join(", ")
             ));
         }
         if problems.is_empty() {
@@ -217,7 +303,6 @@ impl Gate {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::corpus_run::outcome::Failure;
 
     fn outcome(id: &str, failures: Vec<Failure>, panic: Option<&str>) -> Outcome {
         Outcome {
@@ -254,11 +339,11 @@ mod tests {
             None,
         ));
         let gate = summary.gate(&expected(""), false);
-        assert_eq!(gate.unexpected, vec!["validate:member-not-found"]);
+        assert_eq!(gate.unexpected["validate:member-not-found"].contracts, 1);
+        let verdict = gate.verdict().unwrap_err();
         assert!(
-            gate.verdict()
-                .unwrap_err()
-                .contains("validate:member-not-found")
+            verdict.contains("validate:member-not-found (1 contract(s), e.g. a)"),
+            "{verdict}"
         );
     }
 
@@ -276,8 +361,45 @@ mod tests {
         );
         assert!(summary.gate(&expected, false).verdict().is_ok());
         let gate = summary.gate(&expected, true);
-        assert_eq!(gate.stale, vec!["parse:gone"]);
+        assert_eq!(gate.stale, vec!["parse:gone (i)"]);
         assert!(gate.verdict().is_err());
+    }
+
+    #[test]
+    fn an_entry_narrowed_to_contracts_leaves_the_others_unexpected() {
+        let mut summary = Summary::default();
+        summary.add(&outcome("listed", vec![failure(Check::Bind, "x")], None));
+        summary.add(&outcome("other", vec![failure(Check::Bind, "x")], None));
+        let expected = expected(
+            "[[failures]]\ncheck = \"bind\"\ncode = \"x\"\nreason = \"r\"\ndeliberate = true\ncontracts = [\"listed\"]\n",
+        );
+        let gate = summary.gate(&expected, true);
+        assert_eq!(gate.unexpected["bind:x"].examples, vec!["other"]);
+        assert!(gate.stale.is_empty());
+        assert!(
+            summary
+                .markdown(&expected)
+                .contains("deliberate [1 listed] ×1, **1 unexpected**")
+        );
+    }
+
+    #[test]
+    fn a_small_bucket_wide_entry_has_to_list_its_contracts() {
+        let mut summary = Summary::default();
+        summary.add(&outcome("a", vec![failure(Check::Bind, "x")], None));
+        let broad = expected(
+            "[[failures]]\ncheck = \"bind\"\ncode = \"x\"\nreason = \"r\"\nissue = \"i\"\n",
+        );
+        assert!(summary.gate(&broad, false).verdict().is_ok());
+        let verdict = summary.gate(&broad, true).verdict().unwrap_err();
+        assert!(
+            verdict.contains("must list them: bind:x (i) claims 1"),
+            "{verdict}"
+        );
+        let deliberate = expected(
+            "[[failures]]\ncheck = \"bind\"\ncode = \"x\"\nreason = \"r\"\ndeliberate = true\n",
+        );
+        assert!(summary.gate(&deliberate, true).verdict().is_ok());
     }
 
     #[test]
@@ -314,7 +436,7 @@ mod tests {
         assert!(
             summary
                 .markdown(&expected(""))
-                .contains("| `validate:y` | 1 | 1 | **no** | a |")
+                .contains("| `validate:y` | 1 | 1 | **1 unexpected** | a |")
         );
     }
 }

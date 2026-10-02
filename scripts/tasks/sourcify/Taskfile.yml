@@ -1,0 +1,49 @@
+version: "3"
+
+# Sourcify corpus runs: real verified contracts compiled with Slang v2, see
+# crates/solidity/testing/sourcify. The release pinned in that crate's corpus.lock is
+# fetched per asset, checked against its sha256, run, and deleted before the next one,
+# so a shard never holds more than one asset on disk.
+
+vars:
+  BIN: "target/release/solidity_testing_sourcify"
+  RESULTS: "target/sourcify/results"
+  REPORT: "target/sourcify/report.md"
+
+tasks:
+  "build":
+    desc: "Build the release binary the other tasks run."
+    cmds:
+      - "cargo build --locked --release --bin solidity_testing_sourcify"
+
+  "testdata":
+    desc: "Run the in-repo corpus test cases."
+    deps:
+      - "build"
+    cmds:
+      - "{{.BIN}} run-corpus crates/solidity/testing/sourcify/testdata/corpus"
+
+  "pr":
+    desc: "Run the PR-tier subset of the pinned corpus release."
+    deps:
+      - "build"
+    cmds:
+      - "{{.BIN}} lock pr | scripts/tasks/sourcify/run-assets.sh {{.BIN}} {{.RESULTS}} --report {{.REPORT}}"
+
+  "shard":
+    desc: "Run one shard of the full pinned corpus (task sourcify:shard SHARD_INDEX=0 SHARD_COUNT=8); the verdict comes from sourcify:report over all shards."
+    deps:
+      - "build"
+    requires:
+      vars:
+        - "SHARD_INDEX"
+        - "SHARD_COUNT"
+    cmds:
+      - "{{.BIN}} lock shard --count {{.SHARD_COUNT}} --index {{.SHARD_INDEX}} | scripts/tasks/sourcify/run-assets.sh {{.BIN}} {{.RESULTS}} --report-only"
+
+  "report":
+    desc: "Render the census and apply the gate over every shard's results (task sourcify:report, REPORT_FLAGS=--report-only to only look)."
+    deps:
+      - "build"
+    cmds:
+      - "find {{.RESULTS}} -name '*.jsonl' -print0 | xargs -0 {{.BIN}} report --stale-check --report {{.REPORT}} {{.REPORT_FLAGS}}"

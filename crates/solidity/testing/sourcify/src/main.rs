@@ -7,12 +7,13 @@ mod command;
 mod corpus;
 mod corpus_run;
 mod events;
+mod lock;
 mod reporting;
 mod results;
 mod run;
 mod sourcify;
 
-use std::path::PathBuf;
+use std::path::{Path, PathBuf};
 use std::process::ExitCode;
 
 use anyhow::Result;
@@ -46,7 +47,30 @@ fn run() -> Result<()> {
         }
         Commands::RunCorpus(corpus_command) => corpus_run::run(&corpus_command),
         Commands::Report(report_command) => corpus_run::report(&report_command),
+        Commands::Lock(lock_command) => run_lock_command(&lock_command),
     }
+}
+
+fn run_lock_command(cmd: &command::LockCommand) -> Result<()> {
+    let path = cmd
+        .lock
+        .clone()
+        .unwrap_or_else(|| Path::new(env!("CARGO_MANIFEST_DIR")).join("corpus.lock"));
+    let lock = lock::CorpusLock::load(&path)?;
+    let print = |name: &str, sha256: &str, bytes: u64, contracts: u64| {
+        println!("{name}	{sha256}	{bytes}	{contracts}");
+    };
+    match &cmd.query {
+        command::LockQuery::Release => println!("{}	{}", lock.repo, lock.tag),
+        command::LockQuery::Pr => print(&lock.pr.asset, &lock.pr.sha256, 0, 0),
+        command::LockQuery::Shard { count, index } => {
+            anyhow::ensure!(*index < *count, "index must be less than count");
+            for asset in lock.shard(*count, *index) {
+                print(&asset.name, &asset.sha256, asset.bytes, asset.contracts);
+            }
+        }
+    }
+    Ok(())
 }
 
 // `cmd` is passed by value because it's consumed in the spawned thread,

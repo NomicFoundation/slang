@@ -10,4 +10,5 @@ set:
 
 includes:
   lint: "./scripts/tasks/lint/Taskfile.yml"
+  sourcify: "./scripts/tasks/sourcify/Taskfile.yml"
   test: "./scripts/tasks/test/Taskfile.yml"

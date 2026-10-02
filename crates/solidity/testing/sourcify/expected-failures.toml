@@ -1,7 +1,9 @@
-# Failure buckets `run-corpus` tolerates, keyed by check and diagnostic code. Every
-# entry names the reason and the issue tracking it, or `deliberate = true` where Slang
-# rejects on purpose what solc lets through. A bucket that stops firing on the full corpus
-# is reported as stale (`--stale-check`), so the entry leaves with the fix.
+# Failure buckets `run-corpus` tolerates, keyed by check and diagnostic code, narrowed by a
+# `message` prefix and/or a `contracts` list where the code alone is too coarse. Every entry
+# names the reason and the issue tracking it, or `deliberate = true` where Slang rejects on
+# purpose what solc lets through. On the full corpus (`--stale-check`) an entry that matches
+# nothing is stale, and an issue-tracked entry claiming 50 contracts or fewer must list them,
+# so an entry narrows as its bug gets fixed and leaves with it.
 
 [[failures]]
 check = "bind"
@@ -24,7 +26,7 @@ issue = "https://github.com/NomicFoundation/slang/issues/2149"
 [[failures]]
 check = "parse"
 code = "syntax/incompatible-version-pragma"
-reason = "`pragma solidity 0.8.34.0;`: solc's version matcher ignores the fourth component; Slang rejects the malformed version on purpose."
+reason = "Four-component versions (`pragma solidity 0.8.34.0;`, `^0.8.17.0`): solc's matcher ignores the fourth component, Slang rejects the malformed version on purpose. Every contract in this bucket has one."
 deliberate = true
 
 [[failures]]
@@ -32,3 +34,242 @@ check = "parse"
 code = "syntax/unsupported-abicoder-v1"
 reason = "`pragma abicoder v1` selects the legacy ABI coder; Slang supports v2 only, on purpose."
 deliberate = true
+
+[[failures]]
+check = "parse"
+code = "syntax/unsupported-experimental-smt-checker"
+reason = "`pragma experimental SMTChecker` asks for a checker Slang does not ship; solc treats it as a no-op without a solver."
+deliberate = true
+
+[[failures]]
+check = "validate"
+code = "structure/duplicate-abicoder-specifier"
+reason = "`pragma abicoder v2` followed by `pragma experimental ABIEncoderV2`: solc only rejects the reverse order, Slang rejects any second selection."
+deliberate = true
+
+[[failures]]
+check = "parse"
+code = "syntax/invalid-version-specifier"
+reason = "`pragma solidity *0.8.7`: solc's version matcher accepts the stray `*`, Slang rejects the malformed specifier."
+deliberate = true
+
+[[failures]]
+check = "validate"
+code = "semantic/missing-override-specifier"
+reason = "solc 0.8.8–0.8.11 checked only the first inherited declaration per signature through an intermediate contract; Slang applies the 0.8.12 rule to every version."
+issue = "https://github.com/NomicFoundation/slang/issues/2188"
+
+[[failures]]
+check = "validate"
+code = "semantic/override-visibility-differs"
+reason = "Same masking as #2188: the `public virtual` behind an interface declaration is never compared on solc ≤0.8.11."
+issue = "https://github.com/NomicFoundation/slang/issues/2188"
+contracts = [
+  "11155111_0x641d94f2cb9a0890fd2c297098b341989619cfed",
+  "11155111_0xcdc564e19f0655ef129435fa42dc5beb26dcae5a",
+  "11155111_0xff54fc2e4a174e5c63e7cb5c15ddb812ab483366",
+  "137_0xd43be54c1aedf7ee4099104f2dae4ea88b18a249",
+  "1_0x13acf63100dab1935f698b7b08eaa311ce1dcaea",
+  "1_0x29086e1fa7d06bf0b93bd31f6ada359518ecdbd0",
+  "1_0x326a62e3d741c28ba9e6c31636c5f0c420818441",
+  "1_0x49a991e33b80d6c5f727242c778dbfeb606b6259",
+  "1_0xd43be54c1aedf7ee4099104f2dae4ea88b18a249",
+  "1_0xf5ed2cf39937271a281f4cb2178f999765d77068",
+  "421614_0xb544d06f937eef459cf722d8377d786b0fc1d174",
+  "42161_0x8c2bb72f96df793a361cfd9fdec03e7dc020b59f",
+  "8453_0x1b4fae6e7464122ad8691abbf550647d92c5f092",
+  "8453_0x58f8bf5aa32fe5e8c2fb504817a6e4bcba3a6847",
+  "8453_0x81db4f443125d1b745e7fbb5a5d821deeaf3c66a",
+  "8453_0x9c19db23ebb6077cdd82e01c53cb35591599b05d",
+  "8453_0xa39e9ba6d44687e2c5185482e34cd82382b4024c",
+  "8453_0xba05aca37ff7cd886948500ea78b228df53c4711",
+  "8453_0xd4aa6c1886b562a9f0db7e848672863b1fff749b",
+  "8453_0xe0139987df14b00c699cfdbdd8f1ef6632ce7107",
+]
+
+[[failures]]
+check = "validate"
+code = "semantic/overriding-non-virtual-member"
+reason = "Same masking as #2188 for a non-virtual implementation behind a virtual declaration; one 0.8.18 contract in the bucket is a corpus artefact solc rejects too."
+issue = "https://github.com/NomicFoundation/slang/issues/2188"
+contracts = [
+  "100_0x237d4d7f9295a60d6b46421fa1a8af4d4416a7a5",
+  "11155111_0xbc7a1b68d13c23f198b51640b87717b24e07d6c1",
+  "1_0x1e8be946370a99019e323998acd37a1206bdd507",
+  "1_0x315a31b911396603cb80d71d43ee844a02f7ed9c",
+  "1_0x71b6bc6c70e27dcfd7d0b7ae8eba6a76d518d88a",
+  "1_0x7e0049866879151480d9ec01391bbf713f7705b1",
+  "1_0xbfa53d098d7063ddcc39a45ea6f8c290fcd7fc70",
+  "421614_0x02871e390215c621f4d80dd0333528992c679bae",
+  "421614_0x3a64eb7a85a8c96b48fc9a60e6e2b6b9b09eef21",
+  "421614_0x756d87277c2c1d065c59189dd742bb1563422624",
+  "421614_0xdc6a63285f948a8733920137797333f7864af0c2",
+  "421614_0xdf6bfecace1fd234e994521568c0b005151224a1",
+  "42161_0x0d66acdc238c7d1bdbda922a096be15fbcc284d9",
+  "42161_0x2d0de93eb98b138c5c71c062f11d7b5c857ec857",
+  "42161_0xa2c249c1942413a55f4797e4d106c4dfcc0d5ebb",
+  "42161_0xae7ce463ac67117c2b28591174a496f89526962c",
+  "42161_0xeeffa6fd3034cd19a039b38db00bf76e0e183679",
+  "42161_0xfc17116cc14d2b4bf264bc4eb939f667420b5781",
+  "56_0x157ba4bbbb2bd7d59024143c2c9e08f6060717a6",
+  "56_0x1a90c33955ce1a84a1861fa2fc9e77642d4dab3d",
+  "56_0x385b70b8f206a4bf14970ff3e019daae2fed36f4",
+  "56_0x7d42f3e6cd1c8e9e1020d9e26746bb2ab64fa096",
+  "80002_0x54a4fe2888bb81645fb861afcc452a749b5760fa",
+  "97_0x03f2ef944f8d12d9047eeb758ec41827ba05d718",
+  "97_0x0de7c6bf32d85229452b5342633cb072eaf05580",
+  "97_0x17bcaf0fecee8c7c80232783c57c5ecb39581fa6",
+  "97_0x30f6c7dc912fbb88e8f78c5c5ffacbc1db414e3f",
+  "97_0x50053d47c1712420092c21992912ea60cded2efe",
+  "97_0xaab28a0b5f83bea9e969a952fcbdc215a8a27b87",
+  "97_0xdea068c3cc836c30baf826d0f7b5e0037e3df1f3",
+  "97_0xf12d769d8f4a9803c7a3d2eb6eacdfa911cc9e6d",
+  "97_0xf1450bf87e53756e84ffe8d77ff6d7dec3725a1a",
+]
+
+[[failures]]
+check = "validate"
+code = "type-system/incompatible-conditional-branches"
+reason = "Three shapes solc unifies and Slang does not: fixed-size arrays of reference elements across data locations (#2189), tuple assignments of different arity (#2190), function types differing in visibility and mutability (#2191)."
+issue = "https://github.com/NomicFoundation/slang/issues/2189"
+contracts = [
+  "11155111_0x0e42bc2b5a8259aec7e2a717865ce2a0449bdd7e",
+  "11155111_0x15fe9790cb49fdb04f81e89186d35358fe9648e4",
+  "11155111_0x2266e1ca26e427bd52b7b45e7fe074f42d1555bf",
+  "11155111_0x581b68366fc6866c2ea76448ed3cb33d8e3e22e1",
+  "11155111_0x88b685913b6a066c6bbd7090ab8344ceb5d79c20",
+  "11155111_0xefaebaa400aa46a8753b291822c6421dade1f721",
+  "1_0x5329010316a53a80d36c9bdf79bcc834192a4dba",
+  "1_0x6eac9229485a76002e16695b8734b3b7d76e3ed4",
+  "1_0x6fc56b64827b94b4f67ebd9f502854ecb02f0eab",
+  "1_0xccd4cafd32ed18af35839eb867eff85489a7d323",
+  "1_0xccfa853c447c038f79edbc91d4a35d5423ac3a1c",
+  "42161_0xc3d871e1d75c60c9147c52d4a4a30ec9f50336b2",
+  "56_0x7fdf0e43c6bf5907857f1698c436a7480e87cc0a",
+  "80002_0x053acb92ab46cfbf6fde6419c2e7e7e394557f80",
+  "80002_0x5cc94047e4fe0266fd2686600d90511884b8c641",
+  "80002_0x613d15a12136aa38b36c49976752b9bd30f30cec",
+  "80002_0x8c7a341663f5e64327c9b4164acb6f45876e7708",
+  "80002_0xc1481700d5a479c23230ee3014b3bf6de607d6ca",
+  "80002_0xdc9b3e269eee23fb167a8ea18377e10ceaf3aacb",
+  "80002_0xe7834cf222406e7b2aecdf9b009cc961d382b636",
+  "84532_0xf95c7054bf471622437b05e55af88ed10a236cfd",
+  "97_0x5be93f31a8c978afdea102f3567d83ed446d3e26",
+  "97_0x6e274e5be896f35392bf86d6c93dfaa46c158181",
+  "97_0xbdf799f826f55775f6301dfdb08791086338d078",
+]
+
+[[failures]]
+check = "parse"
+code = "syntax/unexpected-terminal"
+message = "Unexpected IndexedKeyword"
+reason = "Duplicate `indexed` on an event parameter, accepted by solc before 0.8.18."
+issue = "https://github.com/NomicFoundation/slang/issues/2192"
+contracts = [
+  "137_0x19bdfecdf99e489bb4dc2c3dc04bdf443cc2a7f1",
+  "137_0x5ed57b8f59f8d3bc805fc1087d8de93c78a87305",
+  "1_0xd4559e5f507ed935f19208a5d50637898c192ab3",
+  "56_0x32cdcd79f7fbaad6df1e599c4322126792982f71",
+]
+
+[[failures]]
+check = "parse"
+code = "syntax/unexpected-terminal"
+message = "Unexpected Pragma"
+reason = "Version pragmas solc's matcher swallows (`^0.8.1.`, `^0.8.20 - <0.8.31`), rejected on purpose."
+deliberate = true
+
+[[failures]]
+check = "validate"
+code = "type-system/expression-not-a-value"
+reason = "`(msg, 'text');` as an expression statement: solc never evaluates the tuple, Slang rejects the builtin as a value."
+issue = "https://github.com/NomicFoundation/slang/issues/2193"
+contracts = [
+  "80001_0x0c798de0dec0d17a33099d77149957dfe18905b0",
+]
+
+[[failures]]
+check = "validate"
+code = "type-system/receive-function-parameters"
+reason = "`function receive(address, uint256)` is an ordinary function in solc; Slang's IR classifies it as the receive function. Fixed on main after this harness's base."
+issue = "https://github.com/NomicFoundation/slang/issues/2129"
+contracts = [
+  "10_0x450441d90715c79870f48105c2ea445110e2f509",
+  "11155111_0xdc6e17d3cf1d5d37682043973e9c6ea70e2f4267",
+  "40_0xbb3d452f166201d59efc363a57fcbb749d704838",
+  "41_0x4fc8404cf7df274febf4cff31f3da8c2fac9a40b",
+  "41_0xcadf84bb9b1f9e1f875b1fb7f5b933c7f2e1502e",
+  "4_0x0ff21ce329d25ad007cd1f196325136bb7a68898",
+  "4_0x6d73dfa3680b5e6035bea3fb2cc761a79ba0eafa",
+  "4_0x805f20f38aba8d3ee15b50d634913d06bf88be5e",
+  "4_0xf635bdb931ea882268d1ecf749709eb77b7b452c",
+  "5_0xedc44269708984f43e251de4bd5702a61c1dae4d",
+]
+
+[[failures]]
+check = "validate"
+code = "structure/multiple-receive-functions"
+reason = "Same as `receive-function-parameters`: the misclassified `function receive(...)` next to a real `receive()`."
+issue = "https://github.com/NomicFoundation/slang/issues/2129"
+contracts = [
+  "137_0xf023b9f32048826f7267a8423171c513ddee0c21",
+  "40_0xbb3d452f166201d59efc363a57fcbb749d704838",
+  "41_0x4fc8404cf7df274febf4cff31f3da8c2fac9a40b",
+  "41_0xcadf84bb9b1f9e1f875b1fb7f5b933c7f2e1502e",
+]
+
+[[failures]]
+check = "validate"
+code = "semantic/linearisation-impossible"
+reason = "Not a divergence: this record bundles sources solc rejects for the same reason; the verified target is a single library. The harness compiles every file in a record, not the target's import closure."
+deliberate = true
+contracts = ["56_0xfd09c6bcd60a9e3b83b8a1cf23236f28bf934efd"]
+
+[[failures]]
+check = "bind"
+code = "resolution/identifier-redeclaration"
+reason = "A name declared in a file and again elsewhere in an import cycle: solc's per-import symbol snapshot hides one, Slang's transitive closure sees both."
+issue = "https://github.com/NomicFoundation/slang/issues/2194"
+
+[[failures]]
+check = "bind"
+code = "resolution/identifier-not-found"
+reason = "Follow-on of #2194: every use of the name it reports as redeclared, in these four contracts."
+issue = "https://github.com/NomicFoundation/slang/issues/2194"
+contracts = [
+  "97_0x08f0740c2ab229cefe40b12571652c7538f687f4",
+  "97_0x60106f5a850ba3f94d7002a9c76a57d605012721",
+  "97_0xb09b0214d8a450485bcbf754352806c76026d370",
+  "97_0xe15ebd2609800e350cf3cd26c1d06afaeab08a8b",
+]
+
+[[failures]]
+check = "bind"
+code = "resolution/ambiguous-yul-reference"
+reason = "A constant imported by name through two routes resolves in Solidity but is ambiguous inside assembly."
+issue = "https://github.com/NomicFoundation/slang/issues/2195"
+contracts = [
+  "10_0x1cfc4c4720504997bcdb86ee6ade450a2c48dcea",
+  "10_0xb0c0e5b4180a68890e5557a6a47b80b6e912d3f3",
+  "11155111_0x0cbb63268cc425856bee73881911e4256723d217",
+  "11155111_0x1322c8bfcbfb09fb9998245754d4dabe80756d3d",
+  "11155111_0x8456aac7a9ccfd24c11aba831adcedd239053990",
+  "11155111_0xa1899ddcbe3f667a0ce975a0ed14f58d17d332cb",
+  "11155420_0x6ddee1298a63bbe356bc8f9c5a8f796607186319",
+  "11155420_0x88e6a83f92ff87644456e686a1b606157ba23728",
+  "84532_0x2b18a40892721782c2d4d5bf0c6788d7497185b4",
+]
+
+[[failures]]
+check = "bind"
+code = "resolution/imported-declaration-not-found"
+reason = "Follow-on of a version pragma with a trailing dot (`pragma solidity ^0.8.1.;`), rejected on purpose: the file never parses, so nothing can be imported from it."
+deliberate = true
+contracts = ["11155111_0x19e2b7829b7338f89b574289a29cc8b8ef7c4acb"]
+
+[[failures]]
+check = "bind"
+code = "resolution/identifier-not-library-name"
+reason = "Follow-on of the trailing-dot pragma rejected on purpose: a `using` directive naming a library from the file that failed to parse."
+deliberate = true
+contracts = ["11155111_0x19e2b7829b7338f89b574289a29cc8b8ef7c4acb"]

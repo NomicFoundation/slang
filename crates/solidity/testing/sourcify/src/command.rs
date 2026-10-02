@@ -17,6 +17,35 @@ pub enum Commands {
     ShowCombinedResults(ShowCombinedResultsCommand),
     RunCorpus(RunCorpusCommand),
     Report(ReportCommand),
+    Lock(LockCommand),
+}
+
+/// Read `corpus.lock` for the workflows: which release, which asset the PR tier runs,
+/// which assets a shard of the full tier runs. Output is tab-separated, one asset per
+/// line: name, sha256, bytes, contracts.
+#[derive(Debug, Parser)]
+pub struct LockCommand {
+    /// The lock file. Defaults to the crate's `corpus.lock`.
+    #[arg(long)]
+    pub lock: Option<PathBuf>,
+
+    #[command(subcommand)]
+    pub query: LockQuery,
+}
+
+#[derive(Subcommand, Debug)]
+pub enum LockQuery {
+    /// Print the release, tab-separated: repo, tag.
+    Release,
+    /// Print the PR-tier asset.
+    Pr,
+    /// Print the assets of one shard of the full corpus.
+    Shard {
+        #[arg(long)]
+        count: usize,
+        #[arg(long)]
+        index: usize,
+    },
 }
 
 /// Compile every contract of a corpus snapshot with Slang v2 and classify what it
