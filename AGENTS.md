@@ -154,10 +154,11 @@ grep -r "__MARKER_NAME__" .
 
 ## Renovate Config
 
-When editing `renovate.json` (or any `Cargo.toml` line paired with its custom regex manager via a [sync marker](#sync-markers)), validate locally before pushing:
+When editing `renovate.json` (or any `Cargo.toml` line paired with its custom regex manager via a [sync marker](#sync-markers)), validate locally before pushing, with the Renovate version CI pins:
 
-- **Schema check:** `npx --yes --package renovate -- renovate-config-validator renovate.json`
-- **Full extraction dry-run:** `LOG_LEVEL=debug npx --yes renovate --platform=local --dry-run=full` — confirms each dep shows the expected `skipReason` / `updates`. Catches gotchas like `matchPackageNames` failing to match git-source cargo deps (where `packageName` is the git URL, not the `Cargo.toml` key — use `matchDepNames` for those).
+- **Pinned version:** `export RENOVATE_VERSION=$(sed -n 's/.*RENOVATE_VERSION: "\(.*\)"/\1/p' .github/workflows/ci.yml)`
+- **Schema check:** `npx --yes --package "renovate@$RENOVATE_VERSION" -- renovate-config-validator renovate.json`
+- **Full extraction dry-run:** `LOG_LEVEL=debug npx --yes "renovate@$RENOVATE_VERSION" --platform=local --dry-run=full` — confirms each dep shows the expected `skipReason` / `updates`. Catches gotchas like `matchPackageNames` failing to match git-source cargo deps (where `packageName` is the git URL, not the `Cargo.toml` key — use `matchDepNames` for those).
 
 ## Snapshot Tests
 
