@@ -283,28 +283,6 @@ fn test_max_length_array_lays_out() {
     );
 }
 
-// A custom base slot pushes the layout past the end of storage. `x` spans
-// `2**256 - 1` slots from base slot 1, reaching `2**256`, so no layout exists.
-define_fixture!(
-    OversizedBaseSlot,
-    file: "main.sol", r#"
-pragma solidity *;
-contract C layout at 1 {
-    uint256[2 ** 256 - 1] x;
-}
-"#,
-);
-
-#[test]
-fn test_oversized_base_slot_has_no_layout() {
-    let unit = OversizedBaseSlot::build_compilation_unit();
-    let contract = unit
-        .find_contract_by_name("C")
-        .next()
-        .expect("contract can be found");
-    assert!(contract.compute_storage_layout().is_none());
-}
-
 // A struct declared inside a contract is laid out under its scope-qualified
 // name.
 define_fixture!(

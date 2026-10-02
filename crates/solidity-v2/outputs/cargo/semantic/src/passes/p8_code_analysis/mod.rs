@@ -2,6 +2,7 @@ mod built_ins;
 mod cycle_detection;
 mod fallback_functions;
 mod receive_functions;
+mod storage_size;
 
 use slang_solidity_v2_common::diagnostics::DiagnosticCollection;
 use slang_solidity_v2_common::evm_targets::EvmTarget;
@@ -35,4 +36,11 @@ pub fn run(
 
     fallback_functions::check_fallback_functions(binder, types, file_node_mapper, diagnostics);
     receive_functions::check_receive_functions(binder, types, file_node_mapper, diagnostics);
+    storage_size::check_contract_storage_sizes(
+        binder,
+        contract_data,
+        types,
+        file_node_mapper,
+        diagnostics,
+    );
 }

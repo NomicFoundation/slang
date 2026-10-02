@@ -154,7 +154,7 @@ impl StorageLayoutBuilder {
     /// The number of whole slots consumed, rounding a partially-filled final
     /// slot up to a slot boundary. `None` if that rounding runs past the end
     /// of storage.
-    fn slots_used(&self) -> Option<U256> {
+    pub(crate) fn slots_used(&self) -> Option<U256> {
         if self.byte_offset > 0 {
             self.slot.checked_add(U256::from(1))
         } else {
