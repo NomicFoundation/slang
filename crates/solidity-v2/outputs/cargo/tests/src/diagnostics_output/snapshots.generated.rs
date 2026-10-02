@@ -4963,6 +4963,34 @@ mod type_system {
         }
     }
 
+    mod contract_too_large_for_storage {
+        use super::*;
+
+        #[test]
+        fn inherited_variables() -> Result<()> {
+            run(
+                "type_system/contract_too_large_for_storage",
+                "inherited_variables",
+            )
+        }
+
+        #[test]
+        fn own_variables() -> Result<()> {
+            run(
+                "type_system/contract_too_large_for_storage",
+                "own_variables",
+            )
+        }
+
+        #[test]
+        fn partial_last_slot() -> Result<()> {
+            run(
+                "type_system/contract_too_large_for_storage",
+                "partial_last_slot",
+            )
+        }
+    }
+
     mod explicit_conversion_not_allowed {
         use super::*;
 
@@ -6119,6 +6147,22 @@ mod type_system {
         }
 
         #[test]
+        fn past_end_of_storage() -> Result<()> {
+            run(
+                "type_system/storage_layout_base_slot",
+                "past_end_of_storage",
+            )
+        }
+
+        #[test]
+        fn past_end_of_storage_partial_slot() -> Result<()> {
+            run(
+                "type_system/storage_layout_base_slot",
+                "past_end_of_storage_partial_slot",
+            )
+        }
+
+        #[test]
         fn type_max() -> Result<()> {
             run("type_system/storage_layout_base_slot", "type_max")
         }
@@ -6147,6 +6191,57 @@ mod type_system {
         #[test]
         fn valid() -> Result<()> {
             run("type_system/storage_layout_base_slot", "valid")
+        }
+
+        #[test]
+        fn zero_base_past_end_of_storage() -> Result<()> {
+            run(
+                "type_system/storage_layout_base_slot",
+                "zero_base_past_end_of_storage",
+            )
+        }
+    }
+
+    mod type_too_large_for_storage {
+        use super::*;
+
+        #[test]
+        fn dynamic_array_element() -> Result<()> {
+            run(
+                "type_system/type_too_large_for_storage",
+                "dynamic_array_element",
+            )
+        }
+
+        #[test]
+        fn fixed_size_array_variable() -> Result<()> {
+            run(
+                "type_system/type_too_large_for_storage",
+                "fixed_size_array_variable",
+            )
+        }
+
+        #[test]
+        fn mapping_value() -> Result<()> {
+            run("type_system/type_too_large_for_storage", "mapping_value")
+        }
+
+        #[test]
+        fn memory_only() -> Result<()> {
+            run("type_system/type_too_large_for_storage", "memory_only")
+        }
+
+        #[test]
+        fn struct_member_array_element() -> Result<()> {
+            run(
+                "type_system/type_too_large_for_storage",
+                "struct_member_array_element",
+            )
+        }
+
+        #[test]
+        fn struct_variable() -> Result<()> {
+            run("type_system/type_too_large_for_storage", "struct_variable")
         }
     }
 
