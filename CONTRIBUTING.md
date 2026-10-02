@@ -43,15 +43,15 @@ To install language-specific binaries and packages, we use [Hermit](https://cash
 
 ## Infra CLI
 
-To ensure consistency, and a good experience for first-time developers, all build/test/run/debug commands should be written, versioned, and documented inside the `infra_cli` crate. This means that any dev instructions are well documented, versioned, and verified/executed with every build. It also means that we can minimize any manual setup or teardown steps during development, and just rely on that cli.
+To ensure consistency, and a good experience for first-time developers, every build/test/run/debug command is written, versioned, and documented in the repository itself, rather than left to a README for each developer to follow by hand. This means that any dev instructions are well documented, versioned, and verified/executed with every build. It also means that we can minimize any manual setup or teardown steps during development.
 
-You can access all such commands (from the hermit environment) by just running the `infra` script, which just refers to `$REPO_ROOT/scripts/bin/infra`. If this is your first time contributing, we recommend starting with `infra --help` to familiarize yourself with its capabilities.
+The `infra_cli` crate covers setup and publishing. You can access its commands (from the hermit environment) by just running the `infra` script, which just refers to `$REPO_ROOT/scripts/bin/infra`. If this is your first time contributing, we recommend starting with `infra --help` to familiarize yourself with its capabilities. Checking, testing, and linting have moved to Task, described below.
 
 ## Task Runner
 
-Testing and linting are orchestrated by [Task](https://taskfile.dev), a task runner installed through Hermit like any other tool, so `task` is available on the `$PATH` of an activated environment (or as `$REPO_ROOT/bin/task`). Start with `task --list` to see what is available.
+Checking, testing, and linting are orchestrated by [Task](https://taskfile.dev), a task runner installed through Hermit like any other tool, so `task` is available on the `$PATH` of an activated environment (or as `$REPO_ROOT/bin/task`). Start with `task --list` to see what is available.
 
-The root `$REPO_ROOT/Taskfile.yml` only wires up the files under `$REPO_ROOT/scripts/tasks/`, one per command group, which is where the tasks themselves live.
+The root `$REPO_ROOT/Taskfile.yml` only wires up the files under `$REPO_ROOT/scripts/tasks/`, which is where the tasks themselves live. See `task --list` for a list of all available tasks.
 
 ## Versioning and Publishing
 
@@ -86,7 +86,7 @@ CI installs dependencies behind [Socket Firewall](https://docs.socket.dev/) (`sf
 in _firewall_ mode, which intercepts package-manager traffic (cargo, npm, pip) and
 blocks packages Socket flags as malicious. The `setup-sfw` composite action installs
 it and exports `SFW_PREFIX`, which prefixes the dependency-fetching steps (`infra
-setup`, `infra check`, and the cooldown and renovate checks). It runs **only in CI** —
+setup`, `task check`, and the cooldown and renovate checks). It runs **only in CI** —
 local `infra` commands are unaffected.
 
 **Required by default.** If Socket Firewall can't be installed (e.g. a socket.dev

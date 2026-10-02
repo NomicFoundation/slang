@@ -11,7 +11,9 @@ use infra_utils::commands::Command;
 use infra_utils::paths::{FileWalker, PathExtensions};
 
 use crate::toolchains::npm::Npm;
-use crate::toolchains::wasm::NPM_CRATE;
+
+// The crate holding the sources of the V1 NPM package.
+const NPM_CRATE: &str = "solidity_npm_package";
 
 #[derive(Clone, Debug, Parser)]
 pub struct ChangesetsController {}

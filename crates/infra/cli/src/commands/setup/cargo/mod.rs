@@ -1,7 +1,9 @@
 use infra_utils::commands::Command;
 use infra_utils::github::GitHub;
 
-use crate::toolchains::wasm::WASM_TARGET;
+// The WASI target that every NPM package's WASM component is compiled for.
+// __WASM_BUILD_TARGET__ (keep in sync)
+const WASM_TARGET: &str = "wasm32-wasip2";
 
 pub fn setup_cargo() {
     // The bootstrap bash script defined in '$REPO_ROOT/scripts/_common.sh'
