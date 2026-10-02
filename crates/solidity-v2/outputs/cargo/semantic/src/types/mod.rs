@@ -15,7 +15,7 @@ pub(crate) use operator_typing::{BinaryOperator, UnaryOperator};
 pub(crate) use registry::NoMobileType;
 pub use registry::TypeRegistry;
 
-#[derive(Clone, Copy, Debug, Eq, Hash, PartialEq)]
+#[derive(Clone, Copy, Debug, Eq, Hash, Ord, PartialEq, PartialOrd)]
 pub struct TypeId(usize);
 
 // __SLANG_TYPE_TYPES__ keep in sync with AST types

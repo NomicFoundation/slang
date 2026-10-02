@@ -8,7 +8,7 @@ use std::sync::Arc;
 
 use ruint::aliases::U256;
 use sha3::{Digest, Keccak256};
-use slang_solidity_v2_common::collections::Map;
+use slang_solidity_v2_common::collections::SortedMap;
 use slang_solidity_v2_common::files::FileId;
 use slang_solidity_v2_common::nodes::NodeId;
 use slang_solidity_v2_semantic::context::SemanticContext;
@@ -437,11 +437,11 @@ pub enum StorageKind {
 #[derive(Clone, Debug, Default, Eq, PartialEq)]
 pub struct StorageLayout {
     items: Vec<StorageItem>,
-    types: Map<TypeId, StorageType>,
+    types: SortedMap<TypeId, StorageType>,
 }
 
 impl StorageLayout {
-    pub(crate) fn new(items: Vec<StorageItem>, types: Map<TypeId, StorageType>) -> Self {
+    pub(crate) fn new(items: Vec<StorageItem>, types: SortedMap<TypeId, StorageType>) -> Self {
         Self { items, types }
     }
 
@@ -450,8 +450,8 @@ impl StorageLayout {
         &self.items
     }
 
-    /// Every type the items refer to, directly or through another type, in no
-    /// particular order.
+    /// Every type the items refer to, directly or through another type,
+    /// ordered by [`TypeId`].
     pub fn types(&self) -> impl ExactSizeIterator<Item = &StorageType> {
         self.types.values()
     }

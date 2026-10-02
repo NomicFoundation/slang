@@ -6,7 +6,7 @@ pub(crate) use contract_data::{ContractData, ContractLinearisations};
 pub use dispatch::VirtualTarget;
 pub(crate) use file_node_mapper::FileNodeMapper;
 use ruint::aliases::U256;
-use slang_solidity_v2_common::collections::{Map, Set, SortedMap};
+use slang_solidity_v2_common::collections::{Set, SortedMap};
 use slang_solidity_v2_common::diagnostics::DiagnosticCollection;
 use slang_solidity_v2_common::evm_targets::EvmTarget;
 use slang_solidity_v2_common::files::FileId;
@@ -674,8 +674,8 @@ impl SemanticContext {
         &self,
         roots: impl IntoIterator<Item = TypeId>,
         mut describe: impl FnMut(TypeId, StorageTypeLayout) -> T,
-    ) -> Option<Map<TypeId, T>> {
-        let mut table = Map::default();
+    ) -> Option<SortedMap<TypeId, T>> {
+        let mut table = SortedMap::default();
         for type_id in roots {
             self.add_to_storage_type_table(type_id, &mut table, &mut describe)?;
         }
@@ -688,7 +688,7 @@ impl SemanticContext {
     fn add_to_storage_type_table<T>(
         &self,
         type_id: TypeId,
-        table: &mut Map<TypeId, T>,
+        table: &mut SortedMap<TypeId, T>,
         describe: &mut impl FnMut(TypeId, StorageTypeLayout) -> T,
     ) -> Option<()> {
         if table.contains_key(&type_id) {

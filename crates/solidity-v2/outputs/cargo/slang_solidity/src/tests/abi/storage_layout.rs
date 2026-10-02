@@ -493,8 +493,8 @@ fn test_type_names_match_solc_labels() {
 }
 
 /// Renders a layout's types table as `label: size, kind` lines, naming the
-/// types each entry refers to by their labels, sorted since the table has no
-/// order.
+/// types each entry refers to by their labels, sorted so the expectations do
+/// not depend on the order types are registered in.
 fn describe_storage_types(layout: &abi::StorageLayout) -> Vec<String> {
     let label_of = |type_id: TypeId| {
         layout
@@ -599,6 +599,12 @@ fn test_storage_types_table() {
             "uint8[3][]: 1 slots, dynamic array of uint8[3]",
         ]
     );
+    let type_ids: Vec<_> = abi
+        .storage_layout()
+        .types()
+        .map(StorageType::type_id)
+        .collect();
+    assert!(type_ids.is_sorted(), "the table is ordered by type id");
     // `uint8` is in both tables: each layout describes its own types.
     assert_eq!(
         describe_storage_types(abi.transient_storage_layout()),
