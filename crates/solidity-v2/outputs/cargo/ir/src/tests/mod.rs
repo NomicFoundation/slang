@@ -15,6 +15,7 @@ macro_rules! expect_variant {
     };
 }
 
+mod assembly_memory_safety;
 mod builder;
 mod text_range;
 mod version_pragma;
