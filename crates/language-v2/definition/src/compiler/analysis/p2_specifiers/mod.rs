@@ -79,6 +79,7 @@ fn check_item(analysis: &mut Analysis, item: &SpannedItem) {
 fn check_struct(analysis: &mut Analysis, item: &SpannedStructItem) {
     let SpannedStructItem {
         name: _,
+        documentable: _,
         enabled,
         switch_lexical_context: _,
         fields,

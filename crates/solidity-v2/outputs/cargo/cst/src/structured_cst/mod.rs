@@ -1,3 +1,4 @@
+pub mod natspec;
 pub mod text_range;
 
 #[path = "nodes.generated.rs"]

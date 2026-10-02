@@ -86,6 +86,7 @@ fn check_struct(
 ) {
     let SpannedStructItem {
         name,
+        documentable: _,
         enabled,
         switch_lexical_context,
         fields,
@@ -356,7 +357,11 @@ fn check_trivia(
     enablement: &VersionSet,
     lexical_context: &Identifier,
 ) {
-    let SpannedTriviaItem { name, scanner } = item;
+    let SpannedTriviaItem {
+        name,
+        category: _,
+        scanner,
+    } = item;
 
     check_token_scanner(analysis, Some(name), scanner, enablement, lexical_context);
 }
