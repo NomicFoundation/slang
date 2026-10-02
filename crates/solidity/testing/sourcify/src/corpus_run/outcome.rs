@@ -8,7 +8,7 @@ use slang_solidity_v2::diagnostics::{DiagnosticExtensions, DiagnosticKind, Diagn
 /// Every check groups the error diagnostics of one subsystem, so a failure names the
 /// layer at fault and the gate can be turned on per layer.
 #[derive(Clone, Copy, Debug, Eq, Ord, PartialEq, PartialOrd, Serialize, Deserialize)]
-#[serde(rename_all = "lowercase")]
+#[serde(rename_all = "snake_case")]
 pub enum Check {
     /// Syntax errors.
     Parse,
@@ -16,6 +16,10 @@ pub enum Check {
     Bind,
     /// Structural, type-system and semantic errors.
     Validate,
+    /// The target contract's storage slots against solc's `storageLayout` artifact.
+    StorageLayout,
+    /// The spelling of each storage item's type against solc's type label.
+    StorageTypes,
 }
 
 impl Check {
@@ -36,6 +40,8 @@ impl std::fmt::Display for Check {
             Check::Parse => f.write_str("parse"),
             Check::Bind => f.write_str("bind"),
             Check::Validate => f.write_str("validate"),
+            Check::StorageLayout => f.write_str("storage_layout"),
+            Check::StorageTypes => f.write_str("storage_types"),
         }
     }
 }
@@ -74,6 +80,9 @@ pub struct Outcome {
     pub failures: Vec<Failure>,
     #[serde(default)]
     pub warnings: usize,
+    /// Checks that could not run on this record, by check name, with the reason.
+    #[serde(default, skip_serializing_if = "BTreeMap::is_empty")]
+    pub skipped_checks: BTreeMap<String, String>,
 }
 
 impl Outcome {
