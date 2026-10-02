@@ -10,7 +10,7 @@ use super::units::{CodeUnit, visit_code_unit};
 use crate::binder::{Binder, Definition, Resolution, Typing};
 use crate::built_ins::InternalBuiltIn;
 use crate::context::ContractReference;
-use crate::types::{Type, TypeRegistry};
+use crate::types::{FunctionType, FunctionTypeVisibility, Type, TypeId, TypeRegistry};
 
 /// A reference to a callable or constant found in a code unit.
 #[derive(Clone, Copy, PartialEq, Eq, Hash)]
@@ -28,6 +28,24 @@ pub(super) enum CallableReference {
     },
 }
 
+/// The parameter and return types of a function type. Visibility and
+/// mutability convert, so a function can be stored in a pointer exactly when
+/// both have the same signature.
+#[derive(PartialEq, Eq, Hash)]
+pub(super) struct PointerSignature {
+    parameter_types: Vec<TypeId>,
+    return_type: TypeId,
+}
+
+impl PointerSignature {
+    pub(super) fn new(function_type: &FunctionType) -> Self {
+        Self {
+            parameter_types: function_type.parameter_types.clone(),
+            return_type: function_type.return_type,
+        }
+    }
+}
+
 /// What a code unit contributes to the dependency analysis. Each unit is
 /// walked once and its references are reused by every contract traversal.
 pub(super) struct UnitReferences {
@@ -40,6 +58,9 @@ pub(super) struct UnitReferences {
     /// value. They can still run through a stored pointer, so the ones found
     /// in creation code also seed the deployed walk.
     pub(super) indirect_calls: OrderedSet<CallableReference>,
+    /// Signatures of the calls through an internal function value, eg. `p()`
+    /// or `(f)()`. Each can run any taken function of its signature.
+    pub(super) pointer_calls: Set<PointerSignature>,
     /// Errors this unit reverts with, by `revert E(...)` or a call `E(...)`
     /// as in `require(c, E(...))`. A reference that is not a call, eg.
     /// `E.selector`, does not count.
@@ -63,6 +84,7 @@ pub(super) fn collect(
             contracts: Vec::new(),
             calls: OrderedSet::default(),
             indirect_calls: OrderedSet::default(),
+            pointer_calls: Set::default(),
             errors: SortedSet::default(),
             events: SortedSet::default(),
             direct_callees: Set::default(),
@@ -71,6 +93,7 @@ pub(super) fn collect(
         if !collector.contracts.is_empty()
             || !collector.calls.is_empty()
             || !collector.indirect_calls.is_empty()
+            || !collector.pointer_calls.is_empty()
             || !collector.errors.is_empty()
             || !collector.events.is_empty()
         {
@@ -80,6 +103,7 @@ pub(super) fn collect(
                     contracts: collector.contracts,
                     calls: collector.calls,
                     indirect_calls: collector.indirect_calls,
+                    pointer_calls: collector.pointer_calls,
                     errors: collector.errors,
                     events: collector.events,
                 },
@@ -140,6 +164,7 @@ struct ReferenceCollector<'a> {
     // reported when several paths reach the same dependency.
     calls: OrderedSet<CallableReference>,
     indirect_calls: OrderedSet<CallableReference>,
+    pointer_calls: Set<PointerSignature>,
     errors: SortedSet<NodeId>,
     events: SortedSet<NodeId>,
     // Callee expression node ids. A function referenced outside this set
@@ -382,6 +407,44 @@ impl ReferenceCollector<'_> {
         }
     }
 
+    /// Records the signature of a call through an internal function value.
+    fn collect_pointer_call(&mut self, node: &ir::FunctionCallExpression) {
+        if self.names_function(&node.operand) {
+            return;
+        }
+        let Some(callee_id) = node.operand.node_id() else {
+            return;
+        };
+        // An external function value is called by a message call, not
+        // through a pointer.
+        if let Typing::Resolved(type_id) = self.binder.node_typing(callee_id)
+            && let Type::Function(function_type) = self.types.get_type_by_id(*type_id)
+            && !matches!(function_type.visibility, FunctionTypeVisibility::External)
+        {
+            self.pointer_calls
+                .insert(PointerSignature::new(function_type));
+        }
+    }
+
+    /// Whether a callee names a function, so the call is direct. Any other
+    /// callee is a function value, eg. `(f)` or `c ? f : g`.
+    fn names_function(&self, callee: &ir::Expression) -> bool {
+        let name = match callee {
+            ir::Expression::Identifier(identifier) => identifier,
+            ir::Expression::MemberAccessExpression(member_access) => &member_access.member,
+            _ => return false,
+        };
+        // An overloaded name already resolves to the overload the call
+        // selects.
+        let Some(Resolution::Definition(definition_id)) = self.resolved_reference(name) else {
+            return false;
+        };
+        matches!(
+            self.binder.find_definition_by_id(definition_id),
+            Some(Definition::Function(_))
+        )
+    }
+
     /// Records the modifier a modifier invocation runs.
     fn collect_modifier_invocation(&mut self, node: &ir::ModifierInvocation) {
         let Some(name) = node.name.last() else {
@@ -452,6 +515,7 @@ impl Visitor for ReferenceCollector<'_> {
         if let Some(callee_id) = node.operand.node_id() {
             self.direct_callees.insert(callee_id);
         }
+        self.collect_pointer_call(node);
         self.collect_error_call(node);
         true
     }

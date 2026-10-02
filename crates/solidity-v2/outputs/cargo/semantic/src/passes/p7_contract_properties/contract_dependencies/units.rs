@@ -27,6 +27,18 @@ enum CodeUnitKind<'a> {
     BaseArguments(&'a ir::PositionalArguments),
 }
 
+impl<'a> CodeUnit<'a> {
+    /// The unit's function definition, if it is a callable. Unlike a
+    /// `Definition`, it also covers the nameless constructor, fallback and
+    /// receive.
+    pub(super) fn callable(&self) -> Option<&'a ir::FunctionDefinition> {
+        match self.kind {
+            CodeUnitKind::Callable(function) => Some(function),
+            CodeUnitKind::Initializer(_) | CodeUnitKind::BaseArguments(_) => None,
+        }
+    }
+}
+
 pub(super) fn collect(binder: &Binder) -> Vec<CodeUnit<'_>> {
     let mut units = Vec::new();
     for (definition_id, definition) in binder.definitions() {

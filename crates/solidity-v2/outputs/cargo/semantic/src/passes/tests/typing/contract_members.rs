@@ -5,12 +5,13 @@ use slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind;
 use slang_solidity_v2_common::diagnostics::kinds::resolution::{
     AmbiguousReference, MemberNotFound, NoMatchingCallableDeclaration,
 };
+use slang_solidity_v2_common::diagnostics::kinds::type_system::IncompatibleConditionalBranches;
 
 use super::support::diagnostic_kinds;
 use super::{Analyse, Analysis, expression, expression_statement_types, expressions};
 use crate::types::{
-    ByteArrayType, BytesType, ContractType, DataLocation, IntegerType, LibraryType, StringType,
-    TupleType, Type,
+    ArrayType, ByteArrayType, BytesType, ContractType, DataLocation, FunctionType,
+    FunctionTypeVisibility, IntegerType, LibraryType, StringType, TupleType, Type,
 };
 
 /// The recovered type of each expression statement in the body of `function`,
@@ -571,4 +572,121 @@ fn test_static_library_call_is_not_partially_applied() {
         .expect_no_diagnostics();
     let typings = statement_types(&analysis, "Test", "__test");
     assert_eq!(typings, vec![Some(Type::Boolean)]);
+}
+
+#[test]
+fn test_public_library_function_member_is_external() {
+    // A public library function runs in the deployed library, so the library
+    // name and a `using` directive reach it externally, with its `calldata`
+    // parameters in `memory`. An internal library function, and the bare name
+    // inside the library, stay internal.
+    let source = r#"
+        pragma solidity *;
+        library L {
+            function f(uint[] calldata a) public pure returns (uint) { return a.length; }
+            function g(uint x) internal pure returns (uint) { return x; }
+            function h(uint x) public pure returns (uint) { return x; }
+            function __probe() internal pure {
+                h;
+            }
+        }
+        contract Test {
+            using L for uint;
+            function __test() internal pure {
+                uint y = 1;
+                L.f;
+                L.g;
+                y.h;
+            }
+        }
+        "#;
+    let analysis = Analysis::of_source(source)
+        .run(Analyse::References)
+        .expect_no_diagnostics();
+
+    let typings = statement_types(&analysis, "Test", "__test");
+    let [
+        Some(Type::Function(f)),
+        Some(Type::Function(g)),
+        Some(Type::Function(h)),
+    ] = typings.as_slice()
+    else {
+        panic!("expected three function types, got {typings:?}");
+    };
+    assert_eq!(f.visibility, FunctionTypeVisibility::External);
+    assert!(matches!(
+        analysis.types().get_type_by_id(f.parameter_types[0]),
+        Type::Array(ArrayType {
+            location: DataLocation::Memory,
+            ..
+        })
+    ));
+    assert_eq!(g.visibility, FunctionTypeVisibility::Internal);
+    assert_eq!(h.visibility, FunctionTypeVisibility::External);
+    assert!(h.partially_applied);
+
+    let typings = statement_types(&analysis, "L", "__probe");
+    assert!(
+        matches!(
+            typings.as_slice(),
+            [Some(Type::Function(FunctionType {
+                visibility: FunctionTypeVisibility::Public,
+                ..
+            }))]
+        ),
+        "expected the bare name to stay public, got {typings:?}",
+    );
+}
+
+#[test]
+fn test_public_library_call_returns_memory() {
+    // The externalized function returns `calldata` values in `memory`.
+    let source = r#"
+        pragma solidity *;
+        library L {
+            function f(uint[] calldata a) public pure returns (uint[] calldata) { return a; }
+        }
+        contract Test {
+            function __test(uint[] memory a) internal pure {
+                L.f(a);
+            }
+        }
+        "#;
+    let analysis = Analysis::of_source(source)
+        .run(Analyse::References)
+        .expect_no_diagnostics();
+
+    let typings = statement_types(&analysis, "Test", "__test");
+    assert!(
+        matches!(
+            typings.as_slice(),
+            [Some(Type::Array(ArrayType {
+                location: DataLocation::Memory,
+                ..
+            }))]
+        ),
+        "expected a memory array, got {typings:?}",
+    );
+}
+
+#[test]
+fn test_public_library_function_does_not_unify_with_an_internal_one() {
+    // An external call and an internal function value have no common type.
+    let source = r#"
+        pragma solidity *;
+        library L {
+            function f(uint x) public pure returns (uint) { return x; }
+        }
+        contract Test {
+            function g(uint x) internal pure returns (uint) { return x; }
+            function __test(bool c) internal pure {
+                (c ? L.f : g)(1);
+            }
+        }
+        "#;
+    let analysis = Analysis::of_source(source).run(Analyse::References);
+    assert_eq!(
+        vec![DiagnosticKind::from(IncompatibleConditionalBranches)],
+        diagnostic_kinds(&analysis.diagnostics)
+    );
 }

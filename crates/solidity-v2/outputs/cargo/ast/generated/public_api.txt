@@ -1839,6 +1839,8 @@ impl slang_solidity_v2_ast::ast::ContractDefinitionStruct
 pub fn slang_solidity_v2_ast::ast::ContractDefinitionStruct::compute_abi(&self) -> core::option::Option<slang_solidity_v2_ast::abi::ContractAbi>
 impl slang_solidity_v2_ast::ast::ContractDefinitionStruct
 pub fn slang_solidity_v2_ast::ast::ContractDefinitionStruct::constructor(&self) -> core::option::Option<slang_solidity_v2_ast::ast::FunctionDefinition>
+pub fn slang_solidity_v2_ast::ast::ContractDefinitionStruct::creation_functions(&self) -> alloc::vec::Vec<slang_solidity_v2_ast::ast::FunctionDefinition>
+pub fn slang_solidity_v2_ast::ast::ContractDefinitionStruct::creation_pointer_targets(&self) -> alloc::vec::Vec<slang_solidity_v2_ast::ast::FunctionDefinition>
 pub fn slang_solidity_v2_ast::ast::ContractDefinitionStruct::direct_bases(&self) -> alloc::vec::Vec<slang_solidity_v2_ast::ast::ContractBase>
 pub fn slang_solidity_v2_ast::ast::ContractDefinitionStruct::errors(&self) -> alloc::vec::Vec<slang_solidity_v2_ast::ast::ErrorDefinition>
 pub fn slang_solidity_v2_ast::ast::ContractDefinitionStruct::events(&self) -> alloc::vec::Vec<slang_solidity_v2_ast::ast::EventDefinition>
@@ -1853,6 +1855,8 @@ pub fn slang_solidity_v2_ast::ast::ContractDefinitionStruct::modifiers(&self) ->
 pub fn slang_solidity_v2_ast::ast::ContractDefinitionStruct::resolve_modifier(&self, &slang_solidity_v2_ast::ast::ModifierInvocation) -> core::option::Option<slang_solidity_v2_ast::ast::FunctionDefinition>
 pub fn slang_solidity_v2_ast::ast::ContractDefinitionStruct::resolve_super(&self, &slang_solidity_v2_ast::ast::FunctionDefinition, &slang_solidity_v2_ast::ast::ContractDefinition) -> core::option::Option<slang_solidity_v2_ast::ast::FunctionDefinition>
 pub fn slang_solidity_v2_ast::ast::ContractDefinitionStruct::resolve_virtual(&self, &slang_solidity_v2_ast::ast::FunctionDefinition) -> core::option::Option<slang_solidity_v2_ast::ast::VirtualTarget>
+pub fn slang_solidity_v2_ast::ast::ContractDefinitionStruct::runtime_functions(&self) -> alloc::vec::Vec<slang_solidity_v2_ast::ast::FunctionDefinition>
+pub fn slang_solidity_v2_ast::ast::ContractDefinitionStruct::runtime_pointer_targets(&self) -> alloc::vec::Vec<slang_solidity_v2_ast::ast::FunctionDefinition>
 pub fn slang_solidity_v2_ast::ast::ContractDefinitionStruct::state_variables(&self) -> alloc::vec::Vec<slang_solidity_v2_ast::ast::StateVariableDefinition>
 pub fn slang_solidity_v2_ast::ast::ContractDefinitionStruct::used_errors(&self) -> alloc::vec::Vec<slang_solidity_v2_ast::ast::ErrorDefinition>
 pub fn slang_solidity_v2_ast::ast::ContractDefinitionStruct::used_events(&self) -> alloc::vec::Vec<slang_solidity_v2_ast::ast::EventDefinition>
@@ -2824,6 +2828,8 @@ impl slang_solidity_v2_ast::ast::LibraryDefinitionStruct
 pub fn slang_solidity_v2_ast::ast::LibraryDefinitionStruct::compute_abi(&self) -> core::option::Option<slang_solidity_v2_ast::abi::ContractAbi>
 impl slang_solidity_v2_ast::ast::LibraryDefinitionStruct
 pub fn slang_solidity_v2_ast::ast::LibraryDefinitionStruct::functions(&self) -> alloc::vec::Vec<slang_solidity_v2_ast::ast::FunctionDefinition>
+pub fn slang_solidity_v2_ast::ast::LibraryDefinitionStruct::runtime_functions(&self) -> alloc::vec::Vec<slang_solidity_v2_ast::ast::FunctionDefinition>
+pub fn slang_solidity_v2_ast::ast::LibraryDefinitionStruct::runtime_pointer_targets(&self) -> alloc::vec::Vec<slang_solidity_v2_ast::ast::FunctionDefinition>
 pub fn slang_solidity_v2_ast::ast::LibraryDefinitionStruct::state_variables(&self) -> alloc::vec::Vec<slang_solidity_v2_ast::ast::StateVariableDefinition>
 pub fn slang_solidity_v2_ast::ast::LibraryDefinitionStruct::used_errors(&self) -> alloc::vec::Vec<slang_solidity_v2_ast::ast::ErrorDefinition>
 pub fn slang_solidity_v2_ast::ast::LibraryDefinitionStruct::used_events(&self) -> alloc::vec::Vec<slang_solidity_v2_ast::ast::EventDefinition>

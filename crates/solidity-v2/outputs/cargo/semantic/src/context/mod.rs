@@ -237,6 +237,40 @@ impl SemanticContext {
         self.contract_data.contract_dependencies()
     }
 
+    /// The functions the given contract's creation code runs, in the order
+    /// they are first reached: the constructor chain, the functions and
+    /// modifiers it calls, and its pointer targets. Taking a function as a
+    /// value does not run it. Empty for a library, an interface or a contract
+    /// that has none.
+    pub fn creation_functions(&self, definition_id: NodeId) -> &[ir::FunctionDefinition] {
+        self.contract_data.creation_functions(definition_id)
+    }
+
+    /// The creation functions a call through an internal function value in
+    /// the given contract's creation code can reach, in the order they become
+    /// reachable. A function that code takes as a value is one once the code
+    /// reaches a pointer call of its signature, matched by signature and not
+    /// by the stored value. Empty for a library, an interface or a contract
+    /// that has none.
+    pub fn creation_pointer_targets(&self, definition_id: NodeId) -> &[ir::FunctionDefinition] {
+        self.contract_data.creation_pointer_targets(definition_id)
+    }
+
+    /// The same as [`Self::creation_functions`] for the given contract's or
+    /// library's deployed code, run from its entry points and public
+    /// constants.
+    pub fn runtime_functions(&self, definition_id: NodeId) -> &[ir::FunctionDefinition] {
+        self.contract_data.runtime_functions(definition_id)
+    }
+
+    /// The same as [`Self::creation_pointer_targets`] for the given
+    /// contract's or library's deployed code. A function the creation code
+    /// takes as a value counts too, since the creation code can store it in a
+    /// pointer the deployed code calls.
+    pub fn runtime_pointer_targets(&self, definition_id: NodeId) -> &[ir::FunctionDefinition] {
+        self.contract_data.runtime_pointer_targets(definition_id)
+    }
+
     /// The errors the given contract's or library's code can revert with,
     /// through `revert E(...)` or a call `E(...)`, from its creation code or
     /// any code its deployed entry points reach, each once, in a stable order.

@@ -206,6 +206,48 @@ impl ContractDefinitionStruct {
             .collect()
     }
 
+    /// The functions this contract's creation code runs: the constructor
+    /// chain, the functions and modifiers it calls, and its pointer targets.
+    pub fn creation_functions(&self) -> Vec<FunctionDefinition> {
+        self.semantic
+            .creation_functions(self.ir_node.id())
+            .iter()
+            .map(|ir_node| create_function_definition(ir_node, &self.semantic))
+            .collect()
+    }
+
+    /// The creation functions a call through an internal function value in
+    /// this contract's creation code can reach, ie. the functions that code
+    /// takes as values with the signature of one of its pointer calls.
+    pub fn creation_pointer_targets(&self) -> Vec<FunctionDefinition> {
+        self.semantic
+            .creation_pointer_targets(self.ir_node.id())
+            .iter()
+            .map(|ir_node| create_function_definition(ir_node, &self.semantic))
+            .collect()
+    }
+
+    /// The functions this contract's deployed code runs: the entry points,
+    /// the functions and modifiers they call, and its pointer targets.
+    pub fn runtime_functions(&self) -> Vec<FunctionDefinition> {
+        self.semantic
+            .runtime_functions(self.ir_node.id())
+            .iter()
+            .map(|ir_node| create_function_definition(ir_node, &self.semantic))
+            .collect()
+    }
+
+    /// The same as `creation_pointer_targets` for this contract's deployed
+    /// code, including the functions the creation code takes as values with
+    /// the signature of a pointer call the deployed code reaches.
+    pub fn runtime_pointer_targets(&self) -> Vec<FunctionDefinition> {
+        self.semantic
+            .runtime_pointer_targets(self.ir_node.id())
+            .iter()
+            .map(|ir_node| create_function_definition(ir_node, &self.semantic))
+            .collect()
+    }
+
     /// The errors this contract's constructor, entry points and function
     /// pointers can revert with, directly or through the code they reach,
     /// wherever they are declared.

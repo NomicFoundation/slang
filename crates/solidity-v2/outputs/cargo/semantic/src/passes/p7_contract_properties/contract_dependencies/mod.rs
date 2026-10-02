@@ -13,6 +13,9 @@
 //!    ([`units`], [`references`]).
 //! 2. For each contract, traverse the unit references reachable from its
 //!    entry points, resolving virtual callables against it ([`dependencies`]).
+//! 3. For each segment, traverse its calls alone to list the functions it
+//!    runs. A function taken as a value joins as a pointer target once the
+//!    traversal reaches a pointer call of its signature ([`dependencies`]).
 
 mod dependencies;
 mod references;
@@ -25,7 +28,15 @@ use crate::types::TypeRegistry;
 pub(super) fn run(binder: &Binder, contract_data: &mut ContractData, types: &TypeRegistry) {
     let units = units::collect(binder);
     let unit_references = references::collect(binder, types, &units);
-    let dependencies = dependencies::build(binder, contract_data, types, &unit_references);
+    let dependencies = dependencies::build(binder, contract_data, types, &units, &unit_references);
     contract_data.set_contract_dependencies(dependencies.creation, dependencies.deployed);
+    contract_data.set_segment_functions(
+        dependencies.creation_functions,
+        dependencies.deployed_functions,
+    );
+    contract_data.set_pointer_targets(
+        dependencies.creation_pointer_targets,
+        dependencies.deployed_pointer_targets,
+    );
     contract_data.set_used_errors_and_events(dependencies.used_errors, dependencies.used_events);
 }

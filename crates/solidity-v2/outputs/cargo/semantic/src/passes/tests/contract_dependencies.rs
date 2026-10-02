@@ -1,5 +1,6 @@
 //! Tests for the per-phase contract bytecode dependency maps and the
-//! merged view derived from them.
+//! merged view derived from them, and for each segment's functions and
+//! pointer targets.
 //!
 //! The last section pins the walk orders where slang records a different
 //! expression than solc for a dependency they both find.
@@ -9,6 +10,7 @@ use slang_solidity_v2_common::diagnostics::kinds::semantic::CyclicBytecodeDepend
 use slang_solidity_v2_common::evm_targets::EvmTarget;
 use slang_solidity_v2_common::nodes::NodeId;
 use slang_solidity_v2_common::versions::LanguageVersion;
+use slang_solidity_v2_ir::ir;
 
 use super::support::{Analyse, Analysis, find_function, only_diagnostic};
 use crate::binder::Definition;
@@ -49,6 +51,54 @@ fn library_id(context: &SemanticContext, name: &str) -> NodeId {
         })
         .expect("library exists")
         .0
+}
+
+/// Names each function after the contract or library declaring it, eg.
+/// `C.run` or `C.constructor`. A free function keeps its bare name.
+fn function_labels(context: &SemanticContext, functions: &[ir::FunctionDefinition]) -> Vec<String> {
+    functions
+        .iter()
+        .map(|function| {
+            let name = match (&function.name, &function.kind) {
+                (Some(name), _) => name.unparse(),
+                (None, ir::FunctionKind::Constructor) => "constructor",
+                (None, ir::FunctionKind::Fallback) => "fallback",
+                (None, ir::FunctionKind::Receive) => "receive",
+                (None, _) => unreachable!("only a constructor, fallback or receive is nameless"),
+            };
+            let owner = context.binder().definitions().values().find_map(|definition| {
+                let (owner, members) = match definition {
+                    Definition::Contract(contract) => {
+                        (&contract.ir_node.name, &contract.ir_node.members)
+                    }
+                    Definition::Library(library) => (&library.ir_node.name, &library.ir_node.members),
+                    _ => return None,
+                };
+                members
+                    .iter()
+                    .any(|member| {
+                        matches!(member, ir::ContractMember::FunctionDefinition(member)
+                            if member.id() == function.id())
+                    })
+                    .then(|| owner.unparse())
+            });
+            match owner {
+                Some(owner) => format!("{owner}.{name}"),
+                None => name.to_owned(),
+            }
+        })
+        .collect()
+}
+
+/// The creation functions, creation pointer targets, runtime functions and
+/// runtime pointer targets of `definition_id`, named by `function_labels`.
+fn segments(context: &SemanticContext, definition_id: NodeId) -> [Vec<String>; 4] {
+    [
+        function_labels(context, context.creation_functions(definition_id)),
+        function_labels(context, context.creation_pointer_targets(definition_id)),
+        function_labels(context, context.runtime_functions(definition_id)),
+        function_labels(context, context.runtime_pointer_targets(definition_id)),
+    ]
 }
 
 #[test]
@@ -848,6 +898,549 @@ fn user_defined_operator_function_is_followed() {
     let b = contract_id(&context, "B");
 
     assert!(context.deployed_bytecode_dependencies()[&a].contains_key(&b));
+}
+
+// The tests below pin each segment's functions and pointer targets. Each
+// expectation lists the creation functions, the creation pointer targets,
+// the runtime functions and the runtime pointer targets.
+
+#[test]
+fn a_pointer_called_in_the_constructor_targets_the_creation_segment() {
+    let source = "
+        pragma solidity *;
+        contract C {
+            uint value;
+            constructor() {
+                function() internal pure returns (uint) l = g;
+                value = l();
+            }
+            function g() internal pure returns (uint) { return 1; }
+        }";
+    let context = build_context(source);
+
+    let c = contract_id(&context, "C");
+    assert_eq!(
+        segments(&context, c),
+        [vec!["C.constructor", "C.g"], vec!["C.g"], vec![], vec![]]
+    );
+}
+
+#[test]
+fn a_function_stored_at_creation_joins_a_runtime_pointer_call() {
+    let source = "
+        pragma solidity *;
+        contract C {
+            function() internal pure returns (uint) p;
+            constructor() { p = g; }
+            function run() public view returns (uint) { return p(); }
+            function g() internal pure returns (uint) { return 1; }
+        }";
+    let context = build_context(source);
+
+    let c = contract_id(&context, "C");
+    assert_eq!(
+        segments(&context, c),
+        [vec!["C.constructor"], vec![], vec!["C.run", "C.g"], vec!["C.g"]]
+    );
+}
+
+#[test]
+fn a_stored_function_without_a_pointer_call_runs_nowhere() {
+    let source = "
+        pragma solidity *;
+        contract C {
+            function() internal pure returns (uint) p;
+            constructor() { p = g; }
+            function run() public pure returns (uint) { return 2; }
+            function g() internal pure returns (uint) { return 1; }
+        }";
+    let context = build_context(source);
+
+    let c = contract_id(&context, "C");
+    assert_eq!(
+        segments(&context, c),
+        [vec!["C.constructor"], vec![], vec!["C.run"], vec![]]
+    );
+}
+
+#[test]
+fn a_pointer_call_of_another_signature_targets_nothing() {
+    let source = "
+        pragma solidity *;
+        contract C {
+            function() internal pure returns (uint) p;
+            function(uint) internal pure returns (uint) q;
+            constructor() { p = g; }
+            function run() public view returns (uint) { return q(1); }
+            function g() internal pure returns (uint) { return 1; }
+        }";
+    let context = build_context(source);
+
+    let c = contract_id(&context, "C");
+    assert_eq!(
+        segments(&context, c),
+        [vec!["C.constructor"], vec![], vec!["C.run"], vec![]]
+    );
+}
+
+#[test]
+fn a_pure_function_is_a_target_of_a_view_pointer() {
+    // Mutability converts, so it is not part of the signature.
+    let source = "
+        pragma solidity *;
+        contract C {
+            function() internal view returns (uint) p;
+            constructor() { p = g; }
+            function run() public view returns (uint) { return p(); }
+            function g() internal pure returns (uint) { return 1; }
+        }";
+    let context = build_context(source);
+
+    let c = contract_id(&context, "C");
+    assert_eq!(
+        segments(&context, c),
+        [vec!["C.constructor"], vec![], vec!["C.run", "C.g"], vec!["C.g"]]
+    );
+}
+
+#[test]
+fn a_memory_parameter_does_not_match_a_calldata_pointer() {
+    let source = "
+        pragma solidity *;
+        contract C {
+            function(uint[] memory) internal pure returns (uint) stored;
+            function(uint[] calldata) internal pure returns (uint) p;
+            constructor() { stored = g; }
+            function run(uint[] calldata x) external view returns (uint) { return p(x); }
+            function g(uint[] memory) internal pure returns (uint) { return 1; }
+        }";
+    let context = build_context(source);
+
+    let c = contract_id(&context, "C");
+    assert_eq!(
+        segments(&context, c),
+        [vec!["C.constructor"], vec![], vec!["C.run"], vec![]]
+    );
+}
+
+#[test]
+fn a_joined_target_lets_a_second_stored_function_join() {
+    // `g` joins through `p()`, and its own `q(1)` then lets `h` join.
+    let source = "
+        pragma solidity *;
+        contract C {
+            function() internal view returns (uint) p;
+            function(uint) internal pure returns (uint) q;
+            constructor() { p = g; q = h; }
+            function run() public view returns (uint) { return p(); }
+            function g() internal view returns (uint) { return q(1); }
+            function h(uint x) internal pure returns (uint) { return x; }
+        }";
+    let context = build_context(source);
+
+    let c = contract_id(&context, "C");
+    assert_eq!(
+        segments(&context, c),
+        [
+            vec!["C.constructor"],
+            vec![],
+            vec!["C.run", "C.g", "C.h"],
+            vec!["C.g", "C.h"]
+        ]
+    );
+}
+
+#[test]
+fn a_function_taken_anywhere_at_creation_joins_a_runtime_pointer_call() {
+    let run = "function run() public view returns (uint) { return p(); }";
+    let g = "function g() internal pure returns (uint) { return 1; }";
+    let cases = [
+        // A state-variable initializer.
+        (
+            format!(
+                "contract C {{
+                    function() internal pure returns (uint) p = g;
+                    {run}
+                    {g}
+                }}"
+            ),
+            vec![],
+            vec!["C.run", "C.g"],
+        ),
+        // A base constructor.
+        (
+            format!(
+                "contract A {{
+                    function() internal pure returns (uint) p;
+                    constructor() {{ p = g; }}
+                    {g}
+                }}
+                contract C is A {{ {run} }}"
+            ),
+            vec!["A.constructor"],
+            vec!["C.run", "A.g"],
+        ),
+        // Inheritance-specifier arguments.
+        (
+            format!(
+                "function g() pure returns (uint) {{ return 1; }}
+                abstract contract A {{
+                    function() internal pure returns (uint) p;
+                    constructor(function() internal pure returns (uint) f) {{ p = f; }}
+                }}
+                contract C is A(g) {{ {run} }}"
+            ),
+            vec!["A.constructor"],
+            vec!["C.run", "g"],
+        ),
+        // Base-constructor arguments of a constructor.
+        (
+            format!(
+                "abstract contract A {{
+                    function() internal pure returns (uint) p;
+                    constructor(function() internal pure returns (uint) f) {{ p = f; }}
+                }}
+                contract C is A {{
+                    constructor() A(g) {{}}
+                    {run}
+                    {g}
+                }}"
+            ),
+            vec!["A.constructor", "C.constructor"],
+            vec!["C.run", "C.g"],
+        ),
+        // A constructor modifier.
+        (
+            format!(
+                "contract C {{
+                    function() internal pure returns (uint) p;
+                    modifier m() {{ p = g; _; }}
+                    constructor() m {{}}
+                    {run}
+                    {g}
+                }}"
+            ),
+            vec!["C.constructor", "C.m"],
+            vec!["C.run", "C.g"],
+        ),
+    ];
+    for (contracts, creation, runtime) in cases {
+        let source = format!("pragma solidity *;\n{contracts}");
+        let context = build_context(&source);
+
+        let c = contract_id(&context, "C");
+        let target = runtime[1..].to_vec();
+        assert_eq!(
+            segments(&context, c),
+            [creation, vec![], runtime, target],
+            "{contracts}"
+        );
+    }
+}
+
+#[test]
+fn an_internal_library_function_stored_at_creation_is_a_runtime_target() {
+    let source = "
+        pragma solidity *;
+        library L {
+            function f() internal pure returns (uint) { return 1; }
+        }
+        contract C {
+            function() internal pure returns (uint) p;
+            constructor() { p = L.f; }
+            function run() public view returns (uint) { return p(); }
+        }";
+    let context = build_context(source);
+
+    let c = contract_id(&context, "C");
+    assert_eq!(
+        segments(&context, c),
+        [vec!["C.constructor"], vec![], vec!["C.run", "L.f"], vec!["L.f"]]
+    );
+}
+
+#[test]
+fn a_virtual_function_stored_by_a_base_targets_the_override() {
+    let source = "
+        pragma solidity *;
+        contract A {
+            function() internal pure returns (uint) p;
+            constructor() { p = g; }
+            function g() internal pure virtual returns (uint) { return 1; }
+        }
+        contract C is A {
+            constructor() {}
+            function run() public view returns (uint) { return p(); }
+            function g() internal pure override returns (uint) { return 2; }
+        }";
+    let context = build_context(source);
+
+    let c = contract_id(&context, "C");
+    assert_eq!(
+        segments(&context, c),
+        [
+            vec!["A.constructor", "C.constructor"],
+            vec![],
+            vec!["C.run", "C.g"],
+            vec!["C.g"]
+        ]
+    );
+}
+
+#[test]
+fn a_conditional_callee_is_a_pointer_call() {
+    // `h`, which the creation code took, joins before `f`, which `run`
+    // takes.
+    let source = "
+        pragma solidity *;
+        contract C {
+            function() internal pure returns (uint) p;
+            constructor() { p = h; }
+            function run(bool c) public view returns (uint) { return (c ? f : p)(); }
+            function f() internal pure returns (uint) { return 1; }
+            function h() internal pure returns (uint) { return 2; }
+        }";
+    let context = build_context(source);
+
+    let c = contract_id(&context, "C");
+    assert_eq!(
+        segments(&context, c),
+        [
+            vec!["C.constructor"],
+            vec![],
+            vec!["C.run", "C.h", "C.f"],
+            vec!["C.h", "C.f"]
+        ]
+    );
+}
+
+#[test]
+fn a_function_taken_without_a_pointer_call_runs_nowhere() {
+    let source = "
+        pragma solidity *;
+        contract C {
+            function() internal pure returns (uint) q;
+            function run() public { q = h; }
+            function h() internal pure returns (uint) { return 2; }
+        }";
+    let context = build_context(source);
+
+    let c = contract_id(&context, "C");
+    assert_eq!(segments(&context, c), [vec![], vec![], vec!["C.run"], vec![]]);
+}
+
+#[test]
+fn a_function_called_directly_is_no_target_without_a_pointer_call() {
+    let source = "
+        pragma solidity *;
+        contract C {
+            function() internal pure returns (uint) p;
+            constructor() { p = g; }
+            function run() public pure returns (uint) { return g(); }
+            function g() internal pure returns (uint) { return 1; }
+        }";
+    let context = build_context(source);
+
+    let c = contract_id(&context, "C");
+    assert_eq!(
+        segments(&context, c),
+        [vec!["C.constructor"], vec![], vec!["C.run", "C.g"], vec![]]
+    );
+}
+
+#[test]
+fn functions_only_unreached_code_uses_run_nowhere() {
+    // `unused` calls `helper` and takes `taken`, but no segment runs it.
+    let source = "
+        pragma solidity *;
+        contract C {
+            function() internal pure returns (uint) p;
+            function run() public view returns (uint) { return p(); }
+            function unused() internal returns (uint) { p = taken; return helper(); }
+            function helper() internal pure returns (uint) { return 1; }
+            function taken() internal pure returns (uint) { return 2; }
+        }";
+    let context = build_context(source);
+
+    let c = contract_id(&context, "C");
+    assert_eq!(segments(&context, c), [vec![], vec![], vec!["C.run"], vec![]]);
+}
+
+#[test]
+fn a_library_pointer_call_targets_its_runtime_segment() {
+    let source = "
+        pragma solidity *;
+        library L {
+            function run() external pure returns (uint) {
+                function() internal pure returns (uint) p = g;
+                return p();
+            }
+            function g() internal pure returns (uint) { return 1; }
+        }";
+    let context = build_context(source);
+
+    let l = library_id(&context, "L");
+    assert_eq!(
+        segments(&context, l),
+        [vec![], vec![], vec!["L.run", "L.g"], vec!["L.g"]]
+    );
+}
+
+#[test]
+fn a_parenthesized_callee_is_a_pointer_call() {
+    let source = "
+        pragma solidity *;
+        contract C {
+            constructor() { (f)(); }
+            function f() internal pure {}
+        }";
+    let context = build_context(source);
+
+    let c = contract_id(&context, "C");
+    assert_eq!(
+        segments(&context, c),
+        [vec!["C.constructor", "C.f"], vec!["C.f"], vec![], vec![]]
+    );
+}
+
+#[test]
+fn a_selector_read_through_the_base_name_takes_the_function() {
+    // `B.f` is a function value even when only its selector is read.
+    let source = "
+        pragma solidity *;
+        contract B {
+            constructor() {}
+            function f() public pure returns (uint) { return 7; }
+        }
+        contract C is B {
+            bytes4 s;
+            function() internal pure returns (uint) p;
+            constructor() { s = B.f.selector; p(); }
+        }";
+    let context = build_context(source);
+
+    let c = contract_id(&context, "C");
+    assert_eq!(
+        segments(&context, c),
+        [
+            vec!["B.constructor", "C.constructor", "B.f"],
+            vec!["B.f"],
+            vec!["B.f"],
+            vec![]
+        ]
+    );
+}
+
+#[test]
+fn an_entry_point_runs_the_overriding_modifier() {
+    let source = "
+        pragma solidity *;
+        contract A {
+            modifier m() virtual { _; }
+            function run() public m {}
+        }
+        contract C is A {
+            modifier m() override { _; }
+        }";
+    let context = build_context(source);
+
+    let c = contract_id(&context, "C");
+    assert_eq!(
+        segments(&context, c),
+        [vec![], vec![], vec!["A.run", "C.m"], vec![]]
+    );
+}
+
+#[test]
+fn super_free_and_operator_calls_run_their_targets() {
+    let source = "
+        pragma solidity *;
+        type Int is int256;
+        function add(Int a, Int) pure returns (Int) { return a; }
+        using {add as +} for Int global;
+        function free() pure returns (uint) { return 1; }
+        contract A {
+            function f() internal pure virtual returns (uint) { return 2; }
+        }
+        contract C is A {
+            function f() internal pure override returns (uint) { return 3; }
+            function run(Int x, Int y) public pure returns (Int) {
+                super.f();
+                free();
+                return x + y;
+            }
+        }";
+    let context = build_context(source);
+
+    let c = contract_id(&context, "C");
+    assert_eq!(
+        segments(&context, c),
+        [vec![], vec![], vec!["C.run", "A.f", "free", "add"], vec![]]
+    );
+}
+
+#[test]
+fn base_constructors_run_most_base_first() {
+    let source = "
+        pragma solidity *;
+        contract A { constructor() {} }
+        contract B is A { constructor() {} }
+        contract C is B { constructor() {} }";
+    let context = build_context(source);
+
+    let c = contract_id(&context, "C");
+    assert_eq!(
+        segments(&context, c),
+        [
+            vec!["A.constructor", "B.constructor", "C.constructor"],
+            vec![],
+            vec![],
+            vec![]
+        ]
+    );
+}
+
+#[test]
+fn a_parenthesized_public_library_call_is_no_pointer_call() {
+    // `L.f` and `y.f` are external calls into the deployed library, so the
+    // stored `h` never runs.
+    let source = "
+        pragma solidity *;
+        library L {
+            function f(uint x) public pure returns (uint) { return x; }
+        }
+        contract C {
+            using L for uint;
+            function(uint) internal pure returns (uint) p;
+            constructor() { p = h; }
+            function run(uint y) public view returns (uint) { return (L.f)(1) + (y.f)(); }
+            function h(uint x) internal pure returns (uint) { return x; }
+        }";
+    let context = build_context(source);
+
+    let c = contract_id(&context, "C");
+    assert_eq!(
+        segments(&context, c),
+        [vec!["C.constructor"], vec![], vec!["C.run"], vec![]]
+    );
+}
+
+#[test]
+fn a_parenthesized_public_function_in_its_library_is_a_pointer_call() {
+    // Inside the library, the bare name is the function itself.
+    let source = "
+        pragma solidity *;
+        library L {
+            function g(uint x) public pure returns (uint) { return x; }
+            function h(uint x) external pure returns (uint) { return (g)(x); }
+        }";
+    let context = build_context(source);
+
+    let l = library_id(&context, "L");
+    assert_eq!(
+        segments(&context, l),
+        [vec![], vec![], vec!["L.g", "L.h"], vec!["L.g"]]
+    );
 }
 
 // The tests below pin the walk orders that make slang record a different

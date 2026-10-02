@@ -13,6 +13,7 @@ mod members;
 mod meta_type;
 mod node_location;
 mod number_literals;
+mod segment_functions;
 mod typing;
 mod virtual_resolution;
 mod visitor;

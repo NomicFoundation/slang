@@ -833,6 +833,7 @@ impl Pass<'_> {
     /// operand types as `operand_typing`:
     /// - reference types with an "inherited" data location take the operand's
     ///   location;
+    /// - public and external library functions take their externalized type;
     /// - functions attached via `using for` bind the receiver as their first
     ///   argument, producing a partially applied function;
     /// - function declarations that are not callable through the operand's
@@ -843,6 +844,12 @@ impl Pass<'_> {
         type_id: TypeId,
         operand_typing: &Typing,
     ) -> TypeId {
+        // A public or external library function runs in the deployed library,
+        // so reached through the library name or a `using` directive it is
+        // called externally.
+        let type_id = self
+            .externalized_library_function_type(type_id)
+            .unwrap_or(type_id);
         let type_ = self.types.get_type_by_id(type_id);
 
         if type_.is_inherited_location() {
@@ -878,6 +885,30 @@ impl Pass<'_> {
             }
         }
         type_id
+    }
+
+    /// The externalized type of a public or external library function, when
+    /// `type_id` is its type.
+    fn externalized_library_function_type(&self, type_id: TypeId) -> Option<TypeId> {
+        let Type::Function(FunctionType {
+            definition_id: Some(definition_id),
+            ..
+        }) = self.types.get_type_by_id(type_id)
+        else {
+            return None;
+        };
+        let enclosing_definition_id = self.binder.enclosing_definition_node_id(*definition_id)?;
+        if !matches!(
+            self.binder.find_definition_by_id(enclosing_definition_id),
+            Some(Definition::Library(_))
+        ) {
+            return None;
+        }
+        // Only a public or external function has an externalized type.
+        match self.binder.find_definition_by_id(*definition_id) {
+            Some(Definition::Function(function)) => function.externalized_type_id,
+            _ => None,
+        }
     }
 
     /// Returns the user meta type of a function's definition when reaching the

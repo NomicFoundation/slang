@@ -55,6 +55,16 @@ pub(crate) struct ContractData {
     creation_bytecode_dependencies: SortedMap<NodeId, SortedMap<NodeId, ContractReference>>,
     /// The same for the deployed code.
     deployed_bytecode_dependencies: SortedMap<NodeId, SortedMap<NodeId, ContractReference>>,
+    /// For each contract, the functions its creation code runs, in the order
+    /// they are first reached.
+    creation_functions: SortedMap<NodeId, Vec<ir::FunctionDefinition>>,
+    /// The same for each contract's and library's deployed code.
+    runtime_functions: SortedMap<NodeId, Vec<ir::FunctionDefinition>>,
+    /// For each contract, the creation functions a call through a function
+    /// value can reach, in the order they become reachable.
+    creation_pointer_targets: SortedMap<NodeId, Vec<ir::FunctionDefinition>>,
+    /// The same for each contract's and library's deployed code.
+    runtime_pointer_targets: SortedMap<NodeId, Vec<ir::FunctionDefinition>>,
     /// For each contract and library, the errors its code can revert with,
     /// each once, in a stable order.
     used_errors: SortedMap<NodeId, Vec<ir::ErrorDefinition>>,
@@ -72,6 +82,10 @@ impl ContractData {
             linearisations: data,
             creation_bytecode_dependencies: SortedMap::default(),
             deployed_bytecode_dependencies: SortedMap::default(),
+            creation_functions: SortedMap::default(),
+            runtime_functions: SortedMap::default(),
+            creation_pointer_targets: SortedMap::default(),
+            runtime_pointer_targets: SortedMap::default(),
             used_errors: SortedMap::default(),
             used_events: SortedMap::default(),
         }
@@ -86,6 +100,24 @@ impl ContractData {
         self.deployed_bytecode_dependencies = deployed;
     }
 
+    pub(crate) fn set_segment_functions(
+        &mut self,
+        creation: SortedMap<NodeId, Vec<ir::FunctionDefinition>>,
+        runtime: SortedMap<NodeId, Vec<ir::FunctionDefinition>>,
+    ) {
+        self.creation_functions = creation;
+        self.runtime_functions = runtime;
+    }
+
+    pub(crate) fn set_pointer_targets(
+        &mut self,
+        creation: SortedMap<NodeId, Vec<ir::FunctionDefinition>>,
+        runtime: SortedMap<NodeId, Vec<ir::FunctionDefinition>>,
+    ) {
+        self.creation_pointer_targets = creation;
+        self.runtime_pointer_targets = runtime;
+    }
+
     pub(crate) fn set_used_errors_and_events(
         &mut self,
         errors: SortedMap<NodeId, Vec<ir::ErrorDefinition>>,
@@ -93,6 +125,33 @@ impl ContractData {
     ) {
         self.used_errors = errors;
         self.used_events = events;
+    }
+
+    pub(crate) fn creation_functions(&self, definition_id: NodeId) -> &[ir::FunctionDefinition] {
+        self.creation_functions
+            .get(&definition_id)
+            .map_or(&[], Vec::as_slice)
+    }
+
+    pub(crate) fn runtime_functions(&self, definition_id: NodeId) -> &[ir::FunctionDefinition] {
+        self.runtime_functions
+            .get(&definition_id)
+            .map_or(&[], Vec::as_slice)
+    }
+
+    pub(crate) fn creation_pointer_targets(
+        &self,
+        definition_id: NodeId,
+    ) -> &[ir::FunctionDefinition] {
+        self.creation_pointer_targets
+            .get(&definition_id)
+            .map_or(&[], Vec::as_slice)
+    }
+
+    pub(crate) fn runtime_pointer_targets(&self, definition_id: NodeId) -> &[ir::FunctionDefinition] {
+        self.runtime_pointer_targets
+            .get(&definition_id)
+            .map_or(&[], Vec::as_slice)
     }
 
     pub(crate) fn used_errors(&self, definition_id: NodeId) -> &[ir::ErrorDefinition] {
