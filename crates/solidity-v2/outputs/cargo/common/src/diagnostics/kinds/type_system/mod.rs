@@ -5,6 +5,7 @@ mod array_length_too_large;
 mod array_length_zero;
 mod cannot_call_via_contract_type_name;
 mod constant_arithmetic_error;
+mod contract_too_large_for_storage;
 mod explicit_conversion_not_allowed;
 mod expression_not_a_value;
 mod expression_not_an_lvalue;
@@ -21,6 +22,7 @@ mod receive_function_parameters;
 mod storage_layout_base_non_integer;
 mod storage_layout_base_not_constant;
 mod storage_layout_base_out_of_range;
+mod storage_layout_base_past_end;
 mod type_too_large_for_storage;
 mod write_to_constant;
 
@@ -31,6 +33,7 @@ pub use array_length_too_large::ArrayLengthTooLarge;
 pub use array_length_zero::ArrayLengthZero;
 pub use cannot_call_via_contract_type_name::CannotCallViaContractTypeName;
 pub use constant_arithmetic_error::ConstantArithmeticError;
+pub use contract_too_large_for_storage::ContractTooLargeForStorage;
 pub use explicit_conversion_not_allowed::ExplicitConversionNotAllowed;
 pub use expression_not_a_value::{ExpressionNotAValue, NotAValueKind};
 pub use expression_not_an_lvalue::ExpressionNotAnLValue;
@@ -48,6 +51,7 @@ use serde::Serialize;
 pub use storage_layout_base_non_integer::StorageLayoutBaseNonInteger;
 pub use storage_layout_base_not_constant::StorageLayoutBaseNotConstant;
 pub use storage_layout_base_out_of_range::StorageLayoutBaseOutOfRange;
+pub use storage_layout_base_past_end::StorageLayoutBasePastEnd;
 pub use type_too_large_for_storage::TypeTooLargeForStorage;
 pub use write_to_constant::WriteToConstant;
 
@@ -96,8 +100,13 @@ define_diagnostic_kind! {
         /// A storage layout base slot expression evaluates to a value outside
         /// the range of `uint256`.
         StorageLayoutBaseOutOfRange(StorageLayoutBaseOutOfRange),
+        /// A contract's state variables, laid out from its storage layout base
+        /// slot, extend past the end of storage.
+        StorageLayoutBasePastEnd(StorageLayoutBasePastEnd),
         /// A state variable stores a type that extends past the end of storage.
         TypeTooLargeForStorage(TypeTooLargeForStorage),
+        /// A contract's state variables extend past the end of storage.
+        ContractTooLargeForStorage(ContractTooLargeForStorage),
         /// A function is called through a contract/interface type name (eg.
         /// `C.f()`) rather than through an instance.
         CannotCallViaContractTypeName(CannotCallViaContractTypeName),

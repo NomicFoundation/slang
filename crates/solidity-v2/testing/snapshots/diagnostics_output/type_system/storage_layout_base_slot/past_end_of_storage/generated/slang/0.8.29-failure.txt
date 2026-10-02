@@ -1,0 +1,11 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 1
+
+[type-system/storage-layout-base-past-end] Error: Contract extends past the end of storage from this base slot.
+   ╭─[input.sol:5:22]
+   │
+ 5 │ contract C layout at 1 {
+   │                      ┬  
+   │                      ╰── Error occurred here.
+───╯
