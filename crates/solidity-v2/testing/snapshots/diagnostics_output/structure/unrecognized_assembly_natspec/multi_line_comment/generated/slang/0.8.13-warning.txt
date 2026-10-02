@@ -1,0 +1,30 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 3
+
+[structure/unrecognized-assembly-natspec] Warning: The only NatSpec comment allowed on an assembly block is '/// @solidity memory-safe-assembly', on a single line, which marks it as memory safe.
+   ╭─[input.sol:7:9]
+   │
+ 7 │         /** @solidity memory-safe-assembly */
+   │         ──────────────────┬──────────────────  
+   │                           ╰──────────────────── Warning occurred here.
+───╯
+
+[structure/unrecognized-assembly-natspec] Warning: The only NatSpec comment allowed on an assembly block is '/// @solidity memory-safe-assembly', on a single line, which marks it as memory safe.
+    ╭─[input.sol:10:9]
+    │
+ 10 │ ╭─▶         /**
+    ┆ ┆   
+ 12 │ ├─▶          */
+    │ │                 
+    │ ╰───────────────── Warning occurred here.
+────╯
+
+[structure/unrecognized-assembly-natspec] Warning: The only NatSpec comment allowed on an assembly block is '/// @solidity memory-safe-assembly', on a single line, which marks it as memory safe.
+    ╭─[input.sol:15:9]
+    │
+ 15 │ ╭─▶         /// @solidity memory-safe-assembly
+ 16 │ ├─▶         ///
+    │ │                 
+    │ ╰───────────────── Warning occurred here.
+────╯
