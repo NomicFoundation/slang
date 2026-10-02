@@ -43,8 +43,8 @@ pub enum StorageTypeKind {
     /// A dynamic array: its slot holds the length, and the elements start at
     /// the slot's hash.
     DynamicArray { element: TypeId },
-    /// A fixed-size array, with its elements stored in place.
-    FixedSizeArray { element: TypeId },
+    /// A fixed-size array of `length` elements, stored in place.
+    FixedSizeArray { element: TypeId, length: U256 },
     /// A mapping: its slot is empty, each value is at the hash of its key and
     /// the slot.
     Mapping { key: TypeId, value: TypeId },
@@ -55,10 +55,31 @@ pub enum StorageTypeKind {
 /// A struct member, and its position relative to the start of the struct.
 #[derive(Clone, Debug, Eq, PartialEq)]
 pub struct StorageMember {
-    pub node_id: NodeId,
-    pub name: String,
-    pub type_id: TypeId,
-    pub position: StoragePosition,
+    pub(crate) node_id: NodeId,
+    pub(crate) name: String,
+    pub(crate) type_id: TypeId,
+    pub(crate) position: StoragePosition,
+}
+
+impl StorageMember {
+    pub fn node_id(&self) -> NodeId {
+        self.node_id
+    }
+
+    /// The member's name.
+    pub fn name(&self) -> &str {
+        &self.name
+    }
+
+    /// The member's type, as it is in storage.
+    pub fn type_id(&self) -> TypeId {
+        self.type_id
+    }
+
+    /// Where the member starts, relative to the start of the struct.
+    pub fn position(&self) -> StoragePosition {
+        self.position
+    }
 }
 
 /// Assigns each state variable or struct member its storage position in

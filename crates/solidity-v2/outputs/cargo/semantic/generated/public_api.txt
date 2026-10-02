@@ -297,6 +297,7 @@ pub slang_solidity_v2_semantic::context::StorageTypeKind::DynamicArray
 pub slang_solidity_v2_semantic::context::StorageTypeKind::DynamicArray::element: slang_solidity_v2_semantic::types::TypeId
 pub slang_solidity_v2_semantic::context::StorageTypeKind::FixedSizeArray
 pub slang_solidity_v2_semantic::context::StorageTypeKind::FixedSizeArray::element: slang_solidity_v2_semantic::types::TypeId
+pub slang_solidity_v2_semantic::context::StorageTypeKind::FixedSizeArray::length: ruint::aliases::U256
 pub slang_solidity_v2_semantic::context::StorageTypeKind::Mapping
 pub slang_solidity_v2_semantic::context::StorageTypeKind::Mapping::key: slang_solidity_v2_semantic::types::TypeId
 pub slang_solidity_v2_semantic::context::StorageTypeKind::Mapping::value: slang_solidity_v2_semantic::types::TypeId
@@ -358,10 +359,11 @@ impl slang_solidity_v2_semantic::context::StorageLayoutBuilder
 pub fn slang_solidity_v2_semantic::context::StorageLayoutBuilder::allocate(&mut self, slang_solidity_v2_semantic::context::StorageSize) -> core::option::Option<slang_solidity_v2_semantic::context::StoragePosition>
 pub fn slang_solidity_v2_semantic::context::StorageLayoutBuilder::new(ruint::aliases::U256) -> Self
 pub struct slang_solidity_v2_semantic::context::StorageMember
-pub slang_solidity_v2_semantic::context::StorageMember::name: alloc::string::String
-pub slang_solidity_v2_semantic::context::StorageMember::node_id: slang_solidity_v2_common::nodes::NodeId
-pub slang_solidity_v2_semantic::context::StorageMember::position: slang_solidity_v2_semantic::context::StoragePosition
-pub slang_solidity_v2_semantic::context::StorageMember::type_id: slang_solidity_v2_semantic::types::TypeId
+impl slang_solidity_v2_semantic::context::StorageMember
+pub fn slang_solidity_v2_semantic::context::StorageMember::name(&self) -> &str
+pub fn slang_solidity_v2_semantic::context::StorageMember::node_id(&self) -> slang_solidity_v2_common::nodes::NodeId
+pub fn slang_solidity_v2_semantic::context::StorageMember::position(&self) -> slang_solidity_v2_semantic::context::StoragePosition
+pub fn slang_solidity_v2_semantic::context::StorageMember::type_id(&self) -> slang_solidity_v2_semantic::types::TypeId
 impl core::clone::Clone for slang_solidity_v2_semantic::context::StorageMember
 pub fn slang_solidity_v2_semantic::context::StorageMember::clone(&self) -> slang_solidity_v2_semantic::context::StorageMember
 impl core::cmp::Eq for slang_solidity_v2_semantic::context::StorageMember
