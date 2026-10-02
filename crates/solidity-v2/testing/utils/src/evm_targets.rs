@@ -1,19 +1,5 @@
 use inflector::Inflector;
-use infra_utils::solc::default_evm_version;
-use semver::Version;
 use slang_solidity_v2_common::evm_targets::EvmTarget;
-use slang_solidity_v2_common::versions::LanguageVersion;
-
-/// The EVM target `solc` of the given language version defaults to when no
-/// explicit target is specified.
-pub fn default_evm_target(language_version: LanguageVersion) -> EvmTarget {
-    let version: Version = language_version.into();
-    let name = default_evm_version(&version);
-
-    parse_evm_target_name(name).unwrap_or_else(|| {
-        panic!("'{name}' is the default EVM version of {version}, but is not a known EVM target.")
-    })
-}
 
 /// Maps an `evmVersion` name as written by `solc` (camelCase, e.g.
 /// `tangerineWhistle`) to the corresponding [`EvmTarget`], whose own `Display`
@@ -27,6 +13,9 @@ pub fn parse_evm_target_name(name: &str) -> Option<EvmTarget> {
 
 #[cfg(test)]
 mod tests {
+    use infra_utils::solc::default_evm_version;
+    use slang_solidity_v2_common::versions::LanguageVersion;
+
     use super::*;
 
     #[test]
@@ -43,9 +32,13 @@ mod tests {
     }
 
     #[test]
-    fn every_supported_version_has_a_default_target() {
+    fn default_evm_targets_match_solc() {
         for &version in LanguageVersion::ALL {
-            assert!(matches!(default_evm_target(version), _), "{version}");
+            assert_eq!(
+                Some(version.default_evm_target()),
+                parse_evm_target_name(default_evm_version(&version.into())),
+                "{version}"
+            );
         }
     }
 }

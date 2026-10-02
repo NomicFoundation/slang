@@ -6,7 +6,6 @@ use slang_solidity_v2_common::diagnostics::DiagnosticSeverity;
 use slang_solidity_v2_common::files::FileId;
 use slang_solidity_v2_common::versions::LanguageVersion;
 use solidity_v2_testing_utils::compilation;
-use solidity_v2_testing_utils::evm_targets::default_evm_target;
 use solidity_v2_testing_utils::reporting::diagnostic;
 
 use crate::evm_target::{FUTURE_EVM_VERSION, ParsedTarget, resolve_evm_target};
@@ -48,7 +47,7 @@ fn run_test_case(test_case: &IsolTestCase, language_version: LanguageVersion) ->
 
     let resolved = resolve_evm_target(
         test_case.evm_version.as_deref(),
-        default_evm_target(language_version),
+        language_version.default_evm_target(),
     )?;
 
     let evm_target = match resolved {

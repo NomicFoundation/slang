@@ -4,7 +4,6 @@ use infra_utils::codegen::CodegenFileSystem;
 use infra_utils::paths::PathExtensions;
 use slang_solidity_v2_parser::Parser as V2Parser;
 use solidity_v2_testing_utils::cst_renderer::render;
-use solidity_v2_testing_utils::evm_targets::default_evm_target;
 
 use crate::snapshots::{self, SnapshotOutcome, SnapshotStatus, TestCase, TestConfig};
 
@@ -30,7 +29,7 @@ pub fn run(parser_name: &str, test_name: &str) -> Result<()> {
             "Not comparing with 'solc' in 'cst_output' tests"
         );
         ensure!(
-            case.evm_target == default_evm_target(case.language_version),
+            case.evm_target == case.language_version.default_evm_target(),
             "Parsing doesn't currently depend on the EVM target, so 'cst_output' tests cannot pin it"
         );
     }

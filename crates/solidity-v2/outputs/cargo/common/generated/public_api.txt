@@ -5664,6 +5664,8 @@ impl slang_solidity_v2_common::versions::LanguageVersion
 pub const slang_solidity_v2_common::versions::LanguageVersion::ALL: &'static [slang_solidity_v2_common::versions::LanguageVersion; 38]
 pub const slang_solidity_v2_common::versions::LanguageVersion::EARLIEST: Self
 pub const slang_solidity_v2_common::versions::LanguageVersion::LATEST: Self
+impl slang_solidity_v2_common::versions::LanguageVersion
+pub const fn slang_solidity_v2_common::versions::LanguageVersion::default_evm_target(self) -> slang_solidity_v2_common::evm_targets::EvmTarget
 impl core::clone::Clone for slang_solidity_v2_common::versions::LanguageVersion
 pub fn slang_solidity_v2_common::versions::LanguageVersion::clone(&self) -> slang_solidity_v2_common::versions::LanguageVersion
 impl core::cmp::Eq for slang_solidity_v2_common::versions::LanguageVersion

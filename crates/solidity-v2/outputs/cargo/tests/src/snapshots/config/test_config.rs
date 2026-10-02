@@ -4,7 +4,6 @@ use anyhow::{Context, Result, ensure};
 use infra_utils::paths::PathExtensions;
 use slang_solidity_v2_common::evm_targets::EvmTarget;
 use slang_solidity_v2_common::versions::{LanguageVersion, LanguageVersionSpecifier};
-use solidity_v2_testing_utils::evm_targets::default_evm_target;
 
 use crate::snapshots::config::TestCase;
 use crate::snapshots::config::raw::test_config::RawTestConfig;
@@ -90,7 +89,7 @@ impl TestConfig {
                 language_version,
                 evm_target: self
                     .override_evm_target
-                    .unwrap_or_else(|| default_evm_target(language_version)),
+                    .unwrap_or_else(|| language_version.default_evm_target()),
                 expected_solc_divergence: self.expected_solc_divergence.as_ref().is_some_and(
                     |entries| {
                         entries
