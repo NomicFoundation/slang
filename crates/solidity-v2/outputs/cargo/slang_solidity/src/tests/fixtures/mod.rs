@@ -1,6 +1,6 @@
 use std::sync::Arc;
 
-use crate::ast::{Definition, InterfaceDefinition, LibraryDefinition};
+use crate::ast::{Definition, InterfaceDefinition, LibraryDefinition, StructDefinition};
 use crate::compilation::{CompilationUnit, FileId};
 use crate::tests::support;
 
@@ -72,6 +72,16 @@ pub(super) fn find_library(unit: &CompilationUnit, name: &str) -> LibraryDefinit
         })
         .find(|library| library.name().name() == name)
         .unwrap_or_else(|| panic!("library `{name}` is declared"))
+}
+
+pub(super) fn find_struct(unit: &CompilationUnit, name: &str) -> StructDefinition {
+    unit.all_definitions()
+        .filter_map(|definition| match definition {
+            Definition::Struct(struct_definition) => Some(struct_definition),
+            _ => None,
+        })
+        .find(|struct_definition| struct_definition.name().name() == name)
+        .unwrap_or_else(|| panic!("struct `{name}` is declared"))
 }
 
 // Fixture build tests
