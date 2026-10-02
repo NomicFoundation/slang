@@ -1669,6 +1669,11 @@ mod source_unit {
     }
 
     #[test]
+    fn invalid_block_comment_close() -> Result<()> {
+        run("SourceUnit", "invalid_block_comment_close")
+    }
+
+    #[test]
     fn layout_at() -> Result<()> {
         run("SourceUnit", "layout_at")
     }
@@ -1828,8 +1833,18 @@ mod source_unit {
     }
 
     #[test]
+    fn unterminated_block_comment() -> Result<()> {
+        run("SourceUnit", "unterminated_block_comment")
+    }
+
+    #[test]
     fn unterminated_double_quote_string() -> Result<()> {
         run("SourceUnit", "unterminated_double_quote_string")
+    }
+
+    #[test]
+    fn unterminated_natspec_block_comment() -> Result<()> {
+        run("SourceUnit", "unterminated_natspec_block_comment")
     }
 
     #[test]
