@@ -83,6 +83,14 @@ mod resolution {
         }
 
         #[test]
+        fn overloaded_call_invalid_utf8_string_literal() -> Result<()> {
+            run(
+                "resolution/ambiguous_reference",
+                "overloaded_call_invalid_utf8_string_literal",
+            )
+        }
+
+        #[test]
         fn overloaded_call_named_arguments() -> Result<()> {
             run(
                 "resolution/ambiguous_reference",
@@ -5937,6 +5945,26 @@ mod type_system {
         #[test]
         fn library() -> Result<()> {
             run("type_system/invalid_base", "library")
+        }
+    }
+
+    mod invalid_utf_8_string_literal {
+        use super::*;
+
+        #[test]
+        fn escaped_string_to_string() -> Result<()> {
+            run(
+                "type_system/invalid_utf8_string_literal",
+                "escaped_string_to_string",
+            )
+        }
+
+        #[test]
+        fn hex_string_to_string() -> Result<()> {
+            run(
+                "type_system/invalid_utf8_string_literal",
+                "hex_string_to_string",
+            )
         }
     }
 

@@ -14,6 +14,7 @@ mod fallback_function_signature;
 mod incompatible_conditional_branches;
 mod incompatible_constant_operator;
 mod invalid_base;
+mod invalid_utf8_string_literal;
 mod literal_too_large;
 mod partially_applied_function_used_as_value;
 mod receive_function_parameters;
@@ -38,6 +39,7 @@ pub use fallback_function_signature::FallbackFunctionSignature;
 pub use incompatible_conditional_branches::IncompatibleConditionalBranches;
 pub use incompatible_constant_operator::IncompatibleConstantOperator;
 pub use invalid_base::InvalidBase;
+pub use invalid_utf8_string_literal::InvalidUtf8StringLiteral;
 pub use literal_too_large::LiteralTooLarge;
 pub use partially_applied_function_used_as_value::PartiallyAppliedFunctionUsedAsValue;
 pub use receive_function_parameters::ReceiveFunctionParameters;
@@ -114,5 +116,7 @@ define_diagnostic_kind! {
         /// An explicit type conversion is not allowed from the type of its
         /// argument to the target type.
         ExplicitConversionNotAllowed(ExplicitConversionNotAllowed),
+        /// A string literal that is not valid UTF-8 is converted to `string`.
+        InvalidUtf8StringLiteral(InvalidUtf8StringLiteral),
     }
 }
