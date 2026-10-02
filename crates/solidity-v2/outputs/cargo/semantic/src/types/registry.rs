@@ -29,6 +29,10 @@ pub struct TypeRegistry {
     // member-access typings (p5); keep them only here. A bare reference to a
     // `public` function should type as internal, as in solc.
     externalized_function_types: Map<TypeId, TypeId>,
+    // Each `Inherited`-location struct member type, mapped to its `Storage` form,
+    // so a storage layout names one type id whether it is reached through a
+    // struct member or a state variable.
+    storage_relocations: Map<TypeId, TypeId>,
     // Some implicit conversion rules are version dependant. The version is
     // threaded in here so we can gate those rules on it.
     language_version: LanguageVersion,
@@ -105,6 +109,7 @@ impl TypeRegistry {
             types,
             super_types: Map::default(),
             externalized_function_types: Map::default(),
+            storage_relocations: Map::default(),
             language_version,
 
             address_type_id: TypeId(address_type),
@@ -640,6 +645,33 @@ impl TypeRegistry {
     /// for it. `None` means it was never externalized, not that it has no such form.
     pub fn externalized_function_type_id(&self, type_id: TypeId) -> Option<TypeId> {
         self.externalized_function_types.get(&type_id).copied()
+    }
+
+    // Registers the `Storage` form of a struct member type reachable from a state
+    // variable, remembering the pair for `storage_type_id`, and returns it. A type
+    // without an `Inherited` location is its own storage form.
+    pub(crate) fn register_storage_relocation(&mut self, type_id: TypeId) -> TypeId {
+        if !self.get_type_by_id(type_id).is_inherited_location() {
+            return type_id;
+        }
+        let storage_type_id =
+            self.register_type_id_with_data_location(type_id, DataLocation::Storage);
+        self.storage_relocations.insert(type_id, storage_type_id);
+        storage_type_id
+    }
+
+    /// The type a struct member of type `type_id` has in storage: its `Storage`
+    /// form when it is an `Inherited`-location type, else `type_id` itself.
+    /// Only members of structs reachable from a state variable have one.
+    pub(crate) fn storage_type_id(&self, type_id: TypeId) -> TypeId {
+        if let Some(storage_type_id) = self.storage_relocations.get(&type_id) {
+            return *storage_type_id;
+        }
+        debug_assert!(
+            !self.get_type_by_id(type_id).is_inherited_location(),
+            "struct member type {type_id:?} is not reachable from a state variable",
+        );
+        type_id
     }
 
     // Marks a function type as partially applied:

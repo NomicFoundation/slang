@@ -7,9 +7,13 @@ use std::sync::Arc;
 
 use ruint::aliases::U256;
 use sha3::{Digest, Keccak256};
+use slang_solidity_v2_common::collections::SortedMap;
 use slang_solidity_v2_common::files::FileId;
 use slang_solidity_v2_common::nodes::NodeId;
 use slang_solidity_v2_semantic::context::SemanticContext;
+pub use slang_solidity_v2_semantic::context::{
+    StorageMember, StoragePosition, StorageSize, StorageTypeKind,
+};
 use slang_solidity_v2_semantic::types::{FunctionTypeMutability, TypeId};
 
 pub use self::types::{AbiType, NotAnAbiType, TupleComponent};
@@ -21,8 +25,8 @@ pub struct ContractAbi {
     name: String,
     file_id: FileId,
     entries: Vec<AbiEntry>,
-    storage_layout: Vec<StorageItem>,
-    transient_storage_layout: Vec<StorageItem>,
+    storage_layout: StorageLayout,
+    transient_storage_layout: StorageLayout,
 }
 
 impl ContractAbi {
@@ -32,8 +36,8 @@ impl ContractAbi {
         name: String,
         file_id: FileId,
         mut entries: Vec<AbiEntry>,
-        storage_layout: Vec<StorageItem>,
-        transient_storage_layout: Vec<StorageItem>,
+        storage_layout: StorageLayout,
+        transient_storage_layout: StorageLayout,
     ) -> Self {
         entries.sort();
         Self {
@@ -62,11 +66,11 @@ impl ContractAbi {
         &self.entries
     }
 
-    pub fn storage_layout(&self) -> &[StorageItem] {
+    pub fn storage_layout(&self) -> &StorageLayout {
         &self.storage_layout
     }
 
-    pub fn transient_storage_layout(&self) -> &[StorageItem] {
+    pub fn transient_storage_layout(&self) -> &StorageLayout {
         &self.transient_storage_layout
     }
 }
@@ -366,13 +370,53 @@ impl fmt::Debug for AbiParameter {
     }
 }
 
+/// Which storage a layout describes: the persistent storage, or the transient
+/// storage that is cleared at the end of each transaction.
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+pub enum StorageKind {
+    Persistent,
+    Transient,
+}
+
+/// The state variables of one kind of storage, and the types they are laid
+/// out with.
+#[derive(Clone, Debug, Default, Eq, PartialEq)]
+pub struct StorageLayout {
+    items: Vec<StorageItem>,
+    types: SortedMap<TypeId, StorageType>,
+}
+
+impl StorageLayout {
+    pub(crate) fn new(items: Vec<StorageItem>, types: SortedMap<TypeId, StorageType>) -> Self {
+        Self { items, types }
+    }
+
+    /// The state variables, in the order they are laid out.
+    pub fn items(&self) -> &[StorageItem] {
+        &self.items
+    }
+
+    /// Every type the items refer to, directly or through another type,
+    /// ordered by [`TypeId`].
+    pub fn types(&self) -> impl ExactSizeIterator<Item = &StorageType> {
+        self.types.values()
+    }
+
+    /// The entry of [`Self::types`] for `type_id`, as named by a
+    /// [`StorageItem`] or a [`StorageTypeKind`] of this layout.
+    pub fn storage_type(&self, type_id: TypeId) -> Option<&StorageType> {
+        self.types.get(&type_id)
+    }
+}
+
+/// A state variable, and where it is stored.
 #[derive(Clone, Debug, Eq, PartialEq)]
 pub struct StorageItem {
     node_id: NodeId,
-    label: String,
+    name: String,
     slot: U256,
     offset: usize,
-    type_name: String,
+    type_id: TypeId,
 }
 
 impl StorageItem {
@@ -380,8 +424,9 @@ impl StorageItem {
         self.node_id
     }
 
-    pub fn label(&self) -> &str {
-        &self.label
+    /// The state variable's name.
+    pub fn name(&self) -> &str {
+        &self.name
     }
 
     pub fn slot(&self) -> U256 {
@@ -392,8 +437,41 @@ impl StorageItem {
         self.offset
     }
 
-    pub fn type_name(&self) -> &str {
-        &self.type_name
+    /// The key of the item's type in [`StorageLayout::types`], which also
+    /// holds its name.
+    pub fn type_id(&self) -> TypeId {
+        self.type_id
+    }
+}
+
+/// How a type is laid out in storage.
+#[derive(Clone, Debug, Eq, PartialEq)]
+pub struct StorageType {
+    type_id: TypeId,
+    label: String,
+    size: StorageSize,
+    kind: StorageTypeKind,
+}
+
+impl StorageType {
+    pub fn type_id(&self) -> TypeId {
+        self.type_id
+    }
+
+    /// The type's name as a storage layout spells it, e.g. `struct C.S` or
+    /// `mapping(address => uint256)`.
+    pub fn label(&self) -> &str {
+        &self.label
+    }
+
+    /// How much storage the type occupies: whole slots, or a width in bytes
+    /// for a value type that can share a slot with its neighbours.
+    pub fn size(&self) -> StorageSize {
+        self.size
+    }
+
+    pub fn kind(&self) -> &StorageTypeKind {
+        &self.kind
     }
 }
 

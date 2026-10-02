@@ -14,9 +14,12 @@ use slang_solidity_v2_common::nodes::NodeId;
 use slang_solidity_v2_common::utils::strings::strip_string_literal_quotes;
 use slang_solidity_v2_common::versions::LanguageVersion;
 use slang_solidity_v2_ir::ir;
-pub use storage_layout::{StorageLayoutBuilder, StoragePosition, StorageSize};
+pub use storage_layout::{
+    StorageLayoutBuilder, StorageMember, StoragePosition, StorageSize, StorageTypeKind,
+    StorageTypeLayout,
+};
 
-use crate::binder::{Binder, BinderCapacities, Definition, Reference};
+use crate::binder::{Binder, BinderCapacities, Definition, Reference, StructDefinition};
 use crate::passes::{
     p1_collect_definitions, p2_linearise_contracts, p3_type_definitions, p4_compute_linearisations,
     p5_resolve_references, p6_resolve_yul, p7_contract_properties, p8_code_analysis,
@@ -300,12 +303,6 @@ impl SemanticContext {
 
     /// Qualifies a nested definition with its enclosing scope, as solc's
     /// `canonicalName` does: `L.S`, `C.E`.
-    pub(crate) fn definition_canonical_name(&self, definition_id: NodeId) -> String {
-        let mut name = String::new();
-        self.write_definition_canonical_name(definition_id, &mut name);
-        name
-    }
-
     fn write_definition_canonical_name(&self, definition_id: NodeId, out: &mut String) {
         if let Some(enclosing) = self.binder.enclosing_definition_node_id(definition_id) {
             self.write_definition_canonical_name(enclosing, out);
@@ -321,79 +318,98 @@ impl SemanticContext {
     }
 
     pub fn type_internal_name(&self, type_id: TypeId) -> String {
+        let mut name = String::new();
+        self.write_type_internal_name(type_id, &mut name);
+        name
+    }
+
+    fn write_type_internal_name(&self, type_id: TypeId, out: &mut String) {
         match self.types.get_type_by_id(type_id) {
-            Type::Address(_) => "address".to_string(),
+            Type::Address(_) => out.push_str("address"),
             Type::Array(ArrayType { element_type, .. }) => {
-                format!(
-                    "{element}[]",
-                    element = self.type_internal_name(*element_type)
-                )
+                self.write_type_internal_name(*element_type, out);
+                out.push_str("[]");
             }
             Type::ArraySlice(ArraySliceType { array_type_id }) => {
-                format!("{} slice", self.type_internal_name(*array_type_id))
+                self.write_type_internal_name(*array_type_id, out);
+                out.push_str(" slice");
             }
-            Type::Boolean => "bool".to_string(),
-            Type::ByteArray(ByteArrayType { width }) => format!("bytes{width}"),
-            Type::Bytes(_) => "bytes".to_string(),
+            Type::Boolean => out.push_str("bool"),
+            Type::ByteArray(ByteArrayType { width }) => write!(out, "bytes{width}").unwrap(),
+            Type::Bytes(_) => out.push_str("bytes"),
             Type::FixedPointNumber(FixedPointNumberType {
                 is_signed,
                 bits,
                 decimal_places,
-            }) => format!(
+            }) => write!(
+                out,
                 "{prefix}{bits}x{decimal_places}",
                 prefix = if *is_signed { "fixed" } else { "ufixed" },
-            ),
+            )
+            .unwrap(),
             Type::FixedSizeArray(FixedSizeArrayType {
                 element_type, size, ..
             }) => {
-                format!(
-                    "{element}[{size}]",
-                    element = self.type_internal_name(*element_type),
-                )
+                self.write_type_internal_name(*element_type, out);
+                write!(out, "[{size}]").unwrap();
             }
-            Type::Function(_) => "function".to_string(),
-            Type::Integer(IntegerType { is_signed, bits }) => format!(
+            Type::Function(_) => out.push_str("function"),
+            Type::Integer(IntegerType { is_signed, bits }) => write!(
+                out,
                 "{prefix}{bits}",
                 prefix = if *is_signed { "int" } else { "uint" }
-            ),
-            Type::Literal(_) => "literal".to_string(),
+            )
+            .unwrap(),
+            Type::Literal(_) => out.push_str("literal"),
             Type::Mapping(MappingType {
                 key_type_id,
                 value_type_id,
-            }) => format!(
-                "mapping({key_type} => {value_type})",
-                key_type = self.type_internal_name(*key_type_id),
-                value_type = self.type_internal_name(*value_type_id)
-            ),
-            Type::String(_) => "string".to_string(),
-            Type::Tuple(TupleType { types }) => format!(
-                "({types})",
-                types = types
-                    .iter()
-                    .map(|type_id| self.type_internal_name(*type_id))
-                    .collect::<Vec<_>>()
-                    .join(",")
-            ),
+            }) => {
+                out.push_str("mapping(");
+                self.write_type_internal_name(*key_type_id, out);
+                out.push_str(" => ");
+                self.write_type_internal_name(*value_type_id, out);
+                out.push(')');
+            }
+            Type::String(_) => out.push_str("string"),
+            Type::Tuple(TupleType { types }) => {
+                out.push('(');
+                for (index, type_id) in types.iter().enumerate() {
+                    if index > 0 {
+                        out.push(',');
+                    }
+                    self.write_type_internal_name(*type_id, out);
+                }
+                out.push(')');
+            }
             Type::Contract(ContractType { definition_id })
             | Type::Enum(EnumType { definition_id })
             | Type::Interface(InterfaceType { definition_id })
             | Type::Library(LibraryType { definition_id })
             | Type::Struct(StructType { definition_id, .. })
             | Type::UserDefinedValue(UserDefinedValueType { definition_id }) => {
-                self.definition_canonical_name(*definition_id)
+                self.write_definition_canonical_name(*definition_id, out);
             }
             Type::Error(ErrorType { definition_id }) => {
-                format!("error({})", self.definition_canonical_name(*definition_id))
+                out.push_str("error(");
+                self.write_definition_canonical_name(*definition_id, out);
+                out.push(')');
             }
             Type::Event(EventType { definition_id }) => {
-                format!("event({})", self.definition_canonical_name(*definition_id))
+                out.push_str("event(");
+                self.write_definition_canonical_name(*definition_id, out);
+                out.push(')');
             }
             // Meta-types print in solc's `type(T)` notation.
             Type::MetaType(MetaType { type_id }) => {
-                format!("type({})", self.type_internal_name(*type_id))
+                out.push_str("type(");
+                self.write_type_internal_name(*type_id, out);
+                out.push(')');
             }
             Type::UserMetaType(UserMetaType { definition_id }) => {
-                format!("type({})", self.definition_canonical_name(*definition_id))
+                out.push_str("type(");
+                self.write_definition_canonical_name(*definition_id, out);
+                out.push(')');
             }
         }
     }
@@ -449,7 +465,7 @@ impl SemanticContext {
                 out.push_str("struct ");
                 self.write_definition_canonical_name(*definition_id, out);
             }
-            _ => out.push_str(&self.type_internal_name(type_id)),
+            _ => self.write_type_internal_name(type_id, out),
         }
     }
 
@@ -591,26 +607,13 @@ impl SemanticContext {
                 }
             }
             Type::Struct(StructType { definition_id, .. }) => {
-                // Recursive structs are not valid Solidity, but guard against cycles
-                // to avoid unbounded recursion if malformed types reach this point.
-                // Such recursion should already have been reported by the recursive-struct analysis.
-                if !visited_structs.insert(*definition_id) {
-                    return None;
-                }
                 let Definition::Struct(struct_definition) =
                     self.binder.find_definition_by_id(*definition_id)?
                 else {
                     return None;
                 };
-                let mut builder = StorageLayoutBuilder::new(U256::ZERO);
-                for member in struct_definition.ir_node.members.iter() {
-                    let member_type_id = self.binder.node_typing(member.id()).as_type_id()?;
-                    let member_size =
-                        self.storage_size_of_type_id_impl(member_type_id, visited_structs)?;
-                    builder.allocate(member_size)?;
-                }
-                visited_structs.remove(definition_id);
-                Some(Slots(builder.slots_used()?))
+                self.lay_out_struct_members(struct_definition, visited_structs, |_, _, _| {})
+                    .map(Slots)
             }
             Type::UserDefinedValue(UserDefinedValueType { definition_id }) => self
                 .storage_size_of_type_id_impl(
@@ -627,5 +630,156 @@ impl SemanticContext {
             | Type::Tuple(_)
             | Type::UserMetaType(_) => None,
         }
+    }
+
+    /// Positions each member of `struct_definition` from slot 0, passing it to
+    /// `on_member` with its declared type, and returns the number of slots the
+    /// struct occupies. `None` when the struct is recursive, a member has no
+    /// storage size, or it overflows storage.
+    fn lay_out_struct_members(
+        &self,
+        struct_definition: &StructDefinition,
+        visited_structs: &mut Set<NodeId>,
+        mut on_member: impl FnMut(&ir::StructMember, TypeId, StoragePosition),
+    ) -> Option<U256> {
+        // Recursive structs are not valid Solidity, but guard against cycles
+        // to avoid unbounded recursion if malformed types reach this point.
+        // Such recursion should already have been reported by the recursive-struct analysis.
+        let definition_id = struct_definition.ir_node.id();
+        if !visited_structs.insert(definition_id) {
+            return None;
+        }
+        let mut builder = StorageLayoutBuilder::new(U256::ZERO);
+        for member in struct_definition.ir_node.members.iter() {
+            let member_type_id = self.binder.node_typing(member.id()).as_type_id()?;
+            let member_size = self.storage_size_of_type_id_impl(member_type_id, visited_structs)?;
+            let position = builder.allocate(member_size)?;
+            on_member(member, member_type_id, position);
+        }
+        visited_structs.remove(&definition_id);
+        builder.slots_used()
+    }
+
+    /// The type table of a storage layout: `roots` (the types of its state
+    /// variables) and every type those refer to, each with `describe` applied
+    /// to how it is laid out. `None` when one of them cannot be stored or
+    /// overflows storage.
+    pub fn storage_type_table<T>(
+        &self,
+        roots: impl IntoIterator<Item = TypeId>,
+        mut describe: impl FnMut(TypeId, StorageTypeLayout) -> T,
+    ) -> Option<SortedMap<TypeId, T>> {
+        let mut table = SortedMap::default();
+        for type_id in roots {
+            self.add_to_storage_type_table(type_id, &mut table, &mut describe)?;
+        }
+        Some(table)
+    }
+
+    /// Adds `type_id` to `table`, then every type it refers to that `table`
+    /// does not have yet. Checking `table` first also stops at recursive
+    /// structs, which refer back to themselves through a mapping or an array.
+    fn add_to_storage_type_table<T>(
+        &self,
+        type_id: TypeId,
+        table: &mut SortedMap<TypeId, T>,
+        describe: &mut impl FnMut(TypeId, StorageTypeLayout) -> T,
+    ) -> Option<()> {
+        if table.contains_key(&type_id) {
+            return Some(());
+        }
+        let layout = self.storage_type_layout(type_id)?;
+        // `describe` takes the layout, so keep what it refers to first. Only a
+        // struct refers to more than two types.
+        let (first, second, member_type_ids) = match &layout.kind {
+            StorageTypeKind::Value | StorageTypeKind::Bytes => (None, None, Vec::new()),
+            StorageTypeKind::DynamicArray { element }
+            | StorageTypeKind::FixedSizeArray { element, .. } => (Some(*element), None, Vec::new()),
+            StorageTypeKind::Mapping { key, value } => (Some(*key), Some(*value), Vec::new()),
+            StorageTypeKind::Struct { members } => (
+                None,
+                None,
+                members.iter().map(|member| member.type_id).collect(),
+            ),
+        };
+        table.insert(type_id, describe(type_id, layout));
+        for referenced_type_id in first.into_iter().chain(second).chain(member_type_ids) {
+            self.add_to_storage_type_table(referenced_type_id, table, describe)?;
+        }
+        Some(())
+    }
+
+    /// How a type in storage is laid out, as an entry of
+    /// [`Self::storage_type_table`]. `None` when the type cannot be stored or
+    /// overflows storage.
+    fn storage_type_layout(&self, type_id: TypeId) -> Option<StorageTypeLayout> {
+        let kind = match self.types.get_type_by_id(type_id) {
+            Type::Struct(StructType { definition_id, .. }) => {
+                let Definition::Struct(struct_definition) =
+                    self.binder.find_definition_by_id(*definition_id)?
+                else {
+                    return None;
+                };
+                let mut members = Vec::with_capacity(struct_definition.ir_node.members.len());
+                let slots = self.lay_out_struct_members(
+                    struct_definition,
+                    &mut Set::default(),
+                    |member, type_id, position| {
+                        members.push(StorageMember {
+                            node_id: member.id(),
+                            name: member.name.unparse().to_string(),
+                            type_id: self.types.storage_type_id(type_id),
+                            position,
+                        });
+                    },
+                )?;
+                return Some(StorageTypeLayout {
+                    size: StorageSize::Slots(slots),
+                    kind: StorageTypeKind::Struct { members },
+                });
+            }
+            Type::Array(ArrayType { element_type, .. }) => StorageTypeKind::DynamicArray {
+                element: *element_type,
+            },
+            Type::Bytes(_) | Type::String(_) => StorageTypeKind::Bytes,
+            Type::FixedSizeArray(FixedSizeArrayType {
+                element_type, size, ..
+            }) => StorageTypeKind::FixedSizeArray {
+                element: *element_type,
+                length: *size,
+            },
+            Type::Mapping(MappingType {
+                key_type_id,
+                value_type_id,
+            }) => StorageTypeKind::Mapping {
+                key: *key_type_id,
+                value: *value_type_id,
+            },
+            Type::Address(_)
+            | Type::Boolean
+            | Type::ByteArray(_)
+            | Type::Contract(_)
+            | Type::Enum(_)
+            | Type::FixedPointNumber(_)
+            | Type::Function(_)
+            | Type::Integer(_)
+            | Type::Interface(_)
+            | Type::UserDefinedValue(_) => StorageTypeKind::Value,
+
+            // None of these can be stored. They should never reach a storage
+            // layout, but describe nothing if they do.
+            Type::ArraySlice(_)
+            | Type::Error(_)
+            | Type::Event(_)
+            | Type::Library(_)
+            | Type::Literal(_)
+            | Type::MetaType(_)
+            | Type::Tuple(_)
+            | Type::UserMetaType(_) => return None,
+        };
+        Some(StorageTypeLayout {
+            size: self.storage_size_of_type_id(type_id)?,
+            kind,
+        })
     }
 }

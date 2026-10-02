@@ -1,6 +1,6 @@
 use slang_solidity_v2_common::collections::Set;
 
-use crate::abi::{AbiEntry, ContractAbi};
+use crate::abi::{AbiEntry, ContractAbi, StorageLayout};
 use crate::ast::{
     ContractMember, FunctionDefinition, FunctionMutability, LibraryDefinitionStruct,
     StorageLocation,
@@ -49,8 +49,8 @@ impl LibraryDefinitionStruct {
             self.ir_node.name.unparse().to_string(),
             self.get_file_id().clone(),
             entries,
-            Vec::new(),
-            Vec::new(),
+            StorageLayout::default(),
+            StorageLayout::default(),
         ))
     }
 }

@@ -1,4 +1,7 @@
 use ruint::aliases::U256;
+use slang_solidity_v2_common::nodes::NodeId;
+
+use crate::types::TypeId;
 
 pub(super) const SLOT_SIZE: usize = 32;
 
@@ -17,6 +20,66 @@ pub enum StorageSize {
 pub struct StoragePosition {
     pub slot: U256,
     pub offset: usize,
+}
+
+/// How a type is laid out in storage: its size, and how its contents are
+/// arranged. Every `TypeId` it refers to is the type as it is in storage, so
+/// a struct member and a state variable of the same type share one, and is
+/// described in the same type table.
+#[derive(Clone, Debug, Eq, PartialEq)]
+pub struct StorageTypeLayout {
+    pub size: StorageSize,
+    pub kind: StorageTypeKind,
+}
+
+/// How a type's contents are arranged in storage.
+#[derive(Clone, Debug, Eq, PartialEq)]
+pub enum StorageTypeKind {
+    /// A value type, stored in place.
+    Value,
+    /// A `bytes` or `string`, stored in its slot when short and at the slot's
+    /// hash otherwise.
+    Bytes,
+    /// A dynamic array: its slot holds the length, and the elements start at
+    /// the slot's hash.
+    DynamicArray { element: TypeId },
+    /// A fixed-size array of `length` elements, stored in place.
+    FixedSizeArray { element: TypeId, length: U256 },
+    /// A mapping: its slot is empty, each value is at the hash of its key and
+    /// the slot.
+    Mapping { key: TypeId, value: TypeId },
+    /// A struct, with its members stored in place, in declaration order.
+    Struct { members: Vec<StorageMember> },
+}
+
+/// A struct member, and its position relative to the start of the struct.
+#[derive(Clone, Debug, Eq, PartialEq)]
+pub struct StorageMember {
+    pub(crate) node_id: NodeId,
+    pub(crate) name: String,
+    pub(crate) type_id: TypeId,
+    pub(crate) position: StoragePosition,
+}
+
+impl StorageMember {
+    pub fn node_id(&self) -> NodeId {
+        self.node_id
+    }
+
+    /// The member's name.
+    pub fn name(&self) -> &str {
+        &self.name
+    }
+
+    /// The member's type, as it is in storage.
+    pub fn type_id(&self) -> TypeId {
+        self.type_id
+    }
+
+    /// Where the member starts, relative to the start of the struct.
+    pub fn position(&self) -> StoragePosition {
+        self.position
+    }
 }
 
 /// Assigns each state variable or struct member its storage position in

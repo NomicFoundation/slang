@@ -1,3 +1,4 @@
+use slang_solidity_v2_common::collections::Set;
 use slang_solidity_v2_common::diagnostics::DiagnosticCollection;
 use slang_solidity_v2_common::nodes::NodeId;
 use slang_solidity_v2_common::versions::LanguageVersion;
@@ -18,8 +19,9 @@ mod visitor;
 /// active `using` directives and associating them to the relevant scopes (or
 /// registering them gloablly).
 /// Finally, public state variables will be assigned an equivalent getter
-/// function type. This happens after the main typing pass to ensure all types
-/// are already registered.
+/// function type, and the types stored by state variables get their storage
+/// forms registered. This happens after the main typing pass to ensure all
+/// types are already registered.
 pub fn run(
     files: &[impl SemanticFile],
     binder: &mut Binder,
@@ -38,14 +40,16 @@ pub fn run(
             diagnostics,
         );
     }
+    let mut relocated_structs = Set::default();
     for file in files {
-        Pass::visit_file_type_getters(
+        Pass::visit_file_state_variables(
             file,
             binder,
             language_version,
             types,
             file_node_mapper,
             diagnostics,
+            &mut relocated_structs,
         );
     }
 }
@@ -97,18 +101,20 @@ impl<'a> Pass<'a> {
         assert!(pass.current_receiver_type.is_none());
     }
 
-    // This is a short second pass to compute and register the types of the
-    // getter functions for public state variables. Computing the type of the
-    // getter requires all struct fields to be typed already thus why this
-    // cannot happen concurrently with the typing of the definitions in the main
-    // pass.
-    fn visit_file_type_getters(
+    // This is a short second pass over the state variables: it registers the
+    // storage forms of the types they store, and computes and registers the
+    // types of the getter functions for public ones. Both need all struct
+    // fields typed already, thus why this cannot happen concurrently with the
+    // typing of the definitions in the main pass. `relocated_structs` carries
+    // the structs already handled across files.
+    fn visit_file_state_variables(
         file: &'a impl SemanticFile,
         binder: &'a mut Binder,
         language_version: LanguageVersion,
         types: &'a mut TypeRegistry,
         file_node_mapper: &'a FileNodeMapper,
         diagnostics: &'a mut DiagnosticCollection,
+        relocated_structs: &mut Set<NodeId>,
     ) {
         let mut pass = Self {
             scope_stack: Vec::new(),
@@ -120,10 +126,14 @@ impl<'a> Pass<'a> {
             current_receiver_type: None,
             nested_mappings_to_skip: 0,
         };
-        pass.type_getters_from(file.ir_root());
+        pass.type_state_variables_from(file.ir_root(), relocated_structs);
     }
 
-    fn type_getters_from(&mut self, source_unit: &ir::SourceUnit) {
+    fn type_state_variables_from(
+        &mut self,
+        source_unit: &ir::SourceUnit,
+        relocated_structs: &mut Set<NodeId>,
+    ) {
         for source_unit_member in source_unit.members.iter() {
             let (receiver_type, members) = match source_unit_member {
                 ir::SourceUnitMember::ContractDefinition(contract_definition) => (
@@ -144,17 +154,23 @@ impl<'a> Pass<'a> {
                 else {
                     continue;
                 };
+                let node_id = state_var_definition.id();
+                let Some(type_id) = self.binder.node_typing(node_id).as_type_id() else {
+                    continue;
+                };
+
+                if matches!(
+                    state_var_definition.attributes.mutability,
+                    ir::StateVariableMutability::Mutable | ir::StateVariableMutability::Transient
+                ) {
+                    self.register_storage_relocations(type_id, relocated_structs);
+                }
                 if !matches!(
                     state_var_definition.attributes.visibility,
                     ir::StateVariableVisibility::Public
                 ) {
                     continue;
                 }
-
-                let node_id = state_var_definition.id();
-                let Some(type_id) = self.binder.node_typing(node_id).as_type_id() else {
-                    continue;
-                };
 
                 let Some((getter_type_id, getter_member_ids)) =
                     self.compute_getter_type(receiver_type_id, node_id, type_id)

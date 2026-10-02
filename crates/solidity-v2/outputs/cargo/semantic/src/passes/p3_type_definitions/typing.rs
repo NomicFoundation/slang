@@ -1,3 +1,4 @@
+use slang_solidity_v2_common::collections::Set;
 use slang_solidity_v2_common::nodes::NodeId;
 use slang_solidity_v2_ir::ir;
 
@@ -181,6 +182,49 @@ impl Pass<'_> {
             return None;
         }
         Some(self.types.externalize_function_type(type_id))
+    }
+
+    /// Registers the `Storage` form of every struct member type reachable in
+    /// storage from `type_id`, the type of a state variable, so a storage
+    /// layout names one type id per type. Struct members are typed with an
+    /// `Inherited` location; everything else a state variable reaches is
+    /// already typed in storage. `relocated_structs` holds the structs already
+    /// handled, which also stops at recursive ones.
+    pub(super) fn register_storage_relocations(
+        &mut self,
+        type_id: TypeId,
+        relocated_structs: &mut Set<NodeId>,
+    ) {
+        match self.types.get_type_by_id(type_id) {
+            Type::Array(ArrayType { element_type, .. })
+            | Type::FixedSizeArray(FixedSizeArrayType { element_type, .. }) => {
+                self.register_storage_relocations(*element_type, relocated_structs);
+            }
+            Type::Mapping(MappingType { value_type_id, .. }) => {
+                self.register_storage_relocations(*value_type_id, relocated_structs);
+            }
+            Type::Struct(StructType { definition_id, .. }) => {
+                if !relocated_structs.insert(*definition_id) {
+                    return;
+                }
+                let Some(Definition::Struct(struct_definition)) =
+                    self.binder.find_definition_by_id(*definition_id)
+                else {
+                    return;
+                };
+                let member_type_ids: Vec<_> = struct_definition
+                    .ir_node
+                    .members
+                    .iter()
+                    .filter_map(|member| self.binder.node_typing(member.id()).as_type_id())
+                    .collect();
+                for member_type_id in member_type_ids {
+                    let storage_type_id = self.types.register_storage_relocation(member_type_id);
+                    self.register_storage_relocations(storage_type_id, relocated_structs);
+                }
+            }
+            _ => {}
+        }
     }
 
     /// Computes the type of the getter generated for a public state variable,
