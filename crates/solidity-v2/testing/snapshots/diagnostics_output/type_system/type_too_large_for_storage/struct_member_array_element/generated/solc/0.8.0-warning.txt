@@ -1,0 +1,19 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 2
+
+[Warning 7325] Warning: Type struct Big covers a large part of storage and thus makes collisions likely. Either use mappings or dynamic arrays and allow their size to be increased only in small quantities per transaction.
+    ╭─[input.sol:15:5]
+    │
+ 15 │     W w;
+    │     ┬  
+    │     ╰── Warning occurred here.
+────╯
+
+[Warning 7325] Warning: Type uint256[57896044618658097711785492504343953926634992332820282019728792003956564819968] covers a large part of storage and thus makes collisions likely. Either use mappings or dynamic arrays and allow their size to be increased only in small quantities per transaction.
+    ╭─[input.sol:15:5]
+    │
+ 15 │     W w;
+    │     ┬  
+    │     ╰── Warning occurred here.
+────╯

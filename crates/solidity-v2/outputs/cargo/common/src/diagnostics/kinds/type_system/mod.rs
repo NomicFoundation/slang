@@ -21,6 +21,7 @@ mod receive_function_parameters;
 mod storage_layout_base_non_integer;
 mod storage_layout_base_not_constant;
 mod storage_layout_base_out_of_range;
+mod type_too_large_for_storage;
 mod write_to_constant;
 
 pub use array_length_fractional::ArrayLengthFractional;
@@ -47,6 +48,7 @@ use serde::Serialize;
 pub use storage_layout_base_non_integer::StorageLayoutBaseNonInteger;
 pub use storage_layout_base_not_constant::StorageLayoutBaseNotConstant;
 pub use storage_layout_base_out_of_range::StorageLayoutBaseOutOfRange;
+pub use type_too_large_for_storage::TypeTooLargeForStorage;
 pub use write_to_constant::WriteToConstant;
 
 use crate::diagnostics::kinds::DiagnosticKind;
@@ -94,6 +96,8 @@ define_diagnostic_kind! {
         /// A storage layout base slot expression evaluates to a value outside
         /// the range of `uint256`.
         StorageLayoutBaseOutOfRange(StorageLayoutBaseOutOfRange),
+        /// A state variable stores a type that extends past the end of storage.
+        TypeTooLargeForStorage(TypeTooLargeForStorage),
         /// A function is called through a contract/interface type name (eg.
         /// `C.f()`) rather than through an instance.
         CannotCallViaContractTypeName(CannotCallViaContractTypeName),
