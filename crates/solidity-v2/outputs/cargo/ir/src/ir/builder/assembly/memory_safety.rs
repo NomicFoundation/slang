@@ -3,6 +3,7 @@
 
 use slang_solidity_v2_common::diagnostics::kinds::structure::DuplicateAssemblyFlag;
 use slang_solidity_v2_common::versions::LanguageVersion;
+use slang_solidity_v2_cst::structured_cst::natspec::NatSpec;
 use slang_solidity_v2_cst::structured_cst::nodes as input;
 
 use crate::ir::Source;
@@ -48,11 +49,23 @@ impl<S: Source> CstToIrBuilder<'_, S> {
 
         is_memory_safe
     }
+
+    /// Whether the `NatSpec` comment attached to the assembly statement marks it as memory safe.
+    pub(super) fn check_memory_safe_natspec(&mut self, natspec: Option<&NatSpec>) -> bool {
+        if self.language_version < LanguageVersion::V0_8_13 {
+            // Before 0.8.13 the comment had no effect
+            return false;
+        }
+        let Some(natspec) = natspec else {
+            return false;
+        };
+
+        is_memory_safe_marker(self.source.text(natspec.range.clone()))
+    }
 }
 
 /// Whether the text of a `NatSpec` comment marks the assembly statement it documents as memory
 /// safe: only a single `/// @solidity memory-safe-assembly` line does.
-#[allow(dead_code)]
 fn is_memory_safe_marker(comment: &str) -> bool {
     // A `///` comment includes the line break after its last line
     let comment = comment

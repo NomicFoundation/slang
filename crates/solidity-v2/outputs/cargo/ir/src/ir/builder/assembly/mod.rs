@@ -30,10 +30,12 @@ impl<S: Source> CstToIrBuilder<'_, S> {
             self.report(dialect, InvalidAssemblyDialect);
         }
 
-        let is_memory_safe = match &source.flags {
+        let has_memory_safe_flag = match &source.flags {
             Some(flags) => self.check_memory_safe_flag(flags),
             None => false,
         };
+        let has_memory_safe_natspec = self.check_memory_safe_natspec(source.natspec.as_ref());
+        let is_memory_safe = has_memory_safe_flag || has_memory_safe_natspec;
         let body = self.build_yul_block(&source.body);
 
         Arc::new(output::AssemblyStatementStruct {
