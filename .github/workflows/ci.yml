@@ -112,6 +112,10 @@ jobs:
     permissions:
       contents: "read"
 
+    env:
+      # renovate: datasource=npm depName=renovate
+      RENOVATE_VERSION: "44.115.2"
+
     # Not common-setup: only needs SFW + npx; no build or cache setup.
     steps:
       - name: "Checkout Repository"
@@ -125,7 +129,7 @@ jobs:
           optional: "true"
 
       - name: "Renovate schema check"
-        run: "${SFW_PREFIX:-} ./bin/npx --yes --package renovate -- renovate-config-validator renovate.json"
+        run: '${SFW_PREFIX:-} ./bin/npx --yes --package "renovate@${RENOVATE_VERSION}" -- renovate-config-validator renovate.json'
 
       - name: "Renovate extraction dry-run"
         env:
@@ -133,7 +137,7 @@ jobs:
           # anonymous 60 req/hr rate limit shared across the runner IP.
           GITHUB_COM_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
           LOG_LEVEL: "debug"
-        run: "${SFW_PREFIX:-} ./bin/npx --yes renovate --platform=local --dry-run=full"
+        run: '${SFW_PREFIX:-} ./bin/npx --yes "renovate@${RENOVATE_VERSION}" --platform=local --dry-run=full'
 
   # The full CI runs on the bare runner so it can reuse the cargo-target cache;
   # reproducing that cache-mount setup inside a devcontainer would slow CI down
