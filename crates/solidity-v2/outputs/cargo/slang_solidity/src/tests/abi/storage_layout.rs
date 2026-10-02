@@ -543,13 +543,16 @@ fn describe_storage_types(layout: &abi::StorageLayout) -> Vec<String> {
     lines
 }
 
-// Expected entries are solc 0.8.36's `types` for each layout of this source.
+// Expected entries are solc 0.8.37's `types` for each layout of this source.
 // solc also keeps a mapping's `string` and `bytes` keys apart from the storage
 // ones, so each spelling appears twice.
 define_fixture!(
     StorageTypes,
     file: "main.sol", r#"
 pragma solidity *;
+type Price is uint64;
+interface IOracle {}
+
 contract Types {
     struct Node {
         string name;
@@ -559,11 +562,19 @@ contract Types {
         function () external callback;
         uint8 tag;
     }
+    enum Kind { A, B }
 
     Node root;
     mapping(bytes => uint8)[2] flags;
     uint8[3][] grid;
     Node[] nodes;
+    Kind kind;
+    Price price;
+    IOracle oracle;
+    Types self;
+    function (uint256) internal view returns (bool) check;
+    bool paused;
+    mapping(address => mapping(Kind => IOracle[])) registry;
     uint8 transient lock;
     uint64 transient counter;
 }
@@ -582,11 +593,23 @@ fn test_storage_types_table() {
     assert_eq!(
         describe_storage_types(abi.storage_layout()),
         [
+            "Price: 8 bytes, value",
+            "address: 20 bytes, value",
+            "bool: 1 bytes, value",
             "bytes: 1 slots, bytes",
             "bytes: 1 slots, bytes",
+            "contract IOracle: 20 bytes, value",
+            "contract IOracle[]: 1 slots, dynamic array of contract IOracle",
+            "contract Types: 20 bytes, value",
+            "enum Types.Kind: 1 bytes, value",
             "function () external: 24 bytes, value",
+            "function (uint256) view returns (bool): 8 bytes, value",
+            "mapping(address => mapping(enum Types.Kind => contract IOracle[])): 1 slots, \
+             mapping from address to mapping(enum Types.Kind => contract IOracle[])",
             "mapping(bytes => uint8): 1 slots, mapping from bytes to uint8",
             "mapping(bytes => uint8)[2]: 2 slots, fixed-size array of mapping(bytes => uint8)",
+            "mapping(enum Types.Kind => contract IOracle[]): 1 slots, \
+             mapping from enum Types.Kind to contract IOracle[]",
             "mapping(string => struct Types.Node): 1 slots, mapping from string to struct Types.Node",
             "string: 1 slots, bytes",
             "string: 1 slots, bytes",
@@ -599,6 +622,28 @@ fn test_storage_types_table() {
             "uint8[3][]: 1 slots, dynamic array of uint8[3]",
         ]
     );
+    // The value types share slots 9 and 10, as solc packs them.
+    let layout = abi.storage_layout();
+    assert_layout_item_eq!(layout[4], "kind", uint!(9_U256), 0, "enum Types.Kind");
+    assert_layout_item_eq!(layout[5], "price", uint!(9_U256), 1, "Price");
+    assert_layout_item_eq!(layout[6], "oracle", uint!(9_U256), 9, "contract IOracle");
+    assert_layout_item_eq!(layout[7], "self", uint!(10_U256), 0, "contract Types");
+    assert_layout_item_eq!(
+        layout[8],
+        "check",
+        uint!(10_U256),
+        20,
+        "function (uint256) view returns (bool)"
+    );
+    assert_layout_item_eq!(layout[9], "paused", uint!(10_U256), 28, "bool");
+    assert_layout_item_eq!(
+        layout[10],
+        "registry",
+        uint!(11_U256),
+        0,
+        "mapping(address => mapping(enum Types.Kind => contract IOracle[]))"
+    );
+
     let type_ids: Vec<_> = abi
         .storage_layout()
         .types()
