@@ -2,7 +2,7 @@ use crate::evm_targets::EvmTarget;
 use crate::versions::LanguageVersion;
 
 impl LanguageVersion {
-    /// The EVM target `solc` of this version compiles for when none is requested.
+    /// The default EVM target of this language version, used when none is requested.
     pub const fn default_evm_target(self) -> EvmTarget {
         match self {
             Self::V0_8_0 | Self::V0_8_1 | Self::V0_8_2 | Self::V0_8_3 | Self::V0_8_4 => {
