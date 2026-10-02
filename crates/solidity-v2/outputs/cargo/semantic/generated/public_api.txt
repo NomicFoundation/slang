@@ -335,7 +335,7 @@ pub fn slang_solidity_v2_semantic::context::SemanticContext::linearised_state_va
 pub fn slang_solidity_v2_semantic::context::SemanticContext::resolve_reference_identifier_to_definition_id(&self, slang_solidity_v2_common::nodes::NodeId) -> core::option::Option<slang_solidity_v2_common::nodes::NodeId>
 pub fn slang_solidity_v2_semantic::context::SemanticContext::resolve_reference_identifier_to_immediate_definition_id(&self, slang_solidity_v2_common::nodes::NodeId) -> core::option::Option<slang_solidity_v2_common::nodes::NodeId>
 pub fn slang_solidity_v2_semantic::context::SemanticContext::storage_size_of_type_id(&self, slang_solidity_v2_semantic::types::TypeId) -> core::option::Option<slang_solidity_v2_semantic::context::StorageSize>
-pub fn slang_solidity_v2_semantic::context::SemanticContext::storage_type_table<T>(&self, impl core::iter::traits::collect::IntoIterator<Item = slang_solidity_v2_semantic::types::TypeId>, impl core::ops::function::FnMut(slang_solidity_v2_semantic::types::TypeId, slang_solidity_v2_semantic::context::StorageTypeLayout) -> T) -> core::option::Option<slang_solidity_v2_common::collections::aliases::Map<slang_solidity_v2_semantic::types::TypeId, T>>
+pub fn slang_solidity_v2_semantic::context::SemanticContext::storage_type_table<T>(&self, impl core::iter::traits::collect::IntoIterator<Item = slang_solidity_v2_semantic::types::TypeId>, impl core::ops::function::FnMut(slang_solidity_v2_semantic::types::TypeId, slang_solidity_v2_semantic::context::StorageTypeLayout) -> T) -> core::option::Option<slang_solidity_v2_common::collections::aliases::SortedMap<slang_solidity_v2_semantic::types::TypeId, T>>
 pub fn slang_solidity_v2_semantic::context::SemanticContext::type_abi_internal_name(&self, slang_solidity_v2_semantic::types::TypeId) -> alloc::string::String
 pub fn slang_solidity_v2_semantic::context::SemanticContext::type_internal_name(&self, slang_solidity_v2_semantic::types::TypeId) -> alloc::string::String
 pub fn slang_solidity_v2_semantic::context::SemanticContext::type_library_name(&self, slang_solidity_v2_semantic::types::TypeId) -> core::option::Option<alloc::string::String>
@@ -813,8 +813,12 @@ pub struct slang_solidity_v2_semantic::types::TypeId(_)
 impl core::clone::Clone for slang_solidity_v2_semantic::types::TypeId
 pub fn slang_solidity_v2_semantic::types::TypeId::clone(&self) -> slang_solidity_v2_semantic::types::TypeId
 impl core::cmp::Eq for slang_solidity_v2_semantic::types::TypeId
+impl core::cmp::Ord for slang_solidity_v2_semantic::types::TypeId
+pub fn slang_solidity_v2_semantic::types::TypeId::cmp(&self, &slang_solidity_v2_semantic::types::TypeId) -> core::cmp::Ordering
 impl core::cmp::PartialEq for slang_solidity_v2_semantic::types::TypeId
 pub fn slang_solidity_v2_semantic::types::TypeId::eq(&self, &slang_solidity_v2_semantic::types::TypeId) -> bool
+impl core::cmp::PartialOrd for slang_solidity_v2_semantic::types::TypeId
+pub fn slang_solidity_v2_semantic::types::TypeId::partial_cmp(&self, &slang_solidity_v2_semantic::types::TypeId) -> core::option::Option<core::cmp::Ordering>
 impl core::fmt::Debug for slang_solidity_v2_semantic::types::TypeId
 pub fn slang_solidity_v2_semantic::types::TypeId::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
 impl core::hash::Hash for slang_solidity_v2_semantic::types::TypeId
