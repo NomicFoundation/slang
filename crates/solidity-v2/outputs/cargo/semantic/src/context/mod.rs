@@ -13,7 +13,7 @@ use slang_solidity_v2_common::nodes::NodeId;
 use slang_solidity_v2_common::utils::strings::strip_string_literal_quotes;
 use slang_solidity_v2_common::versions::LanguageVersion;
 use slang_solidity_v2_ir::ir;
-pub(crate) use storage_layout::StorageAnalyzer;
+pub(crate) use storage_layout::{NoStorageSize, StorageAnalyzer};
 pub use storage_layout::{
     StorageLayoutBuilder, StorageMember, StoragePosition, StorageSize, StorageTypeKind,
     StorageTypeLayout, StorageTypeTable,

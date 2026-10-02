@@ -1,0 +1,11 @@
+{
+  "expected_solc_divergence": [
+    {
+      "specifier": {
+        "type": "From",
+        "from": "0.8.0"
+      },
+      "reason": "Slang is intentionally stricter than solc here. The stored type extends past the end of storage, so it has no valid storage layout. solc only warns (7325) because the outer array or mapping occupies a single slot, then fails with an internal error when asked for the storage layout, or when generating code that accesses an oversized element."
+    }
+  ]
+}

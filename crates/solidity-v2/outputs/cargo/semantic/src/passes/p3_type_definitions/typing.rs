@@ -4,6 +4,7 @@ use slang_solidity_v2_ir::ir;
 
 use super::Pass;
 use crate::binder::Definition;
+use crate::context::{NoStorageSize, StorageAnalyzer};
 use crate::types::{
     AddressType, ArrayType, ContractType, DataLocation, EnumType, FixedSizeArrayType, FunctionType,
     FunctionTypeMutability, FunctionTypeVisibility, InterfaceType, LibraryType, MappingType,
@@ -229,6 +230,49 @@ impl Pass<'_> {
                 }
             }
             _ => {}
+        }
+    }
+
+    /// Whether `type_id`, the type of a state variable, or a type it stores
+    /// through an array, a mapping or a struct member, extends past the end of
+    /// storage. Types that have no size for another reason are reported
+    /// elsewhere.
+    pub(super) fn stores_type_too_large_for_storage(
+        &self,
+        type_id: TypeId,
+        visited_structs: &mut Set<NodeId>,
+    ) -> bool {
+        let analyzer = StorageAnalyzer::new(self.binder, self.types);
+        if analyzer.storage_size(type_id) == Err(NoStorageSize::TooLarge) {
+            return true;
+        }
+        match self.types.get_type_by_id(type_id) {
+            Type::Array(ArrayType { element_type, .. })
+            | Type::FixedSizeArray(FixedSizeArrayType { element_type, .. }) => {
+                self.stores_type_too_large_for_storage(*element_type, visited_structs)
+            }
+            Type::Mapping(MappingType { value_type_id, .. }) => {
+                self.stores_type_too_large_for_storage(*value_type_id, visited_structs)
+            }
+            Type::Struct(StructType { definition_id, .. }) => {
+                if !visited_structs.insert(*definition_id) {
+                    return false;
+                }
+                let Some(Definition::Struct(struct_definition)) =
+                    self.binder.find_definition_by_id(*definition_id)
+                else {
+                    return false;
+                };
+                struct_definition.ir_node.members.iter().any(|member| {
+                    self.binder
+                        .node_typing(member.id())
+                        .as_type_id()
+                        .is_some_and(|member_type_id| {
+                            self.stores_type_too_large_for_storage(member_type_id, visited_structs)
+                        })
+                })
+            }
+            _ => false,
         }
     }
 
