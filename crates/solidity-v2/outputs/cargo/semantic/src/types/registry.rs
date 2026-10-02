@@ -157,6 +157,10 @@ impl TypeRegistry {
         self.super_types.insert(type_node_id, super_type_node_ids);
     }
 
+    pub(crate) fn language_version(&self) -> LanguageVersion {
+        self.language_version
+    }
+
     pub fn get_type_by_id(&self, type_id: TypeId) -> &Type {
         self.types.get_index(type_id.0).unwrap()
     }
@@ -213,23 +217,34 @@ impl TypeRegistry {
                 }
             }
 
-            (
-                Type::Literal(LiteralKind::Integer { value }),
-                Type::Integer(IntegerType { is_signed, bits }),
-            ) => numbers::integer_literal_fits(value, *is_signed, *bits),
+            (Type::Integer(integer_type), Type::FixedPointNumber(fixed_point_type)) => {
+                numbers::integer_type_fits_in_fixed_point(integer_type, fixed_point_type)
+            }
 
-            (
-                Type::Literal(LiteralKind::HexInteger { value, .. }),
-                Type::Integer(IntegerType { is_signed, bits }),
-            ) => numbers::integer_literal_fits(&BigInt::from(value.clone()), *is_signed, *bits),
+            (Type::Literal(LiteralKind::Integer { value }), Type::Integer(integer_type)) => {
+                numbers::integer_literal_fits_in(value, integer_type)
+            }
+
+            (Type::Literal(LiteralKind::HexInteger { value, .. }), Type::Integer(integer_type)) => {
+                numbers::integer_literal_fits_in(&BigInt::from(value.clone()), integer_type)
+            }
 
             // Non-integer rational literals never implicitly convert to an
             // integer type — if a rational reduced to an integer it would have
             // been normalised to `LiteralKind::Integer` at construction time.
             (Type::Literal(LiteralKind::Rational { .. }), Type::Integer(_)) => false,
 
-            // TODO: Rational -> FixedPointNumber once v2 models implicit
-            // conversion of rational literals to fixed-point types.
+            (
+                Type::Literal(
+                    kind @ (LiteralKind::Integer { .. }
+                    | LiteralKind::HexInteger { .. }
+                    | LiteralKind::Rational { .. }),
+                ),
+                Type::FixedPointNumber(fixed_point_type),
+            ) => Number::from_literal_kind(kind).is_some_and(|value| {
+                numbers::literal_fits_in_fixed_point(&value, fixed_point_type)
+            }),
+
             (Type::Integer(_), Type::Literal(_)) => false,
 
             (
@@ -259,10 +274,11 @@ impl TypeRegistry {
                 Type::ByteArray(ByteArrayType { width }),
             ) if *bytes == *width => true,
 
+            // A string literal fits any `bytesN` at least as long as it is.
             (
                 Type::Literal(LiteralKind::HexString { bytes } | LiteralKind::String { bytes }),
                 Type::ByteArray(ByteArrayType { width }),
-            ) if *bytes == *width as usize => true,
+            ) => *bytes <= *width as usize,
 
             (
                 Type::Array(ArrayType {
@@ -274,8 +290,10 @@ impl TypeRegistry {
                     location: to_location,
                 }),
             ) => {
+                // Elements are not converted one by one, so their types must
+                // match exactly, apart from the data location.
                 from_location.implicitly_convertible_to(*to_location)
-                    && self.implicitly_convertible_to(*from_element_type, *to_element_type)
+                    && self.equal_ignoring_location(*from_element_type, *to_element_type)
             }
 
             (
@@ -293,7 +311,7 @@ impl TypeRegistry {
                 // conversion rules are strict and only allow changing data
                 // location (from storage/calldata to memory)
                 *from_size == *to_size
-                    && *from_element_type == *to_element_type
+                    && self.equal_ignoring_location(*from_element_type, *to_element_type)
                     && from_location.implicitly_convertible_to(*to_location)
             }
 
@@ -398,6 +416,56 @@ impl TypeRegistry {
             }
 
             // TODO: add more implicit conversion rules
+            _ => false,
+        }
+    }
+
+    /// Whether both types are the same once their data locations (and those
+    /// of any nested reference types) are disregarded.
+    fn equal_ignoring_location(&self, left_type_id: TypeId, right_type_id: TypeId) -> bool {
+        if left_type_id == right_type_id {
+            return true;
+        }
+        match (
+            self.get_type_by_id(left_type_id),
+            self.get_type_by_id(right_type_id),
+        ) {
+            (
+                Type::Array(ArrayType {
+                    element_type: left_element_type,
+                    ..
+                }),
+                Type::Array(ArrayType {
+                    element_type: right_element_type,
+                    ..
+                }),
+            ) => self.equal_ignoring_location(*left_element_type, *right_element_type),
+            (
+                Type::FixedSizeArray(FixedSizeArrayType {
+                    element_type: left_element_type,
+                    size: left_size,
+                    ..
+                }),
+                Type::FixedSizeArray(FixedSizeArrayType {
+                    element_type: right_element_type,
+                    size: right_size,
+                    ..
+                }),
+            ) => {
+                left_size == right_size
+                    && self.equal_ignoring_location(*left_element_type, *right_element_type)
+            }
+            (
+                Type::Struct(StructType {
+                    definition_id: left_definition_id,
+                    ..
+                }),
+                Type::Struct(StructType {
+                    definition_id: right_definition_id,
+                    ..
+                }),
+            ) => left_definition_id == right_definition_id,
+            (Type::Bytes(_), Type::Bytes(_)) | (Type::String(_), Type::String(_)) => true,
             _ => false,
         }
     }

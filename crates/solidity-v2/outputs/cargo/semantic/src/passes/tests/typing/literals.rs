@@ -120,6 +120,15 @@ fn test_value_bearing_integer_literal_types() {
         })
     );
 
+    // An odd digit count spans no whole number of bytes: a plain `Integer`.
+    let (type_, _) = expression("0x123").into_resolved_type();
+    assert_eq!(
+        type_,
+        Type::Literal(LiteralKind::Integer {
+            value: BigInt::from(291)
+        })
+    );
+
     // Folding a hex literal demotes it to a plain `Integer` (provenance lost).
     let (type_, _) = expression("0x10 + 0").into_resolved_type();
     assert_eq!(

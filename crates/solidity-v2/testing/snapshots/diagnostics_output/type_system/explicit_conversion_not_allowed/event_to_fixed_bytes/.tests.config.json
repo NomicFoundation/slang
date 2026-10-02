@@ -1,0 +1,6 @@
+{
+  "override_language_versions": {
+    "specifier": { "type": "From", "from": "0.8.15" },
+    "reason": "Event selectors (`.selector` on an event) were introduced in 0.8.15."
+  }
+}

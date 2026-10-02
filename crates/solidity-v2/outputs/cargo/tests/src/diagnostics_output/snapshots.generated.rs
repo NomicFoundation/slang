@@ -4955,6 +4955,362 @@ mod type_system {
         }
     }
 
+    mod explicit_conversion_not_allowed {
+        use super::*;
+
+        #[test]
+        fn address_to_library() -> Result<()> {
+            run(
+                "type_system/explicit_conversion_not_allowed",
+                "address_to_library",
+            )
+        }
+
+        #[test]
+        fn array_element_type_change() -> Result<()> {
+            run(
+                "type_system/explicit_conversion_not_allowed",
+                "array_element_type_change",
+            )
+        }
+
+        #[test]
+        fn array_element_type_widening() -> Result<()> {
+            run(
+                "type_system/explicit_conversion_not_allowed",
+                "array_element_type_widening",
+            )
+        }
+
+        #[test]
+        fn bytes_to_fixed_bytes() -> Result<()> {
+            run(
+                "type_system/explicit_conversion_not_allowed",
+                "bytes_to_fixed_bytes",
+            )
+        }
+
+        #[test]
+        fn calldata_slice_to_fixed_bytes() -> Result<()> {
+            run(
+                "type_system/explicit_conversion_not_allowed",
+                "calldata_slice_to_fixed_bytes",
+            )
+        }
+
+        #[test]
+        fn calldata_slice_to_string() -> Result<()> {
+            run(
+                "type_system/explicit_conversion_not_allowed",
+                "calldata_slice_to_string",
+            )
+        }
+
+        #[test]
+        fn contract_type_name_to_address() -> Result<()> {
+            run(
+                "type_system/explicit_conversion_not_allowed",
+                "contract_type_name_to_address",
+            )
+        }
+
+        #[test]
+        fn elementary_type_name_to_address() -> Result<()> {
+            run(
+                "type_system/explicit_conversion_not_allowed",
+                "elementary_type_name_to_address",
+            )
+        }
+
+        #[test]
+        fn enum_to_other_enum() -> Result<()> {
+            run(
+                "type_system/explicit_conversion_not_allowed",
+                "enum_to_other_enum",
+            )
+        }
+
+        #[test]
+        fn enum_to_signed_integer() -> Result<()> {
+            run(
+                "type_system/explicit_conversion_not_allowed",
+                "enum_to_signed_integer",
+            )
+        }
+
+        #[test]
+        fn error_to_fixed_bytes() -> Result<()> {
+            run(
+                "type_system/explicit_conversion_not_allowed",
+                "error_to_fixed_bytes",
+            )
+        }
+
+        #[test]
+        fn event_to_fixed_bytes() -> Result<()> {
+            run(
+                "type_system/explicit_conversion_not_allowed",
+                "event_to_fixed_bytes",
+            )
+        }
+
+        #[test]
+        fn external_function_to_address() -> Result<()> {
+            run(
+                "type_system/explicit_conversion_not_allowed",
+                "external_function_to_address",
+            )
+        }
+
+        #[test]
+        fn external_function_to_integer() -> Result<()> {
+            run(
+                "type_system/explicit_conversion_not_allowed",
+                "external_function_to_integer",
+            )
+        }
+
+        #[test]
+        fn fixed_bytes_to_address_width() -> Result<()> {
+            run(
+                "type_system/explicit_conversion_not_allowed",
+                "fixed_bytes_to_address_width",
+            )
+        }
+
+        #[test]
+        fn fixed_bytes_to_bytes() -> Result<()> {
+            run(
+                "type_system/explicit_conversion_not_allowed",
+                "fixed_bytes_to_bytes",
+            )
+        }
+
+        #[test]
+        fn fixed_bytes_to_integer_width() -> Result<()> {
+            run(
+                "type_system/explicit_conversion_not_allowed",
+                "fixed_bytes_to_integer_width",
+            )
+        }
+
+        #[test]
+        fn fixed_point_to_fixed_bytes() -> Result<()> {
+            run(
+                "type_system/explicit_conversion_not_allowed",
+                "fixed_point_to_fixed_bytes",
+            )
+        }
+
+        #[test]
+        fn fixed_size_storage_array_to_dynamic() -> Result<()> {
+            run(
+                "type_system/explicit_conversion_not_allowed",
+                "fixed_size_storage_array_to_dynamic",
+            )
+        }
+
+        #[test]
+        fn integer_literal_out_of_range() -> Result<()> {
+            run(
+                "type_system/explicit_conversion_not_allowed",
+                "integer_literal_out_of_range",
+            )
+        }
+
+        #[test]
+        fn integer_literal_to_fixed_point() -> Result<()> {
+            run(
+                "type_system/explicit_conversion_not_allowed",
+                "integer_literal_to_fixed_point",
+            )
+        }
+
+        #[test]
+        fn integer_sign_and_width_change() -> Result<()> {
+            run(
+                "type_system/explicit_conversion_not_allowed",
+                "integer_sign_and_width_change",
+            )
+        }
+
+        #[test]
+        fn integer_to_bool() -> Result<()> {
+            run(
+                "type_system/explicit_conversion_not_allowed",
+                "integer_to_bool",
+            )
+        }
+
+        #[test]
+        fn integer_to_narrower_fixed_point() -> Result<()> {
+            run(
+                "type_system/explicit_conversion_not_allowed",
+                "integer_to_narrower_fixed_point",
+            )
+        }
+
+        #[test]
+        fn integer_to_payable_address() -> Result<()> {
+            run(
+                "type_system/explicit_conversion_not_allowed",
+                "integer_to_payable_address",
+            )
+        }
+
+        #[test]
+        fn integer_to_wider_fixed_point() -> Result<()> {
+            run(
+                "type_system/explicit_conversion_not_allowed",
+                "integer_to_wider_fixed_point",
+            )
+        }
+
+        #[test]
+        fn internal_function_to_address() -> Result<()> {
+            run(
+                "type_system/explicit_conversion_not_allowed",
+                "internal_function_to_address",
+            )
+        }
+
+        #[test]
+        fn library_to_address() -> Result<()> {
+            run(
+                "type_system/explicit_conversion_not_allowed",
+                "library_to_address",
+            )
+        }
+
+        #[test]
+        fn literal_out_of_enum_range() -> Result<()> {
+            run(
+                "type_system/explicit_conversion_not_allowed",
+                "literal_out_of_enum_range",
+            )
+        }
+
+        #[test]
+        fn literal_to_byte_array() -> Result<()> {
+            run(
+                "type_system/explicit_conversion_not_allowed",
+                "literal_to_byte_array",
+            )
+        }
+
+        #[test]
+        fn negative_literal_to_address() -> Result<()> {
+            run(
+                "type_system/explicit_conversion_not_allowed",
+                "negative_literal_to_address",
+            )
+        }
+
+        #[test]
+        fn negative_literal_to_user_defined_value_type() -> Result<()> {
+            run(
+                "type_system/explicit_conversion_not_allowed",
+                "negative_literal_to_user_defined_value_type",
+            )
+        }
+
+        #[test]
+        fn non_payable_address_to_payable_base() -> Result<()> {
+            run(
+                "type_system/explicit_conversion_not_allowed",
+                "non_payable_address_to_payable_base",
+            )
+        }
+
+        #[test]
+        fn non_payable_address_to_payable_contract() -> Result<()> {
+            run(
+                "type_system/explicit_conversion_not_allowed",
+                "non_payable_address_to_payable_contract",
+            )
+        }
+
+        #[test]
+        fn odd_length_hex_literal_to_fixed_bytes() -> Result<()> {
+            run(
+                "type_system/explicit_conversion_not_allowed",
+                "odd_length_hex_literal_to_fixed_bytes",
+            )
+        }
+
+        #[test]
+        fn payable_address_to_fixed_bytes() -> Result<()> {
+            run(
+                "type_system/explicit_conversion_not_allowed",
+                "payable_address_to_fixed_bytes",
+            )
+        }
+
+        #[test]
+        fn payable_address_to_integer() -> Result<()> {
+            run(
+                "type_system/explicit_conversion_not_allowed",
+                "payable_address_to_integer",
+            )
+        }
+
+        #[test]
+        fn reference_to_value_type() -> Result<()> {
+            run(
+                "type_system/explicit_conversion_not_allowed",
+                "reference_to_value_type",
+            )
+        }
+
+        #[test]
+        fn string_literal_too_long() -> Result<()> {
+            run(
+                "type_system/explicit_conversion_not_allowed",
+                "string_literal_too_long",
+            )
+        }
+
+        #[test]
+        fn string_to_contract() -> Result<()> {
+            run(
+                "type_system/explicit_conversion_not_allowed",
+                "string_to_contract",
+            )
+        }
+
+        #[test]
+        fn string_to_fixed_bytes() -> Result<()> {
+            run(
+                "type_system/explicit_conversion_not_allowed",
+                "string_to_fixed_bytes",
+            )
+        }
+
+        #[test]
+        fn this_to_payable_address() -> Result<()> {
+            run(
+                "type_system/explicit_conversion_not_allowed",
+                "this_to_payable_address",
+            )
+        }
+
+        #[test]
+        fn unrelated_contract() -> Result<()> {
+            run(
+                "type_system/explicit_conversion_not_allowed",
+                "unrelated_contract",
+            )
+        }
+
+        #[test]
+        fn user_defined_value_type_from_underlying() -> Result<()> {
+            run(
+                "type_system/explicit_conversion_not_allowed",
+                "user_defined_value_type_from_underlying",
+            )
+        }
+    }
+
     mod expression_not_a_value {
         use super::*;
 
@@ -5277,6 +5633,14 @@ mod type_system {
         }
 
         #[test]
+        fn type_name_struct_constructor_argument() -> Result<()> {
+            run(
+                "type_system/expression_not_a_value",
+                "type_name_struct_constructor_argument",
+            )
+        }
+
+        #[test]
         fn uncalled_new() -> Result<()> {
             run("type_system/expression_not_a_value", "uncalled_new")
         }
@@ -5502,6 +5866,22 @@ mod type_system {
             run(
                 "type_system/incompatible_conditional_branches",
                 "byte_array_and_literal_zero",
+            )
+        }
+
+        #[test]
+        fn integer_and_narrower_fixed_point() -> Result<()> {
+            run(
+                "type_system/incompatible_conditional_branches",
+                "integer_and_narrower_fixed_point",
+            )
+        }
+
+        #[test]
+        fn integer_and_wider_fixed_point() -> Result<()> {
+            run(
+                "type_system/incompatible_conditional_branches",
+                "integer_and_wider_fixed_point",
             )
         }
 

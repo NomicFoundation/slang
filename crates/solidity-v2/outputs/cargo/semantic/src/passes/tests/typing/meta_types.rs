@@ -2,6 +2,7 @@
 //! and array types built from them, and the members reached through them.
 
 use ruint::aliases::U256;
+use slang_solidity_v2_common::diagnostics::kinds::type_system::ExplicitConversionNotAllowed;
 use slang_solidity_v2_common::evm_targets::EvmTarget;
 use slang_solidity_v2_ir::ir::{self, NodeIdentity};
 
@@ -182,13 +183,20 @@ fn test_explicit_enum_cast() {
         matches!(type_, Type::Enum(_)),
         "expected `E(1)` to type as the enum, got {type_:?}",
     );
+}
 
-    // User defined value types are not castable by name: conversion goes
-    // through `wrap`/`unwrap`.
-    let (type_, _) = expression("T(1)")
+#[test]
+fn test_disallowed_conversion_types_as_target() {
+    // A user defined value type only converts from itself, but the failed
+    // conversion still types as the target so that its uses are checked.
+    let (type_, diagnostic) = expression("T(1)")
         .with_members("type T is uint256;")
-        .into_type();
-    assert_eq!(type_, None);
+        .into_type_and_diagnostic();
+    assert!(
+        matches!(type_, Some(Type::UserDefinedValue(_))),
+        "expected `T(1)` to type as the UDVT, got {type_:?}",
+    );
+    assert_eq!(diagnostic, Some(ExplicitConversionNotAllowed.into()));
 }
 
 #[test]

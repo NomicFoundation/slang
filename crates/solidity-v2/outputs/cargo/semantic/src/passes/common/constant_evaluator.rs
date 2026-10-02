@@ -11,7 +11,7 @@ use slang_solidity_v2_ir::ir;
 
 use crate::binder::{Binder, Definition, Resolution, Scope, ScopeId};
 use crate::built_ins::{BuiltInsResolver, InternalBuiltIn};
-use crate::types::literals::numbers::{integer_literal_fits, rational_literal_fits};
+use crate::types::literals::numbers::{integer_literal_fits_in, rational_literal_fits_in};
 use crate::types::{
     BinaryOperator, IntegerType, LiteralKind, Number, Type, TypeId, TypeRegistry, UnaryOperator,
     literals,
@@ -166,17 +166,13 @@ impl Number {
     fn coerce_to_integer(&self, target: &IntegerType) -> Option<TypedValue> {
         match self {
             // Already an integer, so just do range check.
-            Number::Integer(integer) => {
-                integer_literal_fits(integer, target.is_signed, target.bits)
-                    .then(|| TypedValue::Integer(self.clone(), target.clone()))
-            }
+            Number::Integer(integer) => integer_literal_fits_in(integer, target)
+                .then(|| TypedValue::Integer(self.clone(), target.clone())),
             // Convert the rational number to an integer if it fits within
             // the integer range.
-            Number::Rational(rational) => {
-                rational_literal_fits(rational, target.is_signed, target.bits).then(|| {
-                    TypedValue::Integer(Number::Integer(rational.to_integer()), target.clone())
-                })
-            }
+            Number::Rational(rational) => rational_literal_fits_in(rational, target).then(|| {
+                TypedValue::Integer(Number::Integer(rational.to_integer()), target.clone())
+            }),
         }
     }
 }
