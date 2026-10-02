@@ -700,7 +700,7 @@ impl SemanticContext {
         let (first, second, member_type_ids) = match &layout.kind {
             StorageTypeKind::Value | StorageTypeKind::Bytes => (None, None, Vec::new()),
             StorageTypeKind::DynamicArray { element }
-            | StorageTypeKind::FixedSizeArray { element } => (Some(*element), None, Vec::new()),
+            | StorageTypeKind::FixedSizeArray { element, .. } => (Some(*element), None, Vec::new()),
             StorageTypeKind::Mapping { key, value } => (Some(*key), Some(*value), Vec::new()),
             StorageTypeKind::Struct { members } => (
                 None,
@@ -748,11 +748,12 @@ impl SemanticContext {
                 element: *element_type,
             },
             Type::Bytes(_) | Type::String(_) => StorageTypeKind::Bytes,
-            Type::FixedSizeArray(FixedSizeArrayType { element_type, .. }) => {
-                StorageTypeKind::FixedSizeArray {
-                    element: *element_type,
-                }
-            }
+            Type::FixedSizeArray(FixedSizeArrayType {
+                element_type, size, ..
+            }) => StorageTypeKind::FixedSizeArray {
+                element: *element_type,
+                length: *size,
+            },
             Type::Mapping(MappingType {
                 key_type_id,
                 value_type_id,

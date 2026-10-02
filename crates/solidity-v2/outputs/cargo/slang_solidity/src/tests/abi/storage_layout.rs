@@ -514,8 +514,8 @@ fn describe_storage_types(layout: &abi::StorageLayout) -> Vec<String> {
             StorageTypeKind::DynamicArray { element } => {
                 format!("dynamic array of {}", label_of(*element))
             }
-            StorageTypeKind::FixedSizeArray { element } => {
-                format!("fixed-size array of {}", label_of(*element))
+            StorageTypeKind::FixedSizeArray { element, length } => {
+                format!("fixed-size array of {length} {}", label_of(*element))
             }
             StorageTypeKind::Mapping { key, value } => {
                 format!("mapping from {} to {}", label_of(*key), label_of(*value))
@@ -526,10 +526,10 @@ fn describe_storage_types(layout: &abi::StorageLayout) -> Vec<String> {
                     .map(|member| {
                         format!(
                             "{} at {}+{}: {}",
-                            member.name,
-                            member.position.slot,
-                            member.position.offset,
-                            label_of(member.type_id)
+                            member.name(),
+                            member.position().slot,
+                            member.position().offset,
+                            label_of(member.type_id())
                         )
                     })
                     .collect();
@@ -607,7 +607,7 @@ fn test_storage_types_table() {
             "mapping(address => mapping(enum Types.Kind => contract IOracle[])): 1 slots, \
              mapping from address to mapping(enum Types.Kind => contract IOracle[])",
             "mapping(bytes => uint8): 1 slots, mapping from bytes to uint8",
-            "mapping(bytes => uint8)[2]: 2 slots, fixed-size array of mapping(bytes => uint8)",
+            "mapping(bytes => uint8)[2]: 2 slots, fixed-size array of 2 mapping(bytes => uint8)",
             "mapping(enum Types.Kind => contract IOracle[]): 1 slots, \
              mapping from enum Types.Kind to contract IOracle[]",
             "mapping(string => struct Types.Node): 1 slots, mapping from string to struct Types.Node",
@@ -618,7 +618,7 @@ fn test_storage_types_table() {
              callback at 4+0: function () external, tag at 4+24: uint8 }",
             "struct Types.Node[]: 1 slots, dynamic array of struct Types.Node",
             "uint8: 1 bytes, value",
-            "uint8[3]: 1 slots, fixed-size array of uint8",
+            "uint8[3]: 1 slots, fixed-size array of 3 uint8",
             "uint8[3][]: 1 slots, dynamic array of uint8[3]",
         ]
     );
@@ -677,8 +677,8 @@ fn test_storage_types_share_member_and_variable_types() {
         panic!("`root` is a struct");
     };
     let children = &members[2];
-    assert_eq!(children.name, "children");
-    assert_eq!(children.type_id, nodes.type_id());
+    assert_eq!(children.name(), "children");
+    assert_eq!(children.type_id(), nodes.type_id());
 }
 
 // The size is exact, even where a byte count would not fit a `uint256`.
