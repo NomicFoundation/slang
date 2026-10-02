@@ -6150,6 +6150,49 @@ mod type_system {
         }
     }
 
+    mod type_too_large_for_storage {
+        use super::*;
+
+        #[test]
+        fn dynamic_array_element() -> Result<()> {
+            run(
+                "type_system/type_too_large_for_storage",
+                "dynamic_array_element",
+            )
+        }
+
+        #[test]
+        fn fixed_size_array_variable() -> Result<()> {
+            run(
+                "type_system/type_too_large_for_storage",
+                "fixed_size_array_variable",
+            )
+        }
+
+        #[test]
+        fn mapping_value() -> Result<()> {
+            run("type_system/type_too_large_for_storage", "mapping_value")
+        }
+
+        #[test]
+        fn memory_only() -> Result<()> {
+            run("type_system/type_too_large_for_storage", "memory_only")
+        }
+
+        #[test]
+        fn struct_member_array_element() -> Result<()> {
+            run(
+                "type_system/type_too_large_for_storage",
+                "struct_member_array_element",
+            )
+        }
+
+        #[test]
+        fn struct_variable() -> Result<()> {
+            run("type_system/type_too_large_for_storage", "struct_variable")
+        }
+    }
+
     mod write_to_constant {
         use super::*;
 
