@@ -74,7 +74,7 @@ impl ast::visitor::Visitor for NonterminalTexts {
 }
 
 #[test]
-fn test_enter_nonterminal_visits_every_sequence_and_collection() {
+fn test_enter_nonterminal_order() {
     let unit = Nonterminals::build_compilation_unit();
     let source_unit = unit.file(&"main.sol".into()).unwrap().ast();
 
@@ -93,7 +93,7 @@ fn test_enter_nonterminal_visits_every_sequence_and_collection() {
             Some("^0.8.0"), // VersionPragmaExpressionSets
             Some("^0.8.0"), // VersionPragmaExpressionSet
             Some("^0.8.0"), // VersionPragmaComparator
-            None,           // VersionPragmaSpecifier
+            None, // VersionPragmaSpecifier: its components are parsed numbers, so it has no range
             Some(contract),
             None, // InheritanceTypes
             Some("uint public x; function f(uint a) public view returns (uint) { return a + x; }"),
