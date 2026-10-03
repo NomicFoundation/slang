@@ -51,6 +51,35 @@ fn test_contract_compute_linearised_bases() {
     assert_eq!(ownable.name().name(), "Ownable");
 }
 
+define_fixture!(
+    InterfaceDiamond,
+    file: "main.sol", r#"
+// SPDX-License-Identifier: UNLICENSED
+pragma solidity ^0.8.29;
+
+interface A {}
+interface B is A {}
+interface C is A {}
+interface D is B, C {}
+"#,
+);
+
+#[test]
+fn test_interface_compute_linearised_bases() {
+    let unit = InterfaceDiamond::build_compilation_unit();
+
+    let linearised_names = |name: &str| -> Vec<String> {
+        fixtures::find_interface(&unit, name)
+            .linearised_bases()
+            .iter()
+            .map(|base| base.name().name().to_owned())
+            .collect()
+    };
+    assert_eq!(linearised_names("D"), ["D", "C", "B", "A"]);
+    assert_eq!(linearised_names("B"), ["B", "A"]);
+    assert_eq!(linearised_names("A"), ["A"]);
+}
+
 #[test]
 fn test_contract_compute_linearised_state_variables() {
     let unit = fixtures::Counter::build_compilation_unit();

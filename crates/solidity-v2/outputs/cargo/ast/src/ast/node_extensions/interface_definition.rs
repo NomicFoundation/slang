@@ -2,7 +2,8 @@ use super::super::nodes::{
     create_error_definition, create_event_definition, create_function_definition,
 };
 use super::super::{
-    ErrorDefinition, EventDefinition, FunctionDefinition, FunctionKind, InterfaceDefinitionStruct,
+    Definition, ErrorDefinition, EventDefinition, FunctionDefinition, FunctionKind,
+    InterfaceDefinition, InterfaceDefinitionStruct,
 };
 
 impl InterfaceDefinitionStruct {
@@ -14,6 +15,34 @@ impl InterfaceDefinitionStruct {
                     function.kind(),
                     FunctionKind::Regular | FunctionKind::Fallback | FunctionKind::Receive
                 )
+            })
+            .collect()
+    }
+
+    /// Returns the list of interfaces in the hierarchy (including self) in the
+    /// order given by the C3 linearisation, with self interface always first.
+    /// Only interface bases are returned; a contract base is skipped.
+    pub fn linearised_bases(&self) -> Vec<InterfaceDefinition> {
+        let Some(base_node_ids) = self
+            .semantic
+            .binder()
+            .get_linearised_bases(self.ir_node.id())
+        else {
+            // TODO(validation) SDR[4]: once we have validation implemented, this
+            // branch should not be reachable, or we should generate an error
+            // while building the `SemanticAnalysis`.
+            return Vec::new();
+        };
+        base_node_ids
+            .iter()
+            .filter_map(|node_id| {
+                match Definition::try_create(*node_id, &self.semantic)
+                    .expect("node is a definition")
+                {
+                    Definition::Interface(interface) => Some(interface),
+                    // TODO(validation) SDR[1369]: an interface can only inherit from other interfaces.
+                    _ => None,
+                }
             })
             .collect()
     }
