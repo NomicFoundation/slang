@@ -1,7 +1,7 @@
 use super::super::nodes::{create_error_definition, create_event_definition};
 use super::super::{
-    ErrorDefinition, EventDefinition, FunctionDefinition, FunctionKind, LibraryDefinitionStruct,
-    StateVariableDefinition,
+    Definition, ErrorDefinition, EventDefinition, FunctionDefinition, FunctionKind,
+    LibraryDefinitionStruct, StateVariableDefinition,
 };
 
 impl LibraryDefinitionStruct {
@@ -34,6 +34,21 @@ impl LibraryDefinitionStruct {
             .used_events(self.ir_node.id())
             .iter()
             .map(|ir_node| create_event_definition(ir_node, &self.semantic))
+            .collect()
+    }
+
+    /// The contracts and libraries whose bytecode this library's externally
+    /// callable functions and public constants embed, directly or through the
+    /// code they reach, through `new` or `type(...).creationCode`/`runtimeCode`.
+    pub fn bytecode_dependencies(&self) -> Vec<Definition> {
+        self.semantic
+            .deployed_bytecode_dependencies()
+            .get(&self.ir_node.id())
+            .into_iter()
+            .flat_map(|dependencies| dependencies.keys())
+            .map(|node_id| {
+                Definition::try_create(*node_id, &self.semantic).expect("node is a definition")
+            })
             .collect()
     }
 }
