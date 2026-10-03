@@ -281,6 +281,7 @@ pub fn slang_solidity_v2_ast::ast::visitor::Visitor::enter_multiplicative_expres
 pub fn slang_solidity_v2_ast::ast::visitor::Visitor::enter_named_argument(&mut self, &slang_solidity_v2_ast::ast::NamedArgument) -> bool
 pub fn slang_solidity_v2_ast::ast::visitor::Visitor::enter_named_arguments(&mut self, &slang_solidity_v2_ast::ast::NamedArguments) -> bool
 pub fn slang_solidity_v2_ast::ast::visitor::Visitor::enter_new_expression(&mut self, &slang_solidity_v2_ast::ast::NewExpression) -> bool
+pub fn slang_solidity_v2_ast::ast::visitor::Visitor::enter_nonterminal(&mut self, &dyn slang_solidity_v2_ast::ast::NodeLocation)
 pub fn slang_solidity_v2_ast::ast::visitor::Visitor::enter_number_unit(&mut self, &slang_solidity_v2_ast::ast::NumberUnit) -> bool
 pub fn slang_solidity_v2_ast::ast::visitor::Visitor::enter_or_expression(&mut self, &slang_solidity_v2_ast::ast::OrExpression) -> bool
 pub fn slang_solidity_v2_ast::ast::visitor::Visitor::enter_override_paths(&mut self, &slang_solidity_v2_ast::ast::OverridePaths) -> bool

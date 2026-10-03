@@ -1,5 +1,6 @@
 use super::fixtures;
-use crate::ast;
+use crate::ast::{self, NodeLocation};
+use crate::define_fixture;
 
 #[derive(Default)]
 struct IdentifierCounter {
@@ -50,4 +51,65 @@ fn test_ast_visitor() {
     assert_eq!(activatable_visitor.total, 31);
     assert_eq!(activatable_visitor.definitions, 10);
     assert_eq!(activatable_visitor.references, 22);
+}
+
+const NONTERMINALS: &str = "pragma solidity ^0.8.0;
+contract C { uint public x; function f(uint a) public view returns (uint) { return a + x; } }";
+
+define_fixture!(
+    Nonterminals,
+    file: "main.sol", NONTERMINALS,
+);
+
+#[derive(Default)]
+struct NonterminalTexts(Vec<Option<&'static str>>);
+
+impl ast::visitor::Visitor for NonterminalTexts {
+    fn enter_nonterminal(&mut self, node: &dyn NodeLocation) {
+        self.0.push(
+            node.calculate_text_range()
+                .map(|range| &NONTERMINALS[range]),
+        );
+    }
+}
+
+#[test]
+fn test_enter_nonterminal_visits_every_sequence_and_collection() {
+    let unit = Nonterminals::build_compilation_unit();
+    let source_unit = unit.file(&"main.sol".into()).unwrap().ast();
+
+    let mut texts = NonterminalTexts::default();
+    ast::visitor::accept_source_unit(&source_unit, &mut texts);
+
+    let contract = "contract C { uint public x; function f(uint a) public view returns (uint) { return a + x; } }";
+    let function = "function f(uint a) public view returns (uint) { return a + x; }";
+    assert_eq!(
+        texts.0,
+        [
+            Some(NONTERMINALS), // SourceUnit
+            Some(NONTERMINALS), // SourceUnitMembers
+            Some("pragma solidity ^0.8.0;"),
+            Some("solidity ^0.8.0"),
+            Some("^0.8.0"), // VersionPragmaExpressionSets
+            Some("^0.8.0"), // VersionPragmaExpressionSet
+            Some("^0.8.0"), // VersionPragmaComparator
+            None,           // VersionPragmaSpecifier
+            Some(contract),
+            None, // InheritanceTypes
+            Some("uint public x; function f(uint a) public view returns (uint) { return a + x; }"),
+            Some("uint public x;"),
+            Some("public"), // StateVariableAttributes
+            Some(function),
+            Some("uint a"), // Parameters
+            Some("uint a"), // Parameter
+            Some("public view"),
+            None,         // ModifierInvocations
+            Some("uint"), // returns: Parameters
+            Some("uint"), // returns: Parameter
+            Some("{ return a + x; }"),
+            Some("return a + x;"), // Statements
+            Some("return a + x;"), // ReturnStatement
+            Some("a + x"),
+        ]
+    );
 }

@@ -1,9 +1,12 @@
 // This file is generated automatically by infrastructure scripts. Please don't edit by hand.
 
+use super::NodeLocation;
 #[allow(clippy::wildcard_imports)]
 use super::nodes::*;
 
 pub trait Visitor {
+    /// Called for every sequence and collection node, before its own `enter_*` method.
+    fn enter_nonterminal(&mut self, _node: &dyn NodeLocation) {}
     fn enter_abicoder_pragma(&mut self, _node: &AbicoderPragma) -> bool {
         true
     }
@@ -917,6 +920,7 @@ pub trait Visitor {
 //
 
 pub fn accept_abicoder_pragma(node: &AbicoderPragma, visitor: &mut impl Visitor) {
+    visitor.enter_nonterminal(node);
     if !visitor.enter_abicoder_pragma(node) {
         return;
     }
@@ -925,6 +929,7 @@ pub fn accept_abicoder_pragma(node: &AbicoderPragma, visitor: &mut impl Visitor)
 }
 
 pub fn accept_additive_expression(node: &AdditiveExpression, visitor: &mut impl Visitor) {
+    visitor.enter_nonterminal(node);
     if !visitor.enter_additive_expression(node) {
         return;
     }
@@ -935,6 +940,7 @@ pub fn accept_additive_expression(node: &AdditiveExpression, visitor: &mut impl 
 }
 
 pub fn accept_address_type(node: &AddressType, visitor: &mut impl Visitor) {
+    visitor.enter_nonterminal(node);
     if !visitor.enter_address_type(node) {
         return;
     }
@@ -942,6 +948,7 @@ pub fn accept_address_type(node: &AddressType, visitor: &mut impl Visitor) {
 }
 
 pub fn accept_and_expression(node: &AndExpression, visitor: &mut impl Visitor) {
+    visitor.enter_nonterminal(node);
     if !visitor.enter_and_expression(node) {
         return;
     }
@@ -951,6 +958,7 @@ pub fn accept_and_expression(node: &AndExpression, visitor: &mut impl Visitor) {
 }
 
 pub fn accept_array_expression(node: &ArrayExpression, visitor: &mut impl Visitor) {
+    visitor.enter_nonterminal(node);
     if !visitor.enter_array_expression(node) {
         return;
     }
@@ -959,6 +967,7 @@ pub fn accept_array_expression(node: &ArrayExpression, visitor: &mut impl Visito
 }
 
 pub fn accept_array_type_name(node: &ArrayTypeName, visitor: &mut impl Visitor) {
+    visitor.enter_nonterminal(node);
     if !visitor.enter_array_type_name(node) {
         return;
     }
@@ -970,6 +979,7 @@ pub fn accept_array_type_name(node: &ArrayTypeName, visitor: &mut impl Visitor) 
 }
 
 pub fn accept_assembly_statement(node: &AssemblyStatement, visitor: &mut impl Visitor) {
+    visitor.enter_nonterminal(node);
     if !visitor.enter_assembly_statement(node) {
         return;
     }
@@ -978,6 +988,7 @@ pub fn accept_assembly_statement(node: &AssemblyStatement, visitor: &mut impl Vi
 }
 
 pub fn accept_assignment_expression(node: &AssignmentExpression, visitor: &mut impl Visitor) {
+    visitor.enter_nonterminal(node);
     if !visitor.enter_assignment_expression(node) {
         return;
     }
@@ -988,6 +999,7 @@ pub fn accept_assignment_expression(node: &AssignmentExpression, visitor: &mut i
 }
 
 pub fn accept_bitwise_and_expression(node: &BitwiseAndExpression, visitor: &mut impl Visitor) {
+    visitor.enter_nonterminal(node);
     if !visitor.enter_bitwise_and_expression(node) {
         return;
     }
@@ -997,6 +1009,7 @@ pub fn accept_bitwise_and_expression(node: &BitwiseAndExpression, visitor: &mut 
 }
 
 pub fn accept_bitwise_or_expression(node: &BitwiseOrExpression, visitor: &mut impl Visitor) {
+    visitor.enter_nonterminal(node);
     if !visitor.enter_bitwise_or_expression(node) {
         return;
     }
@@ -1006,6 +1019,7 @@ pub fn accept_bitwise_or_expression(node: &BitwiseOrExpression, visitor: &mut im
 }
 
 pub fn accept_bitwise_xor_expression(node: &BitwiseXorExpression, visitor: &mut impl Visitor) {
+    visitor.enter_nonterminal(node);
     if !visitor.enter_bitwise_xor_expression(node) {
         return;
     }
@@ -1015,6 +1029,7 @@ pub fn accept_bitwise_xor_expression(node: &BitwiseXorExpression, visitor: &mut 
 }
 
 pub fn accept_block(node: &Block, visitor: &mut impl Visitor) {
+    visitor.enter_nonterminal(node);
     if !visitor.enter_block(node) {
         return;
     }
@@ -1023,6 +1038,7 @@ pub fn accept_block(node: &Block, visitor: &mut impl Visitor) {
 }
 
 pub fn accept_break_statement(node: &BreakStatement, visitor: &mut impl Visitor) {
+    visitor.enter_nonterminal(node);
     if !visitor.enter_break_statement(node) {
         return;
     }
@@ -1030,6 +1046,7 @@ pub fn accept_break_statement(node: &BreakStatement, visitor: &mut impl Visitor)
 }
 
 pub fn accept_call_options_expression(node: &CallOptionsExpression, visitor: &mut impl Visitor) {
+    visitor.enter_nonterminal(node);
     if !visitor.enter_call_options_expression(node) {
         return;
     }
@@ -1039,6 +1056,7 @@ pub fn accept_call_options_expression(node: &CallOptionsExpression, visitor: &mu
 }
 
 pub fn accept_catch_clause(node: &CatchClause, visitor: &mut impl Visitor) {
+    visitor.enter_nonterminal(node);
     if !visitor.enter_catch_clause(node) {
         return;
     }
@@ -1051,6 +1069,7 @@ pub fn accept_catch_clause(node: &CatchClause, visitor: &mut impl Visitor) {
 }
 
 pub fn accept_conditional_expression(node: &ConditionalExpression, visitor: &mut impl Visitor) {
+    visitor.enter_nonterminal(node);
     if !visitor.enter_conditional_expression(node) {
         return;
     }
@@ -1061,6 +1080,7 @@ pub fn accept_conditional_expression(node: &ConditionalExpression, visitor: &mut
 }
 
 pub fn accept_constant_definition(node: &ConstantDefinition, visitor: &mut impl Visitor) {
+    visitor.enter_nonterminal(node);
     if !visitor.enter_constant_definition(node) {
         return;
     }
@@ -1076,6 +1096,7 @@ pub fn accept_constant_definition(node: &ConstantDefinition, visitor: &mut impl 
 }
 
 pub fn accept_continue_statement(node: &ContinueStatement, visitor: &mut impl Visitor) {
+    visitor.enter_nonterminal(node);
     if !visitor.enter_continue_statement(node) {
         return;
     }
@@ -1083,6 +1104,7 @@ pub fn accept_continue_statement(node: &ContinueStatement, visitor: &mut impl Vi
 }
 
 pub fn accept_contract_definition(node: &ContractDefinition, visitor: &mut impl Visitor) {
+    visitor.enter_nonterminal(node);
     if !visitor.enter_contract_definition(node) {
         return;
     }
@@ -1099,6 +1121,7 @@ pub fn accept_decimal_number_expression(
     node: &DecimalNumberExpression,
     visitor: &mut impl Visitor,
 ) {
+    visitor.enter_nonterminal(node);
     if !visitor.enter_decimal_number_expression(node) {
         return;
     }
@@ -1110,6 +1133,7 @@ pub fn accept_decimal_number_expression(
 }
 
 pub fn accept_do_while_statement(node: &DoWhileStatement, visitor: &mut impl Visitor) {
+    visitor.enter_nonterminal(node);
     if !visitor.enter_do_while_statement(node) {
         return;
     }
@@ -1119,6 +1143,7 @@ pub fn accept_do_while_statement(node: &DoWhileStatement, visitor: &mut impl Vis
 }
 
 pub fn accept_emit_statement(node: &EmitStatement, visitor: &mut impl Visitor) {
+    visitor.enter_nonterminal(node);
     if !visitor.enter_emit_statement(node) {
         return;
     }
@@ -1128,6 +1153,7 @@ pub fn accept_emit_statement(node: &EmitStatement, visitor: &mut impl Visitor) {
 }
 
 pub fn accept_enum_definition(node: &EnumDefinition, visitor: &mut impl Visitor) {
+    visitor.enter_nonterminal(node);
     if !visitor.enter_enum_definition(node) {
         return;
     }
@@ -1137,6 +1163,7 @@ pub fn accept_enum_definition(node: &EnumDefinition, visitor: &mut impl Visitor)
 }
 
 pub fn accept_equality_expression(node: &EqualityExpression, visitor: &mut impl Visitor) {
+    visitor.enter_nonterminal(node);
     if !visitor.enter_equality_expression(node) {
         return;
     }
@@ -1147,6 +1174,7 @@ pub fn accept_equality_expression(node: &EqualityExpression, visitor: &mut impl 
 }
 
 pub fn accept_error_definition(node: &ErrorDefinition, visitor: &mut impl Visitor) {
+    visitor.enter_nonterminal(node);
     if !visitor.enter_error_definition(node) {
         return;
     }
@@ -1156,6 +1184,7 @@ pub fn accept_error_definition(node: &ErrorDefinition, visitor: &mut impl Visito
 }
 
 pub fn accept_event_definition(node: &EventDefinition, visitor: &mut impl Visitor) {
+    visitor.enter_nonterminal(node);
     if !visitor.enter_event_definition(node) {
         return;
     }
@@ -1165,6 +1194,7 @@ pub fn accept_event_definition(node: &EventDefinition, visitor: &mut impl Visito
 }
 
 pub fn accept_experimental_pragma(node: &ExperimentalPragma, visitor: &mut impl Visitor) {
+    visitor.enter_nonterminal(node);
     if !visitor.enter_experimental_pragma(node) {
         return;
     }
@@ -1176,6 +1206,7 @@ pub fn accept_exponentiation_expression(
     node: &ExponentiationExpression,
     visitor: &mut impl Visitor,
 ) {
+    visitor.enter_nonterminal(node);
     if !visitor.enter_exponentiation_expression(node) {
         return;
     }
@@ -1185,6 +1216,7 @@ pub fn accept_exponentiation_expression(
 }
 
 pub fn accept_expression_statement(node: &ExpressionStatement, visitor: &mut impl Visitor) {
+    visitor.enter_nonterminal(node);
     if !visitor.enter_expression_statement(node) {
         return;
     }
@@ -1193,6 +1225,7 @@ pub fn accept_expression_statement(node: &ExpressionStatement, visitor: &mut imp
 }
 
 pub fn accept_for_statement(node: &ForStatement, visitor: &mut impl Visitor) {
+    visitor.enter_nonterminal(node);
     if !visitor.enter_for_statement(node) {
         return;
     }
@@ -1206,6 +1239,7 @@ pub fn accept_for_statement(node: &ForStatement, visitor: &mut impl Visitor) {
 }
 
 pub fn accept_function_attributes(node: &FunctionAttributes, visitor: &mut impl Visitor) {
+    visitor.enter_nonterminal(node);
     if !visitor.enter_function_attributes(node) {
         return;
     }
@@ -1219,6 +1253,7 @@ pub fn accept_function_attributes(node: &FunctionAttributes, visitor: &mut impl 
 }
 
 pub fn accept_function_call_expression(node: &FunctionCallExpression, visitor: &mut impl Visitor) {
+    visitor.enter_nonterminal(node);
     if !visitor.enter_function_call_expression(node) {
         return;
     }
@@ -1228,6 +1263,7 @@ pub fn accept_function_call_expression(node: &FunctionCallExpression, visitor: &
 }
 
 pub fn accept_function_definition(node: &FunctionDefinition, visitor: &mut impl Visitor) {
+    visitor.enter_nonterminal(node);
     if !visitor.enter_function_definition(node) {
         return;
     }
@@ -1247,6 +1283,7 @@ pub fn accept_function_definition(node: &FunctionDefinition, visitor: &mut impl 
 }
 
 pub fn accept_function_type(node: &FunctionType, visitor: &mut impl Visitor) {
+    visitor.enter_nonterminal(node);
     if !visitor.enter_function_type(node) {
         return;
     }
@@ -1259,6 +1296,7 @@ pub fn accept_function_type(node: &FunctionType, visitor: &mut impl Visitor) {
 }
 
 pub fn accept_function_type_attributes(node: &FunctionTypeAttributes, visitor: &mut impl Visitor) {
+    visitor.enter_nonterminal(node);
     if !visitor.enter_function_type_attributes(node) {
         return;
     }
@@ -1268,6 +1306,7 @@ pub fn accept_function_type_attributes(node: &FunctionTypeAttributes, visitor: &
 }
 
 pub fn accept_hex_number_expression(node: &HexNumberExpression, visitor: &mut impl Visitor) {
+    visitor.enter_nonterminal(node);
     if !visitor.enter_hex_number_expression(node) {
         return;
     }
@@ -1276,6 +1315,7 @@ pub fn accept_hex_number_expression(node: &HexNumberExpression, visitor: &mut im
 }
 
 pub fn accept_if_statement(node: &IfStatement, visitor: &mut impl Visitor) {
+    visitor.enter_nonterminal(node);
     if !visitor.enter_if_statement(node) {
         return;
     }
@@ -1288,6 +1328,7 @@ pub fn accept_if_statement(node: &IfStatement, visitor: &mut impl Visitor) {
 }
 
 pub fn accept_import_deconstruction(node: &ImportDeconstruction, visitor: &mut impl Visitor) {
+    visitor.enter_nonterminal(node);
     if !visitor.enter_import_deconstruction(node) {
         return;
     }
@@ -1300,6 +1341,7 @@ pub fn accept_import_deconstruction_symbol(
     node: &ImportDeconstructionSymbol,
     visitor: &mut impl Visitor,
 ) {
+    visitor.enter_nonterminal(node);
     if !visitor.enter_import_deconstruction_symbol(node) {
         return;
     }
@@ -1311,6 +1353,7 @@ pub fn accept_import_deconstruction_symbol(
 }
 
 pub fn accept_index_access_expression(node: &IndexAccessExpression, visitor: &mut impl Visitor) {
+    visitor.enter_nonterminal(node);
     if !visitor.enter_index_access_expression(node) {
         return;
     }
@@ -1325,6 +1368,7 @@ pub fn accept_index_access_expression(node: &IndexAccessExpression, visitor: &mu
 }
 
 pub fn accept_inequality_expression(node: &InequalityExpression, visitor: &mut impl Visitor) {
+    visitor.enter_nonterminal(node);
     if !visitor.enter_inequality_expression(node) {
         return;
     }
@@ -1335,6 +1379,7 @@ pub fn accept_inequality_expression(node: &InequalityExpression, visitor: &mut i
 }
 
 pub fn accept_inheritance_type(node: &InheritanceType, visitor: &mut impl Visitor) {
+    visitor.enter_nonterminal(node);
     if !visitor.enter_inheritance_type(node) {
         return;
     }
@@ -1346,6 +1391,7 @@ pub fn accept_inheritance_type(node: &InheritanceType, visitor: &mut impl Visito
 }
 
 pub fn accept_interface_definition(node: &InterfaceDefinition, visitor: &mut impl Visitor) {
+    visitor.enter_nonterminal(node);
     if !visitor.enter_interface_definition(node) {
         return;
     }
@@ -1358,6 +1404,7 @@ pub fn accept_interface_definition(node: &InterfaceDefinition, visitor: &mut imp
 }
 
 pub fn accept_library_definition(node: &LibraryDefinition, visitor: &mut impl Visitor) {
+    visitor.enter_nonterminal(node);
     if !visitor.enter_library_definition(node) {
         return;
     }
@@ -1367,6 +1414,7 @@ pub fn accept_library_definition(node: &LibraryDefinition, visitor: &mut impl Vi
 }
 
 pub fn accept_mapping_type(node: &MappingType, visitor: &mut impl Visitor) {
+    visitor.enter_nonterminal(node);
     if !visitor.enter_mapping_type(node) {
         return;
     }
@@ -1376,6 +1424,7 @@ pub fn accept_mapping_type(node: &MappingType, visitor: &mut impl Visitor) {
 }
 
 pub fn accept_member_access_expression(node: &MemberAccessExpression, visitor: &mut impl Visitor) {
+    visitor.enter_nonterminal(node);
     if !visitor.enter_member_access_expression(node) {
         return;
     }
@@ -1385,6 +1434,7 @@ pub fn accept_member_access_expression(node: &MemberAccessExpression, visitor: &
 }
 
 pub fn accept_modifier_invocation(node: &ModifierInvocation, visitor: &mut impl Visitor) {
+    visitor.enter_nonterminal(node);
     if !visitor.enter_modifier_invocation(node) {
         return;
     }
@@ -1396,6 +1446,7 @@ pub fn accept_modifier_invocation(node: &ModifierInvocation, visitor: &mut impl 
 }
 
 pub fn accept_multi_typed_declaration(node: &MultiTypedDeclaration, visitor: &mut impl Visitor) {
+    visitor.enter_nonterminal(node);
     if !visitor.enter_multi_typed_declaration(node) {
         return;
     }
@@ -1408,6 +1459,7 @@ pub fn accept_multi_typed_declaration_element(
     node: &MultiTypedDeclarationElement,
     visitor: &mut impl Visitor,
 ) {
+    visitor.enter_nonterminal(node);
     if !visitor.enter_multi_typed_declaration_element(node) {
         return;
     }
@@ -1421,6 +1473,7 @@ pub fn accept_multiplicative_expression(
     node: &MultiplicativeExpression,
     visitor: &mut impl Visitor,
 ) {
+    visitor.enter_nonterminal(node);
     if !visitor.enter_multiplicative_expression(node) {
         return;
     }
@@ -1431,6 +1484,7 @@ pub fn accept_multiplicative_expression(
 }
 
 pub fn accept_named_argument(node: &NamedArgument, visitor: &mut impl Visitor) {
+    visitor.enter_nonterminal(node);
     if !visitor.enter_named_argument(node) {
         return;
     }
@@ -1440,6 +1494,7 @@ pub fn accept_named_argument(node: &NamedArgument, visitor: &mut impl Visitor) {
 }
 
 pub fn accept_new_expression(node: &NewExpression, visitor: &mut impl Visitor) {
+    visitor.enter_nonterminal(node);
     if !visitor.enter_new_expression(node) {
         return;
     }
@@ -1448,6 +1503,7 @@ pub fn accept_new_expression(node: &NewExpression, visitor: &mut impl Visitor) {
 }
 
 pub fn accept_or_expression(node: &OrExpression, visitor: &mut impl Visitor) {
+    visitor.enter_nonterminal(node);
     if !visitor.enter_or_expression(node) {
         return;
     }
@@ -1457,6 +1513,7 @@ pub fn accept_or_expression(node: &OrExpression, visitor: &mut impl Visitor) {
 }
 
 pub fn accept_parameter(node: &Parameter, visitor: &mut impl Visitor) {
+    visitor.enter_nonterminal(node);
     if !visitor.enter_parameter(node) {
         return;
     }
@@ -1471,6 +1528,7 @@ pub fn accept_parameter(node: &Parameter, visitor: &mut impl Visitor) {
 }
 
 pub fn accept_path_import(node: &PathImport, visitor: &mut impl Visitor) {
+    visitor.enter_nonterminal(node);
     if !visitor.enter_path_import(node) {
         return;
     }
@@ -1482,6 +1540,7 @@ pub fn accept_path_import(node: &PathImport, visitor: &mut impl Visitor) {
 }
 
 pub fn accept_postfix_expression(node: &PostfixExpression, visitor: &mut impl Visitor) {
+    visitor.enter_nonterminal(node);
     if !visitor.enter_postfix_expression(node) {
         return;
     }
@@ -1491,6 +1550,7 @@ pub fn accept_postfix_expression(node: &PostfixExpression, visitor: &mut impl Vi
 }
 
 pub fn accept_pragma_directive(node: &PragmaDirective, visitor: &mut impl Visitor) {
+    visitor.enter_nonterminal(node);
     if !visitor.enter_pragma_directive(node) {
         return;
     }
@@ -1499,6 +1559,7 @@ pub fn accept_pragma_directive(node: &PragmaDirective, visitor: &mut impl Visito
 }
 
 pub fn accept_prefix_expression(node: &PrefixExpression, visitor: &mut impl Visitor) {
+    visitor.enter_nonterminal(node);
     if !visitor.enter_prefix_expression(node) {
         return;
     }
@@ -1508,6 +1569,7 @@ pub fn accept_prefix_expression(node: &PrefixExpression, visitor: &mut impl Visi
 }
 
 pub fn accept_return_statement(node: &ReturnStatement, visitor: &mut impl Visitor) {
+    visitor.enter_nonterminal(node);
     if !visitor.enter_return_statement(node) {
         return;
     }
@@ -1518,6 +1580,7 @@ pub fn accept_return_statement(node: &ReturnStatement, visitor: &mut impl Visito
 }
 
 pub fn accept_revert_statement(node: &RevertStatement, visitor: &mut impl Visitor) {
+    visitor.enter_nonterminal(node);
     if !visitor.enter_revert_statement(node) {
         return;
     }
@@ -1527,6 +1590,7 @@ pub fn accept_revert_statement(node: &RevertStatement, visitor: &mut impl Visito
 }
 
 pub fn accept_shift_expression(node: &ShiftExpression, visitor: &mut impl Visitor) {
+    visitor.enter_nonterminal(node);
     if !visitor.enter_shift_expression(node) {
         return;
     }
@@ -1537,6 +1601,7 @@ pub fn accept_shift_expression(node: &ShiftExpression, visitor: &mut impl Visito
 }
 
 pub fn accept_single_typed_declaration(node: &SingleTypedDeclaration, visitor: &mut impl Visitor) {
+    visitor.enter_nonterminal(node);
     if !visitor.enter_single_typed_declaration(node) {
         return;
     }
@@ -1548,6 +1613,7 @@ pub fn accept_single_typed_declaration(node: &SingleTypedDeclaration, visitor: &
 }
 
 pub fn accept_source_unit(node: &SourceUnit, visitor: &mut impl Visitor) {
+    visitor.enter_nonterminal(node);
     if !visitor.enter_source_unit(node) {
         return;
     }
@@ -1559,6 +1625,7 @@ pub fn accept_state_variable_attributes(
     node: &StateVariableAttributes,
     visitor: &mut impl Visitor,
 ) {
+    visitor.enter_nonterminal(node);
     if !visitor.enter_state_variable_attributes(node) {
         return;
     }
@@ -1574,6 +1641,7 @@ pub fn accept_state_variable_definition(
     node: &StateVariableDefinition,
     visitor: &mut impl Visitor,
 ) {
+    visitor.enter_nonterminal(node);
     if !visitor.enter_state_variable_definition(node) {
         return;
     }
@@ -1587,6 +1655,7 @@ pub fn accept_state_variable_definition(
 }
 
 pub fn accept_struct_definition(node: &StructDefinition, visitor: &mut impl Visitor) {
+    visitor.enter_nonterminal(node);
     if !visitor.enter_struct_definition(node) {
         return;
     }
@@ -1596,6 +1665,7 @@ pub fn accept_struct_definition(node: &StructDefinition, visitor: &mut impl Visi
 }
 
 pub fn accept_struct_member(node: &StructMember, visitor: &mut impl Visitor) {
+    visitor.enter_nonterminal(node);
     if !visitor.enter_struct_member(node) {
         return;
     }
@@ -1605,6 +1675,7 @@ pub fn accept_struct_member(node: &StructMember, visitor: &mut impl Visitor) {
 }
 
 pub fn accept_try_statement(node: &TryStatement, visitor: &mut impl Visitor) {
+    visitor.enter_nonterminal(node);
     if !visitor.enter_try_statement(node) {
         return;
     }
@@ -1618,6 +1689,7 @@ pub fn accept_try_statement(node: &TryStatement, visitor: &mut impl Visitor) {
 }
 
 pub fn accept_tuple_expression(node: &TupleExpression, visitor: &mut impl Visitor) {
+    visitor.enter_nonterminal(node);
     if !visitor.enter_tuple_expression(node) {
         return;
     }
@@ -1626,6 +1698,7 @@ pub fn accept_tuple_expression(node: &TupleExpression, visitor: &mut impl Visito
 }
 
 pub fn accept_tuple_value(node: &TupleValue, visitor: &mut impl Visitor) {
+    visitor.enter_nonterminal(node);
     if !visitor.enter_tuple_value(node) {
         return;
     }
@@ -1636,6 +1709,7 @@ pub fn accept_tuple_value(node: &TupleValue, visitor: &mut impl Visitor) {
 }
 
 pub fn accept_type_expression(node: &TypeExpression, visitor: &mut impl Visitor) {
+    visitor.enter_nonterminal(node);
     if !visitor.enter_type_expression(node) {
         return;
     }
@@ -1644,6 +1718,7 @@ pub fn accept_type_expression(node: &TypeExpression, visitor: &mut impl Visitor)
 }
 
 pub fn accept_unchecked_block(node: &UncheckedBlock, visitor: &mut impl Visitor) {
+    visitor.enter_nonterminal(node);
     if !visitor.enter_unchecked_block(node) {
         return;
     }
@@ -1655,6 +1730,7 @@ pub fn accept_user_defined_value_type_definition(
     node: &UserDefinedValueTypeDefinition,
     visitor: &mut impl Visitor,
 ) {
+    visitor.enter_nonterminal(node);
     if !visitor.enter_user_defined_value_type_definition(node) {
         return;
     }
@@ -1664,6 +1740,7 @@ pub fn accept_user_defined_value_type_definition(
 }
 
 pub fn accept_using_deconstruction(node: &UsingDeconstruction, visitor: &mut impl Visitor) {
+    visitor.enter_nonterminal(node);
     if !visitor.enter_using_deconstruction(node) {
         return;
     }
@@ -1675,6 +1752,7 @@ pub fn accept_using_deconstruction_symbol(
     node: &UsingDeconstructionSymbol,
     visitor: &mut impl Visitor,
 ) {
+    visitor.enter_nonterminal(node);
     if !visitor.enter_using_deconstruction_symbol(node) {
         return;
     }
@@ -1686,6 +1764,7 @@ pub fn accept_using_deconstruction_symbol(
 }
 
 pub fn accept_using_directive(node: &UsingDirective, visitor: &mut impl Visitor) {
+    visitor.enter_nonterminal(node);
     if !visitor.enter_using_directive(node) {
         return;
     }
@@ -1695,6 +1774,7 @@ pub fn accept_using_directive(node: &UsingDirective, visitor: &mut impl Visitor)
 }
 
 pub fn accept_variable_declaration(node: &VariableDeclaration, visitor: &mut impl Visitor) {
+    visitor.enter_nonterminal(node);
     if !visitor.enter_variable_declaration(node) {
         return;
     }
@@ -1710,6 +1790,7 @@ pub fn accept_variable_declaration_statement(
     node: &VariableDeclarationStatement,
     visitor: &mut impl Visitor,
 ) {
+    visitor.enter_nonterminal(node);
     if !visitor.enter_variable_declaration_statement(node) {
         return;
     }
@@ -1718,6 +1799,7 @@ pub fn accept_variable_declaration_statement(
 }
 
 pub fn accept_version_pragma(node: &VersionPragma, visitor: &mut impl Visitor) {
+    visitor.enter_nonterminal(node);
     if !visitor.enter_version_pragma(node) {
         return;
     }
@@ -1729,6 +1811,7 @@ pub fn accept_version_pragma_comparator(
     node: &VersionPragmaComparator,
     visitor: &mut impl Visitor,
 ) {
+    visitor.enter_nonterminal(node);
     if !visitor.enter_version_pragma_comparator(node) {
         return;
     }
@@ -1738,6 +1821,7 @@ pub fn accept_version_pragma_comparator(
 }
 
 pub fn accept_while_statement(node: &WhileStatement, visitor: &mut impl Visitor) {
+    visitor.enter_nonterminal(node);
     if !visitor.enter_while_statement(node) {
         return;
     }
@@ -1747,6 +1831,7 @@ pub fn accept_while_statement(node: &WhileStatement, visitor: &mut impl Visitor)
 }
 
 pub fn accept_yul_block(node: &YulBlock, visitor: &mut impl Visitor) {
+    visitor.enter_nonterminal(node);
     if !visitor.enter_yul_block(node) {
         return;
     }
@@ -1755,6 +1840,7 @@ pub fn accept_yul_block(node: &YulBlock, visitor: &mut impl Visitor) {
 }
 
 pub fn accept_yul_break_statement(node: &YulBreakStatement, visitor: &mut impl Visitor) {
+    visitor.enter_nonterminal(node);
     if !visitor.enter_yul_break_statement(node) {
         return;
     }
@@ -1762,6 +1848,7 @@ pub fn accept_yul_break_statement(node: &YulBreakStatement, visitor: &mut impl V
 }
 
 pub fn accept_yul_continue_statement(node: &YulContinueStatement, visitor: &mut impl Visitor) {
+    visitor.enter_nonterminal(node);
     if !visitor.enter_yul_continue_statement(node) {
         return;
     }
@@ -1769,6 +1856,7 @@ pub fn accept_yul_continue_statement(node: &YulContinueStatement, visitor: &mut 
 }
 
 pub fn accept_yul_default_case(node: &YulDefaultCase, visitor: &mut impl Visitor) {
+    visitor.enter_nonterminal(node);
     if !visitor.enter_yul_default_case(node) {
         return;
     }
@@ -1777,6 +1865,7 @@ pub fn accept_yul_default_case(node: &YulDefaultCase, visitor: &mut impl Visitor
 }
 
 pub fn accept_yul_for_statement(node: &YulForStatement, visitor: &mut impl Visitor) {
+    visitor.enter_nonterminal(node);
     if !visitor.enter_yul_for_statement(node) {
         return;
     }
@@ -1791,6 +1880,7 @@ pub fn accept_yul_function_call_expression(
     node: &YulFunctionCallExpression,
     visitor: &mut impl Visitor,
 ) {
+    visitor.enter_nonterminal(node);
     if !visitor.enter_yul_function_call_expression(node) {
         return;
     }
@@ -1800,6 +1890,7 @@ pub fn accept_yul_function_call_expression(
 }
 
 pub fn accept_yul_function_definition(node: &YulFunctionDefinition, visitor: &mut impl Visitor) {
+    visitor.enter_nonterminal(node);
     if !visitor.enter_yul_function_definition(node) {
         return;
     }
@@ -1813,6 +1904,7 @@ pub fn accept_yul_function_definition(node: &YulFunctionDefinition, visitor: &mu
 }
 
 pub fn accept_yul_if_statement(node: &YulIfStatement, visitor: &mut impl Visitor) {
+    visitor.enter_nonterminal(node);
     if !visitor.enter_yul_if_statement(node) {
         return;
     }
@@ -1822,6 +1914,7 @@ pub fn accept_yul_if_statement(node: &YulIfStatement, visitor: &mut impl Visitor
 }
 
 pub fn accept_yul_leave_statement(node: &YulLeaveStatement, visitor: &mut impl Visitor) {
+    visitor.enter_nonterminal(node);
     if !visitor.enter_yul_leave_statement(node) {
         return;
     }
@@ -1829,6 +1922,7 @@ pub fn accept_yul_leave_statement(node: &YulLeaveStatement, visitor: &mut impl V
 }
 
 pub fn accept_yul_switch_statement(node: &YulSwitchStatement, visitor: &mut impl Visitor) {
+    visitor.enter_nonterminal(node);
     if !visitor.enter_yul_switch_statement(node) {
         return;
     }
@@ -1841,6 +1935,7 @@ pub fn accept_yul_switch_statement(node: &YulSwitchStatement, visitor: &mut impl
 }
 
 pub fn accept_yul_value_case(node: &YulValueCase, visitor: &mut impl Visitor) {
+    visitor.enter_nonterminal(node);
     if !visitor.enter_yul_value_case(node) {
         return;
     }
@@ -1853,6 +1948,7 @@ pub fn accept_yul_variable_assignment_statement(
     node: &YulVariableAssignmentStatement,
     visitor: &mut impl Visitor,
 ) {
+    visitor.enter_nonterminal(node);
     if !visitor.enter_yul_variable_assignment_statement(node) {
         return;
     }
@@ -1865,6 +1961,7 @@ pub fn accept_yul_variable_declaration_statement(
     node: &YulVariableDeclarationStatement,
     visitor: &mut impl Visitor,
 ) {
+    visitor.enter_nonterminal(node);
     if !visitor.enter_yul_variable_declaration_statement(node) {
         return;
     }
@@ -1879,6 +1976,7 @@ pub fn accept_yul_variable_declaration_value(
     node: &YulVariableDeclarationValue,
     visitor: &mut impl Visitor,
 ) {
+    visitor.enter_nonterminal(node);
     if !visitor.enter_yul_variable_declaration_value(node) {
         return;
     }
@@ -2732,6 +2830,7 @@ pub fn accept_yul_statement(node: &YulStatement, visitor: &mut impl Visitor) {
 
 #[inline]
 fn accept_array_values(items: &ArrayValues, visitor: &mut impl Visitor) {
+    visitor.enter_nonterminal(items);
     if !visitor.enter_array_values(items) {
         return;
     }
@@ -2743,6 +2842,7 @@ fn accept_array_values(items: &ArrayValues, visitor: &mut impl Visitor) {
 
 #[inline]
 fn accept_call_options(items: &CallOptions, visitor: &mut impl Visitor) {
+    visitor.enter_nonterminal(items);
     if !visitor.enter_call_options(items) {
         return;
     }
@@ -2754,6 +2854,7 @@ fn accept_call_options(items: &CallOptions, visitor: &mut impl Visitor) {
 
 #[inline]
 fn accept_catch_clauses(items: &CatchClauses, visitor: &mut impl Visitor) {
+    visitor.enter_nonterminal(items);
     if !visitor.enter_catch_clauses(items) {
         return;
     }
@@ -2765,6 +2866,7 @@ fn accept_catch_clauses(items: &CatchClauses, visitor: &mut impl Visitor) {
 
 #[inline]
 fn accept_contract_members(items: &ContractMembers, visitor: &mut impl Visitor) {
+    visitor.enter_nonterminal(items);
     if !visitor.enter_contract_members(items) {
         return;
     }
@@ -2776,6 +2878,7 @@ fn accept_contract_members(items: &ContractMembers, visitor: &mut impl Visitor) 
 
 #[inline]
 fn accept_enum_members(items: &EnumMembers, visitor: &mut impl Visitor) {
+    visitor.enter_nonterminal(items);
     if !visitor.enter_enum_members(items) {
         return;
     }
@@ -2787,6 +2890,7 @@ fn accept_enum_members(items: &EnumMembers, visitor: &mut impl Visitor) {
 
 #[inline]
 fn accept_hex_string_literals(items: &HexStringLiterals, visitor: &mut impl Visitor) {
+    visitor.enter_nonterminal(items);
     if !visitor.enter_hex_string_literals(items) {
         return;
     }
@@ -2798,6 +2902,7 @@ fn accept_hex_string_literals(items: &HexStringLiterals, visitor: &mut impl Visi
 
 #[inline]
 fn accept_identifier_path(items: &IdentifierPath, visitor: &mut impl Visitor) {
+    visitor.enter_nonterminal(items);
     if !visitor.enter_identifier_path(items) {
         return;
     }
@@ -2812,6 +2917,7 @@ fn accept_import_deconstruction_symbols(
     items: &ImportDeconstructionSymbols,
     visitor: &mut impl Visitor,
 ) {
+    visitor.enter_nonterminal(items);
     if !visitor.enter_import_deconstruction_symbols(items) {
         return;
     }
@@ -2823,6 +2929,7 @@ fn accept_import_deconstruction_symbols(
 
 #[inline]
 fn accept_inheritance_types(items: &InheritanceTypes, visitor: &mut impl Visitor) {
+    visitor.enter_nonterminal(items);
     if !visitor.enter_inheritance_types(items) {
         return;
     }
@@ -2834,6 +2941,7 @@ fn accept_inheritance_types(items: &InheritanceTypes, visitor: &mut impl Visitor
 
 #[inline]
 fn accept_interface_members(items: &InterfaceMembers, visitor: &mut impl Visitor) {
+    visitor.enter_nonterminal(items);
     if !visitor.enter_interface_members(items) {
         return;
     }
@@ -2845,6 +2953,7 @@ fn accept_interface_members(items: &InterfaceMembers, visitor: &mut impl Visitor
 
 #[inline]
 fn accept_library_members(items: &LibraryMembers, visitor: &mut impl Visitor) {
+    visitor.enter_nonterminal(items);
     if !visitor.enter_library_members(items) {
         return;
     }
@@ -2856,6 +2965,7 @@ fn accept_library_members(items: &LibraryMembers, visitor: &mut impl Visitor) {
 
 #[inline]
 fn accept_modifier_invocations(items: &ModifierInvocations, visitor: &mut impl Visitor) {
+    visitor.enter_nonterminal(items);
     if !visitor.enter_modifier_invocations(items) {
         return;
     }
@@ -2870,6 +2980,7 @@ fn accept_multi_typed_declaration_elements(
     items: &MultiTypedDeclarationElements,
     visitor: &mut impl Visitor,
 ) {
+    visitor.enter_nonterminal(items);
     if !visitor.enter_multi_typed_declaration_elements(items) {
         return;
     }
@@ -2881,6 +2992,7 @@ fn accept_multi_typed_declaration_elements(
 
 #[inline]
 fn accept_named_arguments(items: &NamedArguments, visitor: &mut impl Visitor) {
+    visitor.enter_nonterminal(items);
     if !visitor.enter_named_arguments(items) {
         return;
     }
@@ -2892,6 +3004,7 @@ fn accept_named_arguments(items: &NamedArguments, visitor: &mut impl Visitor) {
 
 #[inline]
 fn accept_override_paths(items: &OverridePaths, visitor: &mut impl Visitor) {
+    visitor.enter_nonterminal(items);
     if !visitor.enter_override_paths(items) {
         return;
     }
@@ -2903,6 +3016,7 @@ fn accept_override_paths(items: &OverridePaths, visitor: &mut impl Visitor) {
 
 #[inline]
 fn accept_parameters(items: &Parameters, visitor: &mut impl Visitor) {
+    visitor.enter_nonterminal(items);
     if !visitor.enter_parameters(items) {
         return;
     }
@@ -2914,6 +3028,7 @@ fn accept_parameters(items: &Parameters, visitor: &mut impl Visitor) {
 
 #[inline]
 fn accept_positional_arguments(items: &PositionalArguments, visitor: &mut impl Visitor) {
+    visitor.enter_nonterminal(items);
     if !visitor.enter_positional_arguments(items) {
         return;
     }
@@ -2925,6 +3040,7 @@ fn accept_positional_arguments(items: &PositionalArguments, visitor: &mut impl V
 
 #[inline]
 fn accept_source_unit_members(items: &SourceUnitMembers, visitor: &mut impl Visitor) {
+    visitor.enter_nonterminal(items);
     if !visitor.enter_source_unit_members(items) {
         return;
     }
@@ -2936,6 +3052,7 @@ fn accept_source_unit_members(items: &SourceUnitMembers, visitor: &mut impl Visi
 
 #[inline]
 fn accept_statements(items: &Statements, visitor: &mut impl Visitor) {
+    visitor.enter_nonterminal(items);
     if !visitor.enter_statements(items) {
         return;
     }
@@ -2947,6 +3064,7 @@ fn accept_statements(items: &Statements, visitor: &mut impl Visitor) {
 
 #[inline]
 fn accept_string_literals(items: &StringLiterals, visitor: &mut impl Visitor) {
+    visitor.enter_nonterminal(items);
     if !visitor.enter_string_literals(items) {
         return;
     }
@@ -2958,6 +3076,7 @@ fn accept_string_literals(items: &StringLiterals, visitor: &mut impl Visitor) {
 
 #[inline]
 fn accept_struct_members(items: &StructMembers, visitor: &mut impl Visitor) {
+    visitor.enter_nonterminal(items);
     if !visitor.enter_struct_members(items) {
         return;
     }
@@ -2969,6 +3088,7 @@ fn accept_struct_members(items: &StructMembers, visitor: &mut impl Visitor) {
 
 #[inline]
 fn accept_tuple_values(items: &TupleValues, visitor: &mut impl Visitor) {
+    visitor.enter_nonterminal(items);
     if !visitor.enter_tuple_values(items) {
         return;
     }
@@ -2980,6 +3100,7 @@ fn accept_tuple_values(items: &TupleValues, visitor: &mut impl Visitor) {
 
 #[inline]
 fn accept_unicode_string_literals(items: &UnicodeStringLiterals, visitor: &mut impl Visitor) {
+    visitor.enter_nonterminal(items);
     if !visitor.enter_unicode_string_literals(items) {
         return;
     }
@@ -2994,6 +3115,7 @@ fn accept_using_deconstruction_symbols(
     items: &UsingDeconstructionSymbols,
     visitor: &mut impl Visitor,
 ) {
+    visitor.enter_nonterminal(items);
     if !visitor.enter_using_deconstruction_symbols(items) {
         return;
     }
@@ -3008,6 +3130,7 @@ fn accept_version_pragma_expression_set(
     items: &VersionPragmaExpressionSet,
     visitor: &mut impl Visitor,
 ) {
+    visitor.enter_nonterminal(items);
     if !visitor.enter_version_pragma_expression_set(items) {
         return;
     }
@@ -3022,6 +3145,7 @@ fn accept_version_pragma_expression_sets(
     items: &VersionPragmaExpressionSets,
     visitor: &mut impl Visitor,
 ) {
+    visitor.enter_nonterminal(items);
     if !visitor.enter_version_pragma_expression_sets(items) {
         return;
     }
@@ -3033,6 +3157,7 @@ fn accept_version_pragma_expression_sets(
 
 #[inline]
 fn accept_version_pragma_specifier(items: &VersionPragmaSpecifier, visitor: &mut impl Visitor) {
+    visitor.enter_nonterminal(items);
     if !visitor.enter_version_pragma_specifier(items) {
         return;
     }
@@ -3044,6 +3169,7 @@ fn accept_version_pragma_specifier(items: &VersionPragmaSpecifier, visitor: &mut
 
 #[inline]
 fn accept_yul_arguments(items: &YulArguments, visitor: &mut impl Visitor) {
+    visitor.enter_nonterminal(items);
     if !visitor.enter_yul_arguments(items) {
         return;
     }
@@ -3055,6 +3181,7 @@ fn accept_yul_arguments(items: &YulArguments, visitor: &mut impl Visitor) {
 
 #[inline]
 fn accept_yul_parameters(items: &YulParameters, visitor: &mut impl Visitor) {
+    visitor.enter_nonterminal(items);
     if !visitor.enter_yul_parameters(items) {
         return;
     }
@@ -3066,6 +3193,7 @@ fn accept_yul_parameters(items: &YulParameters, visitor: &mut impl Visitor) {
 
 #[inline]
 fn accept_yul_path(items: &YulPath, visitor: &mut impl Visitor) {
+    visitor.enter_nonterminal(items);
     if !visitor.enter_yul_path(items) {
         return;
     }
@@ -3077,6 +3205,7 @@ fn accept_yul_path(items: &YulPath, visitor: &mut impl Visitor) {
 
 #[inline]
 fn accept_yul_paths(items: &YulPaths, visitor: &mut impl Visitor) {
+    visitor.enter_nonterminal(items);
     if !visitor.enter_yul_paths(items) {
         return;
     }
@@ -3088,6 +3217,7 @@ fn accept_yul_paths(items: &YulPaths, visitor: &mut impl Visitor) {
 
 #[inline]
 fn accept_yul_statements(items: &YulStatements, visitor: &mut impl Visitor) {
+    visitor.enter_nonterminal(items);
     if !visitor.enter_yul_statements(items) {
         return;
     }
@@ -3099,6 +3229,7 @@ fn accept_yul_statements(items: &YulStatements, visitor: &mut impl Visitor) {
 
 #[inline]
 fn accept_yul_value_cases(items: &YulValueCases, visitor: &mut impl Visitor) {
+    visitor.enter_nonterminal(items);
     if !visitor.enter_yul_value_cases(items) {
         return;
     }
@@ -3110,6 +3241,7 @@ fn accept_yul_value_cases(items: &YulValueCases, visitor: &mut impl Visitor) {
 
 #[inline]
 fn accept_yul_variable_names(items: &YulVariableNames, visitor: &mut impl Visitor) {
+    visitor.enter_nonterminal(items);
     if !visitor.enter_yul_variable_names(items) {
         return;
     }

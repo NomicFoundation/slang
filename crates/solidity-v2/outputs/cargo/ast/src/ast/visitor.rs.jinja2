@@ -1,8 +1,11 @@
 {%- set target = model.ir_language_model.target -%}
+use super::NodeLocation;
 #[allow(clippy::wildcard_imports)]
 use super::nodes::*;
 
 pub trait Visitor {
+    /// Called for every sequence and collection node, before its own `enter_*` method.
+    fn enter_nonterminal(&mut self, _node: &dyn NodeLocation) {}
   {%- for parent_type, sequence in target.sequences %}
     fn enter_{{ parent_type | snake_case }}(&mut self, _node: &{{ parent_type }}) -> bool { true }
     fn leave_{{ parent_type | snake_case }}(&mut self, _node: &{{ parent_type }}) {}
@@ -28,6 +31,7 @@ pub trait Visitor {
 
 {% for parent_type, sequence in target.sequences %}
   pub fn accept_{{ parent_type | snake_case }}(node: &{{ parent_type }}, visitor: &mut impl Visitor) {
+    visitor.enter_nonterminal(node);
     if !visitor.enter_{{ parent_type | snake_case }}(node) {
       return;
     }
@@ -94,6 +98,7 @@ pub trait Visitor {
 {% for parent_type, collection in target.collections -%}
   #[inline]
   fn accept_{{ parent_type | snake_case }}(items: &{{ parent_type }}, visitor: &mut impl Visitor) {
+    visitor.enter_nonterminal(items);
     if !visitor.enter_{{ parent_type | snake_case }}(items) {
       return;
     }
