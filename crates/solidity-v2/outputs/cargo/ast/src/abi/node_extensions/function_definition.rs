@@ -1,8 +1,9 @@
+use std::fmt;
+
 use slang_solidity_v2_ir::ir;
 
 use crate::abi::{
-    AbiConstructor, AbiEntry, AbiFallback, AbiFunction, AbiMutability, AbiReceive,
-    selector_from_signature,
+    AbiConstructor, AbiEntry, AbiFallback, AbiFunction, AbiMutability, AbiReceive, SignatureHasher,
 };
 use crate::ast::{Definition, FunctionDefinitionStruct, FunctionVisibility};
 
@@ -64,9 +65,9 @@ impl FunctionDefinitionStruct {
     /// internal functions may contain parameter types that cannot be
     /// ABI-encoded.
     pub fn compute_canonical_signature(&self) -> Option<String> {
-        let name = self.ir_node.name.as_ref()?.unparse();
-        let parameters = self.parameters().compute_canonical_signature()?;
-        Some(format!("{name}({parameters})"))
+        let mut signature = String::new();
+        self.write_canonical_signature(&mut signature)?;
+        Some(signature)
     }
 
     /// Returns the signature for this function using internal type names for
@@ -94,25 +95,44 @@ impl FunctionDefinitionStruct {
     /// storage references, and a user-defined value type unwrapped to its
     /// underlying type — none of which the canonical form can spell.
     pub fn compute_library_signature(&self) -> Option<String> {
-        let name = self.ir_node.name.as_ref()?.unparse();
-        let parameters = self.parameters().compute_library_signature()?;
-        Some(format!("{name}({parameters})"))
+        let mut signature = String::new();
+        self.write_library_signature(&mut signature)?;
+        Some(signature)
     }
 
     /// Returns the signature a selector is hashed from: the library form for a
     /// library member, the canonical form otherwise.
     pub fn compute_selector_signature(&self) -> Option<String> {
-        match self.enclosing_definition() {
-            Some(Definition::Library(_)) => self.compute_library_signature(),
-            _ => self.compute_canonical_signature(),
-        }
+        let mut signature = String::new();
+        self.write_selector_signature(&mut signature)?;
+        Some(signature)
     }
 
     pub fn compute_selector(&self) -> Option<u32> {
         if !self.is_externally_visible() {
             return None;
         }
-        self.compute_selector_signature()
-            .map(|sig| selector_from_signature(&sig))
+        let mut hasher = SignatureHasher::default();
+        self.write_selector_signature(&mut hasher)?;
+        Some(hasher.selector())
+    }
+
+    fn write_selector_signature(&self, out: &mut impl fmt::Write) -> Option<()> {
+        match self.enclosing_definition() {
+            Some(Definition::Library(_)) => self.write_library_signature(out),
+            _ => self.write_canonical_signature(out),
+        }
+    }
+
+    fn write_canonical_signature(&self, out: &mut impl fmt::Write) -> Option<()> {
+        write!(out, "{}(", self.ir_node.name.as_ref()?.unparse()).ok()?;
+        self.parameters().write_canonical_signature(out)?;
+        out.write_char(')').ok()
+    }
+
+    fn write_library_signature(&self, out: &mut impl fmt::Write) -> Option<()> {
+        write!(out, "{}(", self.ir_node.name.as_ref()?.unparse()).ok()?;
+        self.parameters().write_library_signature(out)?;
+        out.write_char(')').ok()
     }
 }
