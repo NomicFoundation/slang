@@ -72,12 +72,37 @@ fn test_interface_compute_linearised_bases() {
         fixtures::find_interface(&unit, name)
             .linearised_bases()
             .iter()
-            .map(|base| base.name().name().to_owned())
+            .map(|base| {
+                let ContractBase::Interface(interface) = base else {
+                    panic!("Base is not an interface");
+                };
+                interface.name().name().to_owned()
+            })
             .collect()
     };
     assert_eq!(linearised_names("D"), ["D", "C", "B", "A"]);
     assert_eq!(linearised_names("B"), ["B", "A"]);
     assert_eq!(linearised_names("A"), ["A"]);
+}
+
+#[test]
+fn test_interface_inheriting_a_contract_keeps_the_contract_base() {
+    let unit = crate::tests::support::compile([(
+        "main.sol".into(),
+        "pragma solidity ^0.8.0;\ncontract C { function c() external {} }\ninterface I is C { function i() external; }\n",
+    )]);
+
+    let bases = fixtures::find_interface(&unit, "I").linearised_bases();
+    assert_eq!(bases.len(), 2);
+
+    let ContractBase::Interface(interface) = &bases[0] else {
+        panic!("Base is not an interface");
+    };
+    assert_eq!(interface.name().name(), "I");
+    let ContractBase::Contract(contract) = &bases[1] else {
+        panic!("Base is not a contract");
+    };
+    assert_eq!(contract.name().name(), "C");
 }
 
 #[test]

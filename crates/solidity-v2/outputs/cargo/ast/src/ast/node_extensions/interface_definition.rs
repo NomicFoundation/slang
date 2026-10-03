@@ -3,8 +3,9 @@ use super::super::nodes::{
 };
 use super::super::{
     Definition, ErrorDefinition, EventDefinition, FunctionDefinition, FunctionKind,
-    InterfaceDefinition, InterfaceDefinitionStruct,
+    InterfaceDefinitionStruct,
 };
+use super::ContractBase;
 
 impl InterfaceDefinitionStruct {
     pub fn functions(&self) -> Vec<FunctionDefinition> {
@@ -19,10 +20,10 @@ impl InterfaceDefinitionStruct {
             .collect()
     }
 
-    /// Returns the list of interfaces in the hierarchy (including self) in the
-    /// order given by the C3 linearisation, with self interface always first.
-    /// Only interface bases are returned; a contract base is skipped.
-    pub fn linearised_bases(&self) -> Vec<InterfaceDefinition> {
+    /// Returns the list of interfaces/contracts in the hierarchy (including
+    /// self) in the order given by the C3 linearisation, with self interface
+    /// always first
+    pub fn linearised_bases(&self) -> Vec<ContractBase> {
         let Some(base_node_ids) = self
             .semantic
             .binder()
@@ -35,14 +36,11 @@ impl InterfaceDefinitionStruct {
         };
         base_node_ids
             .iter()
-            .filter_map(|node_id| {
-                match Definition::try_create(*node_id, &self.semantic)
-                    .expect("node is a definition")
-                {
-                    Definition::Interface(interface) => Some(interface),
-                    // TODO(validation) SDR[1369]: an interface can only inherit from other interfaces.
-                    _ => None,
-                }
+            .map(|node_id| {
+                let base_definition =
+                    Definition::try_create(*node_id, &self.semantic).expect("node is a definition");
+                ContractBase::from_definition(&base_definition)
+                    .expect("Linearised base is either a contract or interface")
             })
             .collect()
     }

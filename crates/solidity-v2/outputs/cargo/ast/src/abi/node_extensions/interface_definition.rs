@@ -1,8 +1,7 @@
 use slang_solidity_v2_ir::ir;
-use slang_solidity_v2_semantic::binder;
 
 use crate::abi::ContractAbi;
-use crate::ast::InterfaceDefinitionStruct;
+use crate::ast::{ContractBase, InterfaceDefinitionStruct};
 
 impl InterfaceDefinitionStruct {
     /// Computes the ERC-165 interface identifier: the XOR of the 4-byte selectors of the regular
@@ -45,16 +44,8 @@ impl InterfaceDefinitionStruct {
 
     // TODO(validation) SDR[1369]: an interface can only inherit from other interfaces.
     fn has_contract_base(&self) -> bool {
-        let binder = self.semantic.binder();
-        binder
-            .get_linearised_bases(self.ir_node.id())
-            .into_iter()
-            .flatten()
-            .any(|base_id| {
-                matches!(
-                    binder.find_definition_by_id(*base_id),
-                    Some(binder::Definition::Contract(_))
-                )
-            })
+        self.linearised_bases()
+            .iter()
+            .any(|base| matches!(base, ContractBase::Contract(_)))
     }
 }
