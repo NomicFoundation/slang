@@ -207,6 +207,7 @@ impl<'a> BuiltInsResolver<'a> {
                         // An abstract contract has no bytecode of its own.
                         "creationCode" if !is_abstract => Some(InternalBuiltIn::TypeCreationCode),
                         "runtimeCode" if !is_abstract => Some(InternalBuiltIn::TypeRuntimeCode),
+                        "interfaceId" if is_abstract => Some(InternalBuiltIn::TypeInterfaceId),
                         _ => None,
                     }
                 }

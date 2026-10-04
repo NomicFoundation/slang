@@ -1618,6 +1618,7 @@ pub fn slang_solidity_v2_ast::ast::ContractDefinitionStruct::as_definition(&self
 pub fn slang_solidity_v2_ast::ast::ContractDefinitionStruct::references(&self) -> alloc::vec::Vec<slang_solidity_v2_ast::ast::Reference>
 impl slang_solidity_v2_ast::ast::ContractDefinitionStruct
 pub fn slang_solidity_v2_ast::ast::ContractDefinitionStruct::compute_abi(&self) -> core::option::Option<slang_solidity_v2_ast::abi::ContractAbi>
+pub fn slang_solidity_v2_ast::ast::ContractDefinitionStruct::compute_interface_id(&self) -> core::option::Option<u32>
 impl slang_solidity_v2_ast::ast::ContractDefinitionStruct
 pub fn slang_solidity_v2_ast::ast::ContractDefinitionStruct::constructor(&self) -> core::option::Option<slang_solidity_v2_ast::ast::FunctionDefinition>
 pub fn slang_solidity_v2_ast::ast::ContractDefinitionStruct::direct_bases(&self) -> alloc::vec::Vec<slang_solidity_v2_ast::ast::ContractBase>

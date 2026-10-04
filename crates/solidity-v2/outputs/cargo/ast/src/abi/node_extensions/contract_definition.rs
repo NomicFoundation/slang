@@ -4,7 +4,9 @@ use slang_solidity_v2_semantic::binder;
 use slang_solidity_v2_semantic::context::StorageLayoutBuilder;
 
 use crate::abi::{ContractAbi, StorageItem};
-use crate::ast::{ContractDefinitionStruct, StateVariableDefinition, StateVariableMutability};
+use crate::ast::{
+    ContractDefinitionStruct, FunctionKind, StateVariableDefinition, StateVariableMutability,
+};
 
 impl ContractDefinitionStruct {
     pub fn compute_abi(&self) -> Option<ContractAbi> {
@@ -47,6 +49,25 @@ impl ContractDefinitionStruct {
             storage_layout,
             transient_storage_layout,
         ))
+    }
+
+    /// Computes the ERC-165 interface identifier `type(C).interfaceId` yields for an abstract
+    /// contract: the XOR of the selectors of the public functions and getters the contract itself
+    /// declares, excluding inherited ones.
+    pub fn compute_interface_id(&self) -> Option<u32> {
+        let mut interface_id = 0u32;
+        for function in self.members().iter_function_definitions() {
+            if matches!(function.kind(), FunctionKind::Regular) && function.is_externally_visible()
+            {
+                interface_id ^= function.compute_selector()?;
+            }
+        }
+        for state_variable in self.members().iter_state_variable_definitions() {
+            if state_variable.is_externally_visible() {
+                interface_id ^= state_variable.compute_selector()?;
+            }
+        }
+        Some(interface_id)
     }
 
     /// Retrieves the custom base slot for this contract, if specified. This is

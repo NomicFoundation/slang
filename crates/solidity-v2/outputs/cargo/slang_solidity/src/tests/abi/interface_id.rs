@@ -30,6 +30,22 @@ interface IAccount {
 }
 
 abstract contract AccountImplementer is IAccount {}
+
+abstract contract AbstractBase {
+    function inherited() external virtual;
+}
+
+abstract contract AbstractThing is AbstractBase {
+    uint256 public stored;
+    constructor() {}
+    function f() public virtual;
+    function g(uint256) external virtual returns (bool) { return true; }
+    function i() internal virtual {}
+    function p() private {}
+    receive() external payable {}
+    fallback() external {}
+    modifier m() { _; }
+}
 "#,
 );
 
@@ -89,5 +105,20 @@ fn interface_id_skips_receive_and_fallback() {
     assert_eq!(
         account.compute_interface_id(),
         Some(selector_from_signature("state()"))
+    );
+}
+
+#[test]
+fn abstract_contract_interface_id_xors_own_functions_and_getters() {
+    let unit = InterfaceIds::build_compilation_unit();
+    let thing = unit
+        .find_contract_by_name("AbstractThing")
+        .next()
+        .expect("AbstractThing contract can be found");
+
+    // f() ^ g(uint256) ^ stored(), the value solc 0.8.34 folds for type(AbstractThing).interfaceId
+    assert_eq!(
+        thing.compute_interface_id(),
+        Some(0x2612_1ff0 ^ 0xe420_264a ^ 0xe582_dd31)
     );
 }

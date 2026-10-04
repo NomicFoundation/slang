@@ -1448,6 +1448,14 @@ mod resolution {
         }
 
         #[test]
+        fn interface_id_on_concrete_contract() -> Result<()> {
+            run(
+                "resolution/member_not_found",
+                "interface_id_on_concrete_contract",
+            )
+        }
+
+        #[test]
         fn internal_function_on_contract_instance() -> Result<()> {
             run(
                 "resolution/member_not_found",
