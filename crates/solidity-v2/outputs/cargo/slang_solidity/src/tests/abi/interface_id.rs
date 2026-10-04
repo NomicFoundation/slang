@@ -46,6 +46,10 @@ abstract contract AbstractThing is AbstractBase {
     fallback() external {}
     modifier m() { _; }
 }
+
+contract Concrete {
+    function f() public {}
+}
 "#,
 );
 
@@ -116,9 +120,20 @@ fn abstract_contract_interface_id_xors_own_functions_and_getters() {
         .next()
         .expect("AbstractThing contract can be found");
 
-    // f() ^ g(uint256) ^ stored(), the value solc 0.8.34 folds for type(AbstractThing).interfaceId
+    // f() ^ g(uint256) ^ stored()
     assert_eq!(
         thing.compute_interface_id(),
         Some(0x2612_1ff0 ^ 0xe420_264a ^ 0xe582_dd31)
     );
+}
+
+#[test]
+fn concrete_contract_has_no_interface_id() {
+    let unit = InterfaceIds::build_compilation_unit();
+    let concrete = unit
+        .find_contract_by_name("Concrete")
+        .next()
+        .expect("Concrete contract can be found");
+
+    assert_eq!(concrete.compute_interface_id(), None);
 }
