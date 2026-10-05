@@ -172,6 +172,11 @@ mod built_ins {
     }
 
     #[test]
+    fn msg_gas() -> Result<()> {
+        run("built_ins", "msg_gas")
+    }
+
+    #[test]
     fn msg_sender() -> Result<()> {
         run("built_ins", "msg_sender")
     }
