@@ -4,6 +4,10 @@ pub use definitions::Definition;
 mod node_extensions;
 pub use node_extensions::*;
 
+#[path = "node_location.generated.rs"]
+mod node_location;
+pub use node_location::NodeLocation;
+
 #[path = "nodes.generated.rs"]
 mod nodes;
 pub use nodes::*;
