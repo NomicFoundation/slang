@@ -76,6 +76,14 @@ fn contract_members(members: &[ContractMember], push: &mut Push<'_>) {
                 push(constructor, &constructor.natspec);
                 block(&constructor.body, push);
             }
+            ContractMember::FallbackFunctionDefinition(fallback) => {
+                push(fallback, &fallback.natspec);
+                function_body(&fallback.body, push);
+            }
+            ContractMember::ReceiveFunctionDefinition(receive) => {
+                push(receive, &receive.natspec);
+                function_body(&receive.body, push);
+            }
             ContractMember::ModifierDefinition(modifier) => {
                 push(modifier, &modifier.natspec);
                 function_body(&modifier.body, push);
@@ -138,6 +146,12 @@ contract C {
     /// @notice A constructor
     constructor() {}
 
+    /// @notice A fallback function
+    fallback() external {}
+
+    /// @notice A receive function
+    receive() external payable {}
+
     /// @notice A modifier
     modifier m() { _; }
 
@@ -170,6 +184,14 @@ uint constant K = 1;
             ("struct S { uint x; }", Some("/// @notice A struct\n")),
             ("enum E { A }", Some("/// @notice An enum\n")),
             ("constructor() {}", Some("/// @notice A constructor\n")),
+            (
+                "fallback() external {}",
+                Some("/// @notice A fallback function\n")
+            ),
+            (
+                "receive() external payable {}",
+                Some("/// @notice A receive function\n")
+            ),
             ("modifier m() { _; }", Some("/// @notice A modifier\n")),
             ("function f() public {", Some("/// @notice A function\n")),
             ("assembly {}", Some("/// @solidity memory-safe-assembly\n")),
