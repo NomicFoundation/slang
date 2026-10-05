@@ -122,6 +122,11 @@ mod built_ins {
     }
 
     #[test]
+    fn blockhash() -> Result<()> {
+        run("built_ins", "blockhash")
+    }
+
+    #[test]
     fn bytes() -> Result<()> {
         run("built_ins", "bytes")
     }
