@@ -1,0 +1,61 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics:
+[resolution/member-not-found] Error: Member 'gas' not found or not visible after argument-dependent lookup.
+   ╭─[input.sol:8:11]
+   │
+ 8 │         x.gas(2)(1);              // should be rejected
+   │           ─┬─  
+   │            ╰─── Error occurred here.
+───╯
+
+------------------------------------------------------------------------
+
+Definitions (4):
+- Def: #1 ["C" @ input.sol:4:10] (contract)
+- Def: #2 ["x" @ input.sol:5:50] (state var, type: function (uint256) returns uint256)
+- Def: #3 ["missing" @ input.sol:7:14] (function, type: function () returns ())
+- Def: #4 ["present" @ input.sol:11:14] (function, type: function () returns ())
+
+------------------------------------------------------------------------
+
+References (4):
+- Ref: ["x" @ input.sol:8:9] -> #2
+- Ref: ["gas" @ input.sol:8:11] -> unresolved
+- Ref: ["x" @ input.sol:12:9] -> #2
+- Ref: ["gas" @ input.sol:12:11] -> built-in
+
+------------------------------------------------------------------------
+
+Unbound identifiers (0):
+
+------------------------------------------------------------------------
+
+Bindings: 
+    ╭─[input.sol:1:1]
+    │
+  4 │ contract C {
+    │          ┬  
+    │          ╰── name: 1
+  5 │     function(uint256) external returns (uint256) x;
+    │                                                  ┬  
+    │                                                  ╰── name: 2
+    │ 
+  7 │     function missing() public {
+    │              ───┬───  
+    │                 ╰───── name: 3
+  8 │         x.gas(2)(1);              // should be rejected
+    │         ┬ ─┬─  
+    │         ╰────── ref: 2
+    │            │   
+    │            ╰─── unresolved
+    │ 
+ 11 │     function present() public {
+    │              ───┬───  
+    │                 ╰───── name: 4
+ 12 │         x{gas: 2}(1);              // should be accepted
+    │         ┬ ─┬─  
+    │         ╰────── ref: 2
+    │            │   
+    │            ╰─── built-in
+────╯
