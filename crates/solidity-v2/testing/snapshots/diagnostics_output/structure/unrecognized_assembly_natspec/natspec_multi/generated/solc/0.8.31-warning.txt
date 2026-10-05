@@ -1,0 +1,91 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 11
+
+[Warning 6269] Warning: Unexpected NatSpec tag "after" with value "bogus-value" in inline assembly.
+    ╭─[input.sol:14:5]
+    │
+ 14 │     assembly {}
+    │     ─────┬─────  
+    │          ╰─────── Warning occurred here.
+────╯
+
+[Warning 6269] Warning: Unexpected NatSpec tag "before" with value "bogus-value" in inline assembly.
+    ╭─[input.sol:14:5]
+    │
+ 14 │     assembly {}
+    │     ─────┬─────  
+    │          ╰─────── Warning occurred here.
+────╯
+
+[Warning 8787] Warning: Unexpected value for @solidity tag in inline assembly: a
+    ╭─[input.sol:14:5]
+    │
+ 14 │     assembly {}
+    │     ─────┬─────  
+    │          ╰─────── Warning occurred here.
+────╯
+
+[Warning 2424] Warning: Natspec memory-safe-assembly special comment for inline assembly is deprecated and scheduled for removal. Use the memory-safe block annotation instead.
+    ╭─[input.sol:14:5]
+    │
+ 14 │     assembly {}
+    │     ─────┬─────  
+    │          ╰─────── Warning occurred here.
+────╯
+
+[Warning 8787] Warning: Unexpected value for @solidity tag in inline assembly: b
+    ╭─[input.sol:14:5]
+    │
+ 14 │     assembly {}
+    │     ─────┬─────  
+    │          ╰─────── Warning occurred here.
+────╯
+
+[Warning 8787] Warning: Unexpected value for @solidity tag in inline assembly: c
+    ╭─[input.sol:14:5]
+    │
+ 14 │     assembly {}
+    │     ─────┬─────  
+    │          ╰─────── Warning occurred here.
+────╯
+
+[Warning 8787] Warning: Unexpected value for @solidity tag in inline assembly: d
+    ╭─[input.sol:14:5]
+    │
+ 14 │     assembly {}
+    │     ─────┬─────  
+    │          ╰─────── Warning occurred here.
+────╯
+
+[Warning 2424] Warning: Natspec memory-safe-assembly special comment for inline assembly is deprecated and scheduled for removal. Use the memory-safe block annotation instead.
+    ╭─[input.sol:18:5]
+    │
+ 18 │     assembly {}
+    │     ─────┬─────  
+    │          ╰─────── Warning occurred here.
+────╯
+
+[Warning 8787] Warning: Unexpected value for @solidity tag in inline assembly: a
+    ╭─[input.sol:18:5]
+    │
+ 18 │     assembly {}
+    │     ─────┬─────  
+    │          ╰─────── Warning occurred here.
+────╯
+
+[Warning 4377] Warning: Value for @solidity tag in inline assembly specified multiple times: a
+    ╭─[input.sol:18:5]
+    │
+ 18 │     assembly {}
+    │     ─────┬─────  
+    │          ╰─────── Warning occurred here.
+────╯
+
+[Warning 4377] Warning: Value for @solidity tag in inline assembly specified multiple times: memory-safe-assembly
+    ╭─[input.sol:18:5]
+    │
+ 18 │     assembly {}
+    │     ─────┬─────  
+    │          ╰─────── Warning occurred here.
+────╯

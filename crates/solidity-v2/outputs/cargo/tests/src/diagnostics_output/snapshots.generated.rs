@@ -3977,6 +3977,11 @@ mod structure {
         }
 
         #[test]
+        fn invalid_natspec() -> Result<()> {
+            run("structure/unrecognized_assembly_natspec", "invalid_natspec")
+        }
+
+        #[test]
         fn marker() -> Result<()> {
             run("structure/unrecognized_assembly_natspec", "marker")
         }
@@ -3986,6 +3991,19 @@ mod structure {
             run(
                 "structure/unrecognized_assembly_natspec",
                 "multi_line_comment",
+            )
+        }
+
+        #[test]
+        fn natspec_multi() -> Result<()> {
+            run("structure/unrecognized_assembly_natspec", "natspec_multi")
+        }
+
+        #[test]
+        fn natspec_multi_swallowed() -> Result<()> {
+            run(
+                "structure/unrecognized_assembly_natspec",
+                "natspec_multi_swallowed",
             )
         }
 
