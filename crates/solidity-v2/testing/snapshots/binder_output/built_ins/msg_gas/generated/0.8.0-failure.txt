@@ -1,0 +1,53 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics:
+[resolution/member-not-found] Error: Member 'gas' not found or not visible after argument-dependent lookup.
+   ╭─[input.sol:6:20]
+   │
+ 6 │         return msg.gas;                 // should be rejected
+   │                    ─┬─  
+   │                     ╰─── Error occurred here.
+───╯
+
+------------------------------------------------------------------------
+
+Definitions (3):
+- Def: #1 ["C" @ input.sol:4:10] (contract)
+- Def: #2 ["removed" @ input.sol:5:14] (function, type: function () returns uint256)
+- Def: #3 ["replacement" @ input.sol:9:14] (function, type: function () returns uint256)
+
+------------------------------------------------------------------------
+
+References (3):
+- Ref: ["msg" @ input.sol:6:16] -> built-in
+- Ref: ["gas" @ input.sol:6:20] -> unresolved
+- Ref: ["gasleft" @ input.sol:10:16] -> built-in
+
+------------------------------------------------------------------------
+
+Unbound identifiers (0):
+
+------------------------------------------------------------------------
+
+Bindings: 
+    ╭─[input.sol:1:1]
+    │
+  4 │ contract C {
+    │          ┬  
+    │          ╰── name: 1
+  5 │     function removed() internal view returns (uint256) {
+    │              ───┬───  
+    │                 ╰───── name: 2
+  6 │         return msg.gas;                 // should be rejected
+    │                ─┬─ ─┬─  
+    │                 ╰─────── built-in
+    │                     │   
+    │                     ╰─── unresolved
+    │ 
+  9 │     function replacement() internal view returns (uint256) {
+    │              ─────┬─────  
+    │                   ╰─────── name: 3
+ 10 │         return gasleft();               // should be accepted
+    │                ───┬───  
+    │                   ╰───── built-in
+────╯
