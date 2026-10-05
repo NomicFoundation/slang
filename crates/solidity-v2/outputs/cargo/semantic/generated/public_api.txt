@@ -108,7 +108,6 @@ pub slang_solidity_v2_semantic::built_ins::InternalBuiltIn::Addmod
 pub slang_solidity_v2_semantic::built_ins::InternalBuiltIn::Address
 pub slang_solidity_v2_semantic::built_ins::InternalBuiltIn::AddressBalance
 pub slang_solidity_v2_semantic::built_ins::InternalBuiltIn::AddressCall
-pub slang_solidity_v2_semantic::built_ins::InternalBuiltIn::AddressCallcode
 pub slang_solidity_v2_semantic::built_ins::InternalBuiltIn::AddressCode
 pub slang_solidity_v2_semantic::built_ins::InternalBuiltIn::AddressCodehash
 pub slang_solidity_v2_semantic::built_ins::InternalBuiltIn::AddressDelegatecall

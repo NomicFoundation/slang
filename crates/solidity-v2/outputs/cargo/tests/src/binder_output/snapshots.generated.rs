@@ -102,6 +102,11 @@ mod built_ins {
     }
 
     #[test]
+    fn address_callcode() -> Result<()> {
+        run("built_ins", "address_callcode")
+    }
+
+    #[test]
     fn address_payable() -> Result<()> {
         run("built_ins", "address_payable")
     }

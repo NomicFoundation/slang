@@ -14,7 +14,6 @@ pub slang_solidity_v2_common::built_ins::BuiltIn::Addmod
 pub slang_solidity_v2_common::built_ins::BuiltIn::Address
 pub slang_solidity_v2_common::built_ins::BuiltIn::AddressBalance
 pub slang_solidity_v2_common::built_ins::BuiltIn::AddressCall
-pub slang_solidity_v2_common::built_ins::BuiltIn::AddressCallcode
 pub slang_solidity_v2_common::built_ins::BuiltIn::AddressCode
 pub slang_solidity_v2_common::built_ins::BuiltIn::AddressCodehash
 pub slang_solidity_v2_common::built_ins::BuiltIn::AddressDelegatecall
