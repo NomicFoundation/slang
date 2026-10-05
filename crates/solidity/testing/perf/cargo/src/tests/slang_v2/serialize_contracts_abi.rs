@@ -22,7 +22,7 @@ pub fn run(input: Input) -> Output {
     test(input)
 }
 
-/// Renders every contract's ABI as solc's JSON.
+/// Renders every contract's ABI as JSON.
 pub fn test(input: Input) -> Output {
     let json = input
         .abi

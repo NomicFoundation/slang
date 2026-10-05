@@ -75,8 +75,7 @@ impl ContractAbi {
         &self.transient_storage_layout
     }
 
-    /// The entries as solc's JSON ABI: `serde_json::to_value(abi.json())` is the `abi` array of
-    /// solc's standard JSON output.
+    /// The entries as the JSON ABI: `serde_json::to_value(abi.json())` is its array of entries.
     pub fn json(&self) -> JsonAbi<'_> {
         JsonAbi(self)
     }
@@ -248,7 +247,7 @@ impl Eq for AbiEntry {}
 
 // The ordering defined by this implementation is alphabetical "type" + "name",
 // same as `solc`'s. For equal names we use the `node_id` as the tie breaker to
-// keep consistency with the `PartialEq` implementation. solc's JSON lists
+// keep consistency with the `PartialEq` implementation. The JSON ABI lists
 // overloads by selector instead; `JsonAbi` reorders them when it renders.
 impl Ord for AbiEntry {
     fn cmp(&self, other: &Self) -> Ordering {

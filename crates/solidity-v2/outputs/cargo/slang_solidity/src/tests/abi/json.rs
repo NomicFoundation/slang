@@ -1,6 +1,5 @@
-//! The JSON-ABI serialization, pinned against solc's `--abi` output for the same sources (0.8.34 and
-//! 0.8.35 agree): the compact strings below are solc's verbatim, so key order and `internalType`
-//! spelling are covered along with the entries themselves.
+//! The JSON-ABI serialization, pinned as compact strings, so key order and `internalType` spelling
+//! are covered along with the entries themselves.
 
 use crate::abi::ContractAbi;
 use crate::define_fixture;
@@ -11,7 +10,7 @@ fn json(abi: &ContractAbi) -> String {
 }
 
 #[test]
-fn tuples_and_getters_match_solc() {
+fn tuples_and_getters_serialize() {
     let unit = super::AbiWithTuples::build_compilation_unit();
     let abi = unit
         .find_contract_by_name("Test")
@@ -27,7 +26,7 @@ fn tuples_and_getters_match_solc() {
 }
 
 #[test]
-fn library_matches_solc() {
+fn library_serializes() {
     let unit = super::LibraryAbi::build_compilation_unit();
     let abi = fixtures::find_library(&unit, "L")
         .compute_abi()
@@ -63,7 +62,7 @@ contract F {
 );
 
 #[test]
-fn internal_types_match_solc() {
+fn internal_types_serialize() {
     let unit = InternalTypeSpellings::build_compilation_unit();
 
     // Kind prefixes, `address payable`, a user-defined value type by name, and a getter over a
@@ -106,7 +105,7 @@ contract Overloaded {
 "#,
 );
 
-/// solc lists overloads in ascending selector order, not declaration order: the three-parameter
+/// Overloads are listed in ascending selector order, not declaration order: the three-parameter
 /// `safeTransferFrom` (`0x42842e0e`) precedes the four-parameter one (`0xb88d4fde`), while the
 /// four-parameter `transferFromAndCall` (`0xc1d34b89`) precedes the three-parameter one
 /// (`0xd8fbe994`).
@@ -235,7 +234,7 @@ fn library_functions_spell_types_by_name() {
 }
 
 #[test]
-fn derived_interface_matches_solc() {
+fn derived_interface_serializes() {
     let unit = super::InterfaceHierarchy::build_compilation_unit();
     let abi = fixtures::find_interface(&unit, "IDerived")
         .compute_abi()
@@ -248,7 +247,7 @@ fn derived_interface_matches_solc() {
 }
 
 #[test]
-fn reached_errors_and_events_match_solc() {
+fn reached_errors_and_events_serialize() {
     let unit = super::ReachedErrorsAndEvents::build_compilation_unit();
     let abi = unit
         .find_contract_by_name("C")

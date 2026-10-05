@@ -1,7 +1,6 @@
-//! The JSON-ABI spelling of the ABI, as solc emits it: entries tagged by `type`, structs spelled
-//! `tuple` with their `components`, `indexed` on event inputs only, `internalType` rendered from
-//! the semantic type, keys in alphabetical order, and overloads in ascending selector order.
-//! `serde_json::to_value(abi.json())` is the `abi` field of solc's standard JSON.
+//! The JSON ABI: entries tagged by `type`, structs spelled `tuple` with their `components`,
+//! `indexed` on event inputs only, `internalType` rendered from the semantic type, keys in
+//! alphabetical order, and overloads in ascending selector order.
 
 use std::fmt;
 use std::sync::Arc;
@@ -17,7 +16,7 @@ use crate::abi::types::type_as_abi_type;
 use crate::abi::{AbiEntry, AbiMutability, AbiParameter, ContractAbi};
 use crate::ast::Definition as AstDefinition;
 
-/// A contract's entries as solc's JSON ABI; see [`ContractAbi::json`].
+/// A contract's entries as the JSON ABI; see [`ContractAbi::json`].
 pub struct JsonAbi<'a>(pub(crate) &'a ContractAbi);
 
 impl Serialize for JsonAbi<'_> {
@@ -27,8 +26,8 @@ impl Serialize for JsonAbi<'_> {
             Some(AstDefinition::Library(_))
         );
         let mut seq = serializer.serialize_seq(Some(self.0.entries.len()))?;
-        // The entries are sorted by kind and name, so overloads are adjacent. solc lists them in
-        // ascending selector order, which is where its interface function map puts them.
+        // The entries are sorted by kind and name, so overloads are adjacent; the JSON ABI lists
+        // them in ascending selector order.
         for run in self.0.entries.chunk_by(same_function_name) {
             if run.len() == 1 {
                 seq.serialize_element(&Entry {
@@ -54,7 +53,6 @@ fn same_function_name(this: &AbiEntry, other: &AbiEntry) -> bool {
     }
 }
 
-/// A library member's selector hashes the library signature, not the canonical one.
 fn selector(entry: &AbiEntry, semantic: &Arc<SemanticContext>) -> u32 {
     let AbiEntry::Function(function) = entry else {
         unreachable!("only functions share a name");
