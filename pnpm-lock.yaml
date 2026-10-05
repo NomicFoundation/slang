@@ -7,8 +7,8 @@ settings:
 catalogs:
   default:
     '@bytecodealliance/preview2-shim':
-      specifier: ^0.24.0
-      version: 0.24.0
+      specifier: ^0.27.0
+      version: 0.27.0
     '@changesets/changelog-github':
       specifier: ^1.0.0
       version: 1.0.1
@@ -146,7 +146,7 @@ importers:
     dependencies:
       '@bytecodealliance/preview2-shim':
         specifier: 'catalog:'
-        version: 0.24.0
+        version: 0.27.0
 
   crates/solidity/outputs/npm/tests:
     devDependencies:
@@ -366,60 +366,60 @@ packages:
     resolution: {integrity: sha512-8gzP4mRNkRF7frCf8NChbx0MHKf13VRiDupVF4B9VeTRNBJsLabRXvwaE71Qwe4dB7ZUsD1Rv09anWF12e3XgQ==}
     hasBin: true
 
-  '@bytecodealliance/jco-node-fs-darwin-arm64@0.2.0':
-    resolution: {integrity: sha512-+Nu0mjp6TiR+QcY1TRbJeG70u4370eM6Kk9BkzeUuAKn920IAJJ8wFU05OKRsCXwiCSHm/A0DDcZM/TVy7gXhw==}
+  '@bytecodealliance/jco-node-fs-darwin-arm64@0.3.2':
+    resolution: {integrity: sha512-WXQq1tRVUWhbK+ImH0G8Kni2AR0sdokLf/KyXRw5P6n4A9ZbgMHOuPfN/PEsYgw4eosuTAonutK0xILk/hA81A==}
     engines: {node: '>=20'}
     cpu: [arm64]
     os: [darwin]
 
-  '@bytecodealliance/jco-node-fs-darwin-x64@0.2.0':
-    resolution: {integrity: sha512-HUF+dPyBBAnIbYuL7EdmdfA7kj0F2ceQ5szNTF0HCPrPCoTtP1oWYtNEx4N6zLC5hZ2hJc01BeRgBfWJ1i6JRw==}
+  '@bytecodealliance/jco-node-fs-darwin-x64@0.3.2':
+    resolution: {integrity: sha512-Fy/OjHnto7hNE5ksewVkmAMXG/uXyj+RAKFZWQFTzFkp73UyT5vuPjKq3nvx9KolUGWBG37BudEMb4ZAoD9TbQ==}
     engines: {node: '>=20'}
     cpu: [x64]
     os: [darwin]
 
-  '@bytecodealliance/jco-node-fs-linux-arm64-gnu@0.2.0':
-    resolution: {integrity: sha512-OOPNHz8T6gJJjuteRMVpgHuNKDADgTafaelqy2RUj5hSqRHV+18Rf+mvHdL5Ci0fqG3DCwCmlQIqIEC6yJwOcQ==}
+  '@bytecodealliance/jco-node-fs-linux-arm64-gnu@0.3.2':
+    resolution: {integrity: sha512-OafRtRu3tfOFQARfkia/LDEqSo2R3yAL1xPwzf4RcRW6JqkOY7qKWsUS5+LPVo/aFaSkMX7F7bdFGpFPmcoZJg==}
     engines: {node: '>=20'}
     cpu: [arm64]
     os: [linux]
     libc: [glibc]
 
-  '@bytecodealliance/jco-node-fs-linux-arm64-musl@0.2.0':
-    resolution: {integrity: sha512-jPxTJtd5CZkBbSrPLdZMeiAfGgSpI1E5bnJRgEQN7TZ/Ivwt3Ci6cOa+R1szb9owtQ9sqbTFapLJx3iggOEFKQ==}
+  '@bytecodealliance/jco-node-fs-linux-arm64-musl@0.3.2':
+    resolution: {integrity: sha512-JblDiwD7+Y+w0d/tjaNDX4QdGvh5lyuDc+S/jDeT7sYA1caA9yiwIjLa8PC/lm2xudqSxD+Cuy4AosXvl+qI0g==}
     engines: {node: '>=20'}
     cpu: [arm64]
     os: [linux]
     libc: [musl]
 
-  '@bytecodealliance/jco-node-fs-linux-x64-gnu@0.2.0':
-    resolution: {integrity: sha512-IZ6oWJrQc37HOyf0GUJ21g3b1ArHfLEclQQiuTQ23f/Iy4OMVNhWwLV45R6HKQh5Mxqkr4t3k5lGRCcIFhC80g==}
+  '@bytecodealliance/jco-node-fs-linux-x64-gnu@0.3.2':
+    resolution: {integrity: sha512-6FzmHoLOsa6b4X9AuFLsvlpNF66Dt4sRRftZHaT1I1pYzCWrJkkpgNJhRXxf67ZPmOwBZJT4dan/g752Rx4xRw==}
     engines: {node: '>=20'}
     cpu: [x64]
     os: [linux]
     libc: [glibc]
 
-  '@bytecodealliance/jco-node-fs-linux-x64-musl@0.2.0':
-    resolution: {integrity: sha512-ozWEq/79+yp7Anj0qt936DXJUmAS/p/Bf8OJj9Uj5zMOoEnFzyCdvta5u86HbLA8oE4FuU64vf6QjLfRpCvzxw==}
+  '@bytecodealliance/jco-node-fs-linux-x64-musl@0.3.2':
+    resolution: {integrity: sha512-SbAJG2PDV8YAHBESHU9sVSckOitJyvlezdF4CGP5/mOp01JnijVkLVXzGK62yVSfa5TpAybbSd1rk+v36NAW/Q==}
     engines: {node: '>=20'}
     cpu: [x64]
     os: [linux]
     libc: [musl]
 
-  '@bytecodealliance/jco-node-fs-win32-arm64-msvc@0.2.0':
-    resolution: {integrity: sha512-9NxrGFRmCqRav82PJ0gm9y4KMFtCRti9BykufdEA2GH+R5pAjaBPbCFmlZvaLWfLVover38xcOhn/KL7ZN+xpg==}
+  '@bytecodealliance/jco-node-fs-win32-arm64-msvc@0.3.2':
+    resolution: {integrity: sha512-nUWYdFysRQJGsIOCk0KAYN2smkNYiHG7rZ7m+0ZXqP+5wqWxKEjkDsORwXiBjdaWFLVww0anZ3SBxrju6P7hXQ==}
     engines: {node: '>=20'}
     cpu: [arm64]
     os: [win32]
 
-  '@bytecodealliance/jco-node-fs-win32-x64-msvc@0.2.0':
-    resolution: {integrity: sha512-kp1pcPZEvgIeoQX9rCkwqrAhfH6ZE6sEvgFwlW0BagNHVzWcCnA2PEFM7UaeycasF6YPhjuc+wK6PsAe0QR1pg==}
+  '@bytecodealliance/jco-node-fs-win32-x64-msvc@0.3.2':
+    resolution: {integrity: sha512-RsPj2t8TvltsMWK7/Z7JcVC/IWPMi07/AJkNLiNTCuGTdT/sseqTThJJwhuz3sjFw7dJdxA+bSGT+23y/KT0fw==}
     engines: {node: '>=20'}
     cpu: [x64]
     os: [win32]
 
-  '@bytecodealliance/jco-node-fs@0.2.0':
-    resolution: {integrity: sha512-AnEbgoANBlFYtrLtiV3Ht6N+uc/8oMA5WFRxPm54tZ161F8FYP00cTqnbB/FQaN6oU8G27zMElpxcQqv8lXuKA==}
+  '@bytecodealliance/jco-node-fs@0.3.2':
+    resolution: {integrity: sha512-yxvqQreNcOQdMsEKZomkSqThtkxrAz3f1Cmy8BsV0UHi9saa2/D1KDB14IAXPYwDq/maS6lCzS+MuMQx6QkUgA==}
     engines: {node: '>=20'}
 
   '@bytecodealliance/jco@1.15.1':
@@ -429,8 +429,8 @@ packages:
   '@bytecodealliance/preview2-shim@0.17.9':
     resolution: {integrity: sha512-i0R3eQBe6PA/o/1EFE3Owe4In2rcccb6QxnjpntM/lPe3/duJ0bRQTVZM2Ufpo99X4eofGeltQUkape1C91FFA==}
 
-  '@bytecodealliance/preview2-shim@0.24.0':
-    resolution: {integrity: sha512-w47lxOptKWkw43gI5z8cpMMnZ01LbyyDf1ZCvVcu44BQl6sfhhvDu7BDDC512PjW5o2tOtR2wFMh9pevxeByvQ==}
+  '@bytecodealliance/preview2-shim@0.27.0':
+    resolution: {integrity: sha512-Tn8XzwB6JxTWXr0nQr3NR724ANwEA3rvQxRk4VZ89ouQBGvCETG1mRP0yPsvGJJuJdCyvIpritv8I/wv0sWCBQ==}
 
   '@bytecodealliance/weval@0.3.4':
     resolution: {integrity: sha512-+GCKtZXhPj7qyDl5pR0F3PTEk8tWINV8dv1tUbKMjMXvqjHIkvzalkWo5ZL2kCKwh8Bwn8rWpSmyvRC/Nlu9nQ==}
@@ -4135,40 +4135,40 @@ snapshots:
       es-module-lexer: 1.7.0
       oxc-parser: 0.76.0
 
-  '@bytecodealliance/jco-node-fs-darwin-arm64@0.2.0':
+  '@bytecodealliance/jco-node-fs-darwin-arm64@0.3.2':
     optional: true
 
-  '@bytecodealliance/jco-node-fs-darwin-x64@0.2.0':
+  '@bytecodealliance/jco-node-fs-darwin-x64@0.3.2':
     optional: true
 
-  '@bytecodealliance/jco-node-fs-linux-arm64-gnu@0.2.0':
+  '@bytecodealliance/jco-node-fs-linux-arm64-gnu@0.3.2':
     optional: true
 
-  '@bytecodealliance/jco-node-fs-linux-arm64-musl@0.2.0':
+  '@bytecodealliance/jco-node-fs-linux-arm64-musl@0.3.2':
     optional: true
 
-  '@bytecodealliance/jco-node-fs-linux-x64-gnu@0.2.0':
+  '@bytecodealliance/jco-node-fs-linux-x64-gnu@0.3.2':
     optional: true
 
-  '@bytecodealliance/jco-node-fs-linux-x64-musl@0.2.0':
+  '@bytecodealliance/jco-node-fs-linux-x64-musl@0.3.2':
     optional: true
 
-  '@bytecodealliance/jco-node-fs-win32-arm64-msvc@0.2.0':
+  '@bytecodealliance/jco-node-fs-win32-arm64-msvc@0.3.2':
     optional: true
 
-  '@bytecodealliance/jco-node-fs-win32-x64-msvc@0.2.0':
+  '@bytecodealliance/jco-node-fs-win32-x64-msvc@0.3.2':
     optional: true
 
-  '@bytecodealliance/jco-node-fs@0.2.0':
+  '@bytecodealliance/jco-node-fs@0.3.2':
     optionalDependencies:
-      '@bytecodealliance/jco-node-fs-darwin-arm64': 0.2.0
-      '@bytecodealliance/jco-node-fs-darwin-x64': 0.2.0
-      '@bytecodealliance/jco-node-fs-linux-arm64-gnu': 0.2.0
-      '@bytecodealliance/jco-node-fs-linux-arm64-musl': 0.2.0
-      '@bytecodealliance/jco-node-fs-linux-x64-gnu': 0.2.0
-      '@bytecodealliance/jco-node-fs-linux-x64-musl': 0.2.0
-      '@bytecodealliance/jco-node-fs-win32-arm64-msvc': 0.2.0
-      '@bytecodealliance/jco-node-fs-win32-x64-msvc': 0.2.0
+      '@bytecodealliance/jco-node-fs-darwin-arm64': 0.3.2
+      '@bytecodealliance/jco-node-fs-darwin-x64': 0.3.2
+      '@bytecodealliance/jco-node-fs-linux-arm64-gnu': 0.3.2
+      '@bytecodealliance/jco-node-fs-linux-arm64-musl': 0.3.2
+      '@bytecodealliance/jco-node-fs-linux-x64-gnu': 0.3.2
+      '@bytecodealliance/jco-node-fs-linux-x64-musl': 0.3.2
+      '@bytecodealliance/jco-node-fs-win32-arm64-msvc': 0.3.2
+      '@bytecodealliance/jco-node-fs-win32-x64-msvc': 0.3.2
 
   '@bytecodealliance/jco@1.15.1':
     dependencies:
@@ -4182,9 +4182,9 @@ snapshots:
 
   '@bytecodealliance/preview2-shim@0.17.9': {}
 
-  '@bytecodealliance/preview2-shim@0.24.0':
+  '@bytecodealliance/preview2-shim@0.27.0':
     dependencies:
-      '@bytecodealliance/jco-node-fs': 0.2.0
+      '@bytecodealliance/jco-node-fs': 0.3.2
 
   '@bytecodealliance/weval@0.3.4':
     dependencies:
