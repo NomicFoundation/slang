@@ -212,6 +212,7 @@ library L {
     function a(C c, I i, E[] memory es, E[2] memory ef, G g, W w) external pure returns (E) {}
     function b(S memory s, S[] memory ss) external pure returns (S memory) {}
     function d(function(uint256) external returns (E) cb) external pure {}
+    function e(S[2] memory sf) external pure {}
     error Err(E e, C c);
     event Ev(E indexed e, S s);
 }
@@ -219,7 +220,8 @@ library L {
 );
 
 /// A library's functions spell enums, contracts and interfaces by name, through arrays and struct
-/// members; its errors and events keep the canonical `uint8` and `address`.
+/// members, and a fixed-size struct array is `tuple[N]`; its errors and events keep the canonical
+/// `uint8` and `address`.
 #[test]
 fn library_functions_spell_types_by_name() {
     let unit = LibraryTypeSpellings::build_compilation_unit();
@@ -229,7 +231,7 @@ fn library_functions_spell_types_by_name() {
 
     assert_eq!(
         json(&abi),
-        r#"[{"inputs":[{"internalType":"enum L.E","name":"e","type":"uint8"},{"internalType":"contract C","name":"c","type":"address"}],"name":"Err","type":"error"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"enum L.E","name":"e","type":"uint8"},{"components":[{"internalType":"enum L.E","name":"e","type":"uint8"},{"internalType":"contract C","name":"c","type":"address"},{"internalType":"uint256","name":"x","type":"uint256"}],"indexed":false,"internalType":"struct L.S","name":"s","type":"tuple"}],"name":"Ev","type":"event"},{"inputs":[{"internalType":"contract C","name":"c","type":"C"},{"internalType":"contract I","name":"i","type":"I"},{"internalType":"enum L.E[]","name":"es","type":"L.E[]"},{"internalType":"enum L.E[2]","name":"ef","type":"L.E[2]"},{"internalType":"enum G","name":"g","type":"G"},{"internalType":"W","name":"w","type":"uint64"}],"name":"a","outputs":[{"internalType":"enum L.E","name":"","type":"L.E"}],"stateMutability":"pure","type":"function"},{"inputs":[{"components":[{"internalType":"enum L.E","name":"e","type":"L.E"},{"internalType":"contract C","name":"c","type":"C"},{"internalType":"uint256","name":"x","type":"uint256"}],"internalType":"struct L.S","name":"s","type":"tuple"},{"components":[{"internalType":"enum L.E","name":"e","type":"L.E"},{"internalType":"contract C","name":"c","type":"C"},{"internalType":"uint256","name":"x","type":"uint256"}],"internalType":"struct L.S[]","name":"ss","type":"tuple[]"}],"name":"b","outputs":[{"components":[{"internalType":"enum L.E","name":"e","type":"L.E"},{"internalType":"contract C","name":"c","type":"C"},{"internalType":"uint256","name":"x","type":"uint256"}],"internalType":"struct L.S","name":"","type":"tuple"}],"stateMutability":"pure","type":"function"},{"inputs":[{"internalType":"function (uint256) external returns (enum L.E)","name":"cb","type":"function"}],"name":"d","outputs":[],"stateMutability":"pure","type":"function"}]"#
+        r#"[{"inputs":[{"internalType":"enum L.E","name":"e","type":"uint8"},{"internalType":"contract C","name":"c","type":"address"}],"name":"Err","type":"error"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"enum L.E","name":"e","type":"uint8"},{"components":[{"internalType":"enum L.E","name":"e","type":"uint8"},{"internalType":"contract C","name":"c","type":"address"},{"internalType":"uint256","name":"x","type":"uint256"}],"indexed":false,"internalType":"struct L.S","name":"s","type":"tuple"}],"name":"Ev","type":"event"},{"inputs":[{"internalType":"contract C","name":"c","type":"C"},{"internalType":"contract I","name":"i","type":"I"},{"internalType":"enum L.E[]","name":"es","type":"L.E[]"},{"internalType":"enum L.E[2]","name":"ef","type":"L.E[2]"},{"internalType":"enum G","name":"g","type":"G"},{"internalType":"W","name":"w","type":"uint64"}],"name":"a","outputs":[{"internalType":"enum L.E","name":"","type":"L.E"}],"stateMutability":"pure","type":"function"},{"inputs":[{"components":[{"internalType":"enum L.E","name":"e","type":"L.E"},{"internalType":"contract C","name":"c","type":"C"},{"internalType":"uint256","name":"x","type":"uint256"}],"internalType":"struct L.S","name":"s","type":"tuple"},{"components":[{"internalType":"enum L.E","name":"e","type":"L.E"},{"internalType":"contract C","name":"c","type":"C"},{"internalType":"uint256","name":"x","type":"uint256"}],"internalType":"struct L.S[]","name":"ss","type":"tuple[]"}],"name":"b","outputs":[{"components":[{"internalType":"enum L.E","name":"e","type":"L.E"},{"internalType":"contract C","name":"c","type":"C"},{"internalType":"uint256","name":"x","type":"uint256"}],"internalType":"struct L.S","name":"","type":"tuple"}],"stateMutability":"pure","type":"function"},{"inputs":[{"internalType":"function (uint256) external returns (enum L.E)","name":"cb","type":"function"}],"name":"d","outputs":[],"stateMutability":"pure","type":"function"},{"inputs":[{"components":[{"internalType":"enum L.E","name":"e","type":"L.E"},{"internalType":"contract C","name":"c","type":"C"},{"internalType":"uint256","name":"x","type":"uint256"}],"internalType":"struct L.S[2]","name":"sf","type":"tuple[2]"}],"name":"e","outputs":[],"stateMutability":"pure","type":"function"}]"#
     );
 }
 
