@@ -1,0 +1,99 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics:
+[resolution/member-not-found] Error: Member 'callcode' not found or not visible after argument-dependent lookup.
+   ╭─[input.sol:6:35]
+   │
+ 6 │         (bool success, ) = target.callcode("");                     // should be rejected
+   │                                   ────┬───  
+   │                                       ╰───── Error occurred here.
+───╯
+[resolution/member-not-found] Error: Member 'callcode' not found or not visible after argument-dependent lookup.
+   ╭─[input.sol:7:49]
+   │
+ 7 │         (bool payableSuccess, ) = payableTarget.callcode("");       // should be rejected
+   │                                                 ────┬───  
+   │                                                     ╰───── Error occurred here.
+───╯
+
+------------------------------------------------------------------------
+
+Definitions (9):
+- Def: #1 ["C" @ input.sol:4:10] (contract)
+- Def: #2 ["missing" @ input.sol:5:14] (function, type: function (address, address payable) returns (bool, bool))
+- Def: #3 ["target" @ input.sol:5:30] (parameter, type: address)
+- Def: #4 ["payableTarget" @ input.sol:5:54] (parameter, type: address payable)
+- Def: #5 ["success" @ input.sol:6:15] (variable, type: bool)
+- Def: #6 ["payableSuccess" @ input.sol:7:15] (variable, type: bool)
+- Def: #7 ["present" @ input.sol:11:14] (function, type: function (address) returns bool)
+- Def: #8 ["target" @ input.sol:11:30] (parameter, type: address)
+- Def: #9 ["success" @ input.sol:12:15] (variable, type: bool)
+
+------------------------------------------------------------------------
+
+References (9):
+- Ref: ["target" @ input.sol:6:28] -> #3
+- Ref: ["callcode" @ input.sol:6:35] -> unresolved
+- Ref: ["payableTarget" @ input.sol:7:35] -> #4
+- Ref: ["callcode" @ input.sol:7:49] -> unresolved
+- Ref: ["success" @ input.sol:8:17] -> #5
+- Ref: ["payableSuccess" @ input.sol:8:26] -> #6
+- Ref: ["target" @ input.sol:12:28] -> #8
+- Ref: ["delegatecall" @ input.sol:12:35] -> built-in
+- Ref: ["success" @ input.sol:13:16] -> #9
+
+------------------------------------------------------------------------
+
+Unbound identifiers (0):
+
+------------------------------------------------------------------------
+
+Bindings: 
+    ╭─[input.sol:1:1]
+    │
+  4 │ contract C {
+    │          ┬  
+    │          ╰── name: 1
+  5 │     function missing(address target, address payable payableTarget) public returns (bool, bool) {
+    │              ───┬───         ───┬──                  ──────┬──────  
+    │                 ╰─────────────────────────────────────────────────── name: 2
+    │                                 │                          │        
+    │                                 ╰─────────────────────────────────── name: 3
+    │                                                            │        
+    │                                                            ╰──────── name: 4
+  6 │         (bool success, ) = target.callcode("");                     // should be rejected
+    │               ───┬───      ───┬── ────┬───  
+    │                  ╰────────────────────────── name: 5
+    │                               │       │     
+    │                               ╰───────────── ref: 3
+    │                                       │     
+    │                                       ╰───── unresolved
+  7 │         (bool payableSuccess, ) = payableTarget.callcode("");       // should be rejected
+    │               ───────┬──────      ──────┬────── ────┬───  
+    │                      ╰──────────────────────────────────── name: 6
+    │                                         │           │     
+    │                                         ╰───────────────── ref: 4
+    │                                                     │     
+    │                                                     ╰───── unresolved
+  8 │         return (success, payableSuccess);
+    │                 ───┬───  ───────┬──────  
+    │                    ╰───────────────────── ref: 5
+    │                                 │        
+    │                                 ╰──────── ref: 6
+    │ 
+ 11 │     function present(address target) public returns (bool) {
+    │              ───┬───         ───┬──  
+    │                 ╰──────────────────── name: 7
+    │                                 │    
+    │                                 ╰──── name: 8
+ 12 │         (bool success, ) = target.delegatecall("");                 // should be accepted
+    │               ───┬───      ───┬── ──────┬─────  
+    │                  ╰────────────────────────────── name: 9
+    │                               │         │       
+    │                               ╰───────────────── ref: 8
+    │                                         │       
+    │                                         ╰─────── built-in
+ 13 │         return success;
+    │                ───┬───  
+    │                   ╰───── ref: 9
+────╯

@@ -276,7 +276,6 @@ impl<'a> BuiltInsResolver<'a> {
             "code" => Some(InternalBuiltIn::AddressCode),
             "codehash" => Some(InternalBuiltIn::AddressCodehash),
             "call" => Some(InternalBuiltIn::AddressCall),
-            "callcode" if !payable => Some(InternalBuiltIn::AddressCallcode),
             "delegatecall" => Some(InternalBuiltIn::AddressDelegatecall),
             "send" if payable => Some(InternalBuiltIn::AddressSend),
             "staticcall" => Some(InternalBuiltIn::AddressStaticcall),
@@ -457,7 +456,6 @@ impl<'a> BuiltInsResolver<'a> {
             | InternalBuiltIn::AbiEncodeWithSelector
             | InternalBuiltIn::AbiEncodeWithSignature
             | InternalBuiltIn::AddressCall
-            | InternalBuiltIn::AddressCallcode
             | InternalBuiltIn::AddressDelegatecall
             | InternalBuiltIn::AddressSend
             | InternalBuiltIn::AddressStaticcall
@@ -515,7 +513,6 @@ impl<'a> BuiltInsResolver<'a> {
             InternalBuiltIn::AbiEncodeWithSignature => self.types.bytes_memory(),
             InternalBuiltIn::Addmod => self.types.uint256(),
             InternalBuiltIn::AddressCall => self.types.boolean_bytes_tuple(),
-            InternalBuiltIn::AddressCallcode => self.types.boolean_bytes_tuple(),
             InternalBuiltIn::AddressDelegatecall => self.types.boolean_bytes_tuple(),
             InternalBuiltIn::AddressSend => self.types.boolean(),
             InternalBuiltIn::AddressStaticcall => self.types.boolean_bytes_tuple(),

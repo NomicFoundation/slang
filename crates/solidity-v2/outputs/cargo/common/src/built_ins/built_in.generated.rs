@@ -51,7 +51,6 @@ pub enum BuiltIn {
     Address,
     AddressBalance,
     AddressCall,
-    AddressCallcode,
     AddressCode,
     AddressCodehash,
     AddressDelegatecall,

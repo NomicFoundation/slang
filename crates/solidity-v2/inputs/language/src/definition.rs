@@ -4556,7 +4556,6 @@ IdentifierPathTailElement: (Period, IdentifierPathElement) = {
                         BuiltInDefinition(name = Address),
                         BuiltInDefinition(name = AddressBalance),
                         BuiltInDefinition(name = AddressCall),
-                        BuiltInDefinition(name = AddressCallcode),
                         BuiltInDefinition(name = AddressCode),
                         BuiltInDefinition(name = AddressCodehash, evm_enabled = From(Constantinople)),
                         BuiltInDefinition(name = AddressDelegatecall, evm_enabled = From(Homestead)),
