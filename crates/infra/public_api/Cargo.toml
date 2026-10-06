@@ -1,0 +1,18 @@
+[package]
+name = "infra_public_api"
+description = "Generates snapshots of the public API of every user-facing crate."
+version.workspace = true
+rust-version.workspace = true
+edition.workspace = true
+publish = false
+
+[dependencies]
+anyhow = { workspace = true }
+clap = { workspace = true }
+infra_utils = { workspace = true }
+public-api = { workspace = true }
+rayon = { workspace = true }
+strum = { workspace = true }
+
+[lints]
+workspace = true

@@ -44,9 +44,9 @@ runs:
     - name: "Build WASM package"
       if: "${{ steps.versions.outputs.should-publish == 'true' }}"
       shell: "bash"
-      # `infra check npm` builds the WASM package into the npm source tree,
+      # `task check:npm` builds the WASM package into the npm source tree,
       # so the `pnpm pack` below picks it up.
-      run: "./scripts/bin/infra check npm"
+      run: "./bin/task check:npm"
 
     - name: "pnpm pack"
       id: "pack"

@@ -15,7 +15,6 @@ tasks:
       - "markdown-link-check"
       - "markdown-lint"
       - "shellcheck"
-      - "tsc"
       - "yamllint"
       - "actionlint"
       - "zizmor"
@@ -79,11 +78,6 @@ tasks:
     desc: "Check for violations in Bash files."
     cmds:
       - "scripts/tasks/_utils/list-files.sh ':(glob)scripts/**' ':(glob,exclude)scripts/**/Taskfile.yml' | scripts/tasks/_utils/xargs-batch.sh shellcheck"
-
-  "tsc":
-    desc: "Check for type errors in TypeScript files."
-    cmds:
-      - "tsc --build tsconfig.json"
 
   "yamllint":
     desc: "Check for violations issues in Yaml files."

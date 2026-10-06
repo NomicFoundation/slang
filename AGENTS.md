@@ -4,7 +4,7 @@
 
 Slang is a modular Solidity compiler tooling suite built by the Nomic Foundation. It provides a full-fidelity concrete syntax tree (CST) parser, semantic analysis, and binding computation for Solidity source code. It is **not** a replacement for solc — it focuses on code analysis and developer tooling, not bytecode generation.
 
-- **Language**: Rust workspace (48 crates) with TypeScript/npm bindings via WASM
+- **Language**: Rust workspace with TypeScript/npm bindings via WASM
 - **Supports**: Solidity versions 0.4.11 to latest 0.8.+
 - **Published as**: `slang_solidity` (crates.io), `@nomicfoundation/slang` (npm)
 
@@ -75,23 +75,23 @@ Available binaries in `./bin/`: `cargo`, `node`, `npm`, `npx`, `pnpm`, `gh`, `py
 
 ## Build & Development Commands
 
-The project uses a custom `infra` CLI that orchestrates all build operations. Use `--help` on any command or subcommand to discover options:
+The project uses a custom `infra` CLI for setup, publishing, and benchmarks. Use `--help` on any command or subcommand to discover options:
 
 ```sh
 ./scripts/bin/infra --help       # See all available commands
 ./scripts/bin/infra setup        # Install all dependencies
 ./scripts/bin/infra setup --help # See setup subcommands (cargo, npm, etc.)
-./scripts/bin/infra check        # Codegen + cargo check + npm check + public API check
-./scripts/bin/infra check --help # See check subcommands (codegen, cargo, npm, public-api)
 ./scripts/bin/infra ci           # Full CI run: setup + check + test + lint
 ```
 
 Always run `infra setup` when initializing a new workspace, to ensure all tools/dependencies are available.
 
-Testing and linting are orchestrated by [`task`](https://taskfile.dev) instead, defined in `$REPO_ROOT/Taskfile.yml`:
+Checking, testing, and linting are orchestrated by [`task`](https://taskfile.dev) instead, defined in `$REPO_ROOT/Taskfile.yml`:
 
 ```sh
 ./bin/task --list        # See all available tasks
+./bin/task check         # Codegen + cargo check + npm build/typecheck + public API check
+./bin/task check:codegen # Run a single check
 ./bin/task test          # Run all tests (cargo nextest + jest), in parallel
 ./bin/task test:cargo:v2 # Run a single test group
 ./bin/task lint          # Run all linters, in parallel
@@ -132,7 +132,7 @@ Many source files are auto-generated, and are either under a `/generated/` direc
 **Never edit these files directly.** Instead, modify the source definitions and regenerate using:
 
 ```sh
-./scripts/bin/infra check codegen
+./bin/task check:codegen
 ```
 
 Most of the generated files are produced from an accompanying `.jinja2` template next to them.

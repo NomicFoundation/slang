@@ -3,4 +3,5 @@
 node_modules/
 
 # Generated Artifacts
+.task/
 target/

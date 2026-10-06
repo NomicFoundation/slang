@@ -1,0 +1,17 @@
+version: "3"
+
+tasks:
+  "default":
+    desc: "Use 'rustdoc' JSON output to generate a snapshot of public api members."
+    cmds:
+      - "cargo run --bin infra_public_api"
+
+  "v1":
+    desc: "Generate the public API snapshots of the V1 crates."
+    cmds:
+      - "cargo run --bin infra_public_api -- --filter=v1"
+
+  "v2":
+    desc: "Generate the public API snapshots of the V2 crates."
+    cmds:
+      - "cargo run --bin infra_public_api -- --filter=v2"

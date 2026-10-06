@@ -1,13 +1,19 @@
 {
   "extends": "../../../../../tsconfig.json",
 
-  "include": ["./**/*"],
+  // The WASM glue under 'wasm/' is consumed from source rather than compiled,
+  // so only its type definitions are included, to check the sources against:
+  "include": ["./src/**/*", "./wasm/**/*.d.mts", "./wasm/**/*.d.ts"],
 
   "compilerOptions": {
+    /* Emit */
+    "noEmit": false,
+    "outDir": "./target",
+
     /* Projects */
     "composite": true,
     "incremental": true,
-    "rootDir": "./",
+    "rootDir": "./src",
     "tsBuildInfoFile": "target/tsc/.tsbuildinfo"
   }
 }

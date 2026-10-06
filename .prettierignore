@@ -21,6 +21,7 @@ documentation/overrides/**/*.html
 **/CHANGELOG.md
 
 # Generated Artifacts
+**/.task/
 **/target/
 **/Pipfile.lock
 **/pnpm-lock.yaml

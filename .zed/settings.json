@@ -2,7 +2,7 @@
 // Some VSCode settings have no direct Zed counterpart and are intentionally omitted:
 // - `editor.unicodeHighlight.allowedCharacters` (Zed has no unicode highlight feature)
 // - `json.schemaDownload.trustedDomains` (Zed allows all schema downloads)
-// - `triggerTaskOnSave` (no auto-task-on-save; run `infra check codegen` manually)
+// - `triggerTaskOnSave` (no auto-task-on-save; run `task check:codegen` manually)
 // - `js/ts.tsdk.path` (vtsls auto-detects `node_modules/typescript/lib`)
 {
   "format_on_save": "on",
