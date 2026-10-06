@@ -5,7 +5,7 @@ use slang_solidity_v2_common::diagnostics::kinds::resolution::NoMatchingCallable
 use slang_solidity_v2_common::versions::LanguageVersion;
 use slang_solidity_v2_ir::ir::{self, NodeIdentity};
 
-use super::{Analyse, Analysis, expression};
+use super::{Analyse, Analysis, expression, expression_statement_types};
 use crate::binder::Typing;
 use crate::types::{FunctionType, IntegerType, Type, TypeId, UserMetaType};
 
@@ -221,4 +221,38 @@ fn test_overloaded_declaration_via_type_name_operand_narrows() {
     // `A.f()` selects the parameterless overload, `A.f(1)` the one-parameter one.
     assert_eq!(parameter_count(first), 0);
     assert_eq!(parameter_count(second), 1);
+}
+
+#[test]
+fn test_public_library_calldata_overload_accepts_memory_receiver() {
+    // A public library function attached with `using` is an external call, so
+    // overload resolution accepts a `memory` receiver for its `calldata` parameter.
+    let source = r#"
+        pragma solidity *;
+        library L {
+            function f(uint256[] calldata, uint256) public pure returns (uint256) { return 1; }
+            function f(uint256[] calldata, string memory) public pure returns (uint256) { return 2; }
+        }
+        contract C {
+            using L for uint256[];
+            function g(uint256[] memory a) internal pure {
+                a.f(1);
+            }
+        }
+    "#;
+
+    let analysis = Analysis::of_source(source)
+        .run(Analyse::References)
+        .expect_no_diagnostics();
+    assert_eq!(
+        expression_statement_types(
+            analysis.function_body("C", "g"),
+            analysis.binder(),
+            analysis.types(),
+        ),
+        vec![Some(Type::Integer(IntegerType {
+            is_signed: false,
+            bits: 256,
+        }))],
+    );
 }

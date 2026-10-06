@@ -140,15 +140,20 @@ impl Pass<'_> {
                 } else if parameters.len() == argument_count + 1
                     && function_type.implicit_receiver_type.is_none()
                     && parameters.first().is_some_and(|parameter| {
-                        parameter.type_id.is_some_and(|type_id| {
-                            self.types
-                                .implicitly_convertible_to(receiver_type_id, type_id)
+                        parameter.type_id.is_some_and(|parameter_type| {
+                            self.parameter_type_matches_argument_type(
+                                parameter_type,
+                                receiver_type_id,
+                                external_call,
+                            )
                         })
                     })
                 {
                     // matches attached functions (these can only be
                     // free-functions or library functions) with a compatible
-                    // first argument
+                    // first argument. An externally visible one reads a
+                    // calldata reference as memory, so the receiver converts
+                    // under the same rules as the remaining arguments.
                     parameters_match(&parameters[1..], external_call)
                 } else {
                     false
