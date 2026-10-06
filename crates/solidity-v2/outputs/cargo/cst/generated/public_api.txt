@@ -12,7 +12,6 @@ pub fn slang_solidity_v2_cst::structured_cst::natspec::NatSpec::eq(&self, &slang
 impl core::fmt::Debug for slang_solidity_v2_cst::structured_cst::natspec::NatSpec
 pub fn slang_solidity_v2_cst::structured_cst::natspec::NatSpec::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
 impl core::marker::StructuralPartialEq for slang_solidity_v2_cst::structured_cst::natspec::NatSpec
-pub fn slang_solidity_v2_cst::structured_cst::natspec::attach_natspec(&mut slang_solidity_v2_cst::structured_cst::nodes::SourceUnit, &impl core::ops::function::Fn(usize) -> core::option::Option<slang_solidity_v2_cst::structured_cst::natspec::NatSpec>)
 pub mod slang_solidity_v2_cst::structured_cst::nodes
 pub enum slang_solidity_v2_cst::structured_cst::nodes::AbicoderVersion
 pub slang_solidity_v2_cst::structured_cst::nodes::AbicoderVersion::AbicoderV1Keyword(slang_solidity_v2_cst::structured_cst::nodes::AbicoderV1Keyword)

@@ -5,13 +5,13 @@ use slang_solidity_v2_common::diagnostics::kinds::syntax::{UnexpectedEof, Unexpe
 use slang_solidity_v2_common::files::FileId;
 use slang_solidity_v2_common::terminals::TerminalKind;
 use slang_solidity_v2_common::versions::LanguageVersion;
-use slang_solidity_v2_cst::structured_cst::natspec::attach_natspec;
+use slang_solidity_v2_cst::structured_cst::natspec::NatSpec;
 use slang_solidity_v2_cst::structured_cst::nodes::{
     SourceUnit, new_source_unit, new_source_unit_members,
 };
 
 use crate::lexer::{LexemeKind, Lexer};
-use crate::parser::natspec_comments::NatSpecComments;
+use crate::parser::natspec_comments::{NatSpecComments, NatSpecConsumer, NatSpecProducer};
 use crate::parser::validation::validate_syntax_version;
 
 mod natspec_comments;
@@ -54,6 +54,15 @@ pub(crate) struct GrammarCtx<'a> {
     pub diagnostics: DiagnosticCollection,
     /// Version being parsed, for diagnostics that depend on which syntax it allows.
     pub language_version: LanguageVersion,
+    /// The `NatSpec` comments read by the lexer, until the documentable nodes take them.
+    pub natspec_comments: NatSpecConsumer<'a>,
+}
+
+impl GrammarCtx<'_> {
+    /// See [`NatSpecConsumer::take`].
+    pub(crate) fn take_natspec(&self, start: usize, end: usize) -> Option<NatSpec> {
+        self.natspec_comments.take(start, end)
+    }
 }
 
 /// The output of a parse operation, containing both the source unit and any diagnostics.
@@ -72,10 +81,11 @@ pub struct Parser;
 
 impl Parser {
     pub fn parse(file_id: &FileId, source: &str, language_version: LanguageVersion) -> ParseOutput {
-        let mut natspec_comments = NatSpecComments::default();
+        let natspec_comments = NatSpecComments::default();
+        let (natspec_producer, natspec_consumer) = natspec_comments.split();
         let tokens = TokenStream {
             lexer: Lexer::new(source, language_version),
-            natspec_comments: &mut natspec_comments,
+            natspec_comments: natspec_producer,
         };
         let parser = grammar::SourceUnitParser::new();
 
@@ -84,17 +94,11 @@ impl Parser {
             file_id,
             diagnostics: DiagnosticCollection::default(),
             language_version,
+            natspec_comments: natspec_consumer,
         };
 
         let source_unit = match parser.parse(&mut ctx, tokens) {
-            Ok(mut source_unit) => {
-                if !natspec_comments.is_empty() {
-                    // Attach the NatSpec comments to the nodes they document
-                    attach_natspec(&mut source_unit, &|start| {
-                        natspec_comments.documenting(start)
-                    });
-                }
-
+            Ok(source_unit) => {
                 // Most validation happens during the 'CompilationUnit' building, but this specific
                 // check is done here to make sure that other 'Parser' users can still be informed of any
                 // inconsistency between the source unit and the expected syntax version.
@@ -182,7 +186,7 @@ fn convert_parse_error(
 /// TODO(v2): Include the trivia in future versions
 struct TokenStream<'source, 'comments> {
     lexer: Lexer<'source>,
-    natspec_comments: &'comments mut NatSpecComments,
+    natspec_comments: NatSpecProducer<'comments>,
 }
 
 impl Iterator for TokenStream<'_, '_> {
@@ -190,7 +194,7 @@ impl Iterator for TokenStream<'_, '_> {
 
     fn next(&mut self) -> Option<Self::Item> {
         // Kept lean for LALRPOP's parsing loop: the pending comment is stored in
-        // `NatSpecComments` rather than in a local, and only a bool tracks whether this call saw one.
+        // `NatSpecProducer` rather than in a local, and only a bool tracks whether this call saw one.
         let mut after_natspec_comment = false;
 
         while let Some(lexeme) = self.lexer.next_lexeme() {

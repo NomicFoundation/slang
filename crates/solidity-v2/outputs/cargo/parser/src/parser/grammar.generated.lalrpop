@@ -264,7 +264,7 @@ Repeated<T>: Vec<T> = {
 
 // Rules for topic Contracts
     
-    ContractDefinition: ContractDefinition =
+    #[inline] ContractDefinitionUndocumented: ContractDefinition =
 {
     <abstract_keyword: (AbstractKeyword)?> <contract_keyword: ContractKeyword>
     <name: Identifier> <open_brace: OpenBrace> <members: ContractMembers>
@@ -280,6 +280,11 @@ Repeated<T>: Vec<T> = {
         new_contract_definition(abstract_keyword, contract_keyword, name,
         specifiers, open_brace, members, close_brace)
     },
+}; ContractDefinition: ContractDefinition =
+{
+    <natspec_start: @L> <mut node: ContractDefinitionUndocumented>
+    <natspec_end: @R> =>
+    { node.natspec = ctx.take_natspec(natspec_start, natspec_end); node },
 };
     
     ContractSpecifiersTrailingMembers:
@@ -365,8 +370,13 @@ BracedContractMembers: (OpenBrace, ContractMembers, CloseBrace) =
     
 
 // Rules for topic Interfaces
-    InterfaceDefinition: InterfaceDefinition = {
+    #[inline]
+    InterfaceDefinitionUndocumented: InterfaceDefinition = {
         <interface_keyword: InterfaceKeyword>  <name: Identifier>  <inheritance: (InheritanceSpecifier)?>  <open_brace: OpenBrace>  <members: InterfaceMembers>  <close_brace: CloseBrace>  => new_interface_definition(<>),
+        
+    };
+    InterfaceDefinition: InterfaceDefinition = {
+        <natspec_start: @L>  <node: InterfaceDefinitionUndocumented>  <natspec_end: @R>  => { let mut node = node; node.natspec = ctx.take_natspec(natspec_start, natspec_end); node },
         
     };
     InterfaceMembers: InterfaceMembers = {
@@ -376,8 +386,13 @@ BracedContractMembers: (OpenBrace, ContractMembers, CloseBrace) =
     
 
 // Rules for topic Libraries
-    LibraryDefinition: LibraryDefinition = {
+    #[inline]
+    LibraryDefinitionUndocumented: LibraryDefinition = {
         <library_keyword: LibraryKeyword>  <name: Identifier>  <open_brace: OpenBrace>  <members: LibraryMembers>  <close_brace: CloseBrace>  => new_library_definition(<>),
+        
+    };
+    LibraryDefinition: LibraryDefinition = {
+        <natspec_start: @L>  <node: LibraryDefinitionUndocumented>  <natspec_end: @R>  => { let mut node = node; node.natspec = ctx.take_natspec(natspec_start, natspec_end); node },
         
     };
     LibraryMembers: LibraryMembers = {
@@ -387,8 +402,13 @@ BracedContractMembers: (OpenBrace, ContractMembers, CloseBrace) =
     
 
 // Rules for topic Structs
-    StructDefinition: StructDefinition = {
+    #[inline]
+    StructDefinitionUndocumented: StructDefinition = {
         <struct_keyword: StructKeyword>  <name: Identifier>  <open_brace: OpenBrace>  <members: StructMembers>  <close_brace: CloseBrace>  => new_struct_definition(<>),
+        
+    };
+    StructDefinition: StructDefinition = {
+        <natspec_start: @L>  <node: StructDefinitionUndocumented>  <natspec_end: @R>  => { let mut node = node; node.natspec = ctx.take_natspec(natspec_start, natspec_end); node },
         
     };
     StructMembers: StructMembers = {
@@ -402,8 +422,13 @@ BracedContractMembers: (OpenBrace, ContractMembers, CloseBrace) =
     
 
 // Rules for topic Enums
-    EnumDefinition: EnumDefinition = {
+    #[inline]
+    EnumDefinitionUndocumented: EnumDefinition = {
         <enum_keyword: EnumKeyword>  <name: Identifier>  <open_brace: OpenBrace>  <members: EnumMembers>  <close_brace: CloseBrace>  => new_enum_definition(<>),
+        
+    };
+    EnumDefinition: EnumDefinition = {
+        <natspec_start: @L>  <node: EnumDefinitionUndocumented>  <natspec_end: @R>  => { let mut node = node; node.natspec = ctx.take_natspec(natspec_start, natspec_end); node },
         
     };
     EnumMembers: EnumMembers = {
@@ -413,15 +438,20 @@ BracedContractMembers: (OpenBrace, ContractMembers, CloseBrace) =
     
 
 // Rules for topic Constants
-    ConstantDefinition: ConstantDefinition = {
+    #[inline]
+    ConstantDefinitionUndocumented: ConstantDefinition = {
         <type_name: TypeName>  <constant_keyword: ConstantKeyword>  <name: Identifier>  <equal: Equal>  <value: Expression>  <semicolon: Semicolon>  => new_constant_definition(<>),
+        
+    };
+    ConstantDefinition: ConstantDefinition = {
+        <natspec_start: @L>  <node: ConstantDefinitionUndocumented>  <natspec_end: @R>  => { let mut node = node; node.natspec = ctx.take_natspec(natspec_start, natspec_end); node },
         
     };
     
 
 // Rules for topic State Variables
     
-    StateVariableDefinition: StateVariableDefinition =
+    #[inline] StateVariableDefinitionUndocumented: StateVariableDefinition =
 {
     <type_name: TypeName1<FunctionTypeInternalReturn,
     IndexAccessPath<IdentifierPathNoError>>> <attributes:
@@ -453,6 +483,11 @@ BracedContractMembers: (OpenBrace, ContractMembers, CloseBrace) =
         new_state_variable_attributes(extra_attributes), name, value,
         semicolon)
     },
+}; StateVariableDefinition: StateVariableDefinition =
+{
+    <natspec_start: @L> <mut node: StateVariableDefinitionUndocumented>
+    <natspec_end: @R> =>
+    { node.natspec = ctx.take_natspec(natspec_start, natspec_end); node },
 }; IdentifierPathNoError: parser_helpers::SeparatedIdentifierPath =
 {
     <head: Identifier> <tail: Repeated<IdentifierPathTailElement>> =>
@@ -490,8 +525,13 @@ BracedContractMembers: (OpenBrace, ContractMembers, CloseBrace) =
     
 
 // Rules for topic Functions
-    FunctionDefinition: FunctionDefinition = {
+    #[inline]
+    FunctionDefinitionUndocumented: FunctionDefinition = {
         <function_keyword: FunctionKeyword>  <name: FunctionName>  <parameters: ParametersDeclaration>  <attributes: FunctionAttributes>  <returns: (ReturnsDeclaration)?>  <body: FunctionBody>  => new_function_definition(<>),
+        
+    };
+    FunctionDefinition: FunctionDefinition = {
+        <natspec_start: @L>  <node: FunctionDefinitionUndocumented>  <natspec_end: @R>  => { let mut node = node; node.natspec = ctx.take_natspec(natspec_start, natspec_end); node },
         
     };
     FunctionName: FunctionName = {
@@ -550,8 +590,13 @@ BracedContractMembers: (OpenBrace, ContractMembers, CloseBrace) =
         <semicolon: Semicolon>  => new_function_body_semicolon(<>),
         
     };
-    ConstructorDefinition: ConstructorDefinition = {
+    #[inline]
+    ConstructorDefinitionUndocumented: ConstructorDefinition = {
         <constructor_keyword: ConstructorKeyword>  <parameters: ParametersDeclaration>  <attributes: ConstructorAttributes>  <body: Block>  => new_constructor_definition(<>),
+        
+    };
+    ConstructorDefinition: ConstructorDefinition = {
+        <natspec_start: @L>  <node: ConstructorDefinitionUndocumented>  <natspec_end: @R>  => { let mut node = node; node.natspec = ctx.take_natspec(natspec_start, natspec_end); node },
         
     };
     ConstructorAttributes: ConstructorAttributes = {
@@ -565,8 +610,13 @@ BracedContractMembers: (OpenBrace, ContractMembers, CloseBrace) =
         <public_keyword: PublicKeyword>  => new_constructor_attribute_public_keyword(<>),
         
     };
-    FallbackFunctionDefinition: FallbackFunctionDefinition = {
+    #[inline]
+    FallbackFunctionDefinitionUndocumented: FallbackFunctionDefinition = {
         <fallback_keyword: FallbackKeyword>  <parameters: ParametersDeclaration>  <attributes: FallbackFunctionAttributes>  <returns: (ReturnsDeclaration)?>  <body: FunctionBody>  => new_fallback_function_definition(<>),
+        
+    };
+    FallbackFunctionDefinition: FallbackFunctionDefinition = {
+        <natspec_start: @L>  <node: FallbackFunctionDefinitionUndocumented>  <natspec_end: @R>  => { let mut node = node; node.natspec = ctx.take_natspec(natspec_start, natspec_end); node },
         
     };
     FallbackFunctionAttributes: FallbackFunctionAttributes = {
@@ -583,8 +633,13 @@ BracedContractMembers: (OpenBrace, ContractMembers, CloseBrace) =
         <virtual_keyword: VirtualKeyword>  => new_fallback_function_attribute_virtual_keyword(<>),
         
     };
-    ReceiveFunctionDefinition: ReceiveFunctionDefinition = {
+    #[inline]
+    ReceiveFunctionDefinitionUndocumented: ReceiveFunctionDefinition = {
         <receive_keyword: ReceiveKeyword>  <parameters: ParametersDeclaration>  <attributes: ReceiveFunctionAttributes>  <body: FunctionBody>  => new_receive_function_definition(<>),
+        
+    };
+    ReceiveFunctionDefinition: ReceiveFunctionDefinition = {
+        <natspec_start: @L>  <node: ReceiveFunctionDefinitionUndocumented>  <natspec_end: @R>  => { let mut node = node; node.natspec = ctx.take_natspec(natspec_start, natspec_end); node },
         
     };
     ReceiveFunctionAttributes: ReceiveFunctionAttributes = {
@@ -602,8 +657,13 @@ BracedContractMembers: (OpenBrace, ContractMembers, CloseBrace) =
     
 
 // Rules for topic Modifiers
-    ModifierDefinition: ModifierDefinition = {
+    #[inline]
+    ModifierDefinitionUndocumented: ModifierDefinition = {
         <modifier_keyword: ModifierKeyword>  <name: Identifier>  <parameters: (ParametersDeclaration)?>  <attributes: ModifierAttributes>  <body: FunctionBody>  => new_modifier_definition(<>),
+        
+    };
+    ModifierDefinition: ModifierDefinition = {
+        <natspec_start: @L>  <node: ModifierDefinitionUndocumented>  <natspec_end: @R>  => { let mut node = node; node.natspec = ctx.take_natspec(natspec_start, natspec_end); node },
         
     };
     ModifierAttributes: ModifierAttributes = {
@@ -622,8 +682,13 @@ BracedContractMembers: (OpenBrace, ContractMembers, CloseBrace) =
     
 
 // Rules for topic Events
-    EventDefinition: EventDefinition = {
+    #[inline]
+    EventDefinitionUndocumented: EventDefinition = {
         <event_keyword: EventKeyword>  <name: Identifier>  <parameters: EventParametersDeclaration>  <anonymous_keyword: (AnonymousKeyword)?>  <semicolon: Semicolon>  => new_event_definition(<>),
+        
+    };
+    EventDefinition: EventDefinition = {
+        <natspec_start: @L>  <node: EventDefinitionUndocumented>  <natspec_end: @R>  => { let mut node = node; node.natspec = ctx.take_natspec(natspec_start, natspec_end); node },
         
     };
     EventParametersDeclaration: EventParametersDeclaration = {
@@ -649,8 +714,13 @@ BracedContractMembers: (OpenBrace, ContractMembers, CloseBrace) =
 
 // Rules for topic Errors
     #[inline]
-    ErrorDefinition: ErrorDefinition = {
+    ErrorDefinitionUndocumented: ErrorDefinition = {
         <error_keyword: ErrorKeyword>  <name: Identifier>  <members: ErrorParametersDeclaration>  <semicolon: Semicolon>  => new_error_definition(<>),
+        
+    };
+    #[inline]
+    ErrorDefinition: ErrorDefinition = {
+        <natspec_start: @L>  <node: ErrorDefinitionUndocumented>  <natspec_end: @R>  => { let mut node = node; node.natspec = ctx.take_natspec(natspec_start, natspec_end); node },
         
     };
     ErrorParametersDeclaration: ErrorParametersDeclaration = {
@@ -842,8 +912,13 @@ VariableDeclarationStatementSpecialRevert: VariableDeclarationStatement =
         <expression: Expression>  <semicolon: Semicolon>  => new_expression_statement(<>),
         
     };
-    AssemblyStatement: AssemblyStatement = {
+    #[inline]
+    AssemblyStatementUndocumented: AssemblyStatement = {
         <assembly_keyword: AssemblyKeyword>  <label: (YulStringLiteral)?>  <flags: (YulFlagsDeclaration)?>  <body: YulBlock>  => new_assembly_statement(<>),
+        
+    };
+    AssemblyStatement: AssemblyStatement = {
+        <natspec_start: @L>  <node: AssemblyStatementUndocumented>  <natspec_end: @R>  => { let mut node = node; node.natspec = ctx.take_natspec(natspec_start, natspec_end); node },
         
     };
     

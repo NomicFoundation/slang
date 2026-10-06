@@ -49,8 +49,19 @@ impl LALRPOPDerivedItem {
 #[derive(Clone, Debug, Serialize)]
 struct LALRPOPDefinition {
     fields: Vec<LALRPOPField>,
-    // If `None`, then the match is forwarded
-    constructor: Option<RustCode>,
+    action: LALRPOPAction,
+}
+
+/// What an `LALRPOPDefinition` produces from its matched fields.
+#[derive(Clone, Debug, Serialize)]
+#[serde(tag = "type", content = "code")]
+enum LALRPOPAction {
+    /// The matched value itself: `<>`.
+    Forward,
+    /// A call to the given node constructor with the matched fields: `new_x(<>)`.
+    Constructor(RustCode),
+    /// The given Rust code, referring to the fields by their capturing names.
+    Code(RustCode),
 }
 
 /// An `LALRPOPField` represents a single matching field within an option:
@@ -139,7 +150,7 @@ pub(crate) fn struct_item_to_lalrpop_items(item: &StructItem) -> Vec<LALRPOPDeri
 
     let option = LALRPOPDefinition {
         fields: fields.collect(),
-        constructor: Some(constructor(&item.name)),
+        action: LALRPOPAction::Constructor(constructor(&item.name)),
     };
 
     vec![LALRPOPDerivedItem::new(
@@ -174,7 +185,10 @@ pub(crate) fn enum_item_to_lalrpop_items(item: &EnumItem) -> Vec<LALRPOPDerivedI
             }];
             LALRPOPDefinition {
                 fields: fields.clone(),
-                constructor: Some(variant_constructor(&item.name, &variant.reference)),
+                action: LALRPOPAction::Constructor(variant_constructor(
+                    &item.name,
+                    &variant.reference,
+                )),
             }
         })
         .collect();
@@ -208,7 +222,7 @@ pub(crate) fn repeated_item_to_lalrpop_items(item: &RepeatedItem) -> Vec<LALRPOP
     }];
     let option = LALRPOPDefinition {
         fields: fields.clone(),
-        constructor: Some(constructor(&item.name)),
+        action: LALRPOPAction::Constructor(constructor(&item.name)),
     };
 
     vec![LALRPOPDerivedItem::new(
@@ -242,7 +256,7 @@ pub(crate) fn separated_item_to_lalrpop_items(item: &SeparatedItem) -> Vec<LALRP
     }];
     let option = LALRPOPDefinition {
         fields: fields.clone(),
-        constructor: Some(constructor(&item.name)),
+        action: LALRPOPAction::Constructor(constructor(&item.name)),
     };
 
     vec![LALRPOPDerivedItem::new(
@@ -335,7 +349,7 @@ pub(crate) fn precedence_item_to_lalrpop_items(item: &PrecedenceItem) -> Vec<LAL
                 producing_type: prec.name.clone(),
                 options: vec![LALRPOPDefinition {
                     fields,
-                    constructor: Some(constructor(&prec.name)),
+                    action: LALRPOPAction::Constructor(constructor(&prec.name)),
                 }],
                 inline: true,
                 public: false,
@@ -347,7 +361,7 @@ pub(crate) fn precedence_item_to_lalrpop_items(item: &PrecedenceItem) -> Vec<LAL
                     capturing_name: capturing_name.clone().into(),
                     rule: simple_match(&prec.name),
                 }],
-                constructor: Some(variant_constructor(&item.name, &prec.name)),
+                action: LALRPOPAction::Constructor(variant_constructor(&item.name, &prec.name)),
             }
         };
 
@@ -359,7 +373,7 @@ pub(crate) fn precedence_item_to_lalrpop_items(item: &PrecedenceItem) -> Vec<LAL
                     capturing_name: item.name.clone(),
                     rule: RustCode(format!("{}{}", item.name, prec_counter - 1)),
                 }],
-                constructor: None,
+                action: LALRPOPAction::Forward,
             },
         ];
 
@@ -380,7 +394,7 @@ pub(crate) fn precedence_item_to_lalrpop_items(item: &PrecedenceItem) -> Vec<LAL
                 capturing_name: item.name.clone(),
                 rule: RustCode(format!("{}{}", item.name, prec_counter)),
             }],
-            constructor: None,
+            action: LALRPOPAction::Forward,
         }],
     ));
 
@@ -474,7 +488,10 @@ fn precedence_operator_to_lalrpop_item(
             if let Field::Required { reference } = field {
                 LALRPOPDefinition {
                     fields: vec![field_to_lalrpop_field(identifier, field)],
-                    constructor: Some(variant_constructor(&operator_ident, reference)),
+                    action: LALRPOPAction::Constructor(variant_constructor(
+                        &operator_ident,
+                        reference,
+                    )),
                 }
             } else {
                 panic!("Operator field must be required");
@@ -511,7 +528,7 @@ fn collect_primaries(item: &PrecedenceItem, prec_counter: i32) -> LALRPOPDerived
                     capturing_name: capturing_name.into(),
                     rule: simple_match(&exp.reference),
                 }],
-                constructor: Some(variant_constructor(&item.name, &exp.reference)),
+                action: LALRPOPAction::Constructor(variant_constructor(&item.name, &exp.reference)),
             }
         })
         .collect();
@@ -538,4 +555,47 @@ fn field_to_lalrpop_field(name: &Identifier, field: &Field) -> LALRPOPField {
             rule: optional(&simple_match(reference)),
         },
     }
+}
+
+/// Splits the rule parsing a documentable node into the rule parsing the node without its
+/// `NatSpec` comment, `<name>Undocumented`, and the `<name>` rule wrapping it and attaching the
+/// comment it takes from the grammar context.
+pub(crate) fn split_documentable_item(item: LALRPOPDerivedItem) -> [LALRPOPDerivedItem; 2] {
+    let undocumented_name: Identifier = format!("{}Undocumented", item.name).into();
+
+    let wrapper = LALRPOPDerivedItem {
+        name: item.name.clone(),
+        producing_type: item.producing_type.clone(),
+        options: vec![LALRPOPDefinition {
+            fields: vec![
+                LALRPOPField {
+                    capturing_name: "natspec_start".into(),
+                    rule: RustCode("@L".to_owned()),
+                },
+                LALRPOPField {
+                    capturing_name: "node".into(),
+                    rule: RustCode(undocumented_name.to_string()),
+                },
+                LALRPOPField {
+                    capturing_name: "natspec_end".into(),
+                    rule: RustCode("@R".to_owned()),
+                },
+            ],
+            action: LALRPOPAction::Code(RustCode(
+                "{ let mut node = node; node.natspec = ctx.take_natspec(natspec_start, natspec_end); node }"
+                    .to_owned(),
+            )),
+        }],
+        inline: item.inline,
+        public: item.public,
+    };
+
+    let undocumented = LALRPOPDerivedItem {
+        name: undocumented_name,
+        inline: true,
+        public: false,
+        ..item
+    };
+
+    [undocumented, wrapper]
 }

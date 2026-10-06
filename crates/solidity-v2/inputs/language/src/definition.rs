@@ -1670,7 +1670,10 @@ language_v2_macros::compile!(Language(
 //
 // In order to solve this we use a trailing expression that captures both the expression and the members,
 // and then extract the members from it.
-ContractDefinition: ContractDefinition = {
+//
+// Contracts are documentable: the rule below attaches the NatSpec comment to the parsed contract.
+#[inline]
+ContractDefinitionUndocumented: ContractDefinition = {
     // If no specifiers are present, we simply capture the members directly
     <abstract_keyword: (AbstractKeyword)?>  <contract_keyword: ContractKeyword>  <name: Identifier>  <open_brace: OpenBrace>  <members: ContractMembers>  <close_brace: CloseBrace>  => {
         new_contract_definition(abstract_keyword, contract_keyword, name, new_contract_specifiers(vec![]), open_brace, members, close_brace)
@@ -1679,6 +1682,12 @@ ContractDefinition: ContractDefinition = {
     <abstract_keyword: (AbstractKeyword)?>  <contract_keyword: ContractKeyword>  <name: Identifier>  <specifiers: ContractSpecifiersTrailingMembers>  => {
         let (specifiers, (open_brace, members, close_brace)) = specifiers;
         new_contract_definition(abstract_keyword, contract_keyword, name, specifiers, open_brace, members, close_brace)
+    },
+};
+ContractDefinition: ContractDefinition = {
+    <natspec_start: @L> <mut node: ContractDefinitionUndocumented> <natspec_end: @R> => {
+        node.natspec = ctx.take_natspec(natspec_start, natspec_end);
+        node
     },
 };
                                         )
@@ -1942,7 +1951,10 @@ BracedContractMembers: (OpenBrace, ContractMembers, CloseBrace) = {
 // error definition or a state variable definition.
 //
 // To solve this we match against state variables where the type is exactly `error` as a special case.
-StateVariableDefinition: StateVariableDefinition = {
+//
+// State variables are documentable: the rule below attaches the NatSpec comment to the parsed variable.
+#[inline]
+StateVariableDefinitionUndocumented: StateVariableDefinition = {
     // When allowing any type except function types without return, we can parse normally.
     // Note the `IdentifierPathNoError`, it avoids matching against `error` as an identifier.
     <type_name: TypeName1<FunctionTypeInternalReturn, IndexAccessPath<IdentifierPathNoError>>>  <attributes: StateVariableAttributes>  <name: Identifier>  <value: (StateVariableDefinitionValue)?>  <semicolon: Semicolon>  => new_state_variable_definition(<>),
@@ -1968,6 +1980,12 @@ StateVariableDefinition: StateVariableDefinition = {
             extra_attributes.extend(special_attributes.1.elements);
         }
         new_state_variable_definition(new_type_name_function_type(function_type), new_state_variable_attributes(extra_attributes), name, value, semicolon)
+    },
+};
+StateVariableDefinition: StateVariableDefinition = {
+    <natspec_start: @L> <mut node: StateVariableDefinitionUndocumented> <natspec_end: @R> => {
+        node.natspec = ctx.take_natspec(natspec_start, natspec_end);
+        node
     },
 };
 

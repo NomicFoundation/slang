@@ -5,7 +5,7 @@
 use crate::structured_cst::nodes::*;
 
 /// A trait for CST nodes that can report the start offset of their text range.
-pub(crate) trait TextStart {
+pub(super) trait TextStart {
     /// Returns the start offset of this node's text, or `None` if the node is empty.
     fn calculate_text_start(&self) -> Option<usize>;
 }

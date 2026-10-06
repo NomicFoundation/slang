@@ -53,8 +53,10 @@ Repeated<T>: Vec<T> = {
         {% for option in item.options -%}
             {% for field in option.fields -%}
                 <{{ field.capturing_name | snake_case }}: {{ field.rule }}> {{ " " }}
-            {%- endfor %}=> {% if option.constructor -%}
-            {{ option.constructor | snake_case }}(<>)
+            {%- endfor %}=> {% if option.action.type == "Constructor" -%}
+            {{ option.action.code | snake_case }}(<>)
+            {%- elif option.action.type == "Code" -%}
+            {{ option.action.code }}
             {%- else -%}
             <>
             {%- endif %},

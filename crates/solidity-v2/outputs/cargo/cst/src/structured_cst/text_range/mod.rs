@@ -9,4 +9,3 @@ mod text_end;
 mod text_range;
 
 pub use text_range::TextRange;
-pub(crate) use text_start::TextStart;
