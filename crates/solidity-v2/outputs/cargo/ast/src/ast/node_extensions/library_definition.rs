@@ -40,7 +40,7 @@ impl LibraryDefinitionStruct {
     /// The contracts and libraries whose bytecode this library's externally
     /// callable functions and public constants embed, directly or through the
     /// code they reach, through `new` or `type(...).creationCode`/`runtimeCode`.
-    pub fn bytecode_dependencies(&self) -> Vec<Definition> {
+    pub fn deployed_bytecode_dependencies(&self) -> Vec<Definition> {
         self.semantic
             .deployed_bytecode_dependencies()
             .get(&self.ir_node.id())

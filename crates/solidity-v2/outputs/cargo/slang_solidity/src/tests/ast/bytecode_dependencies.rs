@@ -73,5 +73,5 @@ fn test_library_bytecode_dependencies() {
     let unit = BytecodeDependencies::build_compilation_unit();
     let library = fixtures::find_library(&unit, "Library");
 
-    assert_eq!(names(library.bytecode_dependencies()), ["Created"]);
+    assert_eq!(names(library.deployed_bytecode_dependencies()), ["Created"]);
 }
