@@ -231,4 +231,32 @@ impl ContractDefinitionStruct {
             .map(|ir_node| create_event_definition(ir_node, &self.semantic))
             .collect()
     }
+
+    /// The contracts and libraries whose bytecode this contract's creation
+    /// code embeds, through `new` or `type(...).creationCode`/`runtimeCode`.
+    pub fn creation_bytecode_dependencies(&self) -> Vec<Definition> {
+        self.semantic
+            .creation_bytecode_dependencies()
+            .get(&self.ir_node.id())
+            .into_iter()
+            .flat_map(|dependencies| dependencies.keys())
+            .map(|node_id| {
+                Definition::try_create(*node_id, &self.semantic).expect("node is a definition")
+            })
+            .collect()
+    }
+
+    /// The contracts and libraries whose bytecode this contract's deployed
+    /// code embeds, through `new` or `type(...).creationCode`/`runtimeCode`.
+    pub fn deployed_bytecode_dependencies(&self) -> Vec<Definition> {
+        self.semantic
+            .deployed_bytecode_dependencies()
+            .get(&self.ir_node.id())
+            .into_iter()
+            .flat_map(|dependencies| dependencies.keys())
+            .map(|node_id| {
+                Definition::try_create(*node_id, &self.semantic).expect("node is a definition")
+            })
+            .collect()
+    }
 }
