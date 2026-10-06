@@ -114,7 +114,7 @@ jobs:
 
     env:
       # renovate: datasource=npm depName=renovate
-      RENOVATE_VERSION: "44.115.2"
+      RENOVATE_VERSION: "44.117.2"
 
     # Not common-setup: only needs SFW + npx; no build or cache setup.
     steps:
