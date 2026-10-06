@@ -23,7 +23,7 @@ pub fn run(
     types: &TypeRegistry,
     diagnostics: &mut DiagnosticCollection,
 ) {
-    cycle_detection::run(binder, contract_data, types, file_node_mapper, diagnostics);
+    cycle_detection::run(binder, contract_data, file_node_mapper, diagnostics);
 
     built_ins::validate_built_in_references(
         binder,

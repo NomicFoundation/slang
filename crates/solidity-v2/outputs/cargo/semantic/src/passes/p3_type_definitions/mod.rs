@@ -18,9 +18,9 @@ mod visitor;
 /// object. Another important milestone that happens in this pass is collecting
 /// active `using` directives and associating them to the relevant scopes (or
 /// registering them gloablly).
-/// Finally, public state variables are assigned an equivalent getter function
-/// type, and recursive structs are marked. This happens after the main typing
-/// pass to ensure all types are already registered.
+/// Finally, public state variables will be assigned an equivalent getter
+/// function type, and recursive structs will be marked. This happens after the
+/// main typing pass to ensure all types are already registered.
 pub fn run(
     files: &[impl SemanticFile],
     binder: &mut Binder,

@@ -150,6 +150,10 @@ pub struct StateVariableDefinition {
 pub struct StructDefinition {
     pub ir_node: ir::StructDefinition,
     pub is_recursive: bool,
+    pub has_recursive_type_graph: bool,
+    /// The structs held by value (directly or through fixed-size arrays), in
+    /// member declaration order. Empty until p3.
+    pub(crate) by_value_dependencies: Vec<NodeId>,
 }
 
 #[derive(Debug)]
@@ -523,6 +527,8 @@ impl Definition {
         Self::Struct(StructDefinition {
             ir_node: Arc::clone(ir_node),
             is_recursive: false,
+            has_recursive_type_graph: false,
+            by_value_dependencies: Vec::new(),
         })
     }
 
