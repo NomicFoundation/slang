@@ -4,7 +4,7 @@
 
 Slang is a modular Solidity compiler tooling suite built by the Nomic Foundation. It provides a full-fidelity concrete syntax tree (CST) parser, semantic analysis, and binding computation for Solidity source code. It is **not** a replacement for solc — it focuses on code analysis and developer tooling, not bytecode generation.
 
-- **Language**: Rust workspace (50 crates) with TypeScript/npm bindings via WASM
+- **Language**: Rust workspace with TypeScript/npm bindings via WASM
 - **Supports**: Solidity versions 0.4.11 to latest 0.8.+
 - **Published as**: `slang_solidity` (crates.io), `@nomicfoundation/slang` (npm)
 
