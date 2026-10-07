@@ -1,5 +1,6 @@
 use ruint::aliases::U256;
 use slang_solidity_v2_common::collections::Set;
+use slang_solidity_v2_ir::ir;
 use slang_solidity_v2_semantic::binder;
 use slang_solidity_v2_semantic::context::StorageLayoutBuilder;
 
@@ -47,6 +48,30 @@ impl ContractDefinitionStruct {
             storage_layout,
             transient_storage_layout,
         ))
+    }
+
+    /// ERC-165 identifier of an abstract contract: the XOR of the selectors of its own public
+    /// functions and getters, excluding inherited ones. `None` for a concrete contract.
+    pub fn compute_interface_id(&self) -> Option<u32> {
+        if !self.is_abstract() {
+            return None;
+        }
+        let mut interface_id = 0u32;
+        for function in self.members().iter_function_definitions() {
+            if function.ir_node.kind != ir::FunctionKind::Regular
+                || !function.is_externally_visible()
+            {
+                continue;
+            }
+            interface_id ^= function.compute_selector()?;
+        }
+        for state_variable in self.members().iter_state_variable_definitions() {
+            if !state_variable.is_externally_visible() {
+                continue;
+            }
+            interface_id ^= state_variable.compute_selector()?;
+        }
+        Some(interface_id)
     }
 
     /// Retrieves the custom base slot for this contract, if specified. This is
