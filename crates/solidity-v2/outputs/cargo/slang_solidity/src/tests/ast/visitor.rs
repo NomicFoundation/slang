@@ -64,12 +64,13 @@ define_fixture!(
 #[derive(Default)]
 struct NonterminalTexts(Vec<Option<&'static str>>);
 
-impl ast::visitor::Visitor for NonterminalTexts {
-    fn enter_nonterminal(&mut self, node: &dyn NodeLocation) {
+impl ast::visitor::NonterminalVisitor for NonterminalTexts {
+    fn enter_nonterminal(&mut self, node: &dyn NodeLocation) -> bool {
         self.0.push(
             node.calculate_text_range()
                 .map(|range| &NONTERMINALS[range]),
         );
+        true
     }
 }
 
@@ -112,4 +113,35 @@ fn test_enter_nonterminal_order() {
             Some("a + x"),
         ]
     );
+}
+
+#[derive(Default)]
+struct OutsideFunctions(Vec<&'static str>);
+
+impl ast::visitor::NonterminalVisitor for OutsideFunctions {
+    fn enter_nonterminal(&mut self, node: &dyn NodeLocation) -> bool {
+        let Some(text) = node
+            .calculate_text_range()
+            .map(|range| &NONTERMINALS[range])
+        else {
+            return true;
+        };
+        if text.starts_with("function") {
+            return false;
+        }
+        self.0.push(text);
+        true
+    }
+}
+
+#[test]
+fn test_enter_nonterminal_false_skips_children() {
+    let unit = Nonterminals::build_compilation_unit();
+    let source_unit = unit.file(&"main.sol".into()).unwrap().ast();
+
+    let mut texts = OutsideFunctions::default();
+    ast::visitor::accept_source_unit(&source_unit, &mut texts);
+
+    assert!(!texts.0.contains(&"uint a"));
+    assert_eq!(texts.0.last(), Some(&"public")); // StateVariableAttributes
 }

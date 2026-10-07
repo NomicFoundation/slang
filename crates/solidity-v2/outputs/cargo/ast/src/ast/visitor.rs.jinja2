@@ -4,8 +4,6 @@ use super::NodeLocation;
 use super::nodes::*;
 
 pub trait Visitor {
-    /// Called for every sequence and collection node, before its own `enter_*` method.
-    fn enter_nonterminal(&mut self, _node: &dyn NodeLocation) {}
   {%- for parent_type, sequence in target.sequences %}
     fn enter_{{ parent_type | snake_case }}(&mut self, _node: &{{ parent_type }}) -> bool { true }
     fn leave_{{ parent_type | snake_case }}(&mut self, _node: &{{ parent_type }}) {}
@@ -25,13 +23,31 @@ pub trait Visitor {
   {% endfor -%}
 }
 
+/// A [`Visitor`] that sees every sequence and collection node through one pair of methods.
+/// Choices are not reported: each one spans its variant.
+pub trait NonterminalVisitor {
+    /// Returning `false` skips the node's children and its `leave_nonterminal`.
+    fn enter_nonterminal(&mut self, _node: &dyn NodeLocation) -> bool { true }
+    fn leave_nonterminal(&mut self, _node: &dyn NodeLocation) {}
+}
+
+impl<T: NonterminalVisitor> Visitor for T {
+  {%- for parent_type, sequence in target.sequences %}
+    fn enter_{{ parent_type | snake_case }}(&mut self, node: &{{ parent_type }}) -> bool { self.enter_nonterminal(node) }
+    fn leave_{{ parent_type | snake_case }}(&mut self, node: &{{ parent_type }}) { self.leave_nonterminal(node); }
+  {% endfor -%}
+  {%- for parent_type, collection in target.collections %}
+    fn enter_{{ parent_type | snake_case }}(&mut self, items: &{{ parent_type }}) -> bool { self.enter_nonterminal(items) }
+    fn leave_{{ parent_type | snake_case }}(&mut self, items: &{{ parent_type }}) { self.leave_nonterminal(items); }
+  {% endfor -%}
+}
+
 //
 // Sequences
 //
 
 {% for parent_type, sequence in target.sequences %}
   pub fn accept_{{ parent_type | snake_case }}(node: &{{ parent_type }}, visitor: &mut impl Visitor) {
-    visitor.enter_nonterminal(node);
     if !visitor.enter_{{ parent_type | snake_case }}(node) {
       return;
     }
@@ -98,7 +114,6 @@ pub trait Visitor {
 {% for parent_type, collection in target.collections -%}
   #[inline]
   fn accept_{{ parent_type | snake_case }}(items: &{{ parent_type }}, visitor: &mut impl Visitor) {
-    visitor.enter_nonterminal(items);
     if !visitor.enter_{{ parent_type | snake_case }}(items) {
       return;
     }
