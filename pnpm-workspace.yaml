@@ -5,7 +5,7 @@ packages:
   - "documentation/public/user-guide"
 
 catalog:
-  "@bytecodealliance/preview2-shim": "^0.24.0"
+  "@bytecodealliance/preview2-shim": "^0.27.0"
   "@changesets/changelog-github": "^1.0.0"
   "@changesets/cli": "^3.0.0"
   "@ignored/slang-jco": "^1.9.1-slang.1"
