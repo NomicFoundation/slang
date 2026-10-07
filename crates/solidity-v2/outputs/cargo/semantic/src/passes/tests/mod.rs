@@ -5,6 +5,7 @@ mod getter_overrides;
 mod interface_functions;
 mod linearised_functions;
 mod overload_resolution;
+mod recursive_structs;
 mod support;
 mod typing;
 mod user_defined_operator_functions;

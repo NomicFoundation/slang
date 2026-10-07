@@ -33,6 +33,21 @@ pub type slang_solidity_v2_semantic::types::Type::Error = ()
 pub fn slang_solidity_v2_semantic::types::Type::try_from(&slang_solidity_v2_semantic::binder::Definition) -> core::result::Result<Self, ()>
 impl core::fmt::Debug for slang_solidity_v2_semantic::binder::Definition
 pub fn slang_solidity_v2_semantic::binder::Definition::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+pub enum slang_solidity_v2_semantic::binder::RecursionKind
+pub slang_solidity_v2_semantic::binder::RecursionKind::ByFunctionType
+pub slang_solidity_v2_semantic::binder::RecursionKind::ByReference
+pub slang_solidity_v2_semantic::binder::RecursionKind::ByValue
+pub slang_solidity_v2_semantic::binder::RecursionKind::NonRecursive
+impl core::cmp::Eq for slang_solidity_v2_semantic::binder::RecursionKind
+impl core::cmp::Ord for slang_solidity_v2_semantic::binder::RecursionKind
+pub fn slang_solidity_v2_semantic::binder::RecursionKind::cmp(&self, &slang_solidity_v2_semantic::binder::RecursionKind) -> core::cmp::Ordering
+impl core::cmp::PartialEq for slang_solidity_v2_semantic::binder::RecursionKind
+pub fn slang_solidity_v2_semantic::binder::RecursionKind::eq(&self, &slang_solidity_v2_semantic::binder::RecursionKind) -> bool
+impl core::cmp::PartialOrd for slang_solidity_v2_semantic::binder::RecursionKind
+pub fn slang_solidity_v2_semantic::binder::RecursionKind::partial_cmp(&self, &slang_solidity_v2_semantic::binder::RecursionKind) -> core::option::Option<core::cmp::Ordering>
+impl core::fmt::Debug for slang_solidity_v2_semantic::binder::RecursionKind
+pub fn slang_solidity_v2_semantic::binder::RecursionKind::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::StructuralPartialEq for slang_solidity_v2_semantic::binder::RecursionKind
 pub enum slang_solidity_v2_semantic::binder::Resolution
 pub slang_solidity_v2_semantic::binder::Resolution::Ambiguous(alloc::boxed::Box<[slang_solidity_v2_common::nodes::NodeId]>)
 pub slang_solidity_v2_semantic::binder::Resolution::BuiltIn(slang_solidity_v2_semantic::built_ins::InternalBuiltIn)

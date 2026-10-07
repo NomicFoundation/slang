@@ -3138,6 +3138,11 @@ mod semantic {
         }
 
         #[test]
+        fn via_function_type() -> Result<()> {
+            run("semantic/recursive_structs", "via_function_type")
+        }
+
+        #[test]
         fn via_mapping() -> Result<()> {
             run("semantic/recursive_structs", "via_mapping")
         }

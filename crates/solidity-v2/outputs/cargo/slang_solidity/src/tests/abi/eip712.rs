@@ -19,8 +19,8 @@ use slang_solidity_v2_common::collections::OrderedSet;
 
 use crate::abi::AbiType;
 use crate::ast::{Definition, StructDefinition, Type};
-use crate::compilation::CompilationUnit;
 use crate::define_fixture;
+use crate::tests::fixtures;
 
 define_fixture!(
     Eip712,
@@ -44,19 +44,6 @@ struct Person {
 }
 "#,
 );
-
-/// Resolves the struct named `name` anywhere in the unit — at file scope or
-/// nested in a contract, in any file. Used only to pick the entry point;
-/// dependency resolution never round-trips through a name.
-fn find_struct(unit: &CompilationUnit, name: &str) -> StructDefinition {
-    unit.all_definitions()
-        .filter_map(|def| match def {
-            Definition::Struct(def) => Some(def),
-            _ => None,
-        })
-        .find(|def| def.name().name() == name)
-        .unwrap_or_else(|| panic!("struct `{name}` is declared"))
-}
 
 /// The EIP-712 type string for a single member's type, or `None` if it has no
 /// representation. Struct (and array-of-struct) members are referred to by the
@@ -150,10 +137,12 @@ fn derives_encode_type_from_ast_and_abi() {
     // Exercises the whole surface at once: multi-file navigation, resolving a
     // member's struct type back to its declaration (through the `P` import
     // alias, so the name is `Person`), array-of-struct members, leaf members
-    // via `AbiType`, and `NodeId`-based dedup (`Person` is reached twice).
+    // via `AbiType`, and `NodeId`-based dedup (`Person` is reached twice). The
+    // name lookup only picks the entry point; dependency resolution never
+    // round-trips through a name.
     let unit = Eip712::build_compilation_unit();
     assert_eq!(
-        encode_type(&find_struct(&unit, "Mail")),
+        encode_type(&fixtures::find_struct(&unit, "Mail")),
         Some(
             "Mail(Person from,string contents,Person[] cc)Person(string name,address wallet)"
                 .to_string()

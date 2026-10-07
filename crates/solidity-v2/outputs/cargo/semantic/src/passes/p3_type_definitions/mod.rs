@@ -7,6 +7,7 @@ use crate::binder::{Binder, Definition, Scope, ScopeId};
 use crate::context::{FileNodeMapper, SemanticFile};
 use crate::types::{ContractType, Type, TypeId, TypeRegistry, UserMetaType};
 
+mod recursive_structs;
 mod resolution;
 mod typing;
 mod visitor;
@@ -17,9 +18,9 @@ mod visitor;
 /// object. Another important milestone that happens in this pass is collecting
 /// active `using` directives and associating them to the relevant scopes (or
 /// registering them gloablly).
-/// Finally, public state variables will be assigned an equivalent getter
-/// function type. This happens after the main typing pass to ensure all types
-/// are already registered.
+/// Finally, recursive structs will be marked, and public state variables will
+/// be assigned an equivalent getter function type. This happens after the main
+/// typing pass to ensure all types are already registered.
 pub fn run(
     files: &[impl SemanticFile],
     binder: &mut Binder,
@@ -38,6 +39,9 @@ pub fn run(
             diagnostics,
         );
     }
+    // TODO: move the recursive struct check in p8 to this pass, so that
+    // `by_value_dependencies` no longer needs to be kept.
+    recursive_structs::mark_recursive_structs(binder, types);
     for file in files {
         Pass::visit_file_type_getters(
             file,

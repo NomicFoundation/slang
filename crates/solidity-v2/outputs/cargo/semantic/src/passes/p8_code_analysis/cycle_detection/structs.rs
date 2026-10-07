@@ -8,17 +8,15 @@ use slang_solidity_v2_common::nodes::NodeId;
 use super::{CycleSearchResult, DependencyGraph};
 use crate::binder::{Binder, Definition, StructDefinition};
 use crate::context::FileNodeMapper;
-use crate::types::{FixedSizeArrayType, StructType, Type, TypeId, TypeRegistry};
 
-// A struct is recursive if it contains itself by value, directly or through
-// other structs.
+// A struct is infinitely sized if it contains itself by value, directly or
+// through other structs.
 pub(super) fn detect_recursive_structs(
     binder: &Binder,
-    types: &TypeRegistry,
     file_node_mapper: &FileNodeMapper,
     diagnostics: &mut DiagnosticCollection,
 ) {
-    let graph = DependencyGraph::new(build_dependencies(binder, types));
+    let graph = DependencyGraph::new(build_dependencies(binder));
     for (struct_id, result) in graph.find_all_cycles() {
         match result {
             CycleSearchResult::Cycle { .. } => {
@@ -42,51 +40,19 @@ pub(super) fn detect_recursive_structs(
     }
 }
 
-fn build_dependencies(binder: &Binder, types: &TypeRegistry) -> SortedMap<NodeId, Vec<NodeId>> {
+// Member order matches solc's member iteration. A struct holding no struct by
+// value cannot be on a cycle, so it gets no entry.
+fn build_dependencies(binder: &Binder) -> SortedMap<NodeId, Vec<NodeId>> {
     binder
         .definitions()
         .iter()
-        .filter_map(|(definition_id, definition)| {
-            let Definition::Struct(struct_definition) = definition else {
-                return None;
-            };
-
-            // Successors keep member declaration order, matching solc's member
-            // iteration. Duplicate edges from members of the same struct type
-            // are harmless to the search.
-            let dependencies: Vec<NodeId> = struct_definition
-                .ir_node
-                .members
-                .iter()
-                .filter_map(|member| binder.node_typing(member.id()).as_type_id())
-                .filter_map(|type_id| struct_dependency(types, type_id))
-                .collect();
-
-            // A struct with no by-value struct members cannot be on a cycle, so
-            // drop it rather than keep an empty entry.
-            if dependencies.is_empty() {
-                return None;
+        .filter_map(|(definition_id, definition)| match definition {
+            Definition::Struct(definition) if !definition.by_value_dependencies.is_empty() => {
+                Some((*definition_id, definition.by_value_dependencies.to_vec()))
             }
-
-            Some((*definition_id, dependencies))
+            _ => None,
         })
         .collect()
-}
-
-// Returns the struct held by value at `type_id`, peeling through fixed-size
-// arrays. Stops at a dynamic array, mapping or other type, as these do not
-// hold a struct by value.
-fn struct_dependency(types: &TypeRegistry, type_id: TypeId) -> Option<NodeId> {
-    let mut current = type_id;
-    loop {
-        match types.get_type_by_id(current) {
-            Type::Struct(StructType { definition_id, .. }) => return Some(*definition_id),
-            Type::FixedSizeArray(FixedSizeArrayType { element_type, .. }) => {
-                current = *element_type;
-            }
-            _ => return None,
-        }
-    }
 }
 
 fn struct_definition(binder: &Binder, struct_id: NodeId) -> &StructDefinition {
