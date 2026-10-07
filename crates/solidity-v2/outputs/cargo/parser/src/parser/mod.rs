@@ -11,10 +11,10 @@ use slang_solidity_v2_cst::structured_cst::nodes::{
 };
 
 use crate::lexer::{LexemeKind, Lexer};
-use crate::parser::natspec_comments::{NatSpecComments, NatSpecConsumer, NatSpecProducer};
+use crate::parser::natspec_stack::NatSpecStack;
 use crate::parser::validation::validate_syntax_version;
 
-mod natspec_comments;
+mod natspec_stack;
 mod parser_helpers;
 #[cfg(test)]
 mod tests;
@@ -55,13 +55,13 @@ pub(crate) struct GrammarCtx<'a> {
     /// Version being parsed, for diagnostics that depend on which syntax it allows.
     pub language_version: LanguageVersion,
     /// The `NatSpec` comments read by the lexer, until the documentable nodes take them.
-    pub natspec_comments: NatSpecConsumer<'a>,
+    pub natspec_stack: &'a NatSpecStack,
 }
 
 impl GrammarCtx<'_> {
-    /// See [`NatSpecConsumer::take`].
-    pub(crate) fn take_natspec(&self, start: usize, end: usize) -> Option<NatSpec> {
-        self.natspec_comments.take(start, end)
+    /// See [`NatSpecStack::pop_for_token_at_range`].
+    pub(crate) fn pop_natspec(&self, start: usize, end: usize) -> Option<NatSpec> {
+        self.natspec_stack.pop_for_token_at_range(start, end)
     }
 }
 
@@ -81,11 +81,10 @@ pub struct Parser;
 
 impl Parser {
     pub fn parse(file_id: &FileId, source: &str, language_version: LanguageVersion) -> ParseOutput {
-        let natspec_comments = NatSpecComments::default();
-        let (natspec_producer, natspec_consumer) = natspec_comments.split();
+        let natspec_stack = NatSpecStack::default();
         let tokens = TokenStream {
             lexer: Lexer::new(source, language_version),
-            natspec_comments: natspec_producer,
+            natspec_stack: &natspec_stack,
         };
         let parser = grammar::SourceUnitParser::new();
 
@@ -94,7 +93,7 @@ impl Parser {
             file_id,
             diagnostics: DiagnosticCollection::default(),
             language_version,
-            natspec_comments: natspec_consumer,
+            natspec_stack: &natspec_stack,
         };
 
         let source_unit = match parser.parse(&mut ctx, tokens) {
@@ -181,12 +180,12 @@ fn convert_parse_error(
 
 /// The lexemes fed to the parser, with their offsets.
 ///
-/// Trivia is skipped, but `NatSpec` comments are recorded with the token they document.
+/// Trivia is skipped, but `NatSpec` comments are pushed with the token they document.
 ///
 /// TODO(v2): Include the trivia in future versions
-struct TokenStream<'source, 'comments> {
+struct TokenStream<'source, 'natspec> {
     lexer: Lexer<'source>,
-    natspec_comments: NatSpecProducer<'comments>,
+    natspec_stack: &'natspec NatSpecStack,
 }
 
 impl Iterator for TokenStream<'_, '_> {
@@ -196,17 +195,21 @@ impl Iterator for TokenStream<'_, '_> {
         let mut natspec_comment = None;
         while let Some(lexeme) = self.lexer.next_lexeme() {
             if lexeme.kind.is_natspec_comment() {
+                // Replaces the previous comment, if any: it's dropped without documenting anything.
                 natspec_comment = Some(lexeme.range.clone());
                 continue;
             }
             if lexeme.kind.is_trivia() {
                 continue;
             }
-            if let Some(natspec_comment) = natspec_comment.take() {
-                self.natspec_comments.attach_natspec_at(natspec_comment, lexeme.range.start);
+            if let Some(range) = natspec_comment.take() {
+                self.natspec_stack
+                    .attach_natspec_to(NatSpec { range }, lexeme.range.start);
             }
             return Some(Ok((lexeme.range.start, lexeme.kind, lexeme.range.end)));
         }
+        // If `natspec_comment` is still `Some`, it means there was a trailing comment not documenting
+        // anything, it is dropped.
         None
     }
 }

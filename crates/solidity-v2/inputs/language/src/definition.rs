@@ -1686,7 +1686,7 @@ ContractDefinitionUndocumented: ContractDefinition = {
 };
 ContractDefinition: ContractDefinition = {
     <natspec_start: @L> <mut node: ContractDefinitionUndocumented> <natspec_end: @R> => {
-        node.natspec = ctx.take_natspec(natspec_start, natspec_end);
+        node.natspec = ctx.pop_natspec(natspec_start, natspec_end);
         node
     },
 };
@@ -1984,7 +1984,7 @@ StateVariableDefinitionUndocumented: StateVariableDefinition = {
 };
 StateVariableDefinition: StateVariableDefinition = {
     <natspec_start: @L> <mut node: StateVariableDefinitionUndocumented> <natspec_end: @R> => {
-        node.natspec = ctx.take_natspec(natspec_start, natspec_end);
+        node.natspec = ctx.pop_natspec(natspec_start, natspec_end);
         node
     },
 };

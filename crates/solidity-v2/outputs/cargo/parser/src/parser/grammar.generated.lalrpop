@@ -284,7 +284,7 @@ Repeated<T>: Vec<T> = {
 {
     <natspec_start: @L> <mut node: ContractDefinitionUndocumented>
     <natspec_end: @R> =>
-    { node.natspec = ctx.take_natspec(natspec_start, natspec_end); node },
+    { node.natspec = ctx.pop_natspec(natspec_start, natspec_end); node },
 };
     
     ContractSpecifiersTrailingMembers:
@@ -376,7 +376,7 @@ BracedContractMembers: (OpenBrace, ContractMembers, CloseBrace) =
         
     };
     InterfaceDefinition: InterfaceDefinition = {
-        <natspec_start: @L>  <node: InterfaceDefinitionUndocumented>  <natspec_end: @R>  => { let mut node = node; node.natspec = ctx.take_natspec(natspec_start, natspec_end); node },
+        <natspec_start: @L>  <node: InterfaceDefinitionUndocumented>  <natspec_end: @R>  => { let mut node = node; node.natspec = ctx.pop_natspec(natspec_start, natspec_end); node },
         
     };
     InterfaceMembers: InterfaceMembers = {
@@ -392,7 +392,7 @@ BracedContractMembers: (OpenBrace, ContractMembers, CloseBrace) =
         
     };
     LibraryDefinition: LibraryDefinition = {
-        <natspec_start: @L>  <node: LibraryDefinitionUndocumented>  <natspec_end: @R>  => { let mut node = node; node.natspec = ctx.take_natspec(natspec_start, natspec_end); node },
+        <natspec_start: @L>  <node: LibraryDefinitionUndocumented>  <natspec_end: @R>  => { let mut node = node; node.natspec = ctx.pop_natspec(natspec_start, natspec_end); node },
         
     };
     LibraryMembers: LibraryMembers = {
@@ -408,7 +408,7 @@ BracedContractMembers: (OpenBrace, ContractMembers, CloseBrace) =
         
     };
     StructDefinition: StructDefinition = {
-        <natspec_start: @L>  <node: StructDefinitionUndocumented>  <natspec_end: @R>  => { let mut node = node; node.natspec = ctx.take_natspec(natspec_start, natspec_end); node },
+        <natspec_start: @L>  <node: StructDefinitionUndocumented>  <natspec_end: @R>  => { let mut node = node; node.natspec = ctx.pop_natspec(natspec_start, natspec_end); node },
         
     };
     StructMembers: StructMembers = {
@@ -428,7 +428,7 @@ BracedContractMembers: (OpenBrace, ContractMembers, CloseBrace) =
         
     };
     EnumDefinition: EnumDefinition = {
-        <natspec_start: @L>  <node: EnumDefinitionUndocumented>  <natspec_end: @R>  => { let mut node = node; node.natspec = ctx.take_natspec(natspec_start, natspec_end); node },
+        <natspec_start: @L>  <node: EnumDefinitionUndocumented>  <natspec_end: @R>  => { let mut node = node; node.natspec = ctx.pop_natspec(natspec_start, natspec_end); node },
         
     };
     EnumMembers: EnumMembers = {
@@ -444,7 +444,7 @@ BracedContractMembers: (OpenBrace, ContractMembers, CloseBrace) =
         
     };
     ConstantDefinition: ConstantDefinition = {
-        <natspec_start: @L>  <node: ConstantDefinitionUndocumented>  <natspec_end: @R>  => { let mut node = node; node.natspec = ctx.take_natspec(natspec_start, natspec_end); node },
+        <natspec_start: @L>  <node: ConstantDefinitionUndocumented>  <natspec_end: @R>  => { let mut node = node; node.natspec = ctx.pop_natspec(natspec_start, natspec_end); node },
         
     };
     
@@ -487,7 +487,7 @@ BracedContractMembers: (OpenBrace, ContractMembers, CloseBrace) =
 {
     <natspec_start: @L> <mut node: StateVariableDefinitionUndocumented>
     <natspec_end: @R> =>
-    { node.natspec = ctx.take_natspec(natspec_start, natspec_end); node },
+    { node.natspec = ctx.pop_natspec(natspec_start, natspec_end); node },
 }; IdentifierPathNoError: parser_helpers::SeparatedIdentifierPath =
 {
     <head: Identifier> <tail: Repeated<IdentifierPathTailElement>> =>
@@ -531,7 +531,7 @@ BracedContractMembers: (OpenBrace, ContractMembers, CloseBrace) =
         
     };
     FunctionDefinition: FunctionDefinition = {
-        <natspec_start: @L>  <node: FunctionDefinitionUndocumented>  <natspec_end: @R>  => { let mut node = node; node.natspec = ctx.take_natspec(natspec_start, natspec_end); node },
+        <natspec_start: @L>  <node: FunctionDefinitionUndocumented>  <natspec_end: @R>  => { let mut node = node; node.natspec = ctx.pop_natspec(natspec_start, natspec_end); node },
         
     };
     FunctionName: FunctionName = {
@@ -596,7 +596,7 @@ BracedContractMembers: (OpenBrace, ContractMembers, CloseBrace) =
         
     };
     ConstructorDefinition: ConstructorDefinition = {
-        <natspec_start: @L>  <node: ConstructorDefinitionUndocumented>  <natspec_end: @R>  => { let mut node = node; node.natspec = ctx.take_natspec(natspec_start, natspec_end); node },
+        <natspec_start: @L>  <node: ConstructorDefinitionUndocumented>  <natspec_end: @R>  => { let mut node = node; node.natspec = ctx.pop_natspec(natspec_start, natspec_end); node },
         
     };
     ConstructorAttributes: ConstructorAttributes = {
@@ -616,7 +616,7 @@ BracedContractMembers: (OpenBrace, ContractMembers, CloseBrace) =
         
     };
     FallbackFunctionDefinition: FallbackFunctionDefinition = {
-        <natspec_start: @L>  <node: FallbackFunctionDefinitionUndocumented>  <natspec_end: @R>  => { let mut node = node; node.natspec = ctx.take_natspec(natspec_start, natspec_end); node },
+        <natspec_start: @L>  <node: FallbackFunctionDefinitionUndocumented>  <natspec_end: @R>  => { let mut node = node; node.natspec = ctx.pop_natspec(natspec_start, natspec_end); node },
         
     };
     FallbackFunctionAttributes: FallbackFunctionAttributes = {
@@ -639,7 +639,7 @@ BracedContractMembers: (OpenBrace, ContractMembers, CloseBrace) =
         
     };
     ReceiveFunctionDefinition: ReceiveFunctionDefinition = {
-        <natspec_start: @L>  <node: ReceiveFunctionDefinitionUndocumented>  <natspec_end: @R>  => { let mut node = node; node.natspec = ctx.take_natspec(natspec_start, natspec_end); node },
+        <natspec_start: @L>  <node: ReceiveFunctionDefinitionUndocumented>  <natspec_end: @R>  => { let mut node = node; node.natspec = ctx.pop_natspec(natspec_start, natspec_end); node },
         
     };
     ReceiveFunctionAttributes: ReceiveFunctionAttributes = {
@@ -663,7 +663,7 @@ BracedContractMembers: (OpenBrace, ContractMembers, CloseBrace) =
         
     };
     ModifierDefinition: ModifierDefinition = {
-        <natspec_start: @L>  <node: ModifierDefinitionUndocumented>  <natspec_end: @R>  => { let mut node = node; node.natspec = ctx.take_natspec(natspec_start, natspec_end); node },
+        <natspec_start: @L>  <node: ModifierDefinitionUndocumented>  <natspec_end: @R>  => { let mut node = node; node.natspec = ctx.pop_natspec(natspec_start, natspec_end); node },
         
     };
     ModifierAttributes: ModifierAttributes = {
@@ -688,7 +688,7 @@ BracedContractMembers: (OpenBrace, ContractMembers, CloseBrace) =
         
     };
     EventDefinition: EventDefinition = {
-        <natspec_start: @L>  <node: EventDefinitionUndocumented>  <natspec_end: @R>  => { let mut node = node; node.natspec = ctx.take_natspec(natspec_start, natspec_end); node },
+        <natspec_start: @L>  <node: EventDefinitionUndocumented>  <natspec_end: @R>  => { let mut node = node; node.natspec = ctx.pop_natspec(natspec_start, natspec_end); node },
         
     };
     EventParametersDeclaration: EventParametersDeclaration = {
@@ -720,7 +720,7 @@ BracedContractMembers: (OpenBrace, ContractMembers, CloseBrace) =
     };
     #[inline]
     ErrorDefinition: ErrorDefinition = {
-        <natspec_start: @L>  <node: ErrorDefinitionUndocumented>  <natspec_end: @R>  => { let mut node = node; node.natspec = ctx.take_natspec(natspec_start, natspec_end); node },
+        <natspec_start: @L>  <node: ErrorDefinitionUndocumented>  <natspec_end: @R>  => { let mut node = node; node.natspec = ctx.pop_natspec(natspec_start, natspec_end); node },
         
     };
     ErrorParametersDeclaration: ErrorParametersDeclaration = {
@@ -918,7 +918,7 @@ VariableDeclarationStatementSpecialRevert: VariableDeclarationStatement =
         
     };
     AssemblyStatement: AssemblyStatement = {
-        <natspec_start: @L>  <node: AssemblyStatementUndocumented>  <natspec_end: @R>  => { let mut node = node; node.natspec = ctx.take_natspec(natspec_start, natspec_end); node },
+        <natspec_start: @L>  <node: AssemblyStatementUndocumented>  <natspec_end: @R>  => { let mut node = node; node.natspec = ctx.pop_natspec(natspec_start, natspec_end); node },
         
     };
     

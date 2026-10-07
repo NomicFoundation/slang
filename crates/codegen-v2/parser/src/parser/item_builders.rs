@@ -582,7 +582,7 @@ pub(crate) fn split_documentable_item(item: LALRPOPDerivedItem) -> [LALRPOPDeriv
                 },
             ],
             action: LALRPOPAction::Code(RustCode(
-                "{ let mut node = node; node.natspec = ctx.take_natspec(natspec_start, natspec_end); node }"
+                "{ let mut node = node; node.natspec = ctx.pop_natspec(natspec_start, natspec_end); node }"
                     .to_owned(),
             )),
         }],
