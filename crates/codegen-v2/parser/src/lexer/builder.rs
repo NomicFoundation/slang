@@ -4,7 +4,7 @@ use std::mem::discriminant;
 use indexmap::IndexMap;
 use language_v2_definition::model::{
     Identifier, Item, KeywordItem, KeywordScanner, Language, LexicalContext as LanguageContext,
-    TokenItem, TokenScanner, TriviaItem, VersionSpecifier,
+    TokenItem, TokenScanner, TriviaCategory, TriviaItem, VersionSpecifier,
 };
 
 use crate::lexer::{Lexeme, LexerModel, LexicalContext};
@@ -21,11 +21,13 @@ impl LexerModelBuilder {
 
         let all_lexeme_kinds = Self::collect_all_lexeme_kinds(&contexts);
         let trivia_lexeme_kinds = Self::collect_trivia_lexeme_kinds(&contexts);
+        let natspec_comment_lexeme_kinds = Self::collect_natspec_comment_lexeme_kinds(&contexts);
 
         LexerModel {
             contexts,
             all_lexeme_kinds,
             trivia_lexeme_kinds,
+            natspec_comment_lexeme_kinds,
         }
     }
 
@@ -62,6 +64,25 @@ impl LexerModelBuilder {
                             kinds.insert(format!("{kind}_Unreserved"));
                         }
                     }
+                }
+            }
+        }
+
+        kinds
+    }
+
+    fn collect_natspec_comment_lexeme_kinds(contexts: &[LexicalContext]) -> BTreeSet<String> {
+        let mut kinds = BTreeSet::new();
+
+        for context in contexts {
+            for lexeme in &context.lexemes {
+                if let Lexeme::Trivia {
+                    kind,
+                    category: TriviaCategory::NatSpecComment,
+                    ..
+                } = lexeme
+                {
+                    kinds.insert(kind.clone());
                 }
             }
         }
@@ -164,6 +185,7 @@ impl LexicalContextBuilder {
         Lexeme::Trivia {
             kind: item.name.to_string(),
             regex: self.convert_token_scanner(&item.scanner, false),
+            category: item.category(),
         }
     }
 

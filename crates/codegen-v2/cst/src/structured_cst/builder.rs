@@ -102,9 +102,16 @@ impl StructuredCstModelBuilder {
         let parent_type = item.name.clone();
         let fields: Vec<_> = self.convert_fields(&item.fields).collect();
         let enabled = item.enabled.clone().unwrap_or_default();
+        let is_documentable = item.is_documentable();
 
-        self.sequences
-            .insert(parent_type, Sequence { fields, enabled });
+        self.sequences.insert(
+            parent_type,
+            Sequence {
+                fields,
+                enabled,
+                is_documentable,
+            },
+        );
     }
 
     fn add_enum_item(&mut self, item: &model::EnumItem) {
@@ -273,6 +280,7 @@ impl StructuredCstModelBuilder {
             Sequence {
                 fields,
                 enabled: model::VersionSpecifier::Always,
+                is_documentable: false,
             },
         );
     }

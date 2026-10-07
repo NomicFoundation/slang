@@ -274,6 +274,19 @@ impl LexemeKind {
                 | Self::YulWhitespace
         )
     }
+
+    /// Whether the lexeme is a `NatSpec` comment.
+    pub fn is_natspec_comment(&self) -> bool {
+        matches!(
+            self,
+            Self::MultiLineNatSpecComment
+                | Self::PragmaMultiLineNatSpecComment
+                | Self::PragmaSingleLineNatSpecComment
+                | Self::SingleLineNatSpecComment
+                | Self::YulMultiLineNatSpecComment
+                | Self::YulSingleLineNatSpecComment
+        )
+    }
 }
 
 #[allow(clippy::too_many_lines)]
