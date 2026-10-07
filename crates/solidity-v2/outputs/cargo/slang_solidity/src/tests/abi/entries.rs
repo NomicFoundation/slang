@@ -60,12 +60,8 @@ fn test_abi_entries_with_tuples() {
     let entries = contracts_abi[0].entries();
     assert_eq!(entries.len(), 5);
 
-    // The two structs used throughout, spelled as their canonical tuple types:
-    //   struct S { uint a; uint[] b; T[] c; }
-    //   struct T { uint x; uint y; }
-    let uint256 = "uint256";
-    let t = "(uint256,uint256)";
-    let s = "(uint256,uint256[],(uint256,uint256)[])";
+    // The parameters' types are pinned by `json::tuples_and_getters_serialize`, on the same
+    // fixture.
 
     // f(S memory, T memory, uint x) returns ()
     let AbiEntry::Function(f) = &entries[0] else {
@@ -75,11 +71,8 @@ fn test_abi_entries_with_tuples() {
     let inputs = f.inputs();
     assert_eq!(inputs.len(), 3);
     assert_eq!(inputs[0].name(), None);
-    assert_eq!(inputs[0].type_name(), s);
     assert_eq!(inputs[1].name(), None);
-    assert_eq!(inputs[1].type_name(), t);
     assert_eq!(inputs[2].name(), Some("x"));
-    assert_eq!(inputs[2].type_name(), uint256);
     assert!(f.outputs().is_empty());
 
     // g() returns (S memory s, T memory t, uint)
@@ -91,11 +84,8 @@ fn test_abi_entries_with_tuples() {
     let outputs = g.outputs();
     assert_eq!(outputs.len(), 3);
     assert_eq!(outputs[0].name(), Some("s"));
-    assert_eq!(outputs[0].type_name(), s);
     assert_eq!(outputs[1].name(), Some("t"));
-    assert_eq!(outputs[1].type_name(), t);
     assert_eq!(outputs[2].name(), None);
-    assert_eq!(outputs[2].type_name(), uint256);
 
     // T public (getter) -> t() returns (uint256 x, uint256 y).
     // The getter flattens the struct into its members; their names aren't tracked.
@@ -106,8 +96,6 @@ fn test_abi_entries_with_tuples() {
     assert!(getter.inputs().is_empty());
     let outputs = getter.outputs();
     assert_eq!(outputs.len(), 2);
-    assert_eq!(outputs[0].type_name(), uint256);
-    assert_eq!(outputs[1].type_name(), uint256);
 
     // t_components() returns (uint, uint)
     let AbiEntry::Function(t_components) = &entries[3] else {
@@ -118,9 +106,7 @@ fn test_abi_entries_with_tuples() {
     let outputs = t_components.outputs();
     assert_eq!(outputs.len(), 2);
     assert_eq!(outputs[0].name(), None);
-    assert_eq!(outputs[0].type_name(), uint256);
     assert_eq!(outputs[1].name(), None);
-    assert_eq!(outputs[1].type_name(), uint256);
 
     // t_struct() returns (T memory)
     let AbiEntry::Function(t_struct) = &entries[4] else {
@@ -131,7 +117,6 @@ fn test_abi_entries_with_tuples() {
     let outputs = t_struct.outputs();
     assert_eq!(outputs.len(), 1);
     assert_eq!(outputs[0].name(), None);
-    assert_eq!(outputs[0].type_name(), t);
 }
 
 /// An abstract contract cannot run its constructor, so solc leaves it out of the ABI.
