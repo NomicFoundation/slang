@@ -20,22 +20,36 @@ impl Serialize for ContractAbi {
     fn serialize<S: Serializer>(&self, serializer: S) -> Result<S::Ok, S::Error> {
         let mut seq = serializer.serialize_seq(Some(self.entries.len()))?;
         for entry in &self.entries {
-            seq.serialize_element(entry)?;
+            seq.serialize_element(&Entry {
+                entry,
+                semantic: &self.semantic,
+            })?;
         }
         seq.end()
     }
 }
 
-impl Serialize for AbiEntry {
+/// An entry, with the context its parameters' types are written from.
+struct Entry<'a> {
+    entry: &'a AbiEntry,
+    semantic: &'a Arc<SemanticContext>,
+}
+
+impl Serialize for Entry<'_> {
     fn serialize<S: Serializer>(&self, serializer: S) -> Result<S::Ok, S::Error> {
-        let parameters = |parameters| ParameterList {
+        let parameters = |parameters, spelling| ParameterList {
             parameters,
-            spelling: AbiTypeSpelling::Json,
+            spelling,
+            with_indexed: false,
+            semantic: self.semantic,
         };
-        match self {
+        match self.entry {
             AbiEntry::Constructor(constructor) => {
                 let mut map = serializer.serialize_map(Some(3))?;
-                map.serialize_entry("inputs", &parameters(constructor.inputs()))?;
+                map.serialize_entry(
+                    "inputs",
+                    &parameters(constructor.inputs(), AbiTypeSpelling::Json),
+                )?;
                 map.serialize_entry(
                     "stateMutability",
                     &Mutability(constructor.state_mutability()),
@@ -45,7 +59,7 @@ impl Serialize for AbiEntry {
             }
             AbiEntry::Error(error) => {
                 let mut map = serializer.serialize_map(Some(3))?;
-                map.serialize_entry("inputs", &parameters(error.inputs()))?;
+                map.serialize_entry("inputs", &parameters(error.inputs(), AbiTypeSpelling::Json))?;
                 map.serialize_entry("name", error.name())?;
                 map.serialize_entry("type", "error")?;
                 map.end()
@@ -53,7 +67,13 @@ impl Serialize for AbiEntry {
             AbiEntry::Event(event) => {
                 let mut map = serializer.serialize_map(Some(4))?;
                 map.serialize_entry("anonymous", &event.anonymous())?;
-                map.serialize_entry("inputs", &EventInputs(event.inputs()))?;
+                map.serialize_entry(
+                    "inputs",
+                    &ParameterList {
+                        with_indexed: true,
+                        ..parameters(event.inputs(), AbiTypeSpelling::Json)
+                    },
+                )?;
                 map.serialize_entry("name", event.name())?;
                 map.serialize_entry("type", "event")?;
                 map.end()
@@ -65,14 +85,16 @@ impl Serialize for AbiEntry {
                 map.end()
             }
             AbiEntry::Function(function) => {
-                let function_parameters = |parameters| ParameterList {
-                    parameters,
-                    spelling: function.type_spelling,
-                };
                 let mut map = serializer.serialize_map(Some(5))?;
-                map.serialize_entry("inputs", &function_parameters(function.inputs()))?;
+                map.serialize_entry(
+                    "inputs",
+                    &parameters(function.inputs(), function.type_spelling),
+                )?;
                 map.serialize_entry("name", function.name())?;
-                map.serialize_entry("outputs", &function_parameters(function.outputs()))?;
+                map.serialize_entry(
+                    "outputs",
+                    &parameters(function.outputs(), function.type_spelling),
+                )?;
                 map.serialize_entry("stateMutability", &Mutability(function.state_mutability()))?;
                 map.serialize_entry("type", "function")?;
                 map.end()
@@ -87,9 +109,13 @@ impl Serialize for AbiEntry {
     }
 }
 
+/// An entry's inputs or outputs.
 struct ParameterList<'a> {
     parameters: &'a [AbiParameter],
     spelling: AbiTypeSpelling,
+    /// Only an event's inputs carry `indexed`.
+    with_indexed: bool,
+    semantic: &'a Arc<SemanticContext>,
 }
 
 impl Serialize for ParameterList<'_> {
@@ -98,29 +124,10 @@ impl Serialize for ParameterList<'_> {
         for parameter in self.parameters {
             seq.serialize_element(&Parameter {
                 name: parameter.name().unwrap_or_default(),
-                type_id: parameter.type_id,
-                indexed: None,
+                type_id: parameter.type_id(),
+                indexed: self.with_indexed.then_some(parameter.indexed()),
                 spelling: self.spelling,
-                semantic: &parameter.semantic,
-            })?;
-        }
-        seq.end()
-    }
-}
-
-/// An event's inputs, the only parameters that carry `indexed`.
-struct EventInputs<'a>(&'a [AbiParameter]);
-
-impl Serialize for EventInputs<'_> {
-    fn serialize<S: Serializer>(&self, serializer: S) -> Result<S::Ok, S::Error> {
-        let mut seq = serializer.serialize_seq(Some(self.0.len()))?;
-        for parameter in self.0 {
-            seq.serialize_element(&Parameter {
-                name: parameter.name().unwrap_or_default(),
-                type_id: parameter.type_id,
-                indexed: Some(parameter.indexed()),
-                spelling: AbiTypeSpelling::Json,
-                semantic: &parameter.semantic,
+                semantic: self.semantic,
             })?;
         }
         seq.end()
