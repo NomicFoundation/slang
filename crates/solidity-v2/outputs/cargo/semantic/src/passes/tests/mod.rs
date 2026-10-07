@@ -1,3 +1,4 @@
+mod abi_type_names;
 mod alias_following;
 mod binder;
 mod contract_dependencies;
