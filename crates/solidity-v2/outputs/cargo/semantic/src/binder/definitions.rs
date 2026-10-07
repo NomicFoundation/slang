@@ -160,7 +160,7 @@ pub struct StructDefinition {
     pub recursive: Option<RecursionKind>,
     /// The structs held by value (directly or through fixed-size arrays), in
     /// member declaration order. Empty until p3.
-    pub(crate) by_value_dependencies: Vec<NodeId>,
+    pub(crate) by_value_dependencies: Box<[NodeId]>,
 }
 
 #[derive(Debug)]
@@ -534,7 +534,7 @@ impl Definition {
         Self::Struct(StructDefinition {
             ir_node: Arc::clone(ir_node),
             recursive: None,
-            by_value_dependencies: Vec::new(),
+            by_value_dependencies: Box::default(),
         })
     }
 

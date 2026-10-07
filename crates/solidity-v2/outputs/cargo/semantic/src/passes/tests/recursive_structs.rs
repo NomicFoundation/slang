@@ -175,7 +175,7 @@ fn by_value_dependencies_follow_member_order_and_skip_indirect_references() {
     );
     let id = |name| struct_named(&analysis, name).ir_node.id();
     assert_eq!(
-        struct_named(&analysis, "Holder").by_value_dependencies,
+        *struct_named(&analysis, "Holder").by_value_dependencies,
         [id("Other"), id("Leaf")]
     );
     assert!(

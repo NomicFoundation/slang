@@ -48,7 +48,7 @@ fn build_dependencies(binder: &Binder) -> SortedMap<NodeId, Vec<NodeId>> {
         .iter()
         .filter_map(|(definition_id, definition)| match definition {
             Definition::Struct(definition) if !definition.by_value_dependencies.is_empty() => {
-                Some((*definition_id, definition.by_value_dependencies.clone()))
+                Some((*definition_id, definition.by_value_dependencies.to_vec()))
             }
             _ => None,
         })

@@ -46,7 +46,7 @@ pub(super) fn mark_recursive_structs(binder: &mut Binder, types: &TypeRegistry) 
         } else {
             RecursionKind::NonRecursive
         });
-        definition.by_value_dependencies = node.by_value;
+        definition.by_value_dependencies = node.by_value.into_boxed_slice();
     }
 }
 
