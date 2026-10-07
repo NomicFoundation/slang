@@ -7,4 +7,3 @@ pub mod full_compilation;
 pub mod ir_builder;
 pub mod parser;
 pub mod semantic;
-pub mod serialize_contracts_abi;
