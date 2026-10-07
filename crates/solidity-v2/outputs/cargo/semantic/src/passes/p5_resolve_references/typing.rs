@@ -690,7 +690,7 @@ impl Pass<'_> {
             return None;
         }
         let element_type = self.types.type_of_array_literal(&item_type_ids)?;
-        // Reference-typed elements are relocated to memory as well, as solc does.
+        // The elements of an array literal live in memory too, wherever they came from.
         Some(self.types.register_type_with_data_location(
             Type::FixedSizeArray(FixedSizeArrayType {
                 element_type,

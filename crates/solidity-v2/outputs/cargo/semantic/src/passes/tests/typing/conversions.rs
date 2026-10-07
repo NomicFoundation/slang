@@ -8,8 +8,8 @@ use ruint::aliases::U256;
 
 use super::{Analyse, Analysis, expression, expression_statement_types};
 use crate::types::{
-    ArrayType, ByteArrayType, DataLocation, FixedPointNumberType, FixedSizeArrayType,
-    IntegerType, LiteralKind, MappingType, StringType, TupleType, Type, TypeId, TypeRegistry,
+    ArrayType, ByteArrayType, DataLocation, FixedPointNumberType, FixedSizeArrayType, IntegerType,
+    LiteralKind, MappingType, StringType, TupleType, Type, TypeId, TypeRegistry,
 };
 
 fn register_uint_type(types: &mut TypeRegistry, bits: u32) -> TypeId {
@@ -245,9 +245,14 @@ fn test_array_literal_relocates_reference_elements_to_memory() {
         pragma solidity *;
         contract Test {
             string s;
-            function f(string calldata a, uint256[] calldata xs) external view {
+            function f(
+                string calldata a,
+                uint256[] calldata xs,
+                string[] calldata ys
+            ) external view {
                 [a, a];
                 [xs, xs];
+                [ys, ys];
                 [xs[1:], xs[2:]];
                 [s, s];
             }
@@ -285,11 +290,16 @@ fn test_array_literal_relocates_reference_elements_to_memory() {
         element_type: types.uint256(),
         location: DataLocation::Memory,
     });
+    let memory_string_array = Type::Array(ArrayType {
+        element_type: types.string_memory(),
+        location: DataLocation::Memory,
+    });
     assert_eq!(
         element_types,
         vec![
             memory_string.clone(),
             memory_uint256_array.clone(),
+            memory_string_array,
             memory_uint256_array,
             memory_string,
         ]
