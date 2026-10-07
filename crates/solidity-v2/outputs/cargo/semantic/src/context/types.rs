@@ -12,19 +12,28 @@ use crate::types::{
     TypeId, UserDefinedValueType, UserMetaType,
 };
 
-/// How [`SemanticContext::write_type_abi_name`] spells a type.
+/// How [`SemanticContext::write_type_abi_name`] spells a type. They differ only on these types:
+///
+/// | Type                   | `Selector`   | `LibrarySelector`  | `Json`       | `LibraryJson` |
+/// |------------------------|--------------|--------------------|--------------|---------------|
+/// | enum                   | `uint8`      | `C.E`              | `uint8`      | `C.E`         |
+/// | contract, interface    | `address`    | `C`                | `address`    | `C`           |
+/// | struct                 | `(T1,T2)`    | `C.S`              | `tuple`      | `tuple`       |
+/// | storage reference      | as above     | ` storage` suffix  | as above     | as above      |
+/// | slice                  | as its array | `T[] slice`        | as its array | as its array  |
+/// | mapping, other non-ABI | no name      | internal name      | no name      | no name       |
+///
+/// In all of them an array is spelled through its element, and a user-defined value type as the
+/// type it wraps.
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
 pub enum AbiTypeSpelling {
-    /// The canonical form a selector is hashed from: `uint8` for an enum, `address` for a contract
-    /// or interface, `(T1,T2)` for a struct.
+    /// The canonical form a selector is hashed from.
     Selector,
-    /// The form a library function's selector is hashed from: enums, contracts, interfaces and
-    /// structs by their qualified name, and a trailing ` storage` on a storage reference.
+    /// The form a library function's selector is hashed from.
     LibrarySelector,
-    /// The JSON ABI `type`: [`Self::Selector`]'s, but `tuple` for a struct.
+    /// The JSON ABI `type`.
     Json,
-    /// A library function's JSON ABI `type`: [`Self::Json`]'s, but enums, contracts and interfaces
-    /// by their qualified name, as the library's selectors spell them.
+    /// A library function's JSON ABI `type`, matching its selector's names.
     LibraryJson,
 }
 
