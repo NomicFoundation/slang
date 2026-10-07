@@ -1,11 +1,9 @@
-//! `AbiParameter::internal_type()` spells the type the way solc's JSON-ABI `internalType` field
-//! does. The fixture builds at `LanguageVersion::LATEST`; the expected spellings were taken by
+//! The JSON ABI's `internalType` spells the type the way solc's does. The fixture builds at `LanguageVersion::LATEST`; the expected spellings were taken by
 //! hand from solc 0.8.34 `--abi` on the same source, not from a solc run in the test.
 // TODO: compare these spellings against a solc run at the fixture's own version instead of
 // pinning them by hand. Until then, a failure after a `LATEST` bump means re-deriving the
 // expectation from solc, not editing it.
 
-use crate::abi::AbiEntry;
 use crate::define_fixture;
 
 define_fixture!(
@@ -36,18 +34,23 @@ fn function_input_internal_types(contract: &str, function: &str) -> Vec<String> 
         .expect("contract exists")
         .compute_abi()
         .expect("the ABI is computable");
-    let entry = abi
-        .entries()
+    let json = serde_json::to_value(&abi).expect("the ABI serializes");
+    let entry = json
+        .as_array()
+        .expect("the ABI is an array")
         .iter()
-        .find(|entry| matches!(entry, AbiEntry::Function(f) if f.name() == function))
+        .find(|entry| entry["type"] == "function" && entry["name"] == function)
         .expect("function is in the ABI");
-    let AbiEntry::Function(function) = entry else {
-        unreachable!("matched a function above");
-    };
-    function
-        .inputs()
+    entry["inputs"]
+        .as_array()
+        .expect("a function has inputs")
         .iter()
-        .map(|input| input.internal_type())
+        .map(|input| {
+            input["internalType"]
+                .as_str()
+                .expect("an input has an internal type")
+                .to_owned()
+        })
         .collect()
 }
 

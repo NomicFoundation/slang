@@ -43,7 +43,7 @@ impl StateVariableDefinitionStruct {
             .iter()
             .zip(input_names)
             .map(|(parameter_type_id, name)| {
-                AbiParameter::new(None, name, *parameter_type_id, false, &self.semantic)
+                AbiParameter::new(name, *parameter_type_id, false, &self.semantic)
             })
             .collect::<Option<Vec<_>>>()?;
 
@@ -65,7 +65,7 @@ impl StateVariableDefinitionStruct {
         let outputs = output_types
             .zip(output_names)
             .map(|(output_type_id, name)| {
-                AbiParameter::new(None, name, *output_type_id, false, &self.semantic)
+                AbiParameter::new(name, *output_type_id, false, &self.semantic)
             })
             .collect::<Option<Vec<_>>>()?;
         Some((inputs, outputs))
