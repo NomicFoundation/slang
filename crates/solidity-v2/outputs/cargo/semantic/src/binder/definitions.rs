@@ -146,11 +146,18 @@ pub struct StateVariableDefinition {
     pub(crate) enclosing_scope_id: ScopeId,
 }
 
+#[derive(Debug, Eq, Ord, PartialEq, PartialOrd)]
+pub enum RecursionKind {
+    NonRecursive,
+    ByFunctionType,
+    ByReference,
+    ByValue,
+}
+
 #[derive(Debug)]
 pub struct StructDefinition {
     pub ir_node: ir::StructDefinition,
-    pub is_recursive: bool,
-    pub has_recursive_type_graph: bool,
+    pub recursive: Option<RecursionKind>,
     /// The structs held by value (directly or through fixed-size arrays), in
     /// member declaration order. Empty until p3.
     pub(crate) by_value_dependencies: Vec<NodeId>,
@@ -526,8 +533,7 @@ impl Definition {
     pub(crate) fn new_struct(ir_node: &ir::StructDefinition) -> Self {
         Self::Struct(StructDefinition {
             ir_node: Arc::clone(ir_node),
-            is_recursive: false,
-            has_recursive_type_graph: false,
+            recursive: None,
             by_value_dependencies: Vec::new(),
         })
     }

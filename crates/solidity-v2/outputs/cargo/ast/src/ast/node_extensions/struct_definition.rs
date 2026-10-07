@@ -17,7 +17,7 @@ impl StructDefinitionStruct {
         else {
             unreachable!("struct node without a struct definition");
         };
-        definition.is_recursive
+        definition.recursive >= Some(binder::RecursionKind::ByReference)
     }
 
     /// Whether a cycle is reachable from this struct through struct members,
@@ -35,6 +35,6 @@ impl StructDefinitionStruct {
         else {
             unreachable!("struct node without a struct definition");
         };
-        definition.has_recursive_type_graph
+        definition.recursive >= Some(binder::RecursionKind::ByFunctionType)
     }
 }

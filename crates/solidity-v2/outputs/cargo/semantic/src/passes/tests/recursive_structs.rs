@@ -1,8 +1,8 @@
-//! Tests for the struct recursion flags p3 sets on struct definitions: which
+//! Tests for the struct recursion kinds p3 sets on struct definitions: which
 //! references each follows, and the by-value dependencies recorded for p8.
 
 use super::support::{Analyse, Analysis};
-use crate::binder::{Definition, StructDefinition};
+use crate::binder::{Definition, RecursionKind, StructDefinition};
 
 fn structs(analysis: &Analysis) -> Vec<&StructDefinition> {
     analysis
@@ -23,15 +23,11 @@ fn struct_named<'a>(analysis: &'a Analysis, name: &str) -> &'a StructDefinition 
         .unwrap_or_else(|| panic!("struct `{name}` is declared"))
 }
 
-fn assert_recursion(analysis: &Analysis, expected: &[(&str, bool, bool)]) {
+fn assert_recursion(analysis: &Analysis, expected: &[(&str, RecursionKind)]) {
     assert_eq!(structs(analysis).len(), expected.len());
-    for (name, recursive, recursive_type_graph) in expected {
+    for (name, recursive) in expected {
         let definition = struct_named(analysis, name);
-        assert_eq!(definition.is_recursive, *recursive, "{name}");
-        assert_eq!(
-            definition.has_recursive_type_graph, *recursive_type_graph,
-            "{name}"
-        );
+        assert_eq!(definition.recursive.as_ref(), Some(recursive), "{name}");
     }
 }
 
@@ -53,10 +49,28 @@ fn member_cycles_and_wrappers_are_recursive() {
     assert_recursion(
         &analysis,
         &[
-            ("Plain", false, false),
-            ("ThroughArray", true, true),
-            ("NestingRecursive", true, true),
-            ("SelfMapping", true, true),
+            ("Plain", RecursionKind::NonRecursive),
+            ("ThroughArray", RecursionKind::ByReference),
+            ("NestingRecursive", RecursionKind::ByReference),
+            ("SelfMapping", RecursionKind::ByReference),
+        ],
+    );
+}
+
+#[test]
+fn by_value_cycles_and_wrappers_are_by_value() {
+    let analysis = analyse(
+        "pragma solidity *;
+        struct ThroughFixedArray { ThroughFixedArray[2] kids; }
+        struct Holding { ThroughFixedArray inner; }
+        struct Referring { ThroughFixedArray[] inner; }",
+    );
+    assert_recursion(
+        &analysis,
+        &[
+            ("ThroughFixedArray", RecursionKind::ByValue),
+            ("Holding", RecursionKind::ByValue),
+            ("Referring", RecursionKind::ByReference),
         ],
     );
 }
@@ -84,15 +98,15 @@ fn function_signatures_only_make_the_type_graph_recursive() {
     assert_recursion(
         &analysis,
         &[
-            ("Plain", false, false),
-            ("Parameter", false, true),
-            ("TupleReturn", false, true),
-            ("AcyclicReference", false, false),
-            ("MemberCycle", true, true),
-            ("ReachingMemberCycle", false, true),
-            ("ArrayIntoFunctionCycle", false, true),
-            ("FunctionBackToArray", false, true),
-            ("ReachingFunctionCycle", false, true),
+            ("Plain", RecursionKind::NonRecursive),
+            ("Parameter", RecursionKind::ByFunctionType),
+            ("TupleReturn", RecursionKind::ByFunctionType),
+            ("AcyclicReference", RecursionKind::NonRecursive),
+            ("MemberCycle", RecursionKind::ByReference),
+            ("ReachingMemberCycle", RecursionKind::ByFunctionType),
+            ("ArrayIntoFunctionCycle", RecursionKind::ByFunctionType),
+            ("FunctionBackToArray", RecursionKind::ByFunctionType),
+            ("ReachingFunctionCycle", RecursionKind::ByFunctionType),
         ],
     );
 }
@@ -112,9 +126,9 @@ fn signature_dependencies_stay_tagged_through_nested_types() {
     assert_recursion(
         &analysis,
         &[
-            ("ArrayParameter", false, true),
-            ("NestedFunction", false, true),
-            ("ContainerOfFunctions", false, true),
+            ("ArrayParameter", RecursionKind::ByFunctionType),
+            ("NestedFunction", RecursionKind::ByFunctionType),
+            ("ContainerOfFunctions", RecursionKind::ByFunctionType),
         ],
     );
 }
@@ -128,7 +142,10 @@ fn duplicate_references_to_acyclic_structs_are_not_recursive() {
     );
     assert_recursion(
         &analysis,
-        &[("Plain", false, false), ("Shared", false, false)],
+        &[
+            ("Plain", RecursionKind::NonRecursive),
+            ("Shared", RecursionKind::NonRecursive),
+        ],
     );
 }
 
@@ -139,7 +156,7 @@ fn unresolved_members_are_skipped() {
         struct Recursive { Unknown missing; Recursive[] children; }",
     )
     .run(Analyse::Types);
-    assert_recursion(&analysis, &[("Recursive", true, true)]);
+    assert_recursion(&analysis, &[("Recursive", RecursionKind::ByReference)]);
 }
 
 #[test]
