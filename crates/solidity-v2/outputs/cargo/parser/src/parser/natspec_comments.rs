@@ -29,7 +29,6 @@ impl NatSpecComments {
         (
             NatSpecProducer {
                 comments: &self.comments,
-                pending: None,
             },
             NatSpecConsumer {
                 comments: &self.comments,
@@ -42,35 +41,15 @@ impl NatSpecComments {
 #[derive(Debug)]
 pub(crate) struct NatSpecProducer<'a> {
     comments: &'a RefCell<Vec<RecordedComment>>,
-    /// The last comment pushed, until the token it documents is reported.
-    ///
-    /// A trailing comment, with no token after it, stays here and is dropped.
-    pending: Option<Range<usize>>,
 }
 
 impl NatSpecProducer<'_> {
-    /// Records the `NatSpec` comment at `range`, which may document the next token.
-    ///
-    /// If another comment is pushed first, it replaces this one, which documents nothing and is dropped.
+    /// Records the `NatSpec` comment at `range`, documenting the token starting at `token_start`.
     ///
     /// Never inlined on purpose: the parser records comments from its token stream, which is
     /// inlined into LALRPOP's parsing loop, and inlining this there slows the whole loop down.
     #[inline(never)]
-    pub(crate) fn push(&mut self, range: Range<usize>) {
-        self.pending = Some(range);
-    }
-
-    /// Reports the token after the last pushed comment, starting at `token_start`, which it
-    /// documents.
-    ///
-    /// Never inlined for the same reason as [`NatSpecProducer::push`].
-    #[inline(never)]
-    pub(crate) fn document(&mut self, token_start: usize) {
-        let range = self
-            .pending
-            .take()
-            .expect("a comment to have been pushed before the token it documents");
-
+    pub(crate) fn attach_natspec_at(&mut self, range: Range<usize>, token_start: usize) {
         let mut comments = self.comments.borrow_mut();
         debug_assert!(
             comments
@@ -161,8 +140,7 @@ mod tests {
 
     /// Records a comment at `range`, documenting the token at `token_start`.
     fn record(producer: &mut NatSpecProducer<'_>, range: Range<usize>, token_start: usize) {
-        producer.push(range);
-        producer.document(token_start);
+        producer.attach_natspec_at(range, token_start);
     }
 
     fn take(consumer: &NatSpecConsumer<'_>, start: usize, end: usize) -> Option<Range<usize>> {
@@ -213,14 +191,5 @@ mod tests {
 
         assert_eq!(take(&consumer, 6, 20), None);
         assert_eq!(take(&consumer, 16, 18), None);
-    }
-
-    #[test]
-    fn drops_a_trailing_comment() {
-        let comments = NatSpecComments::default();
-        let (mut producer, consumer) = comments.split();
-        producer.push(0..5);
-
-        assert_eq!(take(&consumer, 0, 10), None);
     }
 }

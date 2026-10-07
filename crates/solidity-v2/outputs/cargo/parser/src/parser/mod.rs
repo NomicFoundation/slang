@@ -193,21 +193,19 @@ impl Iterator for TokenStream<'_, '_> {
     type Item = Result<(usize, LexemeKind, usize), ()>;
 
     fn next(&mut self) -> Option<Self::Item> {
-        // Kept lean for LALRPOP's parsing loop: the pending comment is stored in
-        // `NatSpecProducer` rather than in a local, and only a bool tracks whether this call saw one.
-        let mut after_natspec_comment = false;
-
+        let mut natspec_comment = None;
         while let Some(lexeme) = self.lexer.next_lexeme() {
             if lexeme.kind.is_natspec_comment() {
-                self.natspec_comments.push(lexeme.range.clone());
-                after_natspec_comment = true;
+                natspec_comment = Some(lexeme.range.clone());
+                continue;
             }
-            if !lexeme.kind.is_trivia() {
-                if after_natspec_comment {
-                    self.natspec_comments.document(lexeme.range.start);
-                }
-                return Some(Ok((lexeme.range.start, lexeme.kind, lexeme.range.end)));
+            if lexeme.kind.is_trivia() {
+                continue;
             }
+            if let Some(natspec_comment) = natspec_comment.take() {
+                self.natspec_comments.attach_natspec_at(natspec_comment, lexeme.range.start);
+            }
+            return Some(Ok((lexeme.range.start, lexeme.kind, lexeme.range.end)));
         }
         None
     }
