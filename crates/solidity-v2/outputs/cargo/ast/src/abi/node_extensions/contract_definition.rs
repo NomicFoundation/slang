@@ -66,9 +66,10 @@ impl ContractDefinitionStruct {
             interface_id ^= function.compute_selector()?;
         }
         for state_variable in self.members().iter_state_variable_definitions() {
-            if state_variable.is_externally_visible() {
-                interface_id ^= state_variable.compute_selector()?;
+            if !state_variable.is_externally_visible() {
+                continue;
             }
+            interface_id ^= state_variable.compute_selector()?;
         }
         Some(interface_id)
     }
