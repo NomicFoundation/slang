@@ -46,7 +46,6 @@ impl ContractDefinitionStruct {
             entries,
             storage_layout,
             transient_storage_layout,
-            &self.semantic,
         ))
     }
 

@@ -13,43 +13,22 @@ use slang_solidity_v2_semantic::context::SemanticContext;
 use slang_solidity_v2_semantic::types::{self, TypeId};
 
 use crate::abi::types::type_as_abi_type;
-use crate::abi::{AbiEntry, AbiMutability, AbiParameter, ContractAbi};
-use crate::ast::Definition as AstDefinition;
+use crate::abi::{AbiEntry, AbiMutability, AbiParameter, ContractAbi, TypeSpelling};
 
 /// A contract's entries as the JSON ABI; see [`ContractAbi::json`].
 pub struct JsonAbi<'a>(pub(crate) &'a ContractAbi);
 
 impl Serialize for JsonAbi<'_> {
     fn serialize<S: Serializer>(&self, serializer: S) -> Result<S::Ok, S::Error> {
-        let function_spelling = match AstDefinition::try_create(self.0.node_id, &self.0.semantic) {
-            Some(AstDefinition::Library(_)) => TypeSpelling::ByName,
-            _ => TypeSpelling::Canonical,
-        };
         let mut seq = serializer.serialize_seq(Some(self.0.entries.len()))?;
         for entry in &self.0.entries {
-            seq.serialize_element(&Entry {
-                entry,
-                function_spelling,
-            })?;
+            seq.serialize_element(&Entry(entry))?;
         }
         seq.end()
     }
 }
 
-/// How a parameter's `type` spells enums, contracts and interfaces.
-#[derive(Clone, Copy)]
-enum TypeSpelling {
-    /// `uint8` and `address`.
-    Canonical,
-    /// By name (`L.E`, `C`, `I[]`), as a library function's selector spells them.
-    ByName,
-}
-
-struct Entry<'a> {
-    entry: &'a AbiEntry,
-    /// Only functions take it; constructors, errors and events are always canonical.
-    function_spelling: TypeSpelling,
-}
+struct Entry<'a>(&'a AbiEntry);
 
 impl Serialize for Entry<'_> {
     fn serialize<S: Serializer>(&self, serializer: S) -> Result<S::Ok, S::Error> {
@@ -57,7 +36,7 @@ impl Serialize for Entry<'_> {
             parameters,
             spelling: TypeSpelling::Canonical,
         };
-        match self.entry {
+        match self.0 {
             AbiEntry::Constructor(constructor) => {
                 let mut map = serializer.serialize_map(Some(3))?;
                 map.serialize_entry("inputs", &parameters(constructor.inputs()))?;
@@ -92,7 +71,7 @@ impl Serialize for Entry<'_> {
             AbiEntry::Function(function) => {
                 let function_parameters = |parameters| ParameterList {
                     parameters,
-                    spelling: self.function_spelling,
+                    spelling: function.type_spelling,
                 };
                 let mut map = serializer.serialize_map(Some(5))?;
                 map.serialize_entry("inputs", &function_parameters(function.inputs()))?;

@@ -2,7 +2,9 @@ use itertools::Either;
 use slang_solidity_v2_ir::ir;
 use slang_solidity_v2_semantic::types::{FunctionType, TupleType, Type};
 
-use crate::abi::{AbiEntry, AbiFunction, AbiMutability, AbiParameter, selector_from_signature};
+use crate::abi::{
+    AbiEntry, AbiFunction, AbiMutability, AbiParameter, TypeSpelling, selector_from_signature,
+};
 use crate::ast::{StateVariableDefinitionStruct, StateVariableVisibility};
 
 impl StateVariableDefinitionStruct {
@@ -118,6 +120,7 @@ impl StateVariableDefinitionStruct {
             inputs,
             outputs,
             state_mutability: AbiMutability::View,
+            type_spelling: TypeSpelling::of_function_in(self.enclosing_definition().as_ref()),
         }))
     }
 

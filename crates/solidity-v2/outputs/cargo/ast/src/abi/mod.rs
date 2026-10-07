@@ -16,7 +16,7 @@ use slang_solidity_v2_semantic::types::{FunctionTypeMutability, TypeId};
 pub use self::serialize::JsonAbi;
 pub use self::types::{AbiType, NotAnAbiType, TupleComponent};
 use crate::abi::types::{is_abi_type, type_as_abi_type};
-use crate::ast::Type;
+use crate::ast::{Definition, Type};
 
 pub struct ContractAbi {
     node_id: NodeId,
@@ -25,7 +25,6 @@ pub struct ContractAbi {
     entries: Vec<AbiEntry>,
     storage_layout: Vec<StorageItem>,
     transient_storage_layout: Vec<StorageItem>,
-    semantic: Arc<SemanticContext>,
 }
 
 impl ContractAbi {
@@ -37,7 +36,6 @@ impl ContractAbi {
         mut entries: Vec<AbiEntry>,
         storage_layout: Vec<StorageItem>,
         transient_storage_layout: Vec<StorageItem>,
-        semantic: &Arc<SemanticContext>,
     ) -> Self {
         entries.sort();
         Self {
@@ -47,7 +45,6 @@ impl ContractAbi {
             entries,
             storage_layout,
             transient_storage_layout,
-            semantic: Arc::clone(semantic),
         }
     }
 
@@ -175,6 +172,7 @@ pub struct AbiFunction {
     inputs: Vec<AbiParameter>,
     outputs: Vec<AbiParameter>,
     state_mutability: AbiMutability,
+    type_spelling: TypeSpelling,
 }
 
 impl AbiFunction {
@@ -200,6 +198,24 @@ impl AbiFunction {
 
     pub fn state_mutability(&self) -> &AbiMutability {
         &self.state_mutability
+    }
+}
+
+/// How a function's JSON parameter `type`s spell enums, contracts and interfaces.
+#[derive(Clone, Copy, Debug)]
+pub(crate) enum TypeSpelling {
+    /// `uint8` and `address`.
+    Canonical,
+    /// By name (`L.E`, `C`, `I[]`), as a library function's selector spells them.
+    ByName,
+}
+
+impl TypeSpelling {
+    pub(crate) fn of_function_in(enclosing_definition: Option<&Definition>) -> Self {
+        match enclosing_definition {
+            Some(Definition::Library(_)) => Self::ByName,
+            _ => Self::Canonical,
+        }
     }
 }
 

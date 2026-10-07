@@ -4,6 +4,7 @@ use slang_solidity_v2_ir::ir;
 
 use crate::abi::{
     AbiConstructor, AbiEntry, AbiFallback, AbiFunction, AbiMutability, AbiReceive, SignatureHasher,
+    TypeSpelling,
 };
 use crate::ast::{Definition, FunctionDefinitionStruct, FunctionVisibility};
 
@@ -42,6 +43,7 @@ impl FunctionDefinitionStruct {
                 inputs,
                 outputs,
                 state_mutability,
+                type_spelling: TypeSpelling::of_function_in(self.enclosing_definition().as_ref()),
             })),
             ir::FunctionKind::Constructor => Some(AbiEntry::Constructor(AbiConstructor {
                 node_id,
