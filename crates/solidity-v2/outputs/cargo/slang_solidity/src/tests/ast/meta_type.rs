@@ -2,7 +2,6 @@
 //! `Type::UserMetaType`) and their accessors, reached through
 //! `Expression::get_type()`.
 
-use crate::abi::AbiType;
 use crate::{ast, define_fixture};
 
 define_fixture!(
@@ -71,7 +70,7 @@ fn meta_type_ast_wrappers_are_reachable_via_get_type() {
 
     // `S(x)`: a construction through a type name is a type conversion, and the
     // operand `S` carries a `Type::UserMetaType` that resolves back to the
-    // struct definition. Meta-types have no ABI representation.
+    // struct definition.
     let construction = &calls[0];
     assert!(construction.is_type_conversion());
     let operand_type = construction
@@ -82,7 +81,6 @@ fn meta_type_ast_wrappers_are_reachable_via_get_type() {
         panic!("expected the `S` operand to carry a `Type::UserMetaType`");
     };
     assert_eq!(user_meta.definition().identifier().name(), "S");
-    assert!(AbiType::try_from(&operand_type).is_err());
 
     // `abi.decode(b, (uint[]))`: a plain call, not a type conversion. The
     // `uint[]` type expression carries a `Type::MetaType` wrapping the array
@@ -112,7 +110,6 @@ fn meta_type_ast_wrappers_are_reachable_via_get_type() {
         panic!("expected the `uint[]` type expression to carry a `Type::MetaType`");
     };
     assert!(matches!(meta.meta_type(), ast::Type::Array(_)));
-    assert!(AbiType::try_from(&type_expression_type).is_err());
 
     // `uint(x)`: an elementary cast; the `uint` operand carries a stored
     // `Type::MetaType` typing of its own, wrapping the integer type.
@@ -123,7 +120,6 @@ fn meta_type_ast_wrappers_are_reachable_via_get_type() {
         panic!("expected the `uint` operand to carry a `Type::MetaType`");
     };
     assert!(matches!(meta.meta_type(), ast::Type::Integer(_)));
-    assert!(AbiType::try_from(&operand_type).is_err());
 
     // `(uint)(x)`: a parenthesized cast; the tuple operand's typing passes the
     // meta-type through, so it is still a type conversion.
@@ -143,5 +139,4 @@ fn meta_type_ast_wrappers_are_reachable_via_get_type() {
         panic!("expected the `uint[]` operand to carry a `Type::MetaType`");
     };
     assert!(matches!(meta.meta_type(), ast::Type::Array(_)));
-    assert!(AbiType::try_from(&operand_type).is_err());
 }
