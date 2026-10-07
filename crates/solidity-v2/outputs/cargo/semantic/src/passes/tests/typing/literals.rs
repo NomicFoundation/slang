@@ -14,7 +14,7 @@ use slang_solidity_v2_ir::ir;
 
 use super::{Analyse, Analysis, diagnostic_kind, expression};
 use crate::binder::Definition;
-use crate::types::{FixedSizeArrayType, LiteralKind, Type};
+use crate::types::{AddressType, FixedSizeArrayType, LiteralKind, Type};
 
 /// Runs the full pipeline over `source` and returns contract `name`'s folded
 /// storage base slot together with the diagnostic emitted, if any. A rejected base
@@ -137,6 +137,22 @@ fn test_value_bearing_integer_literal_types() {
             value: BigInt::from(16)
         })
     );
+}
+
+#[test]
+fn test_address_literal_types_as_address() {
+    let address = Some(Type::Address(AddressType { is_payable: false }));
+    let (type_, _) =
+        expression("0xb701a286753ADe3704e1DcFD93507454A2307641").into_type_and_diagnostic();
+    assert_eq!(type_, address);
+    let (type_, _) =
+        expression("(0xb701a286753ADe3704e1DcFD93507454A2307641)").into_type_and_diagnostic();
+    assert_eq!(type_, address);
+
+    // `address` has no arithmetic, so the literal does not fold as a number.
+    let (type_, _) =
+        expression("0xb701a286753ADe3704e1DcFD93507454A2307641 + 1").into_type_and_diagnostic();
+    assert_eq!(type_, None);
 }
 
 #[test]

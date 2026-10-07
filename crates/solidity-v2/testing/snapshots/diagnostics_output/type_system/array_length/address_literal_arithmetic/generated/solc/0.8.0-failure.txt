@@ -1,0 +1,11 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 1
+
+[TypeError 2271] Error: Operator + not compatible with types address and int_const 1. Arithmetic operations on addresses are not supported. Convert to integer first before using them.
+   ╭─[input.sol:5:13]
+   │
+ 5 │     uint256[0x0000000000000000000000000000000000000003 + 1] arr;
+   │             ───────────────────────┬──────────────────────  
+   │                                    ╰──────────────────────── Error occurred here.
+───╯
