@@ -1,7 +1,6 @@
 mod node_extensions;
 mod serialize;
 mod storage_layout;
-mod types;
 
 use std::cmp::Ordering;
 use std::fmt;
@@ -10,7 +9,7 @@ use std::sync::Arc;
 use sha3::{Digest, Keccak256};
 use slang_solidity_v2_common::files::FileId;
 use slang_solidity_v2_common::nodes::NodeId;
-use slang_solidity_v2_semantic::context::SemanticContext;
+use slang_solidity_v2_semantic::context::{AbiTypeSpelling, SemanticContext};
 use slang_solidity_v2_semantic::types::{FunctionTypeMutability, TypeId};
 
 pub(crate) use self::storage_layout::StorageKind;
@@ -18,8 +17,6 @@ pub use self::storage_layout::{
     StorageItem, StorageLayout, StorageMember, StoragePosition, StorageSize, StorageType,
     StorageTypeKind,
 };
-pub use self::types::{AbiType, NotAnAbiType, TupleComponent};
-use crate::abi::types::{is_abi_type, type_as_abi_type};
 use crate::ast::{Definition, Type};
 
 /// Serializes as the JSON ABI, the array of its entries.
@@ -159,7 +156,8 @@ pub struct AbiFunction {
     inputs: Vec<AbiParameter>,
     outputs: Vec<AbiParameter>,
     state_mutability: AbiMutability,
-    type_spelling: TypeSpelling,
+    /// How the JSON spells the parameters' `type`.
+    type_spelling: AbiTypeSpelling,
 }
 
 impl AbiFunction {
@@ -184,21 +182,12 @@ impl AbiFunction {
     }
 }
 
-/// How a function's JSON parameter `type`s spell enums, contracts and interfaces.
-#[derive(Clone, Copy, Debug)]
-pub(crate) enum TypeSpelling {
-    /// `uint8` and `address`.
-    Canonical,
-    /// By name (`L.E`, `C`, `I[]`), as a library function's selector spells them.
-    ByName,
-}
-
-impl TypeSpelling {
-    pub(crate) fn of_function_in(enclosing_definition: Option<&Definition>) -> Self {
-        match enclosing_definition {
-            Some(Definition::Library(_)) => Self::ByName,
-            _ => Self::Canonical,
-        }
+/// How the JSON spells the parameter `type`s of a function declared in `enclosing_definition`:
+/// by name in a library, as its selectors do.
+pub(crate) fn json_type_spelling(enclosing_definition: Option<&Definition>) -> AbiTypeSpelling {
+    match enclosing_definition {
+        Some(Definition::Library(_)) => AbiTypeSpelling::LibraryJson,
+        _ => AbiTypeSpelling::Json,
     }
 }
 
@@ -328,9 +317,8 @@ fn overload_selector(entry: &AbiEntry, semantic: &Arc<SemanticContext>) -> u32 {
     selector.expect("a function in the ABI is externally visible")
 }
 
-/// A parameter of an ABI entry: a view over its semantic type, the way [`Type`] is. The ABI
-/// shape ([`Self::abi_type`]) and the spellings are rendered from the interned `TypeId` on
-/// request rather than stored.
+/// A parameter of an ABI entry: a view over its semantic type, the way [`Type`] is. The
+/// spellings are rendered from the interned `TypeId` on request rather than stored.
 #[derive(Clone)]
 pub struct AbiParameter {
     node_id: Option<NodeId>, // will be `None` if the function is a generated getter
@@ -349,7 +337,7 @@ impl AbiParameter {
         indexed: bool,
         semantic: &Arc<SemanticContext>,
     ) -> Option<Self> {
-        if !is_abi_type(semantic, type_id) {
+        if !semantic.has_abi_type(type_id) {
             return None;
         }
         Some(Self {
@@ -374,19 +362,19 @@ impl AbiParameter {
         Type::create(self.type_id, &self.semantic)
     }
 
-    pub fn abi_type(&self) -> AbiType {
-        type_as_abi_type(&self.semantic, self.type_id).expect(
-            "the type was checked to have an ABI representation when the parameter was built",
-        )
-    }
-
     /// The parameter's type rendered as its canonical-signature spelling — e.g.
     /// `uint256`, `uint256[]`, or `(uint256,uint256)` for a struct. This is the
     /// form used for selector/signature hashing, **not** the JSON-ABI `"type"`
     /// field (structs there are `tuple`/`tuple[]`, see [`ContractAbi`]'s `Serialize`), nor
     /// its `"internalType"` field, which is [`Self::internal_type`].
     pub fn type_name(&self) -> String {
-        self.abi_type().to_string()
+        let mut name = String::new();
+        self.semantic
+            .write_type_abi_name(self.type_id, AbiTypeSpelling::Selector, &mut name)
+            .expect(
+                "the type was checked to have an ABI representation when the parameter was built",
+            );
+        name
     }
 
     /// The type as solc's JSON-ABI `internalType` spells it: `struct C.S[]`, `enum C.E`,

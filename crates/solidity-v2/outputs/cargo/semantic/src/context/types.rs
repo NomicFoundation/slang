@@ -21,6 +21,11 @@ pub enum AbiTypeSpelling {
     /// The form a library function's selector is hashed from: enums, contracts, interfaces and
     /// structs by their qualified name, and a trailing ` storage` on a storage reference.
     LibrarySelector,
+    /// The JSON ABI `type`: [`Self::Selector`]'s, but `tuple` for a struct.
+    Json,
+    /// A library function's JSON ABI `type`: [`Self::Json`]'s, but enums, contracts and interfaces
+    /// by their qualified name, as the library's selectors spell them.
+    LibraryJson,
 }
 
 /// Why [`SemanticContext::write_type_abi_name`] could not write a type.
@@ -290,6 +295,12 @@ impl SemanticContext {
         Ok(())
     }
 
+    /// Whether the type has an ABI representation: a struct only when all its members do.
+    pub fn has_abi_type(&self, type_id: TypeId) -> bool {
+        self.write_type_abi_name(type_id, AbiTypeSpelling::Selector, &mut Discard)
+            .is_ok()
+    }
+
     /// Writes the type as `spelling` spells it in an ABI signature.
     pub fn write_type_abi_name(
         &self,
@@ -313,7 +324,15 @@ impl SemanticContext {
         out: &mut impl fmt::Write,
         visited_structs: &mut Set<NodeId>,
     ) -> Result<(), AbiNameError> {
-        let by_name = matches!(spelling, AbiTypeSpelling::LibrarySelector);
+        let names_user_types = matches!(
+            spelling,
+            AbiTypeSpelling::LibrarySelector | AbiTypeSpelling::LibraryJson
+        );
+        let names_any_type = matches!(spelling, AbiTypeSpelling::LibrarySelector);
+        let is_json = matches!(
+            spelling,
+            AbiTypeSpelling::Json | AbiTypeSpelling::LibraryJson
+        );
         match self.types.get_type_by_id(type_id) {
             Type::Array(ArrayType { element_type, .. }) => {
                 self.write_type_abi_name_impl(*element_type, spelling, out, visited_structs)?;
@@ -335,11 +354,14 @@ impl SemanticContext {
             Type::Contract(ContractType { definition_id })
             | Type::Enum(EnumType { definition_id })
             | Type::Interface(InterfaceType { definition_id })
-            | Type::Struct(StructType { definition_id, .. })
-                if by_name =>
+                if names_user_types =>
             {
                 self.write_definition_canonical_name(*definition_id, out)?;
             }
+            Type::Struct(StructType { definition_id, .. }) if names_any_type => {
+                self.write_definition_canonical_name(*definition_id, out)?;
+            }
+            Type::Struct(_) if is_json => out.write_str("tuple")?,
             Type::Address(_) | Type::Contract(_) | Type::Interface(_) => {
                 out.write_str("address")?;
             }
@@ -363,34 +385,17 @@ impl SemanticContext {
             }
             Type::String(_) => out.write_str("string")?,
             // A slice encodes exactly like the array it slices.
-            Type::ArraySlice(ArraySliceType { array_type_id }) if !by_name => {
+            Type::ArraySlice(ArraySliceType { array_type_id }) if !names_any_type => {
                 self.write_type_abi_name_impl(*array_type_id, spelling, out, visited_structs)?;
             }
             Type::Struct(StructType { definition_id, .. }) => {
-                // Recursive structs are not valid Solidity, but guard against cycles to avoid
-                // unbounded recursion if malformed types reach this point.
-                if !visited_structs.insert(*definition_id) {
-                    return Err(AbiNameError::NoAbiName(type_id));
-                }
-                let Some(Definition::Struct(struct_definition)) =
-                    self.binder.find_definition_by_id(*definition_id)
-                else {
-                    return Err(AbiNameError::Unresolved(*definition_id));
-                };
-                out.write_char('(')?;
-                for (index, member) in struct_definition.ir_node.members.iter().enumerate() {
-                    if index > 0 {
-                        out.write_char(',')?;
-                    }
-                    let member_type_id = self
-                        .binder
-                        .node_typing(member.id())
-                        .as_type_id()
-                        .ok_or(AbiNameError::Unresolved(member.id()))?;
-                    self.write_type_abi_name_impl(member_type_id, spelling, out, visited_structs)?;
-                }
-                visited_structs.remove(definition_id);
-                out.write_char(')')?;
+                self.write_struct_abi_tuple(
+                    type_id,
+                    *definition_id,
+                    spelling,
+                    out,
+                    visited_structs,
+                )?;
             }
             // Only a library function's signature names these, by their internal name: a mapping
             // keeps a user-defined value type by name.
@@ -403,12 +408,48 @@ impl SemanticContext {
             | Type::MetaType(_)
             | Type::Tuple(_)
             | Type::UserMetaType(_) => {
-                if !by_name {
+                if !names_any_type {
                     return Err(AbiNameError::NoAbiName(type_id));
                 }
                 self.write_type_internal_name(type_id, out)?;
             }
         }
+        Ok(())
+    }
+
+    /// Writes a struct as the tuple `(T1,T2)` of its members' types.
+    fn write_struct_abi_tuple(
+        &self,
+        type_id: TypeId,
+        definition_id: NodeId,
+        spelling: AbiTypeSpelling,
+        out: &mut impl fmt::Write,
+        visited_structs: &mut Set<NodeId>,
+    ) -> Result<(), AbiNameError> {
+        // Recursive structs are not valid Solidity, but guard against cycles to avoid unbounded
+        // recursion if malformed types reach this point.
+        if !visited_structs.insert(definition_id) {
+            return Err(AbiNameError::NoAbiName(type_id));
+        }
+        let Some(Definition::Struct(struct_definition)) =
+            self.binder.find_definition_by_id(definition_id)
+        else {
+            return Err(AbiNameError::Unresolved(definition_id));
+        };
+        out.write_char('(')?;
+        for (index, member) in struct_definition.ir_node.members.iter().enumerate() {
+            if index > 0 {
+                out.write_char(',')?;
+            }
+            let member_type_id = self
+                .binder
+                .node_typing(member.id())
+                .as_type_id()
+                .ok_or(AbiNameError::Unresolved(member.id()))?;
+            self.write_type_abi_name_impl(member_type_id, spelling, out, visited_structs)?;
+        }
+        visited_structs.remove(&definition_id);
+        out.write_char(')')?;
         Ok(())
     }
 
@@ -422,5 +463,14 @@ impl SemanticContext {
             return None;
         };
         user_defined_value.target_type_id
+    }
+}
+
+/// A writer that drops what it is given, to check that a type can be written.
+struct Discard;
+
+impl fmt::Write for Discard {
+    fn write_str(&mut self, _: &str) -> fmt::Result {
+        Ok(())
     }
 }
