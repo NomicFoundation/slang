@@ -171,6 +171,7 @@ impl AbiFallback {
 pub struct AbiFunction {
     node_id: NodeId,
     name: String,
+    selector: u32,
     inputs: Vec<AbiParameter>,
     outputs: Vec<AbiParameter>,
     state_mutability: AbiMutability,
@@ -183,6 +184,10 @@ impl AbiFunction {
 
     pub fn name(&self) -> &str {
         &self.name
+    }
+
+    pub fn selector(&self) -> u32 {
+        self.selector
     }
 
     pub fn inputs(&self) -> &[AbiParameter] {
@@ -246,9 +251,9 @@ impl PartialEq for AbiEntry {
 impl Eq for AbiEntry {}
 
 // The ordering defined by this implementation is alphabetical "type" + "name",
-// same as `solc`'s. For equal names we use the `node_id` as the tie breaker to
-// keep consistency with the `PartialEq` implementation. The JSON ABI lists
-// overloads by selector instead; `JsonAbi` reorders them when it renders.
+// same as `solc`'s, with overloaded functions in ascending selector order. For
+// equal names we use the `node_id` as the tie breaker to keep consistency with
+// the `PartialEq` implementation.
 impl Ord for AbiEntry {
     fn cmp(&self, other: &Self) -> Ordering {
         match (self, other) {
@@ -267,12 +272,11 @@ impl Ord for AbiEntry {
                     name_ordering => name_ordering,
                 }
             }
-            (Self::Function(self_inner), Self::Function(other_inner)) => {
-                match self_inner.name.cmp(&other_inner.name) {
-                    Ordering::Equal => self.node_id().cmp(&other.node_id()),
-                    name_ordering => name_ordering,
-                }
-            }
+            (Self::Function(self_inner), Self::Function(other_inner)) => self_inner
+                .name
+                .cmp(&other_inner.name)
+                .then(self_inner.selector.cmp(&other_inner.selector))
+                .then_with(|| self.node_id().cmp(&other.node_id())),
 
             (Self::Constructor(_), _) => Ordering::Less,
             (_, Self::Constructor(_)) => Ordering::Greater,

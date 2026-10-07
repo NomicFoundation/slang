@@ -114,6 +114,7 @@ impl StateVariableDefinitionStruct {
         Some(AbiEntry::Function(AbiFunction {
             node_id: self.ir_node.id(),
             name: self.ir_node.name.unparse().to_string(),
+            selector: self.compute_selector()?,
             inputs,
             outputs,
             state_mutability: AbiMutability::View,
