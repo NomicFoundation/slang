@@ -295,10 +295,67 @@ impl SemanticContext {
         Ok(())
     }
 
-    /// Whether the type has an ABI representation: a struct only when all its members do.
+    /// Whether the type has an ABI representation, i.e. [`Self::write_type_abi_name`] can write
+    /// it in every spelling: a struct only when all its members do.
     pub fn has_abi_type(&self, type_id: TypeId) -> bool {
-        self.write_type_abi_name(type_id, AbiTypeSpelling::Selector, &mut Discard)
-            .is_ok()
+        self.has_abi_type_impl(type_id, &mut Set::default())
+    }
+
+    fn has_abi_type_impl(&self, type_id: TypeId, visited_structs: &mut Set<NodeId>) -> bool {
+        match self.types.get_type_by_id(type_id) {
+            Type::Address(_)
+            | Type::Boolean
+            | Type::ByteArray(_)
+            | Type::Bytes(_)
+            | Type::Contract(_)
+            | Type::Enum(_)
+            | Type::FixedPointNumber(_)
+            | Type::Function(_)
+            | Type::Integer(_)
+            | Type::Interface(_)
+            | Type::String(_) => true,
+            Type::Array(ArrayType { element_type, .. })
+            | Type::FixedSizeArray(FixedSizeArrayType { element_type, .. }) => {
+                self.has_abi_type_impl(*element_type, visited_structs)
+            }
+            Type::ArraySlice(ArraySliceType { array_type_id }) => {
+                self.has_abi_type_impl(*array_type_id, visited_structs)
+            }
+            Type::UserDefinedValue(UserDefinedValueType { definition_id }) => self
+                .user_defined_value_target_type_id(*definition_id)
+                .is_some_and(|target_type_id| {
+                    self.has_abi_type_impl(target_type_id, visited_structs)
+                }),
+            Type::Struct(StructType { definition_id, .. }) => {
+                // A recursive struct has no ABI representation.
+                if !visited_structs.insert(*definition_id) {
+                    return false;
+                }
+                let Some(Definition::Struct(struct_definition)) =
+                    self.binder.find_definition_by_id(*definition_id)
+                else {
+                    return false;
+                };
+                let has_abi_type = struct_definition.ir_node.members.iter().all(|member| {
+                    self.binder
+                        .node_typing(member.id())
+                        .as_type_id()
+                        .is_some_and(|member_type_id| {
+                            self.has_abi_type_impl(member_type_id, visited_structs)
+                        })
+                });
+                visited_structs.remove(definition_id);
+                has_abi_type
+            }
+            Type::Error(_)
+            | Type::Event(_)
+            | Type::Library(_)
+            | Type::Literal(_)
+            | Type::Mapping(_)
+            | Type::MetaType(_)
+            | Type::Tuple(_)
+            | Type::UserMetaType(_) => false,
+        }
     }
 
     /// Writes the type as `spelling` spells it in an ABI signature.
@@ -463,14 +520,5 @@ impl SemanticContext {
             return None;
         };
         user_defined_value.target_type_id
-    }
-}
-
-/// A writer that drops what it is given, to check that a type can be written.
-struct Discard;
-
-impl fmt::Write for Discard {
-    fn write_str(&mut self, _: &str) -> fmt::Result {
-        Ok(())
     }
 }
