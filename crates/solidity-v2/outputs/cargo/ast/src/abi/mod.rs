@@ -36,8 +36,10 @@ impl ContractAbi {
         mut entries: Vec<AbiEntry>,
         storage_layout: Vec<StorageItem>,
         transient_storage_layout: Vec<StorageItem>,
+        semantic: &Arc<SemanticContext>,
     ) -> Self {
         entries.sort();
+        order_overloads_by_selector(&mut entries, semantic);
         Self {
             node_id,
             name,
@@ -163,7 +165,6 @@ impl AbiFallback {
 pub struct AbiFunction {
     node_id: NodeId,
     name: String,
-    selector: u32,
     inputs: Vec<AbiParameter>,
     outputs: Vec<AbiParameter>,
     state_mutability: AbiMutability,
@@ -177,10 +178,6 @@ impl AbiFunction {
 
     pub fn name(&self) -> &str {
         &self.name
-    }
-
-    pub fn selector(&self) -> u32 {
-        self.selector
     }
 
     pub fn inputs(&self) -> &[AbiParameter] {
@@ -262,9 +259,9 @@ impl PartialEq for AbiEntry {
 impl Eq for AbiEntry {}
 
 // The ordering defined by this implementation is alphabetical "type" + "name",
-// same as `solc`'s, with overloaded functions in ascending selector order. For
-// equal names we use the `node_id` as the tie breaker to keep consistency with
-// the `PartialEq` implementation.
+// same as `solc`'s. For equal names we use the `node_id` as the tie breaker to
+// keep consistency with the `PartialEq` implementation; `ContractAbi::new` then
+// puts overloaded functions in ascending selector order.
 impl Ord for AbiEntry {
     fn cmp(&self, other: &Self) -> Ordering {
         match (self, other) {
@@ -283,11 +280,12 @@ impl Ord for AbiEntry {
                     name_ordering => name_ordering,
                 }
             }
-            (Self::Function(self_inner), Self::Function(other_inner)) => self_inner
-                .name
-                .cmp(&other_inner.name)
-                .then(self_inner.selector.cmp(&other_inner.selector))
-                .then_with(|| self.node_id().cmp(&other.node_id())),
+            (Self::Function(self_inner), Self::Function(other_inner)) => {
+                match self_inner.name.cmp(&other_inner.name) {
+                    Ordering::Equal => self.node_id().cmp(&other.node_id()),
+                    name_ordering => name_ordering,
+                }
+            }
 
             (Self::Constructor(_), _) => Ordering::Less,
             (_, Self::Constructor(_)) => Ordering::Greater,
@@ -307,6 +305,36 @@ impl PartialOrd for AbiEntry {
     fn partial_cmp(&self, other: &Self) -> Option<Ordering> {
         Some(self.cmp(other))
     }
+}
+
+/// Reorders each run of same-named functions in sorted `entries` by selector, hashing a selector
+/// only for a function that has overloads.
+fn order_overloads_by_selector(entries: &mut [AbiEntry], semantic: &Arc<SemanticContext>) {
+    for run in entries.chunk_by_mut(same_function_name) {
+        if run.len() > 1 {
+            run.sort_by_cached_key(|entry| overload_selector(entry, semantic));
+        }
+    }
+}
+
+fn same_function_name(this: &AbiEntry, other: &AbiEntry) -> bool {
+    match (this, other) {
+        (AbiEntry::Function(this), AbiEntry::Function(other)) => this.name() == other.name(),
+        _ => false,
+    }
+}
+
+fn overload_selector(entry: &AbiEntry, semantic: &Arc<SemanticContext>) -> u32 {
+    let AbiEntry::Function(function) = entry else {
+        unreachable!("only functions share a name");
+    };
+    let selector = match Definition::try_create(function.node_id(), semantic) {
+        Some(Definition::Function(definition)) => definition.compute_selector(),
+        // A public state variable's getter can overload an inherited function.
+        Some(Definition::StateVariable(definition)) => definition.compute_selector(),
+        _ => unreachable!("an ABI function is a function or a state variable's getter"),
+    };
+    selector.expect("a function in the ABI is externally visible")
 }
 
 /// A parameter of an ABI entry: a view over its semantic type, the way [`Type`] is. The ABI

@@ -40,6 +40,7 @@ impl InterfaceDefinitionStruct {
             entries,
             Vec::new(),
             Vec::new(),
+            &self.semantic,
         ))
     }
 

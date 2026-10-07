@@ -39,7 +39,6 @@ impl FunctionDefinitionStruct {
             ir::FunctionKind::Regular => Some(AbiEntry::Function(AbiFunction {
                 node_id,
                 name: name?,
-                selector: self.compute_selector()?,
                 inputs,
                 outputs,
                 state_mutability,
