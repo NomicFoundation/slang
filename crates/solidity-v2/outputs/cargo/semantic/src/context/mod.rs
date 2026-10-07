@@ -300,7 +300,7 @@ impl SemanticContext {
 
     /// Qualifies a nested definition with its enclosing scope, as solc's
     /// `canonicalName` does: `L.S`, `C.E`.
-    pub(crate) fn definition_canonical_name(&self, definition_id: NodeId) -> String {
+    pub fn definition_canonical_name(&self, definition_id: NodeId) -> String {
         let mut name = String::new();
         self.write_definition_canonical_name(definition_id, &mut name);
         name

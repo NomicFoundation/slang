@@ -7,7 +7,7 @@ use slang_solidity_v2_common::nodes::NodeId;
 use slang_solidity_v2_semantic::context::SemanticContext;
 use slang_solidity_v2_semantic::types::TypeId;
 
-use crate::ast::{Definition as AstDefinition, Type as AstType};
+use crate::ast::{Definition as AstDefinition, StructDefinition, Type as AstType};
 
 /// A type that can appear in a Solidity ABI parameter, as defined in
 /// <https://docs.soliditylang.org/en/latest/abi-spec.html#types>.
@@ -69,7 +69,7 @@ impl fmt::Display for AbiType {
             AbiType::Tuple(components) => {
                 // A struct is always rendered as the canonical-signature form
                 // `(T1,T2,...)` used for selector/signature hashing. The JSON-ABI
-                // `tuple`/`tuple[]` spelling is `ContractAbi::json`'s.
+                // `tuple`/`tuple[]` spelling is `ContractAbi`'s serialization.
                 write!(f, "(")?;
                 for (i, component) in components.iter().enumerate() {
                     if i > 0 {
@@ -118,33 +118,21 @@ pub(crate) fn type_as_abi_type(
     abi_type_from_ast_type(&AstType::create(type_id, semantic), &mut Set::default())
 }
 
-/// Whether the type has an ABI representation, decided the way [`abi_type_from_ast_type`]
-/// does but without building it: nothing is allocated for a type that will be rendered later.
+/// Whether the type has an ABI representation, decided by the same [`abi_shape`] as
+/// [`abi_type_from_ast_type`] but without building it: nothing is allocated for a type that will
+/// be rendered later.
 pub(crate) fn is_abi_type(semantic: &Arc<SemanticContext>, type_id: TypeId) -> bool {
     has_abi_type(&AstType::create(type_id, semantic), &mut Set::default())
 }
 
-/// Mirrors the `None` arms of [`abi_type_from_ast_type`]; keep the two in step.
 fn has_abi_type(value: &AstType, visited_structs: &mut Set<NodeId>) -> bool {
-    match value {
-        AstType::Address(_)
-        | AstType::Boolean(_)
-        | AstType::ByteArray(_)
-        | AstType::Bytes(_)
-        | AstType::Contract(_)
-        | AstType::Enum(_)
-        | AstType::FixedPointNumber(_)
-        | AstType::Function(_)
-        | AstType::Integer(_)
-        | AstType::Interface(_)
-        | AstType::String(_) => true,
-        AstType::Array(array) => has_abi_type(&array.element_type(), visited_structs),
-        AstType::ArraySlice(slice) => has_abi_type(&slice.array_type(), visited_structs),
-        AstType::FixedSizeArray(array) => has_abi_type(&array.element_type(), visited_structs),
-        AstType::Struct(struct_type) => {
-            let AstDefinition::Struct(definition) = struct_type.definition() else {
-                unreachable!("a struct type resolves to a struct definition");
-            };
+    match abi_shape(value) {
+        None => false,
+        Some(AbiShape::Scalar(_)) => true,
+        Some(AbiShape::Array(element) | AbiShape::FixedSizeArray(element, _)) => {
+            has_abi_type(&element, visited_structs)
+        }
+        Some(AbiShape::Struct(definition)) => {
             if !visited_structs.insert(definition.node_id()) {
                 return false;
             }
@@ -156,17 +144,6 @@ fn has_abi_type(value: &AstType, visited_structs: &mut Set<NodeId>) -> bool {
             visited_structs.remove(&definition.node_id());
             representable
         }
-        AstType::UserDefinedValue(udvt) => udvt
-            .target_type()
-            .is_some_and(|target| has_abi_type(&target, visited_structs)),
-        AstType::Error(_)
-        | AstType::Event(_)
-        | AstType::Library(_)
-        | AstType::Literal(_)
-        | AstType::Mapping(_)
-        | AstType::MetaType(_)
-        | AstType::Tuple(_)
-        | AstType::UserMetaType(_) => false,
     }
 }
 
@@ -197,56 +174,16 @@ impl TryFrom<&AstType> for AbiType {
 /// Both the public `TryFrom<&AstType>` and the semantic-`TypeId` entry point
 /// ([`type_as_abi_type`]) funnel through here.
 fn abi_type_from_ast_type(value: &AstType, visited_structs: &mut Set<NodeId>) -> Option<AbiType> {
-    match value {
-        AstType::Address(_) | AstType::Contract(_) | AstType::Interface(_) => {
-            Some(AbiType::Address)
-        }
-        AstType::Boolean(_) => Some(AbiType::Boolean),
-        AstType::Bytes(_) => Some(AbiType::Bytes),
-        AstType::String(_) => Some(AbiType::String),
-        // Every function type maps to the ABI `function` type regardless of its
-        // visibility. Strictly, only *external* function types are ABI-encodable
-        // (as a `bytes24` of address + selector); internal function types are
-        // not. We render them permissively rather than rejecting non-external
-        // ones, because a valid external signature can never contain an internal
-        // function type anyway, and callers that care can inspect visibility on
-        // the source type themselves.
-        AstType::Function(_) => Some(AbiType::Function),
-        AstType::Integer(integer) => Some(AbiType::Integer {
-            is_signed: integer.is_signed(),
-            bits: integer.bits(),
+    match abi_shape(value)? {
+        AbiShape::Scalar(scalar) => Some(scalar),
+        AbiShape::Array(element) => Some(AbiType::Array {
+            element: Box::new(abi_type_from_ast_type(&element, visited_structs)?),
         }),
-        AstType::Enum(_) => Some(AbiType::Integer {
-            is_signed: false,
-            bits: 8,
+        AbiShape::FixedSizeArray(element, size) => Some(AbiType::FixedSizeArray {
+            element: Box::new(abi_type_from_ast_type(&element, visited_structs)?),
+            size,
         }),
-        AstType::ByteArray(byte_array) => Some(AbiType::ByteArray {
-            width: byte_array.width(),
-        }),
-        AstType::FixedPointNumber(fixed) => Some(AbiType::FixedPointNumber {
-            is_signed: fixed.is_signed(),
-            bits: fixed.bits(),
-            decimal_places: fixed.decimal_places(),
-        }),
-        AstType::Array(array) => {
-            let element = abi_type_from_ast_type(&array.element_type(), visited_structs)?;
-            Some(AbiType::Array {
-                element: Box::new(element),
-            })
-        }
-        // A slice ABI-encodes exactly like the array it slices.
-        AstType::ArraySlice(slice) => abi_type_from_ast_type(&slice.array_type(), visited_structs),
-        AstType::FixedSizeArray(array) => {
-            let element = abi_type_from_ast_type(&array.element_type(), visited_structs)?;
-            Some(AbiType::FixedSizeArray {
-                element: Box::new(element),
-                size: array.size(),
-            })
-        }
-        AstType::Struct(struct_type) => {
-            let AstDefinition::Struct(definition) = struct_type.definition() else {
-                unreachable!("a struct type resolves to a struct definition");
-            };
+        AbiShape::Struct(definition) => {
             // Recursive structs are not valid Solidity, but guard against cycles
             // to avoid unbounded recursion if malformed types reach this point.
             if !visited_structs.insert(definition.node_id()) {
@@ -261,9 +198,61 @@ fn abi_type_from_ast_type(value: &AstType, visited_structs: &mut Set<NodeId>) ->
             visited_structs.remove(&definition.node_id());
             Some(AbiType::Tuple(components))
         }
-        AstType::UserDefinedValue(udvt) => {
-            abi_type_from_ast_type(&udvt.target_type()?, visited_structs)
+    }
+}
+
+/// One level of a type's ABI representation, seen through slices and user-defined value types.
+pub(crate) enum AbiShape {
+    Scalar(AbiType),
+    Array(AstType),
+    FixedSizeArray(AstType, U256),
+    Struct(StructDefinition),
+}
+
+/// `None` when the type has no ABI representation at this level.
+pub(crate) fn abi_shape(value: &AstType) -> Option<AbiShape> {
+    let scalar = match value {
+        AstType::Address(_) | AstType::Contract(_) | AstType::Interface(_) => AbiType::Address,
+        AstType::Boolean(_) => AbiType::Boolean,
+        AstType::Bytes(_) => AbiType::Bytes,
+        AstType::String(_) => AbiType::String,
+        // Every function type maps to the ABI `function` type regardless of its
+        // visibility. Strictly, only *external* function types are ABI-encodable
+        // (as a `bytes24` of address + selector); internal function types are
+        // not. We render them permissively rather than rejecting non-external
+        // ones, because a valid external signature can never contain an internal
+        // function type anyway, and callers that care can inspect visibility on
+        // the source type themselves.
+        AstType::Function(_) => AbiType::Function,
+        AstType::Integer(integer) => AbiType::Integer {
+            is_signed: integer.is_signed(),
+            bits: integer.bits(),
+        },
+        AstType::Enum(_) => AbiType::Integer {
+            is_signed: false,
+            bits: 8,
+        },
+        AstType::ByteArray(byte_array) => AbiType::ByteArray {
+            width: byte_array.width(),
+        },
+        AstType::FixedPointNumber(fixed) => AbiType::FixedPointNumber {
+            is_signed: fixed.is_signed(),
+            bits: fixed.bits(),
+            decimal_places: fixed.decimal_places(),
+        },
+        AstType::Array(array) => return Some(AbiShape::Array(array.element_type())),
+        // A slice ABI-encodes exactly like the array it slices.
+        AstType::ArraySlice(slice) => return abi_shape(&slice.array_type()),
+        AstType::FixedSizeArray(array) => {
+            return Some(AbiShape::FixedSizeArray(array.element_type(), array.size()));
         }
+        AstType::Struct(struct_type) => {
+            let AstDefinition::Struct(definition) = struct_type.definition() else {
+                unreachable!("a struct type resolves to a struct definition");
+            };
+            return Some(AbiShape::Struct(definition));
+        }
+        AstType::UserDefinedValue(udvt) => return abi_shape(&udvt.target_type()?),
         AstType::Error(_)
         | AstType::Event(_)
         | AstType::Library(_)
@@ -271,6 +260,7 @@ fn abi_type_from_ast_type(value: &AstType, visited_structs: &mut Set<NodeId>) ->
         | AstType::Mapping(_)
         | AstType::MetaType(_)
         | AstType::Tuple(_)
-        | AstType::UserMetaType(_) => None,
-    }
+        | AstType::UserMetaType(_) => return None,
+    };
+    Some(AbiShape::Scalar(scalar))
 }

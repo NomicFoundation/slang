@@ -13,11 +13,11 @@ use slang_solidity_v2_common::nodes::NodeId;
 use slang_solidity_v2_semantic::context::SemanticContext;
 use slang_solidity_v2_semantic::types::{FunctionTypeMutability, TypeId};
 
-pub use self::serialize::JsonAbi;
 pub use self::types::{AbiType, NotAnAbiType, TupleComponent};
 use crate::abi::types::{is_abi_type, type_as_abi_type};
 use crate::ast::{Definition, Type};
 
+/// Serializes as the JSON ABI, the array of its entries; the storage layouts are not part of it.
 pub struct ContractAbi {
     node_id: NodeId,
     name: String,
@@ -70,11 +70,6 @@ impl ContractAbi {
 
     pub fn transient_storage_layout(&self) -> &[StorageItem] {
         &self.transient_storage_layout
-    }
-
-    /// The entries as the JSON ABI: `serde_json::to_value(abi.json())` is its array of entries.
-    pub fn json(&self) -> JsonAbi<'_> {
-        JsonAbi(self)
     }
 }
 
@@ -369,7 +364,7 @@ impl AbiParameter {
     /// The parameter's type rendered as its canonical-signature spelling — e.g.
     /// `uint256`, `uint256[]`, or `(uint256,uint256)` for a struct. This is the
     /// form used for selector/signature hashing, **not** the JSON-ABI `"type"`
-    /// field (structs there are `tuple`/`tuple[]`, see [`ContractAbi::json`]), nor
+    /// field (structs there are `tuple`/`tuple[]`, see [`ContractAbi`]'s `Serialize`), nor
     /// its `"internalType"` field, which is [`Self::internal_type`].
     pub fn type_name(&self) -> String {
         self.abi_type().to_string()

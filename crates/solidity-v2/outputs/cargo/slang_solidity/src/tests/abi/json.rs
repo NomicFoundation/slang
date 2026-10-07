@@ -6,7 +6,7 @@ use crate::define_fixture;
 use crate::tests::fixtures;
 
 fn json(abi: &ContractAbi) -> String {
-    serde_json::to_string(&abi.json()).expect("the ABI serializes")
+    serde_json::to_string(abi).expect("the ABI serializes")
 }
 
 #[test]

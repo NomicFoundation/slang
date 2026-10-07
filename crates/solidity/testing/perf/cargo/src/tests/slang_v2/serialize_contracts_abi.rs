@@ -27,7 +27,7 @@ pub fn test(input: Input) -> Output {
     let json = input
         .abi
         .iter()
-        .map(|abi| serde_json::to_string(&abi.json()).expect("the ABI serializes"))
+        .map(|abi| serde_json::to_string(abi).expect("the ABI serializes"))
         .collect();
     Output {
         abi: input.abi,

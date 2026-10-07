@@ -7,36 +7,30 @@ use std::sync::Arc;
 
 use serde::Serialize;
 use serde::ser::{SerializeMap, SerializeSeq, Serializer};
-use slang_solidity_v2_common::nodes::NodeId;
-use slang_solidity_v2_semantic::binder;
 use slang_solidity_v2_semantic::context::SemanticContext;
-use slang_solidity_v2_semantic::types::{self, TypeId};
+use slang_solidity_v2_semantic::types::TypeId;
 
-use crate::abi::types::type_as_abi_type;
+use crate::abi::types::{AbiShape, abi_shape};
 use crate::abi::{AbiEntry, AbiMutability, AbiParameter, ContractAbi, TypeSpelling};
+use crate::ast::{StructDefinition, Type as AstType};
 
-/// A contract's entries as the JSON ABI; see [`ContractAbi::json`].
-pub struct JsonAbi<'a>(pub(crate) &'a ContractAbi);
-
-impl Serialize for JsonAbi<'_> {
+impl Serialize for ContractAbi {
     fn serialize<S: Serializer>(&self, serializer: S) -> Result<S::Ok, S::Error> {
-        let mut seq = serializer.serialize_seq(Some(self.0.entries.len()))?;
-        for entry in &self.0.entries {
-            seq.serialize_element(&Entry(entry))?;
+        let mut seq = serializer.serialize_seq(Some(self.entries.len()))?;
+        for entry in &self.entries {
+            seq.serialize_element(entry)?;
         }
         seq.end()
     }
 }
 
-struct Entry<'a>(&'a AbiEntry);
-
-impl Serialize for Entry<'_> {
+impl Serialize for AbiEntry {
     fn serialize<S: Serializer>(&self, serializer: S) -> Result<S::Ok, S::Error> {
         let parameters = |parameters| ParameterList {
             parameters,
             spelling: TypeSpelling::Canonical,
         };
-        match self.0 {
+        match self {
             AbiEntry::Constructor(constructor) => {
                 let mut map = serializer.serialize_map(Some(3))?;
                 map.serialize_entry("inputs", &parameters(constructor.inputs()))?;
@@ -142,15 +136,16 @@ struct Parameter<'a> {
 
 impl Serialize for Parameter<'_> {
     fn serialize<S: Serializer>(&self, serializer: S) -> Result<S::Ok, S::Error> {
-        let struct_id = struct_behind(self.type_id, self.semantic);
+        let value = AstType::create(self.type_id, self.semantic);
+        let definition = struct_behind(&value);
         let mut map = serializer.serialize_map(Some(
-            3 + usize::from(struct_id.is_some()) + usize::from(self.indexed.is_some()),
+            3 + usize::from(definition.is_some()) + usize::from(self.indexed.is_some()),
         ))?;
-        if let Some(struct_id) = struct_id {
+        if let Some(definition) = definition {
             map.serialize_entry(
                 "components",
                 &ComponentList {
-                    struct_id,
+                    definition,
                     spelling: self.spelling,
                     semantic: self.semantic,
                 },
@@ -167,7 +162,7 @@ impl Serialize for Parameter<'_> {
         map.serialize_entry(
             "type",
             &JsonType {
-                type_id: self.type_id,
+                value: &value,
                 spelling: self.spelling,
                 semantic: self.semantic,
             },
@@ -178,19 +173,14 @@ impl Serialize for Parameter<'_> {
 
 /// The members of the struct behind a `tuple`, in declaration order.
 struct ComponentList<'a> {
-    struct_id: NodeId,
+    definition: StructDefinition,
     spelling: TypeSpelling,
     semantic: &'a Arc<SemanticContext>,
 }
 
 impl Serialize for ComponentList<'_> {
     fn serialize<S: Serializer>(&self, serializer: S) -> Result<S::Ok, S::Error> {
-        let Some(binder::Definition::Struct(definition)) =
-            self.semantic.binder().find_definition_by_id(self.struct_id)
-        else {
-            unreachable!("a struct type resolves to a struct definition");
-        };
-        let members = &definition.ir_node.members;
+        let members = &self.definition.ir_node.members;
         let mut seq = serializer.serialize_seq(Some(members.len()))?;
         for member in members.iter() {
             seq.serialize_element(&Parameter {
@@ -211,54 +201,43 @@ impl Serialize for ComponentList<'_> {
 }
 
 /// The JSON-ABI `type` string: a struct is `tuple`, `tuple[]` or `tuple[N]`, everything else its
-/// canonical name, with enums, contracts and interfaces spelled as [`TypeSpelling`] says.
-/// The parameter was checked to have an ABI representation when it was built, so the type is never
-/// declined here.
+/// ABI type, with enums, contracts and interfaces spelled as [`TypeSpelling`] says.
 struct JsonType<'a> {
-    type_id: TypeId,
+    value: &'a AstType,
     spelling: TypeSpelling,
-    semantic: &'a Arc<SemanticContext>,
-}
-
-impl JsonType<'_> {
-    fn of(&self, type_id: TypeId) -> Self {
-        JsonType { type_id, ..*self }
-    }
+    semantic: &'a SemanticContext,
 }
 
 impl fmt::Display for JsonType<'_> {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        match self.semantic.types().get_type_by_id(self.type_id) {
-            types::Type::Array(types::ArrayType { element_type, .. }) => {
-                write!(f, "{}[]", self.of(*element_type))
+        if matches!(self.spelling, TypeSpelling::ByName) {
+            let definition = match self.value {
+                AstType::Contract(contract) => Some(contract.definition()),
+                AstType::Enum(enum_type) => Some(enum_type.definition()),
+                AstType::Interface(interface) => Some(interface.definition()),
+                _ => None,
+            };
+            if let Some(definition) = definition {
+                return f.write_str(
+                    &self
+                        .semantic
+                        .definition_canonical_name(definition.node_id()),
+                );
             }
-            types::Type::FixedSizeArray(types::FixedSizeArrayType {
-                element_type, size, ..
-            }) => write!(f, "{}[{size}]", self.of(*element_type)),
-            types::Type::ArraySlice(types::ArraySliceType { array_type_id }) => {
-                self.of(*array_type_id).fmt(f)
-            }
-            types::Type::UserDefinedValue(types::UserDefinedValueType { definition_id }) => {
-                let Some(binder::Definition::UserDefinedValueType(definition)) =
-                    self.semantic.binder().find_definition_by_id(*definition_id)
-                else {
-                    unreachable!("a user-defined value type resolves to its definition");
-                };
-                let target_type_id = definition
-                    .target_type_id
-                    .expect("a user-defined value type in the ABI has a resolved underlying type");
-                self.of(target_type_id).fmt(f)
-            }
-            types::Type::Struct(_) => f.write_str("tuple"),
-            types::Type::Contract(_) | types::Type::Enum(_) | types::Type::Interface(_)
-                if matches!(self.spelling, TypeSpelling::ByName) =>
-            {
-                f.write_str(&self.semantic.type_internal_name(self.type_id))
-            }
-            _ => type_as_abi_type(self.semantic, self.type_id)
-                .expect("a scalar in the ABI has an ABI type")
-                .fmt(f),
         }
+        // The parameter was checked to have an ABI representation when it was built.
+        match abi_shape(self.value).expect("a parameter in the ABI has an ABI type") {
+            AbiShape::Scalar(scalar) => scalar.fmt(f),
+            AbiShape::Array(element) => write!(f, "{}[]", self.of(&element)),
+            AbiShape::FixedSizeArray(element, size) => write!(f, "{}[{size}]", self.of(&element)),
+            AbiShape::Struct(_) => f.write_str("tuple"),
+        }
+    }
+}
+
+impl JsonType<'_> {
+    fn of<'b>(&'b self, value: &'b AstType) -> JsonType<'b> {
+        JsonType { value, ..*self }
     }
 }
 
@@ -269,17 +248,11 @@ impl Serialize for JsonType<'_> {
 }
 
 /// The struct behind a `tuple` type, through any arrays.
-fn struct_behind(type_id: TypeId, semantic: &SemanticContext) -> Option<NodeId> {
-    match semantic.types().get_type_by_id(type_id) {
-        types::Type::Array(types::ArrayType { element_type, .. })
-        | types::Type::FixedSizeArray(types::FixedSizeArrayType { element_type, .. }) => {
-            struct_behind(*element_type, semantic)
-        }
-        types::Type::ArraySlice(types::ArraySliceType { array_type_id }) => {
-            struct_behind(*array_type_id, semantic)
-        }
-        types::Type::Struct(types::StructType { definition_id, .. }) => Some(*definition_id),
-        _ => None,
+fn struct_behind(value: &AstType) -> Option<StructDefinition> {
+    match abi_shape(value)? {
+        AbiShape::Array(element) | AbiShape::FixedSizeArray(element, _) => struct_behind(&element),
+        AbiShape::Struct(definition) => Some(definition),
+        AbiShape::Scalar(_) => None,
     }
 }
 
