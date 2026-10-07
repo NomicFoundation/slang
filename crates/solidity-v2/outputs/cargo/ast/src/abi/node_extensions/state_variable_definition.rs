@@ -6,7 +6,7 @@ use slang_solidity_v2_semantic::context::{AbiNameError, AbiTypeSpelling};
 use slang_solidity_v2_semantic::types::{FunctionType, TupleType, Type};
 
 use crate::abi::{
-    AbiEntry, AbiFunction, AbiMutability, AbiParameter, SignatureHasher, TypeSpelling,
+    AbiEntry, AbiFunction, AbiMutability, AbiParameter, SignatureHasher, json_type_spelling,
 };
 use crate::ast::{StateVariableDefinitionStruct, StateVariableVisibility};
 
@@ -122,7 +122,7 @@ impl StateVariableDefinitionStruct {
             inputs,
             outputs,
             state_mutability: AbiMutability::View,
-            type_spelling: TypeSpelling::of_function_in(self.enclosing_definition().as_ref()),
+            type_spelling: json_type_spelling(self.enclosing_definition().as_ref()),
         }))
     }
 

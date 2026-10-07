@@ -7,12 +7,14 @@ use std::sync::Arc;
 
 use serde::Serialize;
 use serde::ser::{SerializeMap, SerializeSeq, Serializer};
-use slang_solidity_v2_semantic::context::SemanticContext;
-use slang_solidity_v2_semantic::types::TypeId;
+use slang_solidity_v2_common::nodes::NodeId;
+use slang_solidity_v2_semantic::binder::Definition;
+use slang_solidity_v2_semantic::context::{AbiNameError, AbiTypeSpelling, SemanticContext};
+use slang_solidity_v2_semantic::types::{
+    ArraySliceType, ArrayType, FixedSizeArrayType, StructType, Type, TypeId,
+};
 
-use crate::abi::types::{AbiShape, abi_shape};
-use crate::abi::{AbiEntry, AbiMutability, AbiParameter, ContractAbi, TypeSpelling};
-use crate::ast::{StructDefinition, Type as AstType};
+use crate::abi::{AbiEntry, AbiMutability, AbiParameter, ContractAbi};
 
 impl Serialize for ContractAbi {
     fn serialize<S: Serializer>(&self, serializer: S) -> Result<S::Ok, S::Error> {
@@ -28,7 +30,7 @@ impl Serialize for AbiEntry {
     fn serialize<S: Serializer>(&self, serializer: S) -> Result<S::Ok, S::Error> {
         let parameters = |parameters| ParameterList {
             parameters,
-            spelling: TypeSpelling::Canonical,
+            spelling: AbiTypeSpelling::Json,
         };
         match self {
             AbiEntry::Constructor(constructor) => {
@@ -87,7 +89,7 @@ impl Serialize for AbiEntry {
 
 struct ParameterList<'a> {
     parameters: &'a [AbiParameter],
-    spelling: TypeSpelling,
+    spelling: AbiTypeSpelling,
 }
 
 impl Serialize for ParameterList<'_> {
@@ -117,7 +119,7 @@ impl Serialize for EventInputs<'_> {
                 name: parameter.name().unwrap_or_default(),
                 type_id: parameter.type_id,
                 indexed: Some(parameter.indexed()),
-                spelling: TypeSpelling::Canonical,
+                spelling: AbiTypeSpelling::Json,
                 semantic: &parameter.semantic,
             })?;
         }
@@ -130,22 +132,21 @@ struct Parameter<'a> {
     name: &'a str,
     type_id: TypeId,
     indexed: Option<bool>,
-    spelling: TypeSpelling,
+    spelling: AbiTypeSpelling,
     semantic: &'a Arc<SemanticContext>,
 }
 
 impl Serialize for Parameter<'_> {
     fn serialize<S: Serializer>(&self, serializer: S) -> Result<S::Ok, S::Error> {
-        let value = AstType::create(self.type_id, self.semantic);
-        let definition = struct_behind(&value);
+        let struct_id = struct_behind(self.semantic, self.type_id);
         let mut map = serializer.serialize_map(Some(
-            3 + usize::from(definition.is_some()) + usize::from(self.indexed.is_some()),
+            3 + usize::from(struct_id.is_some()) + usize::from(self.indexed.is_some()),
         ))?;
-        if let Some(definition) = definition {
+        if let Some(struct_id) = struct_id {
             map.serialize_entry(
                 "components",
                 &ComponentList {
-                    definition,
+                    struct_id,
                     spelling: self.spelling,
                     semantic: self.semantic,
                 },
@@ -156,16 +157,20 @@ impl Serialize for Parameter<'_> {
         }
         map.serialize_entry(
             "internalType",
-            &self.semantic.type_abi_internal_name(self.type_id),
+            &written(|f| self.semantic.write_type_abi_internal_name(self.type_id, f)),
         )?;
         map.serialize_entry("name", self.name)?;
         map.serialize_entry(
             "type",
-            &JsonType {
-                value: &value,
-                spelling: self.spelling,
-                semantic: self.semantic,
-            },
+            &written(|f| {
+                self.semantic
+                    .write_type_abi_name(self.type_id, self.spelling, f)
+                    .map_err(|error| match error {
+                        AbiNameError::Write(error) => error,
+                        // The parameter was checked to have an ABI type when it was built.
+                        error => unreachable!("a parameter in the ABI has an ABI type: {error}"),
+                    })
+            }),
         )?;
         map.end()
     }
@@ -173,14 +178,19 @@ impl Serialize for Parameter<'_> {
 
 /// The members of the struct behind a `tuple`, in declaration order.
 struct ComponentList<'a> {
-    definition: StructDefinition,
-    spelling: TypeSpelling,
+    struct_id: NodeId,
+    spelling: AbiTypeSpelling,
     semantic: &'a Arc<SemanticContext>,
 }
 
 impl Serialize for ComponentList<'_> {
     fn serialize<S: Serializer>(&self, serializer: S) -> Result<S::Ok, S::Error> {
-        let members = &self.definition.ir_node.members;
+        let Some(Definition::Struct(definition)) =
+            self.semantic.binder().find_definition_by_id(self.struct_id)
+        else {
+            unreachable!("a struct type resolves to a struct definition");
+        };
+        let members = &definition.ir_node.members;
         let mut seq = serializer.serialize_seq(Some(members.len()))?;
         for member in members.iter() {
             seq.serialize_element(&Parameter {
@@ -200,59 +210,38 @@ impl Serialize for ComponentList<'_> {
     }
 }
 
-/// The JSON-ABI `type` string: a struct is `tuple`, `tuple[]` or `tuple[N]`, everything else its
-/// ABI type, with enums, contracts and interfaces spelled as [`TypeSpelling`] says.
-struct JsonType<'a> {
-    value: &'a AstType,
-    spelling: TypeSpelling,
-    semantic: &'a SemanticContext,
+/// The struct behind a `tuple` type, through any arrays.
+fn struct_behind(semantic: &SemanticContext, type_id: TypeId) -> Option<NodeId> {
+    match semantic.types().get_type_by_id(type_id) {
+        Type::Array(ArrayType { element_type, .. })
+        | Type::FixedSizeArray(FixedSizeArrayType { element_type, .. }) => {
+            struct_behind(semantic, *element_type)
+        }
+        Type::ArraySlice(ArraySliceType { array_type_id }) => {
+            struct_behind(semantic, *array_type_id)
+        }
+        Type::Struct(StructType { definition_id, .. }) => Some(*definition_id),
+        _ => None,
+    }
 }
 
-impl fmt::Display for JsonType<'_> {
+/// Serializes as the string a closure writes, streaming it into the output instead of building
+/// it first.
+struct Written<F>(F);
+
+fn written<F: Fn(&mut fmt::Formatter<'_>) -> fmt::Result>(write: F) -> Written<F> {
+    Written(write)
+}
+
+impl<F: Fn(&mut fmt::Formatter<'_>) -> fmt::Result> fmt::Display for Written<F> {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        if matches!(self.spelling, TypeSpelling::ByName) {
-            let definition = match self.value {
-                AstType::Contract(contract) => Some(contract.definition()),
-                AstType::Enum(enum_type) => Some(enum_type.definition()),
-                AstType::Interface(interface) => Some(interface.definition()),
-                _ => None,
-            };
-            if let Some(definition) = definition {
-                return f.write_str(
-                    &self
-                        .semantic
-                        .definition_canonical_name(definition.node_id()),
-                );
-            }
-        }
-        // The parameter was checked to have an ABI representation when it was built.
-        match abi_shape(self.value).expect("a parameter in the ABI has an ABI type") {
-            AbiShape::Scalar(scalar) => scalar.fmt(f),
-            AbiShape::Array(element) => write!(f, "{}[]", self.of(&element)),
-            AbiShape::FixedSizeArray(element, size) => write!(f, "{}[{size}]", self.of(&element)),
-            AbiShape::Struct(_) => f.write_str("tuple"),
-        }
+        (self.0)(f)
     }
 }
 
-impl JsonType<'_> {
-    fn of<'b>(&'b self, value: &'b AstType) -> JsonType<'b> {
-        JsonType { value, ..*self }
-    }
-}
-
-impl Serialize for JsonType<'_> {
+impl<F: Fn(&mut fmt::Formatter<'_>) -> fmt::Result> Serialize for Written<F> {
     fn serialize<S: Serializer>(&self, serializer: S) -> Result<S::Ok, S::Error> {
         serializer.collect_str(self)
-    }
-}
-
-/// The struct behind a `tuple` type, through any arrays.
-fn struct_behind(value: &AstType) -> Option<StructDefinition> {
-    match abi_shape(value)? {
-        AbiShape::Array(element) | AbiShape::FixedSizeArray(element, _) => struct_behind(&element),
-        AbiShape::Struct(definition) => Some(definition),
-        AbiShape::Scalar(_) => None,
     }
 }
 
