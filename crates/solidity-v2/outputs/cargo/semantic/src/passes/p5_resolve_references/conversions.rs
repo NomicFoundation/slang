@@ -46,9 +46,6 @@ impl Pass<'_> {
             Type::Address(AddressType { is_payable }) => {
                 self.address_explicitly_convertible_to(*is_payable, to_type)
             }
-            Type::Literal(LiteralKind::Address { .. }) => {
-                self.address_explicitly_convertible_to(false, to_type)
-            }
 
             Type::Integer(IntegerType { is_signed, bits }) => {
                 integer_explicitly_convertible_to(*is_signed, *bits, to_type)

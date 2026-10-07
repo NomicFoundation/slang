@@ -1823,6 +1823,14 @@ mod semantic {
         }
 
         #[test]
+        fn parenthesized_address_literal() -> Result<()> {
+            run(
+                "semantic/assembly_constants",
+                "parenthesized_address_literal",
+            )
+        }
+
+        #[test]
         fn parenthesized_literal() -> Result<()> {
             run("semantic/assembly_constants", "parenthesized_literal")
         }
@@ -4785,6 +4793,16 @@ mod type_system {
         }
 
         #[test]
+        fn address_literal() -> Result<()> {
+            run("type_system/array_length", "address_literal")
+        }
+
+        #[test]
+        fn address_literal_arithmetic() -> Result<()> {
+            run("type_system/array_length", "address_literal_arithmetic")
+        }
+
+        #[test]
         fn arithmetic_overflow() -> Result<()> {
             run("type_system/array_length", "arithmetic_overflow")
         }
@@ -6017,6 +6035,11 @@ mod type_system {
         #[test]
         fn address_constant() -> Result<()> {
             run("type_system/storage_layout_base_slot", "address_constant")
+        }
+
+        #[test]
+        fn address_literal() -> Result<()> {
+            run("type_system/storage_layout_base_slot", "address_literal")
         }
 
         #[test]

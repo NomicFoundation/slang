@@ -1,0 +1,11 @@
+{
+  "expected_solc_divergence": [
+    {
+      "specifier": {
+        "type": "From",
+        "from": "0.8.29"
+      },
+      "reason": "TODO(validation) SDR[778]: the constant evaluator reads the literal's digits before the base slot is typed, so an `address` literal folds to a slot. solc rejects it as a non-integer base slot (TypeError 6396, then 1763 from 0.8.31), slang does not yet."
+    }
+  ]
+}

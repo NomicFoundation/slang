@@ -1,0 +1,11 @@
+{
+  "expected_solc_divergence": [
+    {
+      "specifier": {
+        "type": "From",
+        "from": "0.8.0"
+      },
+      "reason": "TODO(validation) SDR[839]: the length folds to 4 because the constant evaluator reads the literal's digits, but the literal is typed `address`, which has no `+` operator. solc rejects it (TypeError 2271), slang does not report the operator yet."
+    }
+  ]
+}
