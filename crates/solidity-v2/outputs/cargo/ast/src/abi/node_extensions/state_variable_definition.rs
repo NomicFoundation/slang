@@ -1,9 +1,12 @@
+use std::fmt;
+
 use itertools::Either;
 use slang_solidity_v2_ir::ir;
+use slang_solidity_v2_semantic::context::{AbiNameError, AbiTypeSpelling};
 use slang_solidity_v2_semantic::types::{FunctionType, TupleType, Type};
 
 use crate::abi::{
-    AbiEntry, AbiFunction, AbiMutability, AbiParameter, TypeSpelling, selector_from_signature,
+    AbiEntry, AbiFunction, AbiMutability, AbiParameter, SignatureHasher, TypeSpelling,
 };
 use crate::ast::{StateVariableDefinitionStruct, StateVariableVisibility};
 
@@ -124,16 +127,10 @@ impl StateVariableDefinitionStruct {
     }
 
     pub fn compute_canonical_signature(&self) -> Option<String> {
-        let (inputs, _) = self.extract_getter_type_parameters_abi()?;
-        let parameters = inputs
-            .into_iter()
-            .map(|parameter| parameter.type_name())
-            .collect::<Vec<_>>()
-            .join(",");
-        Some(format!(
-            "{name}({parameters})",
-            name = self.ir_node.name.unparse(),
-        ))
+        let mut signature = String::new();
+        self.write_canonical_signature(self.getter_function_type()?, &mut signature)
+            .ok()?;
+        Some(signature)
     }
 
     pub fn compute_internal_signature(&self) -> Option<String> {
@@ -141,24 +138,43 @@ impl StateVariableDefinitionStruct {
             // There is no getter defined if the variable is not public
             return None;
         }
-        let parameters = self
-            .getter_function_type()?
-            .parameter_types
-            .iter()
-            .map(|type_id| self.semantic.type_internal_name(*type_id))
-            .collect::<Vec<_>>()
-            .join(",");
-        Some(format!(
-            "{name}({parameters})",
-            name = self.ir_node.name.unparse(),
-        ))
+        let getter_type = self.getter_function_type()?;
+        let mut signature = format!("{}(", self.ir_node.name.unparse());
+        for (index, type_id) in getter_type.parameter_types.iter().enumerate() {
+            if index > 0 {
+                signature.push(',');
+            }
+            self.semantic
+                .write_type_internal_name(*type_id, &mut signature)
+                .ok()?;
+        }
+        signature.push(')');
+        Some(signature)
     }
 
     pub fn compute_selector(&self) -> Option<u32> {
         if !self.is_externally_visible() {
             return None;
         }
-        self.compute_canonical_signature()
-            .map(|sig| selector_from_signature(&sig))
+        let mut hasher = SignatureHasher::default();
+        self.write_canonical_signature(self.getter_function_type()?, &mut hasher)
+            .ok()?;
+        Some(hasher.selector())
+    }
+
+    fn write_canonical_signature(
+        &self,
+        getter_type: &FunctionType,
+        out: &mut impl fmt::Write,
+    ) -> Result<(), AbiNameError> {
+        write!(out, "{}(", self.ir_node.name.unparse())?;
+        for (index, type_id) in getter_type.parameter_types.iter().enumerate() {
+            if index > 0 {
+                out.write_char(',')?;
+            }
+            self.semantic
+                .write_type_abi_name(*type_id, AbiTypeSpelling::Selector, out)?;
+        }
+        Ok(out.write_char(')')?)
     }
 }
