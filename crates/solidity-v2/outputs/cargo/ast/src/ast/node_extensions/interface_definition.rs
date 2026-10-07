@@ -2,8 +2,10 @@ use super::super::nodes::{
     create_error_definition, create_event_definition, create_function_definition,
 };
 use super::super::{
-    ErrorDefinition, EventDefinition, FunctionDefinition, FunctionKind, InterfaceDefinitionStruct,
+    Definition, ErrorDefinition, EventDefinition, FunctionDefinition, FunctionKind,
+    InterfaceDefinitionStruct,
 };
+use super::ContractBase;
 
 impl InterfaceDefinitionStruct {
     pub fn functions(&self) -> Vec<FunctionDefinition> {
@@ -14,6 +16,31 @@ impl InterfaceDefinitionStruct {
                     function.kind(),
                     FunctionKind::Regular | FunctionKind::Fallback | FunctionKind::Receive
                 )
+            })
+            .collect()
+    }
+
+    /// Returns the list of interfaces/contracts in the hierarchy (including
+    /// self) in the order given by the C3 linearisation, with self interface
+    /// always first
+    pub fn linearised_bases(&self) -> Vec<ContractBase> {
+        let Some(base_node_ids) = self
+            .semantic
+            .binder()
+            .get_linearised_bases(self.ir_node.id())
+        else {
+            // TODO(validation) SDR[4]: once we have validation implemented, this
+            // branch should not be reachable, or we should generate an error
+            // while building the `SemanticAnalysis`.
+            return Vec::new();
+        };
+        base_node_ids
+            .iter()
+            .map(|node_id| {
+                let base_definition =
+                    Definition::try_create(*node_id, &self.semantic).expect("node is a definition");
+                ContractBase::from_definition(&base_definition)
+                    .expect("Linearised base is either a contract or interface")
             })
             .collect()
     }
