@@ -22,6 +22,8 @@ impl core::cmp::PartialOrd for slang_solidity_v2_ast::abi::AbiEntry
 pub fn slang_solidity_v2_ast::abi::AbiEntry::partial_cmp(&self, &Self) -> core::option::Option<core::cmp::Ordering>
 impl core::fmt::Debug for slang_solidity_v2_ast::abi::AbiEntry
 pub fn slang_solidity_v2_ast::abi::AbiEntry::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl serde_core::ser::Serialize for slang_solidity_v2_ast::abi::AbiEntry
+pub fn slang_solidity_v2_ast::abi::AbiEntry::serialize<S: serde_core::ser::Serializer>(&self, S) -> core::result::Result<<S as serde_core::ser::Serializer>::Ok, <S as serde_core::ser::Serializer>::Error>
 pub enum slang_solidity_v2_ast::abi::AbiType
 pub slang_solidity_v2_ast::abi::AbiType::Address
 pub slang_solidity_v2_ast::abi::AbiType::Array
@@ -138,6 +140,8 @@ pub fn slang_solidity_v2_ast::abi::ContractAbi::name(&self) -> &str
 pub fn slang_solidity_v2_ast::abi::ContractAbi::node_id(&self) -> slang_solidity_v2_common::nodes::NodeId
 pub fn slang_solidity_v2_ast::abi::ContractAbi::storage_layout(&self) -> &[slang_solidity_v2_ast::abi::StorageItem]
 pub fn slang_solidity_v2_ast::abi::ContractAbi::transient_storage_layout(&self) -> &[slang_solidity_v2_ast::abi::StorageItem]
+impl serde_core::ser::Serialize for slang_solidity_v2_ast::abi::ContractAbi
+pub fn slang_solidity_v2_ast::abi::ContractAbi::serialize<S: serde_core::ser::Serializer>(&self, S) -> core::result::Result<<S as serde_core::ser::Serializer>::Ok, <S as serde_core::ser::Serializer>::Error>
 #[non_exhaustive] pub struct slang_solidity_v2_ast::abi::NotAnAbiType
 impl core::clone::Clone for slang_solidity_v2_ast::abi::NotAnAbiType
 pub fn slang_solidity_v2_ast::abi::NotAnAbiType::clone(&self) -> slang_solidity_v2_ast::abi::NotAnAbiType

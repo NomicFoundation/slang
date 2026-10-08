@@ -1,4 +1,5 @@
 mod node_extensions;
+mod serialize;
 mod types;
 
 use std::cmp::Ordering;
@@ -14,8 +15,9 @@ use slang_solidity_v2_semantic::types::{FunctionTypeMutability, TypeId};
 
 pub use self::types::{AbiType, NotAnAbiType, TupleComponent};
 use crate::abi::types::{is_abi_type, type_as_abi_type};
-use crate::ast::Type;
+use crate::ast::{Definition, Type};
 
+/// Serializes as the JSON ABI, the array of its entries; the storage layouts are not part of it.
 pub struct ContractAbi {
     node_id: NodeId,
     name: String,
@@ -34,8 +36,10 @@ impl ContractAbi {
         mut entries: Vec<AbiEntry>,
         storage_layout: Vec<StorageItem>,
         transient_storage_layout: Vec<StorageItem>,
+        semantic: &Arc<SemanticContext>,
     ) -> Self {
         entries.sort();
+        order_overloads_by_selector(&mut entries, semantic);
         Self {
             node_id,
             name,
@@ -164,6 +168,7 @@ pub struct AbiFunction {
     inputs: Vec<AbiParameter>,
     outputs: Vec<AbiParameter>,
     state_mutability: AbiMutability,
+    type_spelling: TypeSpelling,
 }
 
 impl AbiFunction {
@@ -185,6 +190,24 @@ impl AbiFunction {
 
     pub fn state_mutability(&self) -> &AbiMutability {
         &self.state_mutability
+    }
+}
+
+/// How a function's JSON parameter `type`s spell enums, contracts and interfaces.
+#[derive(Clone, Copy, Debug)]
+pub(crate) enum TypeSpelling {
+    /// `uint8` and `address`.
+    Canonical,
+    /// By name (`L.E`, `C`, `I[]`), as a library function's selector spells them.
+    ByName,
+}
+
+impl TypeSpelling {
+    pub(crate) fn of_function_in(enclosing_definition: Option<&Definition>) -> Self {
+        match enclosing_definition {
+            Some(Definition::Library(_)) => Self::ByName,
+            _ => Self::Canonical,
+        }
     }
 }
 
@@ -237,7 +260,8 @@ impl Eq for AbiEntry {}
 
 // The ordering defined by this implementation is alphabetical "type" + "name",
 // same as `solc`'s. For equal names we use the `node_id` as the tie breaker to
-// keep consistency with the `PartialEq` implementation.
+// keep consistency with the `PartialEq` implementation; `ContractAbi::new` then
+// puts overloaded functions in ascending selector order.
 impl Ord for AbiEntry {
     fn cmp(&self, other: &Self) -> Ordering {
         match (self, other) {
@@ -281,6 +305,36 @@ impl PartialOrd for AbiEntry {
     fn partial_cmp(&self, other: &Self) -> Option<Ordering> {
         Some(self.cmp(other))
     }
+}
+
+/// Reorders each run of same-named functions in sorted `entries` by selector, hashing a selector
+/// only for a function that has overloads.
+fn order_overloads_by_selector(entries: &mut [AbiEntry], semantic: &Arc<SemanticContext>) {
+    for run in entries.chunk_by_mut(same_function_name) {
+        if run.len() > 1 {
+            run.sort_by_cached_key(|entry| overload_selector(entry, semantic));
+        }
+    }
+}
+
+fn same_function_name(this: &AbiEntry, other: &AbiEntry) -> bool {
+    match (this, other) {
+        (AbiEntry::Function(this), AbiEntry::Function(other)) => this.name() == other.name(),
+        _ => false,
+    }
+}
+
+fn overload_selector(entry: &AbiEntry, semantic: &Arc<SemanticContext>) -> u32 {
+    let AbiEntry::Function(function) = entry else {
+        unreachable!("only functions share a name");
+    };
+    let selector = match Definition::try_create(function.node_id(), semantic) {
+        Some(Definition::Function(definition)) => definition.compute_selector(),
+        // A public state variable's getter can overload an inherited function.
+        Some(Definition::StateVariable(definition)) => definition.compute_selector(),
+        _ => unreachable!("an ABI function is a function or a state variable's getter"),
+    };
+    selector.expect("a function in the ABI is externally visible")
 }
 
 /// A parameter of an ABI entry: a view over its semantic type, the way [`Type`] is. The ABI
@@ -338,7 +392,7 @@ impl AbiParameter {
     /// The parameter's type rendered as its canonical-signature spelling — e.g.
     /// `uint256`, `uint256[]`, or `(uint256,uint256)` for a struct. This is the
     /// form used for selector/signature hashing, **not** the JSON-ABI `"type"`
-    /// field (structs there are `tuple`/`tuple[]`, which nothing renders yet), nor
+    /// field (structs there are `tuple`/`tuple[]`, see [`ContractAbi`]'s `Serialize`), nor
     /// its `"internalType"` field, which is [`Self::internal_type`].
     pub fn type_name(&self) -> String {
         self.abi_type().to_string()
@@ -401,7 +455,26 @@ pub fn hash_from_signature(signature: &str) -> [u8; 32] {
     Keccak256::digest(signature).into()
 }
 
+/// Keccak-256 over a signature written piece by piece, so a selector needs no signature string.
+#[derive(Default)]
+pub(crate) struct SignatureHasher(Keccak256);
+
+impl fmt::Write for SignatureHasher {
+    fn write_str(&mut self, s: &str) -> fmt::Result {
+        self.0.update(s.as_bytes());
+        Ok(())
+    }
+}
+
+impl SignatureHasher {
+    pub(crate) fn selector(self) -> u32 {
+        let hash: [u8; 32] = self.0.finalize().into();
+        u32::from_be_bytes(hash[0..4].try_into().unwrap())
+    }
+}
+
 pub fn selector_from_signature(signature: &str) -> u32 {
-    let selector_bytes: [u8; 4] = hash_from_signature(signature)[0..4].try_into().unwrap();
-    u32::from_be_bytes(selector_bytes)
+    let mut hasher = SignatureHasher::default();
+    hasher.0.update(signature.as_bytes());
+    hasher.selector()
 }

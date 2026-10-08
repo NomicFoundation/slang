@@ -15,6 +15,7 @@ pub struct Output {
     pub(crate) files: Vec<File>,
     pub(crate) semantic: Arc<SemanticContext>,
     pub(crate) abi: Vec<abi::ContractAbi>,
+    pub(crate) json: Vec<String>,
 }
 
 pub fn setup(project: &str) -> Input {
@@ -31,18 +32,24 @@ pub fn run(input: Input) -> Output {
     test(input)
 }
 
+/// Computes every contract's ABI and renders it as JSON.
 pub fn test(input: Input) -> Output {
-    let abi = input
+    let abi: Vec<abi::ContractAbi> = input
         .files
         .iter()
         .flat_map(|file| {
             ast::create_source_unit(file.ir_root(), &input.semantic).compute_contracts_abi()
         })
         .collect();
+    let json = abi
+        .iter()
+        .map(|abi| serde_json::to_string(abi).expect("the ABI serializes"))
+        .collect();
     Output {
         files: input.files,
         semantic: input.semantic,
         abi,
+        json,
     }
 }
 
