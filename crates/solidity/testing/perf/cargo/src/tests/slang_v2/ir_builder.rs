@@ -31,6 +31,9 @@ pub fn setup(project: &str) -> Input {
     }
 }
 
+// Kept out of line: if inlined into the gungraun wrapper, Callgrind mistakes returns into
+// the wrapper for fresh entries, and toggles collection off mid-run.
+#[inline(never)]
 pub fn run(input: Input) -> Output {
     test(input)
 }
