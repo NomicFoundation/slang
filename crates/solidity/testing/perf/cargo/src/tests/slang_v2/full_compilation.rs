@@ -19,6 +19,9 @@ pub fn setup(project: &str) -> Input {
     crate::tests::setup::setup(project)
 }
 
+// Kept out of line: if inlined into the gungraun wrapper, Callgrind mistakes returns into
+// the wrapper for fresh entries, and toggles collection off mid-run.
+#[inline(never)]
 pub fn run(project: Input) -> Output {
     // Pass every source of the project, rather than just its entrypoint. This
     // matches the workload of the per-stage benchmarks in this directory, which
