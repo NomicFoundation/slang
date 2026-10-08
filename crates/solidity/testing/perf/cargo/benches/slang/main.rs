@@ -57,13 +57,15 @@ mod __dependencies_used_in_lib__ {
 // __SLANG_INFRA_PROJECT_LIST__ (keep in sync)
 macro_rules! bench_projects {
     (
-        #[$lb:meta]
+        #[library_benchmark(setup = $setup:ident)]
         $($rest:tt)*
     ) => {
-        #[$lb]
-        #[bench::weighted_pool("weighted_pool")]
-        #[bench::merkle_proof("merkle_proof")]
-        $($rest)*
+        paste::paste! {
+            #[library_benchmark(setup = [<$setup>])]
+            #[bench::weighted_pool("weighted_pool")]
+            #[bench::merkle_proof("merkle_proof")]
+            $($rest)*
+        }
     };
 }
 
