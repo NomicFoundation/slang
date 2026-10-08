@@ -128,6 +128,14 @@ mod resolution {
         }
 
         #[test]
+        fn own_overload_via_contract_name() -> Result<()> {
+            run(
+                "resolution/ambiguous_reference",
+                "own_overload_via_contract_name",
+            )
+        }
+
+        #[test]
         fn public_variable_shadows_base_function() -> Result<()> {
             run(
                 "resolution/ambiguous_reference",
@@ -1445,6 +1453,22 @@ mod resolution {
         #[test]
         fn external_function_via_super() -> Result<()> {
             run("resolution/member_not_found", "external_function_via_super")
+        }
+
+        #[test]
+        fn inherited_function_via_contract_name() -> Result<()> {
+            run(
+                "resolution/member_not_found",
+                "inherited_function_via_contract_name",
+            )
+        }
+
+        #[test]
+        fn inherited_function_via_interface_name() -> Result<()> {
+            run(
+                "resolution/member_not_found",
+                "inherited_function_via_interface_name",
+            )
         }
 
         #[test]

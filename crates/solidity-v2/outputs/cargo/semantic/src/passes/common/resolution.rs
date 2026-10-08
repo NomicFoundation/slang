@@ -17,6 +17,35 @@ pub(crate) fn resolve_identifier_path_in_scope(
     identifier_path: &ir::IdentifierPath,
     starting_scope_id: ScopeId,
 ) -> Resolution {
+    resolve_path_in_scope(
+        binder,
+        identifier_path,
+        starting_scope_id,
+        Binder::resolve_in_scope_as_namespace,
+    )
+}
+
+/// Resolves the event of an `emit` or the error of a `revert`, whose segments
+/// are members of a type name used as a value, like `C.E` in an expression.
+pub(crate) fn resolve_member_path_in_scope(
+    binder: &mut Binder,
+    identifier_path: &ir::IdentifierPath,
+    starting_scope_id: ScopeId,
+) -> Resolution {
+    resolve_path_in_scope(
+        binder,
+        identifier_path,
+        starting_scope_id,
+        Binder::resolve_in_scope_as_type_member,
+    )
+}
+
+fn resolve_path_in_scope(
+    binder: &mut Binder,
+    identifier_path: &ir::IdentifierPath,
+    starting_scope_id: ScopeId,
+    resolve_member: fn(&Binder, ScopeId, &str) -> Resolution,
+) -> Resolution {
     let mut scope_id = Some(starting_scope_id);
     let mut resolution = Resolution::Unresolved;
 
@@ -27,7 +56,7 @@ pub(crate) fn resolve_identifier_path_in_scope(
                 // we use lexical resolution only in the first segment of the identifier path
                 binder.resolve_in_scope(scope_id, symbol)
             } else {
-                binder.resolve_in_scope_as_namespace(scope_id, symbol)
+                resolve_member(binder, scope_id, symbol)
             }
         } else {
             Resolution::Unresolved
@@ -67,10 +96,9 @@ pub(crate) fn filter_overridden_definitions(
 /// expression of a contract or interface type, and for the members of a type
 /// name. Those collapse by selector, so `calldata` and `memory` count as the
 /// same parameter and a base is overridden even when a data location differs.
-/// A type name reaches the inherited members too, and collapsing them by
-/// selector only merges a declaration with the base it overrides, because one
-/// contract cannot declare two functions that differ only in a parameter's
-/// data location.
+/// A type name reaches only its contract's own members, and collapsing them by
+/// selector merges none of them, because one contract cannot declare two
+/// functions that differ only in a parameter's data location.
 pub(crate) fn filter_overridden_definitions_by_selector(
     binder: &Binder,
     types: &TypeRegistry,
