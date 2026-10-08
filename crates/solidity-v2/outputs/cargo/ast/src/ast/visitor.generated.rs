@@ -912,6 +912,403 @@ pub trait Visitor {
     fn visit_unicode_string_literal(&mut self, _node: &UnicodeStringLiteral) {}
 }
 
+/// Implements the `enter_*` and `leave_*` methods of [`Visitor`] for every sequence and collection
+/// node by forwarding the node to the caller's `$enter` and, if given, `$leave` methods. Choices keep
+/// their defaults: each one spans its variant.
+#[macro_export]
+macro_rules! impl_nonterminal_visitor_hooks {
+    (enter = $enter:ident $(, leave = $leave:ident)?) => {
+        fn enter_abicoder_pragma(&mut self, node: &$crate::ast::AbicoderPragmaStruct) -> bool { self.$enter(node) }
+        $(fn leave_abicoder_pragma(&mut self, node: &$crate::ast::AbicoderPragmaStruct) { self.$leave(node); })?
+
+        fn enter_additive_expression(&mut self, node: &$crate::ast::AdditiveExpressionStruct) -> bool { self.$enter(node) }
+        $(fn leave_additive_expression(&mut self, node: &$crate::ast::AdditiveExpressionStruct) { self.$leave(node); })?
+
+        fn enter_address_type(&mut self, node: &$crate::ast::AddressTypeStruct) -> bool { self.$enter(node) }
+        $(fn leave_address_type(&mut self, node: &$crate::ast::AddressTypeStruct) { self.$leave(node); })?
+
+        fn enter_and_expression(&mut self, node: &$crate::ast::AndExpressionStruct) -> bool { self.$enter(node) }
+        $(fn leave_and_expression(&mut self, node: &$crate::ast::AndExpressionStruct) { self.$leave(node); })?
+
+        fn enter_array_expression(&mut self, node: &$crate::ast::ArrayExpressionStruct) -> bool { self.$enter(node) }
+        $(fn leave_array_expression(&mut self, node: &$crate::ast::ArrayExpressionStruct) { self.$leave(node); })?
+
+        fn enter_array_type_name(&mut self, node: &$crate::ast::ArrayTypeNameStruct) -> bool { self.$enter(node) }
+        $(fn leave_array_type_name(&mut self, node: &$crate::ast::ArrayTypeNameStruct) { self.$leave(node); })?
+
+        fn enter_assembly_statement(&mut self, node: &$crate::ast::AssemblyStatementStruct) -> bool { self.$enter(node) }
+        $(fn leave_assembly_statement(&mut self, node: &$crate::ast::AssemblyStatementStruct) { self.$leave(node); })?
+
+        fn enter_assignment_expression(&mut self, node: &$crate::ast::AssignmentExpressionStruct) -> bool { self.$enter(node) }
+        $(fn leave_assignment_expression(&mut self, node: &$crate::ast::AssignmentExpressionStruct) { self.$leave(node); })?
+
+        fn enter_bitwise_and_expression(&mut self, node: &$crate::ast::BitwiseAndExpressionStruct) -> bool { self.$enter(node) }
+        $(fn leave_bitwise_and_expression(&mut self, node: &$crate::ast::BitwiseAndExpressionStruct) { self.$leave(node); })?
+
+        fn enter_bitwise_or_expression(&mut self, node: &$crate::ast::BitwiseOrExpressionStruct) -> bool { self.$enter(node) }
+        $(fn leave_bitwise_or_expression(&mut self, node: &$crate::ast::BitwiseOrExpressionStruct) { self.$leave(node); })?
+
+        fn enter_bitwise_xor_expression(&mut self, node: &$crate::ast::BitwiseXorExpressionStruct) -> bool { self.$enter(node) }
+        $(fn leave_bitwise_xor_expression(&mut self, node: &$crate::ast::BitwiseXorExpressionStruct) { self.$leave(node); })?
+
+        fn enter_block(&mut self, node: &$crate::ast::BlockStruct) -> bool { self.$enter(node) }
+        $(fn leave_block(&mut self, node: &$crate::ast::BlockStruct) { self.$leave(node); })?
+
+        fn enter_break_statement(&mut self, node: &$crate::ast::BreakStatementStruct) -> bool { self.$enter(node) }
+        $(fn leave_break_statement(&mut self, node: &$crate::ast::BreakStatementStruct) { self.$leave(node); })?
+
+        fn enter_call_options_expression(&mut self, node: &$crate::ast::CallOptionsExpressionStruct) -> bool { self.$enter(node) }
+        $(fn leave_call_options_expression(&mut self, node: &$crate::ast::CallOptionsExpressionStruct) { self.$leave(node); })?
+
+        fn enter_catch_clause(&mut self, node: &$crate::ast::CatchClauseStruct) -> bool { self.$enter(node) }
+        $(fn leave_catch_clause(&mut self, node: &$crate::ast::CatchClauseStruct) { self.$leave(node); })?
+
+        fn enter_conditional_expression(&mut self, node: &$crate::ast::ConditionalExpressionStruct) -> bool { self.$enter(node) }
+        $(fn leave_conditional_expression(&mut self, node: &$crate::ast::ConditionalExpressionStruct) { self.$leave(node); })?
+
+        fn enter_constant_definition(&mut self, node: &$crate::ast::ConstantDefinitionStruct) -> bool { self.$enter(node) }
+        $(fn leave_constant_definition(&mut self, node: &$crate::ast::ConstantDefinitionStruct) { self.$leave(node); })?
+
+        fn enter_continue_statement(&mut self, node: &$crate::ast::ContinueStatementStruct) -> bool { self.$enter(node) }
+        $(fn leave_continue_statement(&mut self, node: &$crate::ast::ContinueStatementStruct) { self.$leave(node); })?
+
+        fn enter_contract_definition(&mut self, node: &$crate::ast::ContractDefinitionStruct) -> bool { self.$enter(node) }
+        $(fn leave_contract_definition(&mut self, node: &$crate::ast::ContractDefinitionStruct) { self.$leave(node); })?
+
+        fn enter_decimal_number_expression(&mut self, node: &$crate::ast::DecimalNumberExpressionStruct) -> bool { self.$enter(node) }
+        $(fn leave_decimal_number_expression(&mut self, node: &$crate::ast::DecimalNumberExpressionStruct) { self.$leave(node); })?
+
+        fn enter_do_while_statement(&mut self, node: &$crate::ast::DoWhileStatementStruct) -> bool { self.$enter(node) }
+        $(fn leave_do_while_statement(&mut self, node: &$crate::ast::DoWhileStatementStruct) { self.$leave(node); })?
+
+        fn enter_emit_statement(&mut self, node: &$crate::ast::EmitStatementStruct) -> bool { self.$enter(node) }
+        $(fn leave_emit_statement(&mut self, node: &$crate::ast::EmitStatementStruct) { self.$leave(node); })?
+
+        fn enter_enum_definition(&mut self, node: &$crate::ast::EnumDefinitionStruct) -> bool { self.$enter(node) }
+        $(fn leave_enum_definition(&mut self, node: &$crate::ast::EnumDefinitionStruct) { self.$leave(node); })?
+
+        fn enter_equality_expression(&mut self, node: &$crate::ast::EqualityExpressionStruct) -> bool { self.$enter(node) }
+        $(fn leave_equality_expression(&mut self, node: &$crate::ast::EqualityExpressionStruct) { self.$leave(node); })?
+
+        fn enter_error_definition(&mut self, node: &$crate::ast::ErrorDefinitionStruct) -> bool { self.$enter(node) }
+        $(fn leave_error_definition(&mut self, node: &$crate::ast::ErrorDefinitionStruct) { self.$leave(node); })?
+
+        fn enter_event_definition(&mut self, node: &$crate::ast::EventDefinitionStruct) -> bool { self.$enter(node) }
+        $(fn leave_event_definition(&mut self, node: &$crate::ast::EventDefinitionStruct) { self.$leave(node); })?
+
+        fn enter_experimental_pragma(&mut self, node: &$crate::ast::ExperimentalPragmaStruct) -> bool { self.$enter(node) }
+        $(fn leave_experimental_pragma(&mut self, node: &$crate::ast::ExperimentalPragmaStruct) { self.$leave(node); })?
+
+        fn enter_exponentiation_expression(&mut self, node: &$crate::ast::ExponentiationExpressionStruct) -> bool { self.$enter(node) }
+        $(fn leave_exponentiation_expression(&mut self, node: &$crate::ast::ExponentiationExpressionStruct) { self.$leave(node); })?
+
+        fn enter_expression_statement(&mut self, node: &$crate::ast::ExpressionStatementStruct) -> bool { self.$enter(node) }
+        $(fn leave_expression_statement(&mut self, node: &$crate::ast::ExpressionStatementStruct) { self.$leave(node); })?
+
+        fn enter_for_statement(&mut self, node: &$crate::ast::ForStatementStruct) -> bool { self.$enter(node) }
+        $(fn leave_for_statement(&mut self, node: &$crate::ast::ForStatementStruct) { self.$leave(node); })?
+
+        fn enter_function_attributes(&mut self, node: &$crate::ast::FunctionAttributesStruct) -> bool { self.$enter(node) }
+        $(fn leave_function_attributes(&mut self, node: &$crate::ast::FunctionAttributesStruct) { self.$leave(node); })?
+
+        fn enter_function_call_expression(&mut self, node: &$crate::ast::FunctionCallExpressionStruct) -> bool { self.$enter(node) }
+        $(fn leave_function_call_expression(&mut self, node: &$crate::ast::FunctionCallExpressionStruct) { self.$leave(node); })?
+
+        fn enter_function_definition(&mut self, node: &$crate::ast::FunctionDefinitionStruct) -> bool { self.$enter(node) }
+        $(fn leave_function_definition(&mut self, node: &$crate::ast::FunctionDefinitionStruct) { self.$leave(node); })?
+
+        fn enter_function_type(&mut self, node: &$crate::ast::FunctionTypeStruct) -> bool { self.$enter(node) }
+        $(fn leave_function_type(&mut self, node: &$crate::ast::FunctionTypeStruct) { self.$leave(node); })?
+
+        fn enter_function_type_attributes(&mut self, node: &$crate::ast::FunctionTypeAttributesStruct) -> bool { self.$enter(node) }
+        $(fn leave_function_type_attributes(&mut self, node: &$crate::ast::FunctionTypeAttributesStruct) { self.$leave(node); })?
+
+        fn enter_hex_number_expression(&mut self, node: &$crate::ast::HexNumberExpressionStruct) -> bool { self.$enter(node) }
+        $(fn leave_hex_number_expression(&mut self, node: &$crate::ast::HexNumberExpressionStruct) { self.$leave(node); })?
+
+        fn enter_if_statement(&mut self, node: &$crate::ast::IfStatementStruct) -> bool { self.$enter(node) }
+        $(fn leave_if_statement(&mut self, node: &$crate::ast::IfStatementStruct) { self.$leave(node); })?
+
+        fn enter_import_deconstruction(&mut self, node: &$crate::ast::ImportDeconstructionStruct) -> bool { self.$enter(node) }
+        $(fn leave_import_deconstruction(&mut self, node: &$crate::ast::ImportDeconstructionStruct) { self.$leave(node); })?
+
+        fn enter_import_deconstruction_symbol(&mut self, node: &$crate::ast::ImportDeconstructionSymbolStruct) -> bool { self.$enter(node) }
+        $(fn leave_import_deconstruction_symbol(&mut self, node: &$crate::ast::ImportDeconstructionSymbolStruct) { self.$leave(node); })?
+
+        fn enter_index_access_expression(&mut self, node: &$crate::ast::IndexAccessExpressionStruct) -> bool { self.$enter(node) }
+        $(fn leave_index_access_expression(&mut self, node: &$crate::ast::IndexAccessExpressionStruct) { self.$leave(node); })?
+
+        fn enter_inequality_expression(&mut self, node: &$crate::ast::InequalityExpressionStruct) -> bool { self.$enter(node) }
+        $(fn leave_inequality_expression(&mut self, node: &$crate::ast::InequalityExpressionStruct) { self.$leave(node); })?
+
+        fn enter_inheritance_type(&mut self, node: &$crate::ast::InheritanceTypeStruct) -> bool { self.$enter(node) }
+        $(fn leave_inheritance_type(&mut self, node: &$crate::ast::InheritanceTypeStruct) { self.$leave(node); })?
+
+        fn enter_interface_definition(&mut self, node: &$crate::ast::InterfaceDefinitionStruct) -> bool { self.$enter(node) }
+        $(fn leave_interface_definition(&mut self, node: &$crate::ast::InterfaceDefinitionStruct) { self.$leave(node); })?
+
+        fn enter_library_definition(&mut self, node: &$crate::ast::LibraryDefinitionStruct) -> bool { self.$enter(node) }
+        $(fn leave_library_definition(&mut self, node: &$crate::ast::LibraryDefinitionStruct) { self.$leave(node); })?
+
+        fn enter_mapping_type(&mut self, node: &$crate::ast::MappingTypeStruct) -> bool { self.$enter(node) }
+        $(fn leave_mapping_type(&mut self, node: &$crate::ast::MappingTypeStruct) { self.$leave(node); })?
+
+        fn enter_member_access_expression(&mut self, node: &$crate::ast::MemberAccessExpressionStruct) -> bool { self.$enter(node) }
+        $(fn leave_member_access_expression(&mut self, node: &$crate::ast::MemberAccessExpressionStruct) { self.$leave(node); })?
+
+        fn enter_modifier_invocation(&mut self, node: &$crate::ast::ModifierInvocationStruct) -> bool { self.$enter(node) }
+        $(fn leave_modifier_invocation(&mut self, node: &$crate::ast::ModifierInvocationStruct) { self.$leave(node); })?
+
+        fn enter_multi_typed_declaration(&mut self, node: &$crate::ast::MultiTypedDeclarationStruct) -> bool { self.$enter(node) }
+        $(fn leave_multi_typed_declaration(&mut self, node: &$crate::ast::MultiTypedDeclarationStruct) { self.$leave(node); })?
+
+        fn enter_multi_typed_declaration_element(&mut self, node: &$crate::ast::MultiTypedDeclarationElementStruct) -> bool { self.$enter(node) }
+        $(fn leave_multi_typed_declaration_element(&mut self, node: &$crate::ast::MultiTypedDeclarationElementStruct) { self.$leave(node); })?
+
+        fn enter_multiplicative_expression(&mut self, node: &$crate::ast::MultiplicativeExpressionStruct) -> bool { self.$enter(node) }
+        $(fn leave_multiplicative_expression(&mut self, node: &$crate::ast::MultiplicativeExpressionStruct) { self.$leave(node); })?
+
+        fn enter_named_argument(&mut self, node: &$crate::ast::NamedArgumentStruct) -> bool { self.$enter(node) }
+        $(fn leave_named_argument(&mut self, node: &$crate::ast::NamedArgumentStruct) { self.$leave(node); })?
+
+        fn enter_new_expression(&mut self, node: &$crate::ast::NewExpressionStruct) -> bool { self.$enter(node) }
+        $(fn leave_new_expression(&mut self, node: &$crate::ast::NewExpressionStruct) { self.$leave(node); })?
+
+        fn enter_or_expression(&mut self, node: &$crate::ast::OrExpressionStruct) -> bool { self.$enter(node) }
+        $(fn leave_or_expression(&mut self, node: &$crate::ast::OrExpressionStruct) { self.$leave(node); })?
+
+        fn enter_parameter(&mut self, node: &$crate::ast::ParameterStruct) -> bool { self.$enter(node) }
+        $(fn leave_parameter(&mut self, node: &$crate::ast::ParameterStruct) { self.$leave(node); })?
+
+        fn enter_path_import(&mut self, node: &$crate::ast::PathImportStruct) -> bool { self.$enter(node) }
+        $(fn leave_path_import(&mut self, node: &$crate::ast::PathImportStruct) { self.$leave(node); })?
+
+        fn enter_postfix_expression(&mut self, node: &$crate::ast::PostfixExpressionStruct) -> bool { self.$enter(node) }
+        $(fn leave_postfix_expression(&mut self, node: &$crate::ast::PostfixExpressionStruct) { self.$leave(node); })?
+
+        fn enter_pragma_directive(&mut self, node: &$crate::ast::PragmaDirectiveStruct) -> bool { self.$enter(node) }
+        $(fn leave_pragma_directive(&mut self, node: &$crate::ast::PragmaDirectiveStruct) { self.$leave(node); })?
+
+        fn enter_prefix_expression(&mut self, node: &$crate::ast::PrefixExpressionStruct) -> bool { self.$enter(node) }
+        $(fn leave_prefix_expression(&mut self, node: &$crate::ast::PrefixExpressionStruct) { self.$leave(node); })?
+
+        fn enter_return_statement(&mut self, node: &$crate::ast::ReturnStatementStruct) -> bool { self.$enter(node) }
+        $(fn leave_return_statement(&mut self, node: &$crate::ast::ReturnStatementStruct) { self.$leave(node); })?
+
+        fn enter_revert_statement(&mut self, node: &$crate::ast::RevertStatementStruct) -> bool { self.$enter(node) }
+        $(fn leave_revert_statement(&mut self, node: &$crate::ast::RevertStatementStruct) { self.$leave(node); })?
+
+        fn enter_shift_expression(&mut self, node: &$crate::ast::ShiftExpressionStruct) -> bool { self.$enter(node) }
+        $(fn leave_shift_expression(&mut self, node: &$crate::ast::ShiftExpressionStruct) { self.$leave(node); })?
+
+        fn enter_single_typed_declaration(&mut self, node: &$crate::ast::SingleTypedDeclarationStruct) -> bool { self.$enter(node) }
+        $(fn leave_single_typed_declaration(&mut self, node: &$crate::ast::SingleTypedDeclarationStruct) { self.$leave(node); })?
+
+        fn enter_source_unit(&mut self, node: &$crate::ast::SourceUnitStruct) -> bool { self.$enter(node) }
+        $(fn leave_source_unit(&mut self, node: &$crate::ast::SourceUnitStruct) { self.$leave(node); })?
+
+        fn enter_state_variable_attributes(&mut self, node: &$crate::ast::StateVariableAttributesStruct) -> bool { self.$enter(node) }
+        $(fn leave_state_variable_attributes(&mut self, node: &$crate::ast::StateVariableAttributesStruct) { self.$leave(node); })?
+
+        fn enter_state_variable_definition(&mut self, node: &$crate::ast::StateVariableDefinitionStruct) -> bool { self.$enter(node) }
+        $(fn leave_state_variable_definition(&mut self, node: &$crate::ast::StateVariableDefinitionStruct) { self.$leave(node); })?
+
+        fn enter_struct_definition(&mut self, node: &$crate::ast::StructDefinitionStruct) -> bool { self.$enter(node) }
+        $(fn leave_struct_definition(&mut self, node: &$crate::ast::StructDefinitionStruct) { self.$leave(node); })?
+
+        fn enter_struct_member(&mut self, node: &$crate::ast::StructMemberStruct) -> bool { self.$enter(node) }
+        $(fn leave_struct_member(&mut self, node: &$crate::ast::StructMemberStruct) { self.$leave(node); })?
+
+        fn enter_try_statement(&mut self, node: &$crate::ast::TryStatementStruct) -> bool { self.$enter(node) }
+        $(fn leave_try_statement(&mut self, node: &$crate::ast::TryStatementStruct) { self.$leave(node); })?
+
+        fn enter_tuple_expression(&mut self, node: &$crate::ast::TupleExpressionStruct) -> bool { self.$enter(node) }
+        $(fn leave_tuple_expression(&mut self, node: &$crate::ast::TupleExpressionStruct) { self.$leave(node); })?
+
+        fn enter_tuple_value(&mut self, node: &$crate::ast::TupleValueStruct) -> bool { self.$enter(node) }
+        $(fn leave_tuple_value(&mut self, node: &$crate::ast::TupleValueStruct) { self.$leave(node); })?
+
+        fn enter_type_expression(&mut self, node: &$crate::ast::TypeExpressionStruct) -> bool { self.$enter(node) }
+        $(fn leave_type_expression(&mut self, node: &$crate::ast::TypeExpressionStruct) { self.$leave(node); })?
+
+        fn enter_unchecked_block(&mut self, node: &$crate::ast::UncheckedBlockStruct) -> bool { self.$enter(node) }
+        $(fn leave_unchecked_block(&mut self, node: &$crate::ast::UncheckedBlockStruct) { self.$leave(node); })?
+
+        fn enter_user_defined_value_type_definition(&mut self, node: &$crate::ast::UserDefinedValueTypeDefinitionStruct) -> bool { self.$enter(node) }
+        $(fn leave_user_defined_value_type_definition(&mut self, node: &$crate::ast::UserDefinedValueTypeDefinitionStruct) { self.$leave(node); })?
+
+        fn enter_using_deconstruction(&mut self, node: &$crate::ast::UsingDeconstructionStruct) -> bool { self.$enter(node) }
+        $(fn leave_using_deconstruction(&mut self, node: &$crate::ast::UsingDeconstructionStruct) { self.$leave(node); })?
+
+        fn enter_using_deconstruction_symbol(&mut self, node: &$crate::ast::UsingDeconstructionSymbolStruct) -> bool { self.$enter(node) }
+        $(fn leave_using_deconstruction_symbol(&mut self, node: &$crate::ast::UsingDeconstructionSymbolStruct) { self.$leave(node); })?
+
+        fn enter_using_directive(&mut self, node: &$crate::ast::UsingDirectiveStruct) -> bool { self.$enter(node) }
+        $(fn leave_using_directive(&mut self, node: &$crate::ast::UsingDirectiveStruct) { self.$leave(node); })?
+
+        fn enter_variable_declaration(&mut self, node: &$crate::ast::VariableDeclarationStruct) -> bool { self.$enter(node) }
+        $(fn leave_variable_declaration(&mut self, node: &$crate::ast::VariableDeclarationStruct) { self.$leave(node); })?
+
+        fn enter_variable_declaration_statement(&mut self, node: &$crate::ast::VariableDeclarationStatementStruct) -> bool { self.$enter(node) }
+        $(fn leave_variable_declaration_statement(&mut self, node: &$crate::ast::VariableDeclarationStatementStruct) { self.$leave(node); })?
+
+        fn enter_version_pragma(&mut self, node: &$crate::ast::VersionPragmaStruct) -> bool { self.$enter(node) }
+        $(fn leave_version_pragma(&mut self, node: &$crate::ast::VersionPragmaStruct) { self.$leave(node); })?
+
+        fn enter_version_pragma_comparator(&mut self, node: &$crate::ast::VersionPragmaComparatorStruct) -> bool { self.$enter(node) }
+        $(fn leave_version_pragma_comparator(&mut self, node: &$crate::ast::VersionPragmaComparatorStruct) { self.$leave(node); })?
+
+        fn enter_while_statement(&mut self, node: &$crate::ast::WhileStatementStruct) -> bool { self.$enter(node) }
+        $(fn leave_while_statement(&mut self, node: &$crate::ast::WhileStatementStruct) { self.$leave(node); })?
+
+        fn enter_yul_block(&mut self, node: &$crate::ast::YulBlockStruct) -> bool { self.$enter(node) }
+        $(fn leave_yul_block(&mut self, node: &$crate::ast::YulBlockStruct) { self.$leave(node); })?
+
+        fn enter_yul_break_statement(&mut self, node: &$crate::ast::YulBreakStatementStruct) -> bool { self.$enter(node) }
+        $(fn leave_yul_break_statement(&mut self, node: &$crate::ast::YulBreakStatementStruct) { self.$leave(node); })?
+
+        fn enter_yul_continue_statement(&mut self, node: &$crate::ast::YulContinueStatementStruct) -> bool { self.$enter(node) }
+        $(fn leave_yul_continue_statement(&mut self, node: &$crate::ast::YulContinueStatementStruct) { self.$leave(node); })?
+
+        fn enter_yul_default_case(&mut self, node: &$crate::ast::YulDefaultCaseStruct) -> bool { self.$enter(node) }
+        $(fn leave_yul_default_case(&mut self, node: &$crate::ast::YulDefaultCaseStruct) { self.$leave(node); })?
+
+        fn enter_yul_for_statement(&mut self, node: &$crate::ast::YulForStatementStruct) -> bool { self.$enter(node) }
+        $(fn leave_yul_for_statement(&mut self, node: &$crate::ast::YulForStatementStruct) { self.$leave(node); })?
+
+        fn enter_yul_function_call_expression(&mut self, node: &$crate::ast::YulFunctionCallExpressionStruct) -> bool { self.$enter(node) }
+        $(fn leave_yul_function_call_expression(&mut self, node: &$crate::ast::YulFunctionCallExpressionStruct) { self.$leave(node); })?
+
+        fn enter_yul_function_definition(&mut self, node: &$crate::ast::YulFunctionDefinitionStruct) -> bool { self.$enter(node) }
+        $(fn leave_yul_function_definition(&mut self, node: &$crate::ast::YulFunctionDefinitionStruct) { self.$leave(node); })?
+
+        fn enter_yul_if_statement(&mut self, node: &$crate::ast::YulIfStatementStruct) -> bool { self.$enter(node) }
+        $(fn leave_yul_if_statement(&mut self, node: &$crate::ast::YulIfStatementStruct) { self.$leave(node); })?
+
+        fn enter_yul_leave_statement(&mut self, node: &$crate::ast::YulLeaveStatementStruct) -> bool { self.$enter(node) }
+        $(fn leave_yul_leave_statement(&mut self, node: &$crate::ast::YulLeaveStatementStruct) { self.$leave(node); })?
+
+        fn enter_yul_switch_statement(&mut self, node: &$crate::ast::YulSwitchStatementStruct) -> bool { self.$enter(node) }
+        $(fn leave_yul_switch_statement(&mut self, node: &$crate::ast::YulSwitchStatementStruct) { self.$leave(node); })?
+
+        fn enter_yul_value_case(&mut self, node: &$crate::ast::YulValueCaseStruct) -> bool { self.$enter(node) }
+        $(fn leave_yul_value_case(&mut self, node: &$crate::ast::YulValueCaseStruct) { self.$leave(node); })?
+
+        fn enter_yul_variable_assignment_statement(&mut self, node: &$crate::ast::YulVariableAssignmentStatementStruct) -> bool { self.$enter(node) }
+        $(fn leave_yul_variable_assignment_statement(&mut self, node: &$crate::ast::YulVariableAssignmentStatementStruct) { self.$leave(node); })?
+
+        fn enter_yul_variable_declaration_statement(&mut self, node: &$crate::ast::YulVariableDeclarationStatementStruct) -> bool { self.$enter(node) }
+        $(fn leave_yul_variable_declaration_statement(&mut self, node: &$crate::ast::YulVariableDeclarationStatementStruct) { self.$leave(node); })?
+
+        fn enter_yul_variable_declaration_value(&mut self, node: &$crate::ast::YulVariableDeclarationValueStruct) -> bool { self.$enter(node) }
+        $(fn leave_yul_variable_declaration_value(&mut self, node: &$crate::ast::YulVariableDeclarationValueStruct) { self.$leave(node); })?
+
+        fn enter_array_values(&mut self, items: &$crate::ast::ArrayValuesStruct) -> bool { self.$enter(items) }
+        $(fn leave_array_values(&mut self, items: &$crate::ast::ArrayValuesStruct) { self.$leave(items); })?
+
+        fn enter_call_options(&mut self, items: &$crate::ast::CallOptionsStruct) -> bool { self.$enter(items) }
+        $(fn leave_call_options(&mut self, items: &$crate::ast::CallOptionsStruct) { self.$leave(items); })?
+
+        fn enter_catch_clauses(&mut self, items: &$crate::ast::CatchClausesStruct) -> bool { self.$enter(items) }
+        $(fn leave_catch_clauses(&mut self, items: &$crate::ast::CatchClausesStruct) { self.$leave(items); })?
+
+        fn enter_contract_members(&mut self, items: &$crate::ast::ContractMembersStruct) -> bool { self.$enter(items) }
+        $(fn leave_contract_members(&mut self, items: &$crate::ast::ContractMembersStruct) { self.$leave(items); })?
+
+        fn enter_enum_members(&mut self, items: &$crate::ast::EnumMembersStruct) -> bool { self.$enter(items) }
+        $(fn leave_enum_members(&mut self, items: &$crate::ast::EnumMembersStruct) { self.$leave(items); })?
+
+        fn enter_hex_string_literals(&mut self, items: &$crate::ast::HexStringLiteralsStruct) -> bool { self.$enter(items) }
+        $(fn leave_hex_string_literals(&mut self, items: &$crate::ast::HexStringLiteralsStruct) { self.$leave(items); })?
+
+        fn enter_identifier_path(&mut self, items: &$crate::ast::IdentifierPathStruct) -> bool { self.$enter(items) }
+        $(fn leave_identifier_path(&mut self, items: &$crate::ast::IdentifierPathStruct) { self.$leave(items); })?
+
+        fn enter_import_deconstruction_symbols(&mut self, items: &$crate::ast::ImportDeconstructionSymbolsStruct) -> bool { self.$enter(items) }
+        $(fn leave_import_deconstruction_symbols(&mut self, items: &$crate::ast::ImportDeconstructionSymbolsStruct) { self.$leave(items); })?
+
+        fn enter_inheritance_types(&mut self, items: &$crate::ast::InheritanceTypesStruct) -> bool { self.$enter(items) }
+        $(fn leave_inheritance_types(&mut self, items: &$crate::ast::InheritanceTypesStruct) { self.$leave(items); })?
+
+        fn enter_interface_members(&mut self, items: &$crate::ast::InterfaceMembersStruct) -> bool { self.$enter(items) }
+        $(fn leave_interface_members(&mut self, items: &$crate::ast::InterfaceMembersStruct) { self.$leave(items); })?
+
+        fn enter_library_members(&mut self, items: &$crate::ast::LibraryMembersStruct) -> bool { self.$enter(items) }
+        $(fn leave_library_members(&mut self, items: &$crate::ast::LibraryMembersStruct) { self.$leave(items); })?
+
+        fn enter_modifier_invocations(&mut self, items: &$crate::ast::ModifierInvocationsStruct) -> bool { self.$enter(items) }
+        $(fn leave_modifier_invocations(&mut self, items: &$crate::ast::ModifierInvocationsStruct) { self.$leave(items); })?
+
+        fn enter_multi_typed_declaration_elements(&mut self, items: &$crate::ast::MultiTypedDeclarationElementsStruct) -> bool { self.$enter(items) }
+        $(fn leave_multi_typed_declaration_elements(&mut self, items: &$crate::ast::MultiTypedDeclarationElementsStruct) { self.$leave(items); })?
+
+        fn enter_named_arguments(&mut self, items: &$crate::ast::NamedArgumentsStruct) -> bool { self.$enter(items) }
+        $(fn leave_named_arguments(&mut self, items: &$crate::ast::NamedArgumentsStruct) { self.$leave(items); })?
+
+        fn enter_override_paths(&mut self, items: &$crate::ast::OverridePathsStruct) -> bool { self.$enter(items) }
+        $(fn leave_override_paths(&mut self, items: &$crate::ast::OverridePathsStruct) { self.$leave(items); })?
+
+        fn enter_parameters(&mut self, items: &$crate::ast::ParametersStruct) -> bool { self.$enter(items) }
+        $(fn leave_parameters(&mut self, items: &$crate::ast::ParametersStruct) { self.$leave(items); })?
+
+        fn enter_positional_arguments(&mut self, items: &$crate::ast::PositionalArgumentsStruct) -> bool { self.$enter(items) }
+        $(fn leave_positional_arguments(&mut self, items: &$crate::ast::PositionalArgumentsStruct) { self.$leave(items); })?
+
+        fn enter_source_unit_members(&mut self, items: &$crate::ast::SourceUnitMembersStruct) -> bool { self.$enter(items) }
+        $(fn leave_source_unit_members(&mut self, items: &$crate::ast::SourceUnitMembersStruct) { self.$leave(items); })?
+
+        fn enter_statements(&mut self, items: &$crate::ast::StatementsStruct) -> bool { self.$enter(items) }
+        $(fn leave_statements(&mut self, items: &$crate::ast::StatementsStruct) { self.$leave(items); })?
+
+        fn enter_string_literals(&mut self, items: &$crate::ast::StringLiteralsStruct) -> bool { self.$enter(items) }
+        $(fn leave_string_literals(&mut self, items: &$crate::ast::StringLiteralsStruct) { self.$leave(items); })?
+
+        fn enter_struct_members(&mut self, items: &$crate::ast::StructMembersStruct) -> bool { self.$enter(items) }
+        $(fn leave_struct_members(&mut self, items: &$crate::ast::StructMembersStruct) { self.$leave(items); })?
+
+        fn enter_tuple_values(&mut self, items: &$crate::ast::TupleValuesStruct) -> bool { self.$enter(items) }
+        $(fn leave_tuple_values(&mut self, items: &$crate::ast::TupleValuesStruct) { self.$leave(items); })?
+
+        fn enter_unicode_string_literals(&mut self, items: &$crate::ast::UnicodeStringLiteralsStruct) -> bool { self.$enter(items) }
+        $(fn leave_unicode_string_literals(&mut self, items: &$crate::ast::UnicodeStringLiteralsStruct) { self.$leave(items); })?
+
+        fn enter_using_deconstruction_symbols(&mut self, items: &$crate::ast::UsingDeconstructionSymbolsStruct) -> bool { self.$enter(items) }
+        $(fn leave_using_deconstruction_symbols(&mut self, items: &$crate::ast::UsingDeconstructionSymbolsStruct) { self.$leave(items); })?
+
+        fn enter_version_pragma_expression_set(&mut self, items: &$crate::ast::VersionPragmaExpressionSetStruct) -> bool { self.$enter(items) }
+        $(fn leave_version_pragma_expression_set(&mut self, items: &$crate::ast::VersionPragmaExpressionSetStruct) { self.$leave(items); })?
+
+        fn enter_version_pragma_expression_sets(&mut self, items: &$crate::ast::VersionPragmaExpressionSetsStruct) -> bool { self.$enter(items) }
+        $(fn leave_version_pragma_expression_sets(&mut self, items: &$crate::ast::VersionPragmaExpressionSetsStruct) { self.$leave(items); })?
+
+        fn enter_version_pragma_specifier(&mut self, items: &$crate::ast::VersionPragmaSpecifierStruct) -> bool { self.$enter(items) }
+        $(fn leave_version_pragma_specifier(&mut self, items: &$crate::ast::VersionPragmaSpecifierStruct) { self.$leave(items); })?
+
+        fn enter_yul_arguments(&mut self, items: &$crate::ast::YulArgumentsStruct) -> bool { self.$enter(items) }
+        $(fn leave_yul_arguments(&mut self, items: &$crate::ast::YulArgumentsStruct) { self.$leave(items); })?
+
+        fn enter_yul_parameters(&mut self, items: &$crate::ast::YulParametersStruct) -> bool { self.$enter(items) }
+        $(fn leave_yul_parameters(&mut self, items: &$crate::ast::YulParametersStruct) { self.$leave(items); })?
+
+        fn enter_yul_path(&mut self, items: &$crate::ast::YulPathStruct) -> bool { self.$enter(items) }
+        $(fn leave_yul_path(&mut self, items: &$crate::ast::YulPathStruct) { self.$leave(items); })?
+
+        fn enter_yul_paths(&mut self, items: &$crate::ast::YulPathsStruct) -> bool { self.$enter(items) }
+        $(fn leave_yul_paths(&mut self, items: &$crate::ast::YulPathsStruct) { self.$leave(items); })?
+
+        fn enter_yul_statements(&mut self, items: &$crate::ast::YulStatementsStruct) -> bool { self.$enter(items) }
+        $(fn leave_yul_statements(&mut self, items: &$crate::ast::YulStatementsStruct) { self.$leave(items); })?
+
+        fn enter_yul_value_cases(&mut self, items: &$crate::ast::YulValueCasesStruct) -> bool { self.$enter(items) }
+        $(fn leave_yul_value_cases(&mut self, items: &$crate::ast::YulValueCasesStruct) { self.$leave(items); })?
+
+        fn enter_yul_variable_names(&mut self, items: &$crate::ast::YulVariableNamesStruct) -> bool { self.$enter(items) }
+        $(fn leave_yul_variable_names(&mut self, items: &$crate::ast::YulVariableNamesStruct) { self.$leave(items); })?
+      };
+}
+
+pub use crate::impl_nonterminal_visitor_hooks;
+
 //
 // Sequences
 //

@@ -196,6 +196,7 @@ pub mod slang_solidity_v2_ast::ast
 pub use slang_solidity_v2_ast::ast::LiteralKind
 pub use slang_solidity_v2_ast::ast::Number
 pub mod slang_solidity_v2_ast::ast::visitor
+pub macro slang_solidity_v2_ast::ast::visitor::impl_nonterminal_visitor_hooks!
 pub trait slang_solidity_v2_ast::ast::visitor::Visitor
 pub fn slang_solidity_v2_ast::ast::visitor::Visitor::enter_abicoder_pragma(&mut self, &slang_solidity_v2_ast::ast::AbicoderPragma) -> bool
 pub fn slang_solidity_v2_ast::ast::visitor::Visitor::enter_abicoder_version(&mut self, &slang_solidity_v2_ast::ast::AbicoderVersion) -> bool
@@ -5418,3 +5419,4 @@ pub type slang_solidity_v2_ast::ast::YulVariableAssignmentStatement = slang_soli
 pub type slang_solidity_v2_ast::ast::YulVariableDeclarationStatement = slang_solidity_v2_ast::ast::YulVariableDeclarationStatementStruct
 pub type slang_solidity_v2_ast::ast::YulVariableDeclarationValue = slang_solidity_v2_ast::ast::YulVariableDeclarationValueStruct
 pub type slang_solidity_v2_ast::ast::YulVariableNames = slang_solidity_v2_ast::ast::YulVariableNamesStruct
+pub macro slang_solidity_v2_ast::impl_nonterminal_visitor_hooks!

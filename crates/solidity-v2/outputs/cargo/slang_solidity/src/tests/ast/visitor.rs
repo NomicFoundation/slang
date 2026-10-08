@@ -1,5 +1,6 @@
 use super::fixtures;
-use crate::ast;
+use crate::ast::{self, NodeLocation};
+use crate::define_fixture;
 
 #[derive(Default)]
 struct IdentifierCounter {
@@ -50,4 +51,142 @@ fn test_ast_visitor() {
     assert_eq!(activatable_visitor.total, 31);
     assert_eq!(activatable_visitor.definitions, 10);
     assert_eq!(activatable_visitor.references, 22);
+}
+
+const NONTERMINALS: &str = "pragma solidity ^0.8.0;
+contract C { uint public x; function f(uint a) public view returns (uint) { return a + x; } }";
+
+define_fixture!(
+    Nonterminals,
+    file: "main.sol", NONTERMINALS,
+);
+
+#[derive(Default)]
+struct NonterminalTexts(Vec<Option<&'static str>>);
+
+impl ast::visitor::Visitor for NonterminalTexts {
+    ast::visitor::impl_nonterminal_visitor_hooks!(enter = enter_nonterminal);
+}
+
+impl NonterminalTexts {
+    fn enter_nonterminal(&mut self, node: &dyn NodeLocation) -> bool {
+        self.0.push(
+            node.calculate_text_range()
+                .map(|range| &NONTERMINALS[range]),
+        );
+        true
+    }
+}
+
+#[test]
+fn test_enter_nonterminal_order() {
+    let unit = Nonterminals::build_compilation_unit();
+    let source_unit = unit.file(&"main.sol".into()).unwrap().ast();
+
+    let mut texts = NonterminalTexts::default();
+    ast::visitor::accept_source_unit(&source_unit, &mut texts);
+
+    let contract = "contract C { uint public x; function f(uint a) public view returns (uint) { return a + x; } }";
+    let function = "function f(uint a) public view returns (uint) { return a + x; }";
+    assert_eq!(
+        texts.0,
+        [
+            Some(NONTERMINALS), // SourceUnit
+            Some(NONTERMINALS), // SourceUnitMembers
+            Some("pragma solidity ^0.8.0;"),
+            Some("solidity ^0.8.0"),
+            Some("^0.8.0"), // VersionPragmaExpressionSets
+            Some("^0.8.0"), // VersionPragmaExpressionSet
+            Some("^0.8.0"), // VersionPragmaComparator
+            None, // VersionPragmaSpecifier: its components are parsed numbers, so it has no range
+            Some(contract),
+            None, // InheritanceTypes
+            Some("uint public x; function f(uint a) public view returns (uint) { return a + x; }"),
+            Some("uint public x;"),
+            Some("public"), // StateVariableAttributes
+            Some(function),
+            Some("uint a"), // Parameters
+            Some("uint a"), // Parameter
+            Some("public view"),
+            None,         // ModifierInvocations
+            Some("uint"), // returns: Parameters
+            Some("uint"), // returns: Parameter
+            Some("{ return a + x; }"),
+            Some("return a + x;"), // Statements
+            Some("return a + x;"), // ReturnStatement
+            Some("a + x"),
+        ]
+    );
+}
+
+#[derive(Default)]
+struct OutsideFunctions(Vec<&'static str>);
+
+impl ast::visitor::Visitor for OutsideFunctions {
+    ast::visitor::impl_nonterminal_visitor_hooks!(enter = enter_nonterminal);
+}
+
+impl OutsideFunctions {
+    fn enter_nonterminal(&mut self, node: &dyn NodeLocation) -> bool {
+        let Some(text) = node
+            .calculate_text_range()
+            .map(|range| &NONTERMINALS[range])
+        else {
+            return true;
+        };
+        if text.starts_with("function") {
+            return false;
+        }
+        self.0.push(text);
+        true
+    }
+}
+
+#[test]
+fn test_enter_nonterminal_false_skips_children() {
+    let unit = Nonterminals::build_compilation_unit();
+    let source_unit = unit.file(&"main.sol".into()).unwrap().ast();
+
+    let mut texts = OutsideFunctions::default();
+    ast::visitor::accept_source_unit(&source_unit, &mut texts);
+
+    assert!(!texts.0.contains(&"uint a"));
+    assert_eq!(texts.0.last(), Some(&"public")); // StateVariableAttributes
+}
+
+#[derive(Default)]
+struct NonterminalDepth {
+    depth: usize,
+    max_depth: usize,
+}
+
+impl ast::visitor::Visitor for NonterminalDepth {
+    ast::visitor::impl_nonterminal_visitor_hooks!(
+        enter = enter_nonterminal,
+        leave = leave_nonterminal
+    );
+}
+
+impl NonterminalDepth {
+    fn enter_nonterminal(&mut self, _node: &dyn NodeLocation) -> bool {
+        self.depth += 1;
+        self.max_depth = self.max_depth.max(self.depth);
+        true
+    }
+
+    fn leave_nonterminal(&mut self, _node: &dyn NodeLocation) {
+        self.depth -= 1;
+    }
+}
+
+#[test]
+fn test_leave_nonterminal_pairs_with_enter() {
+    let unit = Nonterminals::build_compilation_unit();
+    let source_unit = unit.file(&"main.sol".into()).unwrap().ast();
+
+    let mut depth = NonterminalDepth::default();
+    ast::visitor::accept_source_unit(&source_unit, &mut depth);
+
+    assert_eq!(depth.depth, 0);
+    assert_eq!(depth.max_depth, 9); // SourceUnit down to the `a + x` expression
 }

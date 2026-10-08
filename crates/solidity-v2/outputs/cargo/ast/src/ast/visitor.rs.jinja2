@@ -22,6 +22,25 @@ pub trait Visitor {
   {% endfor -%}
 }
 
+/// Implements the `enter_*` and `leave_*` methods of [`Visitor`] for every sequence and collection
+/// node by forwarding the node to the caller's `$enter` and, if given, `$leave` methods. Choices keep
+/// their defaults: each one spans its variant.
+#[macro_export]
+macro_rules! impl_nonterminal_visitor_hooks {
+    (enter = $enter:ident $(, leave = $leave:ident)?) => {
+      {%- for parent_type, sequence in target.sequences %}
+        fn enter_{{ parent_type | snake_case }}(&mut self, node: &$crate::ast::{{ parent_type }}Struct) -> bool { self.$enter(node) }
+        $(fn leave_{{ parent_type | snake_case }}(&mut self, node: &$crate::ast::{{ parent_type }}Struct) { self.$leave(node); })?
+      {% endfor -%}
+      {%- for parent_type, collection in target.collections %}
+        fn enter_{{ parent_type | snake_case }}(&mut self, items: &$crate::ast::{{ parent_type }}Struct) -> bool { self.$enter(items) }
+        $(fn leave_{{ parent_type | snake_case }}(&mut self, items: &$crate::ast::{{ parent_type }}Struct) { self.$leave(items); })?
+      {% endfor -%}
+    };
+}
+
+pub use crate::impl_nonterminal_visitor_hooks;
+
 //
 // Sequences
 //
