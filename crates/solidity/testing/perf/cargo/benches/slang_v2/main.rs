@@ -55,20 +55,22 @@ mod __dependencies_used_in_lib__ {
 // __SLANG_INFRA_PROJECT_LIST__ (keep in sync)
 macro_rules! bench_projects {
     (
-        #[$lb:meta]
+        #[library_benchmark(setup = $setup:ident)]
         $($rest:tt)*
     ) => {
-        #[$lb]
-        #[bench::uniswap("uniswap")]
-        #[bench::multicall3("multicall3")]
-        #[bench::create_x("create_x")]
-        #[bench::ui_pool_data_provider_v3("ui_pool_data_provider_v3")]
-        #[bench::cooldogs("cooldogs")]
-        #[bench::one_step_leverage_f("one_step_leverage_f")]
-        #[bench::pointer_libraries("pointer_libraries")]
-        #[bench::merkle_proof("merkle_proof")]
-        #[bench::ens_registrar_controller("ens_registrar_controller")]
-        $($rest)*
+        paste::paste! {
+            #[library_benchmark(setup = [<$setup>])]
+            #[bench::uniswap("uniswap")]
+            #[bench::multicall3("multicall3")]
+            #[bench::create_x("create_x")]
+            #[bench::ui_pool_data_provider_v3("ui_pool_data_provider_v3")]
+            #[bench::cooldogs("cooldogs")]
+            #[bench::one_step_leverage_f("one_step_leverage_f")]
+            #[bench::pointer_libraries("pointer_libraries")]
+            #[bench::merkle_proof("merkle_proof")]
+            #[bench::ens_registrar_controller("ens_registrar_controller")]
+            $($rest)*
+        }
     };
 }
 
