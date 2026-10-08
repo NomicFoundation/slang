@@ -5,14 +5,19 @@ use slang_solidity_v2_common::diagnostics::kinds::syntax::{UnexpectedEof, Unexpe
 use slang_solidity_v2_common::files::FileId;
 use slang_solidity_v2_common::terminals::TerminalKind;
 use slang_solidity_v2_common::versions::LanguageVersion;
+use slang_solidity_v2_cst::structured_cst::natspec::NatSpec;
 use slang_solidity_v2_cst::structured_cst::nodes::{
     SourceUnit, new_source_unit, new_source_unit_members,
 };
 
 use crate::lexer::{LexemeKind, Lexer};
+use crate::parser::natspec_stack::NatSpecStack;
 use crate::parser::validation::validate_syntax_version;
 
+mod natspec_stack;
 mod parser_helpers;
+#[cfg(test)]
+mod tests;
 mod validation;
 
 lalrpop_mod!(
@@ -49,6 +54,15 @@ pub(crate) struct GrammarCtx<'a> {
     pub diagnostics: DiagnosticCollection,
     /// Version being parsed, for diagnostics that depend on which syntax it allows.
     pub language_version: LanguageVersion,
+    /// The `NatSpec` comments read by the lexer, until the documentable nodes take them.
+    pub natspec_stack: &'a NatSpecStack,
+}
+
+impl GrammarCtx<'_> {
+    /// See [`NatSpecStack::pop_for_token_at_range`].
+    pub(crate) fn pop_natspec(&self, start: usize, end: usize) -> Option<NatSpec> {
+        self.natspec_stack.pop_for_token_at_range(start, end)
+    }
 }
 
 /// The output of a parse operation, containing both the source unit and any diagnostics.
@@ -67,7 +81,11 @@ pub struct Parser;
 
 impl Parser {
     pub fn parse(file_id: &FileId, source: &str, language_version: LanguageVersion) -> ParseOutput {
-        let lexer = Lexer::new(source, language_version);
+        let natspec_stack = NatSpecStack::default();
+        let tokens = TokenStream {
+            lexer: Lexer::new(source, language_version),
+            natspec_stack: &natspec_stack,
+        };
         let parser = grammar::SourceUnitParser::new();
 
         let mut ctx = GrammarCtx {
@@ -75,9 +93,10 @@ impl Parser {
             file_id,
             diagnostics: DiagnosticCollection::default(),
             language_version,
+            natspec_stack: &natspec_stack,
         };
 
-        let source_unit = match parser.parse(&mut ctx, lexer) {
+        let source_unit = match parser.parse(&mut ctx, tokens) {
             Ok(source_unit) => {
                 // Most validation happens during the 'CompilationUnit' building, but this specific
                 // check is done here to make sure that other 'Parser' users can still be informed of any
@@ -159,19 +178,38 @@ fn convert_parse_error(
     }
 }
 
-/// Iterate over the lexemes and their offsets
+/// The lexemes fed to the parser, with their offsets.
 ///
-/// TODO(v2): This iterator skips all trivia, we'll want to include it in
-/// future versions
-impl Iterator for Lexer<'_> {
+/// Trivia is skipped, but `NatSpec` comments are pushed with the token they document.
+///
+/// TODO(v2): Include the trivia in future versions
+struct TokenStream<'source, 'natspec> {
+    lexer: Lexer<'source>,
+    natspec_stack: &'natspec NatSpecStack,
+}
+
+impl Iterator for TokenStream<'_, '_> {
     type Item = Result<(usize, LexemeKind, usize), ()>;
 
     fn next(&mut self) -> Option<Self::Item> {
-        while let Some(lexeme) = self.next_lexeme() {
-            if !lexeme.kind.is_trivia() {
-                return Some(Ok((lexeme.range.start, lexeme.kind, lexeme.range.end)));
+        let mut natspec_comment = None;
+        while let Some(lexeme) = self.lexer.next_lexeme() {
+            if lexeme.kind.is_natspec_comment() {
+                // Replaces the previous comment, if any: it's dropped without documenting anything.
+                natspec_comment = Some(lexeme.range.clone());
+                continue;
             }
+            if lexeme.kind.is_trivia() {
+                continue;
+            }
+            if let Some(range) = natspec_comment.take() {
+                self.natspec_stack
+                    .attach_natspec_to(NatSpec { range }, lexeme.range.start);
+            }
+            return Some(Ok((lexeme.range.start, lexeme.kind, lexeme.range.end)));
         }
+        // If `natspec_comment` is still `Some`, it means there was a trailing comment not documenting
+        // anything, it is dropped.
         None
     }
 }

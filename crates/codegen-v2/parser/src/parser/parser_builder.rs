@@ -7,7 +7,7 @@ use language_v2_definition::model::{
 use crate::lexer::{Lexeme, LexerModel};
 use crate::parser::item_builders::{
     enum_item_to_lalrpop_items, precedence_item_to_lalrpop_items, repeated_item_to_lalrpop_items,
-    separated_item_to_lalrpop_items, struct_item_to_lalrpop_items,
+    separated_item_to_lalrpop_items, split_documentable_item, struct_item_to_lalrpop_items,
 };
 use crate::parser::{LALRPOPItem, ParserSection, ParserTopic};
 
@@ -58,6 +58,12 @@ impl<'a> ParserBuilder<'a> {
         }
     }
 
+    /// Returns the rules parsing `item`.
+    ///
+    /// A generated documentable struct gets two rules: see [`split_documentable_item`].
+    ///
+    /// NOTE: verbatim rules are emitted as written, so a documentable struct with verbatim rules
+    /// attaches its `NatSpec` comment itself, the same way.
     fn language_item_to_lalrpop_item(&self, item: &LanguageItem) -> LALRPOPItem {
         // Apply manual parser options
         let parser_options = match item {
@@ -107,6 +113,20 @@ impl<'a> ParserBuilder<'a> {
         );
         for item in &mut items {
             item.public = is_root;
+        }
+
+        if let LanguageItem::Struct { item } = item
+            && item.is_documentable()
+        {
+            debug_assert_eq!(
+                items.len(),
+                1,
+                "A struct should generate exactly one LALRPOP item"
+            );
+            items = items
+                .into_iter()
+                .flat_map(split_documentable_item)
+                .collect();
         }
 
         LALRPOPItem::Items(items)
