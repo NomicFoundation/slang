@@ -64,7 +64,11 @@ define_fixture!(
 #[derive(Default)]
 struct NonterminalTexts(Vec<Option<&'static str>>);
 
-impl ast::visitor::NonterminalVisitor for NonterminalTexts {
+impl ast::visitor::Visitor for NonterminalTexts {
+    ast::visitor::impl_nonterminal_visitor_hooks!(enter = enter_nonterminal);
+}
+
+impl NonterminalTexts {
     fn enter_nonterminal(&mut self, node: &dyn NodeLocation) -> bool {
         self.0.push(
             node.calculate_text_range()
@@ -118,7 +122,11 @@ fn test_enter_nonterminal_order() {
 #[derive(Default)]
 struct OutsideFunctions(Vec<&'static str>);
 
-impl ast::visitor::NonterminalVisitor for OutsideFunctions {
+impl ast::visitor::Visitor for OutsideFunctions {
+    ast::visitor::impl_nonterminal_visitor_hooks!(enter = enter_nonterminal);
+}
+
+impl OutsideFunctions {
     fn enter_nonterminal(&mut self, node: &dyn NodeLocation) -> bool {
         let Some(text) = node
             .calculate_text_range()
@@ -144,4 +152,41 @@ fn test_enter_nonterminal_false_skips_children() {
 
     assert!(!texts.0.contains(&"uint a"));
     assert_eq!(texts.0.last(), Some(&"public")); // StateVariableAttributes
+}
+
+#[derive(Default)]
+struct NonterminalDepth {
+    depth: usize,
+    max_depth: usize,
+}
+
+impl ast::visitor::Visitor for NonterminalDepth {
+    ast::visitor::impl_nonterminal_visitor_hooks!(
+        enter = enter_nonterminal,
+        leave = leave_nonterminal
+    );
+}
+
+impl NonterminalDepth {
+    fn enter_nonterminal(&mut self, _node: &dyn NodeLocation) -> bool {
+        self.depth += 1;
+        self.max_depth = self.max_depth.max(self.depth);
+        true
+    }
+
+    fn leave_nonterminal(&mut self, _node: &dyn NodeLocation) {
+        self.depth -= 1;
+    }
+}
+
+#[test]
+fn test_leave_nonterminal_pairs_with_enter() {
+    let unit = Nonterminals::build_compilation_unit();
+    let source_unit = unit.file(&"main.sol".into()).unwrap().ast();
+
+    let mut depth = NonterminalDepth::default();
+    ast::visitor::accept_source_unit(&source_unit, &mut depth);
+
+    assert_eq!(depth.depth, 0);
+    assert_eq!(depth.max_depth, 9); // SourceUnit down to the `a + x` expression
 }

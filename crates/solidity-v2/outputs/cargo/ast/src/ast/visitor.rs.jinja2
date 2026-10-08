@@ -1,5 +1,4 @@
 {%- set target = model.ir_language_model.target -%}
-use super::NodeLocation;
 #[allow(clippy::wildcard_imports)]
 use super::nodes::*;
 
@@ -23,24 +22,24 @@ pub trait Visitor {
   {% endfor -%}
 }
 
-/// A [`Visitor`] that sees every sequence and collection node through one pair of methods.
-/// Choices are not reported: each one spans its variant.
-pub trait NonterminalVisitor {
-    /// Returning `false` skips the node's children and its `leave_nonterminal`.
-    fn enter_nonterminal(&mut self, _node: &dyn NodeLocation) -> bool { true }
-    fn leave_nonterminal(&mut self, _node: &dyn NodeLocation) {}
+/// Implements the `enter_*` and `leave_*` methods of [`Visitor`] for every sequence and collection
+/// node by forwarding the node to the caller's `$enter` and, if given, `$leave` methods. Choices keep
+/// their defaults: each one spans its variant.
+#[macro_export]
+macro_rules! impl_nonterminal_visitor_hooks {
+    (enter = $enter:ident $(, leave = $leave:ident)?) => {
+      {%- for parent_type, sequence in target.sequences %}
+        fn enter_{{ parent_type | snake_case }}(&mut self, node: &$crate::ast::{{ parent_type }}Struct) -> bool { self.$enter(node) }
+        $(fn leave_{{ parent_type | snake_case }}(&mut self, node: &$crate::ast::{{ parent_type }}Struct) { self.$leave(node); })?
+      {% endfor -%}
+      {%- for parent_type, collection in target.collections %}
+        fn enter_{{ parent_type | snake_case }}(&mut self, items: &$crate::ast::{{ parent_type }}Struct) -> bool { self.$enter(items) }
+        $(fn leave_{{ parent_type | snake_case }}(&mut self, items: &$crate::ast::{{ parent_type }}Struct) { self.$leave(items); })?
+      {% endfor -%}
+    };
 }
 
-impl<T: NonterminalVisitor> Visitor for T {
-  {%- for parent_type, sequence in target.sequences %}
-    fn enter_{{ parent_type | snake_case }}(&mut self, node: &{{ parent_type }}) -> bool { self.enter_nonterminal(node) }
-    fn leave_{{ parent_type | snake_case }}(&mut self, node: &{{ parent_type }}) { self.leave_nonterminal(node); }
-  {% endfor -%}
-  {%- for parent_type, collection in target.collections %}
-    fn enter_{{ parent_type | snake_case }}(&mut self, items: &{{ parent_type }}) -> bool { self.enter_nonterminal(items) }
-    fn leave_{{ parent_type | snake_case }}(&mut self, items: &{{ parent_type }}) { self.leave_nonterminal(items); }
-  {% endfor -%}
-}
+pub use crate::impl_nonterminal_visitor_hooks;
 
 //
 // Sequences
