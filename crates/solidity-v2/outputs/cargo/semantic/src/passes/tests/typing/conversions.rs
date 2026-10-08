@@ -6,9 +6,9 @@ use num_bigint::{BigInt, BigUint};
 use num_rational::BigRational;
 use ruint::aliases::U256;
 
-use super::expression;
+use super::{Analyse, Analysis, expression, expression_statement_types};
 use crate::types::{
-    ByteArrayType, DataLocation, FixedPointNumberType, FixedSizeArrayType, IntegerType,
+    ArrayType, ByteArrayType, DataLocation, FixedPointNumberType, FixedSizeArrayType, IntegerType,
     LiteralKind, MappingType, StringType, TupleType, Type, TypeId, TypeRegistry,
 };
 
@@ -236,6 +236,74 @@ fn test_array_literal_unifies_element_types() {
     };
     assert_eq!(size, U256::from(2));
     assert_eq!(element_type, types.string_memory());
+}
+
+#[test]
+fn test_array_literal_relocates_reference_elements_to_memory() {
+    let analysis = Analysis::of_source(
+        r#"
+        pragma solidity *;
+        contract Test {
+            string s;
+            function f(
+                string calldata a,
+                uint256[] calldata xs,
+                string[] calldata ys
+            ) external view {
+                [a, a];
+                [xs, xs];
+                [ys, ys];
+                [xs[1:], xs[2:]];
+                [s, s];
+            }
+        }
+        "#,
+    )
+    .run(Analyse::References)
+    .expect_no_diagnostics();
+    let typings = expression_statement_types(
+        analysis.function_body("Test", "f"),
+        analysis.binder(),
+        analysis.types(),
+    );
+    let types = analysis.types();
+    let element_types: Vec<Type> = typings
+        .iter()
+        .map(|typing| {
+            let Some(Type::FixedSizeArray(FixedSizeArrayType {
+                element_type,
+                size,
+                location: DataLocation::Memory,
+            })) = typing
+            else {
+                panic!("expected a memory FixedSizeArray, got {typing:?}");
+            };
+            assert_eq!(*size, U256::from(2));
+            types.get_type_by_id(*element_type).clone()
+        })
+        .collect();
+
+    let memory_string = Type::String(StringType {
+        location: DataLocation::Memory,
+    });
+    let memory_uint256_array = Type::Array(ArrayType {
+        element_type: types.uint256(),
+        location: DataLocation::Memory,
+    });
+    let memory_string_array = Type::Array(ArrayType {
+        element_type: types.string_memory(),
+        location: DataLocation::Memory,
+    });
+    assert_eq!(
+        element_types,
+        vec![
+            memory_string.clone(),
+            memory_uint256_array.clone(),
+            memory_string_array,
+            memory_uint256_array,
+            memory_string,
+        ]
+    );
 }
 
 #[test]
