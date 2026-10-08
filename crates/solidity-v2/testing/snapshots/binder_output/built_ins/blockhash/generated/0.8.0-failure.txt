@@ -1,0 +1,65 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics:
+[resolution/member-not-found] Error: Member 'blockhash' not found or not visible after argument-dependent lookup.
+   ╭─[input.sol:6:22]
+   │
+ 6 │         return block.blockhash(n);      // should be rejected
+   │                      ────┬────  
+   │                          ╰────── Error occurred here.
+───╯
+
+------------------------------------------------------------------------
+
+Definitions (5):
+- Def: #1 ["C" @ input.sol:4:10] (contract)
+- Def: #2 ["removed" @ input.sol:5:14] (function, type: function (uint256) returns bytes32)
+- Def: #3 ["n" @ input.sol:5:30] (parameter, type: uint256)
+- Def: #4 ["replacement" @ input.sol:9:14] (function, type: function (uint256) returns bytes32)
+- Def: #5 ["n" @ input.sol:9:34] (parameter, type: uint256)
+
+------------------------------------------------------------------------
+
+References (5):
+- Ref: ["block" @ input.sol:6:16] -> built-in
+- Ref: ["blockhash" @ input.sol:6:22] -> unresolved
+- Ref: ["n" @ input.sol:6:32] -> #3
+- Ref: ["blockhash" @ input.sol:10:16] -> built-in
+- Ref: ["n" @ input.sol:10:26] -> #5
+
+------------------------------------------------------------------------
+
+Unbound identifiers (0):
+
+------------------------------------------------------------------------
+
+Bindings: 
+    ╭─[input.sol:1:1]
+    │
+  4 │ contract C {
+    │          ┬  
+    │          ╰── name: 1
+  5 │     function removed(uint256 n) internal view returns (bytes32) {
+    │              ───┬───         ┬  
+    │                 ╰─────────────── name: 2
+    │                              │  
+    │                              ╰── name: 3
+  6 │         return block.blockhash(n);      // should be rejected
+    │                ──┬── ────┬──── ┬  
+    │                  ╰──────────────── built-in
+    │                          │     │  
+    │                          ╰──────── unresolved
+    │                                │  
+    │                                ╰── ref: 3
+    │ 
+  9 │     function replacement(uint256 n) internal view returns (bytes32) {
+    │              ─────┬─────         ┬  
+    │                   ╰───────────────── name: 4
+    │                                  │  
+    │                                  ╰── name: 5
+ 10 │         return blockhash(n);            // should be accepted
+    │                ────┬──── ┬  
+    │                    ╰──────── built-in
+    │                          │  
+    │                          ╰── ref: 5
+────╯

@@ -127,6 +127,11 @@ mod built_ins {
     }
 
     #[test]
+    fn blockhash() -> Result<()> {
+        run("built_ins", "blockhash")
+    }
+
+    #[test]
     fn bytes() -> Result<()> {
         run("built_ins", "bytes")
     }
@@ -157,6 +162,11 @@ mod built_ins {
     }
 
     #[test]
+    fn gas_on_external_function() -> Result<()> {
+        run("built_ins", "gas_on_external_function")
+    }
+
+    #[test]
     fn global_properties() -> Result<()> {
         run("built_ins", "global_properties")
     }
@@ -169,6 +179,11 @@ mod built_ins {
     #[test]
     fn msg_data() -> Result<()> {
         run("built_ins", "msg_data")
+    }
+
+    #[test]
+    fn msg_gas() -> Result<()> {
+        run("built_ins", "msg_gas")
     }
 
     #[test]
@@ -199,6 +214,16 @@ mod built_ins {
     #[test]
     fn type_expr() -> Result<()> {
         run("built_ins", "type_expr")
+    }
+
+    #[test]
+    fn value_on_external_function() -> Result<()> {
+        run("built_ins", "value_on_external_function")
+    }
+
+    #[test]
+    fn value_on_new_expression() -> Result<()> {
+        run("built_ins", "value_on_new_expression")
     }
 
     #[test]
