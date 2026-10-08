@@ -19,7 +19,6 @@
     "https://docs.renovatebot.com/renovate-schema.json": true
   },
   "rust-analyzer.check.allTargets": true,
-  "rust-analyzer.check.command": "clippy",
   "rust-analyzer.check.features": "all",
   "rust-analyzer.imports.granularity.enforce": true,
   "rust-analyzer.imports.granularity.group": "module",
