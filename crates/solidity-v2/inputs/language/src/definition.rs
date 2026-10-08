@@ -247,46 +247,19 @@ language_v2_macros::compile!(Language(
                         items = [
                             Trivia(
                                 name = PragmaWhitespace,
-                                scanner = OneOrMore(Fragment(PragmaSpaceOrTab))
-                            ),
-                            Fragment(
-                                name = PragmaSpaceOrTab,
-                                scanner = Choice([Atom(" "), Atom("\t")])
+                                scanner = OneOrMore(Choice([Atom(" "), Atom("\t")]))
                             ),
                             Trivia(
                                 name = PragmaEndOfLine,
-                                scanner = Fragment(PragmaLineBreak)
-                            ),
-                            Fragment(
-                                name = PragmaLineBreak,
-                                scanner = Choice([Atom("\n"), Sequence([Atom("\r"), Optional(Atom("\n"))])])
-                            ),
-                            Fragment(
-                                name = PragmaTextAfterSlashes,
-                                // The text of a `//` or `///` line after its leading slashes, so it can't start with `/`
-                                scanner = Sequence([Not(['/', '\r', '\n']), ZeroOrMore(Not(['\r', '\n']))])
+                                scanner = Choice([
+                                    Atom("\n"),
+                                    Sequence([Atom("\r"), Optional(Atom("\n"))])
+                                ])
                             ),
                             Trivia(
                                 name = PragmaSingleLineComment,
                                 category = RegularComment,
-                                // Match consecutive `//` lines that aren't `///` ones, each line keeps its line break, except for the last line of the file.
-                                scanner = Sequence([
-                                    Atom("//"),
-                                    Optional(Fragment(PragmaSingleLineRegularCommentText)),
-                                    Optional(Sequence([
-                                        Fragment(PragmaLineBreak),
-                                        ZeroOrMore(Sequence([ZeroOrMore(Fragment(PragmaSpaceOrTab)), Atom("//"), Optional(Fragment(PragmaSingleLineRegularCommentText)), Fragment(PragmaLineBreak)])),
-                                        Optional(Sequence([ZeroOrMore(Fragment(PragmaSpaceOrTab)), Atom("//"), Fragment(PragmaSingleLineRegularCommentText)]))
-                                    ]))
-                                ])
-                            ),
-                            Fragment(
-                                name = PragmaSingleLineRegularCommentText,
-                                // The text of a `//` line, which can't start with a single `/`, as that would make it a `///` one
-                                scanner = Choice([
-                                    Fragment(PragmaTextAfterSlashes),
-                                    Sequence([Atom("//"), ZeroOrMore(Not(['\r', '\n']))])
-                                ])
+                                scanner = Sequence([Atom("//"), ZeroOrMore(Not(['\r', '\n']))])
                             ),
                             Trivia(
                                 name = PragmaMultiLineComment,
@@ -307,15 +280,10 @@ language_v2_macros::compile!(Language(
                             Trivia(
                                 name = PragmaSingleLineNatSpecComment,
                                 category = NatSpecComment,
-                                // Match consecutive `///` lines, each line keeps its line break, except for the last line of the file.
+                                // `////` is a regular comment
                                 scanner = Sequence([
                                     Atom("///"),
-                                    Optional(Fragment(PragmaTextAfterSlashes)),
-                                    Optional(Sequence([
-                                        Fragment(PragmaLineBreak),
-                                        ZeroOrMore(Sequence([ZeroOrMore(Fragment(PragmaSpaceOrTab)), Atom("///"), Optional(Fragment(PragmaTextAfterSlashes)), Fragment(PragmaLineBreak)])),
-                                        Optional(Sequence([ZeroOrMore(Fragment(PragmaSpaceOrTab)), Atom("///"), Fragment(PragmaTextAfterSlashes)]))
-                                    ]))
+                                    Optional(Sequence([Not(['/', '\r', '\n']), ZeroOrMore(Not(['\r', '\n']))]))
                                 ])
                             ),
                             Trivia(
@@ -1548,46 +1516,19 @@ language_v2_macros::compile!(Language(
                             items = [
                                 Trivia(
                                     name = Whitespace,
-                                    scanner = OneOrMore(Fragment(SpaceOrTab))
-                                ),
-                                Fragment(
-                                    name = SpaceOrTab,
-                                    scanner = Choice([Atom(" "), Atom("\t")])
+                                    scanner = OneOrMore(Choice([Atom(" "), Atom("\t")]))
                                 ),
                                 Trivia(
                                     name = EndOfLine,
-                                    scanner = Fragment(LineBreak)
-                                ),
-                                Fragment(
-                                    name = LineBreak,
-                                    scanner = Choice([Atom("\n"), Sequence([Atom("\r"), Optional(Atom("\n"))])])
-                                ),
-                                Fragment(
-                                    name = TextAfterSlashes,
-                                    // The text of a `//` or `///` line after its leading slashes, so it can't start with `/`
-                                    scanner = Sequence([Not(['/', '\r', '\n']), ZeroOrMore(Not(['\r', '\n']))])
+                                    scanner = Choice([
+                                        Atom("\n"),
+                                        Sequence([Atom("\r"), Optional(Atom("\n"))])
+                                    ])
                                 ),
                                 Trivia(
                                     name = SingleLineComment,
                                     category = RegularComment,
-                                    // Match consecutive `//` lines that aren't `///` ones, each line keeps its line break, except for the last line of the file.
-                                    scanner = Sequence([
-                                        Atom("//"),
-                                        Optional(Fragment(SingleLineRegularCommentText)),
-                                        Optional(Sequence([
-                                            Fragment(LineBreak),
-                                            ZeroOrMore(Sequence([ZeroOrMore(Fragment(SpaceOrTab)), Atom("//"), Optional(Fragment(SingleLineRegularCommentText)), Fragment(LineBreak)])),
-                                            Optional(Sequence([ZeroOrMore(Fragment(SpaceOrTab)), Atom("//"), Fragment(SingleLineRegularCommentText)]))
-                                        ]))
-                                    ])
-                                ),
-                                Fragment(
-                                    name = SingleLineRegularCommentText,
-                                    // The text of a `//` line, which can't start with a single `/`, as that would make it a `///` one
-                                    scanner = Choice([
-                                        Fragment(TextAfterSlashes),
-                                        Sequence([Atom("//"), ZeroOrMore(Not(['\r', '\n']))])
-                                    ])
+                                    scanner = Sequence([Atom("//"), ZeroOrMore(Not(['\r', '\n']))])
                                 ),
                                 Trivia(
                                     name = MultiLineComment,
@@ -1608,15 +1549,10 @@ language_v2_macros::compile!(Language(
                                 Trivia(
                                     name = SingleLineNatSpecComment,
                                     category = NatSpecComment,
-                                    // Match consecutive `///` lines, each line keeps its line break, except for the last line of the file.
+                                    // `////` is a regular comment
                                     scanner = Sequence([
                                         Atom("///"),
-                                        Optional(Fragment(TextAfterSlashes)),
-                                        Optional(Sequence([
-                                            Fragment(LineBreak),
-                                            ZeroOrMore(Sequence([ZeroOrMore(Fragment(SpaceOrTab)), Atom("///"), Optional(Fragment(TextAfterSlashes)), Fragment(LineBreak)])),
-                                            Optional(Sequence([ZeroOrMore(Fragment(SpaceOrTab)), Atom("///"), Fragment(TextAfterSlashes)]))
-                                        ]))
+                                        Optional(Sequence([Not(['/', '\r', '\n']), ZeroOrMore(Not(['\r', '\n']))]))
                                     ])
                                 ),
                                 Trivia(
@@ -4517,46 +4453,19 @@ IdentifierPathTailElement: (Period, IdentifierPathElement) = {
                         items = [
                             Trivia(
                                 name = YulWhitespace,
-                                scanner = OneOrMore(Fragment(YulSpaceOrTab))
-                            ),
-                            Fragment(
-                                name = YulSpaceOrTab,
-                                scanner = Choice([Atom(" "), Atom("\t")])
+                                scanner = OneOrMore(Choice([Atom(" "), Atom("\t")]))
                             ),
                             Trivia(
                                 name = YulEndOfLine,
-                                scanner = Fragment(YulLineBreak)
-                            ),
-                            Fragment(
-                                name = YulLineBreak,
-                                scanner = Choice([Atom("\n"), Sequence([Atom("\r"), Optional(Atom("\n"))])])
-                            ),
-                            Fragment(
-                                name = YulTextAfterSlashes,
-                                // The text of a `//` or `///` line after its leading slashes, so it can't start with `/`
-                                scanner = Sequence([Not(['/', '\r', '\n']), ZeroOrMore(Not(['\r', '\n']))])
+                                scanner = Choice([
+                                    Atom("\n"),
+                                    Sequence([Atom("\r"), Optional(Atom("\n"))])
+                                ])
                             ),
                             Trivia(
                                 name = YulSingleLineComment,
                                 category = RegularComment,
-                                // Match consecutive `//` lines that aren't `///` ones, each line keeps its line break, except for the last line of the file.
-                                scanner = Sequence([
-                                    Atom("//"),
-                                    Optional(Fragment(YulSingleLineRegularCommentText)),
-                                    Optional(Sequence([
-                                        Fragment(YulLineBreak),
-                                        ZeroOrMore(Sequence([ZeroOrMore(Fragment(YulSpaceOrTab)), Atom("//"), Optional(Fragment(YulSingleLineRegularCommentText)), Fragment(YulLineBreak)])),
-                                        Optional(Sequence([ZeroOrMore(Fragment(YulSpaceOrTab)), Atom("//"), Fragment(YulSingleLineRegularCommentText)]))
-                                    ]))
-                                ])
-                            ),
-                            Fragment(
-                                name = YulSingleLineRegularCommentText,
-                                // The text of a `//` line, which can't start with a single `/`, as that would make it a `///` one
-                                scanner = Choice([
-                                    Fragment(YulTextAfterSlashes),
-                                    Sequence([Atom("//"), ZeroOrMore(Not(['\r', '\n']))])
-                                ])
+                                scanner = Sequence([Atom("//"), ZeroOrMore(Not(['\r', '\n']))])
                             ),
                             Trivia(
                                 name = YulMultiLineComment,
@@ -4577,15 +4486,10 @@ IdentifierPathTailElement: (Period, IdentifierPathElement) = {
                             Trivia(
                                 name = YulSingleLineNatSpecComment,
                                 category = NatSpecComment,
-                                // Match consecutive `///` lines, each line keeps its line break, except for the last line of the file.
+                                // `////` is a regular comment
                                 scanner = Sequence([
                                     Atom("///"),
-                                    Optional(Fragment(YulTextAfterSlashes)),
-                                    Optional(Sequence([
-                                        Fragment(YulLineBreak),
-                                        ZeroOrMore(Sequence([ZeroOrMore(Fragment(YulSpaceOrTab)), Atom("///"), Optional(Fragment(YulTextAfterSlashes)), Fragment(YulLineBreak)])),
-                                        Optional(Sequence([ZeroOrMore(Fragment(YulSpaceOrTab)), Atom("///"), Fragment(YulTextAfterSlashes)]))
-                                    ]))
+                                    Optional(Sequence([Not(['/', '\r', '\n']), ZeroOrMore(Not(['\r', '\n']))]))
                                 ])
                             ),
                             Trivia(

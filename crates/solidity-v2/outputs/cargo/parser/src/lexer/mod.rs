@@ -7,4 +7,4 @@ mod lexemes;
 mod tests;
 
 pub use definition::Lexer;
-pub(crate) use lexemes::LexemeKind;
+pub(crate) use lexemes::{Lexeme, LexemeKind};
