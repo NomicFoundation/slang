@@ -350,8 +350,6 @@ pub fn slang_solidity_v2_semantic::context::SemanticContext::linearised_function
 pub fn slang_solidity_v2_semantic::context::SemanticContext::linearised_state_variables(&self, slang_solidity_v2_common::nodes::NodeId) -> &[slang_solidity_v2_ir::ir::nodes::StateVariableDefinition]
 pub fn slang_solidity_v2_semantic::context::SemanticContext::resolve_reference_identifier_to_definition_id(&self, slang_solidity_v2_common::nodes::NodeId) -> core::option::Option<slang_solidity_v2_common::nodes::NodeId>
 pub fn slang_solidity_v2_semantic::context::SemanticContext::resolve_reference_identifier_to_immediate_definition_id(&self, slang_solidity_v2_common::nodes::NodeId) -> core::option::Option<slang_solidity_v2_common::nodes::NodeId>
-pub fn slang_solidity_v2_semantic::context::SemanticContext::storage_size_of_type_id(&self, slang_solidity_v2_semantic::types::TypeId) -> core::option::Option<slang_solidity_v2_semantic::context::StorageSize>
-pub fn slang_solidity_v2_semantic::context::SemanticContext::storage_type_table<T>(&self, impl core::iter::traits::collect::IntoIterator<Item = slang_solidity_v2_semantic::types::TypeId>, impl core::ops::function::FnMut(slang_solidity_v2_semantic::types::TypeId, slang_solidity_v2_semantic::context::StorageTypeLayout) -> T) -> core::option::Option<slang_solidity_v2_semantic::context::StorageTypeTable<T>>
 pub fn slang_solidity_v2_semantic::context::SemanticContext::type_abi_internal_name(&self, slang_solidity_v2_semantic::types::TypeId) -> alloc::string::String
 pub fn slang_solidity_v2_semantic::context::SemanticContext::type_internal_name(&self, slang_solidity_v2_semantic::types::TypeId) -> alloc::string::String
 pub fn slang_solidity_v2_semantic::context::SemanticContext::type_library_name(&self, slang_solidity_v2_semantic::types::TypeId) -> core::option::Option<alloc::string::String>
@@ -361,6 +359,9 @@ impl slang_solidity_v2_semantic::context::SemanticContext
 pub fn slang_solidity_v2_semantic::context::SemanticContext::resolve_modifier(&self, slang_solidity_v2_common::nodes::NodeId, &slang_solidity_v2_ir::ir::nodes::ModifierInvocation) -> core::option::Option<&slang_solidity_v2_ir::ir::nodes::FunctionDefinition>
 pub fn slang_solidity_v2_semantic::context::SemanticContext::resolve_super<'a>(&'a self, slang_solidity_v2_common::nodes::NodeId, &'a slang_solidity_v2_ir::ir::nodes::FunctionDefinition, slang_solidity_v2_common::nodes::NodeId) -> core::option::Option<&'a slang_solidity_v2_ir::ir::nodes::FunctionDefinition>
 pub fn slang_solidity_v2_semantic::context::SemanticContext::resolve_virtual<'a>(&'a self, slang_solidity_v2_common::nodes::NodeId, &'a slang_solidity_v2_ir::ir::nodes::FunctionDefinition) -> core::option::Option<slang_solidity_v2_semantic::context::VirtualTarget<'a>>
+impl slang_solidity_v2_semantic::context::SemanticContext
+pub fn slang_solidity_v2_semantic::context::SemanticContext::storage_size_of_type_id(&self, slang_solidity_v2_semantic::types::TypeId) -> core::option::Option<slang_solidity_v2_semantic::context::StorageSize>
+pub fn slang_solidity_v2_semantic::context::SemanticContext::storage_type_table<T>(&self, impl core::iter::traits::collect::IntoIterator<Item = slang_solidity_v2_semantic::types::TypeId>, impl core::ops::function::FnMut(slang_solidity_v2_semantic::types::TypeId, slang_solidity_v2_semantic::context::StorageTypeLayout) -> T) -> core::option::Option<slang_solidity_v2_semantic::context::StorageTypeTable<T>>
 pub struct slang_solidity_v2_semantic::context::SourceUnitImport
 pub slang_solidity_v2_semantic::context::SourceUnitImport::node_id: slang_solidity_v2_common::nodes::NodeId
 pub slang_solidity_v2_semantic::context::SourceUnitImport::path: alloc::string::String
