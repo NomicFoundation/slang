@@ -1,0 +1,374 @@
+{
+  "name": "storage_types",
+  "chain_id": 0,
+  "version": "0.8.30",
+  "target": "Layouts.sol",
+  "sources": {
+    "Layouts.sol": "// SPDX-License-Identifier: MIT\npragma solidity ^0.8.28;\n\ntype Price is uint128;\n\nenum Side { Buy, Sell }\n\ninterface IToken {}\n\ncontract Layouts {\n    struct Inner {\n        uint8 small;\n        address owner;\n        bool flag;\n        uint256 wide;\n    }\n\n    struct Outer {\n        Inner inner;\n        string name;\n        Inner[] list;\n        uint16[3] triple;\n    }\n\n    struct Node {\n        uint256 value;\n        Node[] children;\n    }\n\n    uint8 a;\n    Side side;\n    Price price;\n    IToken token;\n    bytes data;\n    string text;\n    uint16[3] fixedValues;\n    uint256[][2] nested;\n    Inner[] inners;\n    Outer outer;\n    mapping(address => mapping(uint256 => Outer)) books;\n    mapping(uint256 => Node) nodes;\n    function(uint256) internal returns (bool) callback;\n\n    uint64 transient counter;\n    bool transient locked;\n    address transient caller;\n}\n"
+  },
+  "artifacts": {
+    "abi": [],
+    "storageLayout": {
+      "storage": [
+        {
+          "astId": 39,
+          "contract": "Layouts.sol:Layouts",
+          "label": "a",
+          "offset": 0,
+          "slot": "0",
+          "type": "t_uint8"
+        },
+        {
+          "astId": 42,
+          "contract": "Layouts.sol:Layouts",
+          "label": "side",
+          "offset": 1,
+          "slot": "0",
+          "type": "t_enum(Side)6"
+        },
+        {
+          "astId": 45,
+          "contract": "Layouts.sol:Layouts",
+          "label": "price",
+          "offset": 2,
+          "slot": "0",
+          "type": "t_userDefinedValueType(Price)3"
+        },
+        {
+          "astId": 48,
+          "contract": "Layouts.sol:Layouts",
+          "label": "token",
+          "offset": 0,
+          "slot": "1",
+          "type": "t_contract(IToken)7"
+        },
+        {
+          "astId": 50,
+          "contract": "Layouts.sol:Layouts",
+          "label": "data",
+          "offset": 0,
+          "slot": "2",
+          "type": "t_bytes_storage"
+        },
+        {
+          "astId": 52,
+          "contract": "Layouts.sol:Layouts",
+          "label": "text",
+          "offset": 0,
+          "slot": "3",
+          "type": "t_string_storage"
+        },
+        {
+          "astId": 56,
+          "contract": "Layouts.sol:Layouts",
+          "label": "fixedValues",
+          "offset": 0,
+          "slot": "4",
+          "type": "t_array(t_uint16)3_storage"
+        },
+        {
+          "astId": 61,
+          "contract": "Layouts.sol:Layouts",
+          "label": "nested",
+          "offset": 0,
+          "slot": "5",
+          "type": "t_array(t_array(t_uint256)dyn_storage)2_storage"
+        },
+        {
+          "astId": 65,
+          "contract": "Layouts.sol:Layouts",
+          "label": "inners",
+          "offset": 0,
+          "slot": "7",
+          "type": "t_array(t_struct(Inner)16_storage)dyn_storage"
+        },
+        {
+          "astId": 68,
+          "contract": "Layouts.sol:Layouts",
+          "label": "outer",
+          "offset": 0,
+          "slot": "8",
+          "type": "t_struct(Outer)30_storage"
+        },
+        {
+          "astId": 75,
+          "contract": "Layouts.sol:Layouts",
+          "label": "books",
+          "offset": 0,
+          "slot": "13",
+          "type": "t_mapping(t_address,t_mapping(t_uint256,t_struct(Outer)30_storage))"
+        },
+        {
+          "astId": 80,
+          "contract": "Layouts.sol:Layouts",
+          "label": "nodes",
+          "offset": 0,
+          "slot": "14",
+          "type": "t_mapping(t_uint256,t_struct(Node)37_storage)"
+        },
+        {
+          "astId": 88,
+          "contract": "Layouts.sol:Layouts",
+          "label": "callback",
+          "offset": 0,
+          "slot": "15",
+          "type": "t_function_internal_nonpayable(t_uint256)returns(t_bool)"
+        }
+      ],
+      "types": {
+        "t_address": {
+          "encoding": "inplace",
+          "label": "address",
+          "numberOfBytes": "20"
+        },
+        "t_array(t_array(t_uint256)dyn_storage)2_storage": {
+          "base": "t_array(t_uint256)dyn_storage",
+          "encoding": "inplace",
+          "label": "uint256[][2]",
+          "numberOfBytes": "64"
+        },
+        "t_array(t_struct(Inner)16_storage)dyn_storage": {
+          "base": "t_struct(Inner)16_storage",
+          "encoding": "dynamic_array",
+          "label": "struct Layouts.Inner[]",
+          "numberOfBytes": "32"
+        },
+        "t_array(t_struct(Node)37_storage)dyn_storage": {
+          "base": "t_struct(Node)37_storage",
+          "encoding": "dynamic_array",
+          "label": "struct Layouts.Node[]",
+          "numberOfBytes": "32"
+        },
+        "t_array(t_uint16)3_storage": {
+          "base": "t_uint16",
+          "encoding": "inplace",
+          "label": "uint16[3]",
+          "numberOfBytes": "32"
+        },
+        "t_array(t_uint256)dyn_storage": {
+          "base": "t_uint256",
+          "encoding": "dynamic_array",
+          "label": "uint256[]",
+          "numberOfBytes": "32"
+        },
+        "t_bool": {
+          "encoding": "inplace",
+          "label": "bool",
+          "numberOfBytes": "1"
+        },
+        "t_bytes_storage": {
+          "encoding": "bytes",
+          "label": "bytes",
+          "numberOfBytes": "32"
+        },
+        "t_contract(IToken)7": {
+          "encoding": "inplace",
+          "label": "contract IToken",
+          "numberOfBytes": "20"
+        },
+        "t_enum(Side)6": {
+          "encoding": "inplace",
+          "label": "enum Side",
+          "numberOfBytes": "1"
+        },
+        "t_function_internal_nonpayable(t_uint256)returns(t_bool)": {
+          "encoding": "inplace",
+          "label": "function (uint256) returns (bool)",
+          "numberOfBytes": "8"
+        },
+        "t_mapping(t_address,t_mapping(t_uint256,t_struct(Outer)30_storage))": {
+          "encoding": "mapping",
+          "key": "t_address",
+          "label": "mapping(address => mapping(uint256 => struct Layouts.Outer))",
+          "numberOfBytes": "32",
+          "value": "t_mapping(t_uint256,t_struct(Outer)30_storage)"
+        },
+        "t_mapping(t_uint256,t_struct(Node)37_storage)": {
+          "encoding": "mapping",
+          "key": "t_uint256",
+          "label": "mapping(uint256 => struct Layouts.Node)",
+          "numberOfBytes": "32",
+          "value": "t_struct(Node)37_storage"
+        },
+        "t_mapping(t_uint256,t_struct(Outer)30_storage)": {
+          "encoding": "mapping",
+          "key": "t_uint256",
+          "label": "mapping(uint256 => struct Layouts.Outer)",
+          "numberOfBytes": "32",
+          "value": "t_struct(Outer)30_storage"
+        },
+        "t_string_storage": {
+          "encoding": "bytes",
+          "label": "string",
+          "numberOfBytes": "32"
+        },
+        "t_struct(Inner)16_storage": {
+          "encoding": "inplace",
+          "label": "struct Layouts.Inner",
+          "members": [
+            {
+              "astId": 9,
+              "contract": "Layouts.sol:Layouts",
+              "label": "small",
+              "offset": 0,
+              "slot": "0",
+              "type": "t_uint8"
+            },
+            {
+              "astId": 11,
+              "contract": "Layouts.sol:Layouts",
+              "label": "owner",
+              "offset": 1,
+              "slot": "0",
+              "type": "t_address"
+            },
+            {
+              "astId": 13,
+              "contract": "Layouts.sol:Layouts",
+              "label": "flag",
+              "offset": 21,
+              "slot": "0",
+              "type": "t_bool"
+            },
+            {
+              "astId": 15,
+              "contract": "Layouts.sol:Layouts",
+              "label": "wide",
+              "offset": 0,
+              "slot": "1",
+              "type": "t_uint256"
+            }
+          ],
+          "numberOfBytes": "64"
+        },
+        "t_struct(Node)37_storage": {
+          "encoding": "inplace",
+          "label": "struct Layouts.Node",
+          "members": [
+            {
+              "astId": 32,
+              "contract": "Layouts.sol:Layouts",
+              "label": "value",
+              "offset": 0,
+              "slot": "0",
+              "type": "t_uint256"
+            },
+            {
+              "astId": 36,
+              "contract": "Layouts.sol:Layouts",
+              "label": "children",
+              "offset": 0,
+              "slot": "1",
+              "type": "t_array(t_struct(Node)37_storage)dyn_storage"
+            }
+          ],
+          "numberOfBytes": "64"
+        },
+        "t_struct(Outer)30_storage": {
+          "encoding": "inplace",
+          "label": "struct Layouts.Outer",
+          "members": [
+            {
+              "astId": 19,
+              "contract": "Layouts.sol:Layouts",
+              "label": "inner",
+              "offset": 0,
+              "slot": "0",
+              "type": "t_struct(Inner)16_storage"
+            },
+            {
+              "astId": 21,
+              "contract": "Layouts.sol:Layouts",
+              "label": "name",
+              "offset": 0,
+              "slot": "2",
+              "type": "t_string_storage"
+            },
+            {
+              "astId": 25,
+              "contract": "Layouts.sol:Layouts",
+              "label": "list",
+              "offset": 0,
+              "slot": "3",
+              "type": "t_array(t_struct(Inner)16_storage)dyn_storage"
+            },
+            {
+              "astId": 29,
+              "contract": "Layouts.sol:Layouts",
+              "label": "triple",
+              "offset": 0,
+              "slot": "4",
+              "type": "t_array(t_uint16)3_storage"
+            }
+          ],
+          "numberOfBytes": "160"
+        },
+        "t_uint16": {
+          "encoding": "inplace",
+          "label": "uint16",
+          "numberOfBytes": "2"
+        },
+        "t_uint256": {
+          "encoding": "inplace",
+          "label": "uint256",
+          "numberOfBytes": "32"
+        },
+        "t_uint8": {
+          "encoding": "inplace",
+          "label": "uint8",
+          "numberOfBytes": "1"
+        },
+        "t_userDefinedValueType(Price)3": {
+          "encoding": "inplace",
+          "label": "Price",
+          "numberOfBytes": "16"
+        }
+      }
+    },
+    "transientStorageLayout": {
+      "storage": [
+        {
+          "astId": 90,
+          "contract": "Layouts.sol:Layouts",
+          "label": "counter",
+          "offset": 0,
+          "slot": "0",
+          "type": "t_uint64"
+        },
+        {
+          "astId": 92,
+          "contract": "Layouts.sol:Layouts",
+          "label": "locked",
+          "offset": 8,
+          "slot": "0",
+          "type": "t_bool"
+        },
+        {
+          "astId": 94,
+          "contract": "Layouts.sol:Layouts",
+          "label": "caller",
+          "offset": 9,
+          "slot": "0",
+          "type": "t_address"
+        }
+      ],
+      "types": {
+        "t_address": {
+          "encoding": "inplace",
+          "label": "address",
+          "numberOfBytes": "20"
+        },
+        "t_bool": {
+          "encoding": "inplace",
+          "label": "bool",
+          "numberOfBytes": "1"
+        },
+        "t_uint64": {
+          "encoding": "inplace",
+          "label": "uint64",
+          "numberOfBytes": "8"
+        }
+      }
+    }
+  }
+}
