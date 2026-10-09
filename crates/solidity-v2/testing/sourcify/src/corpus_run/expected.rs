@@ -55,13 +55,29 @@ impl ExpectedFailure {
             Some(issue) if !self.deliberate => issue.clone(),
             _ => "deliberate".to_owned(),
         };
+        label.push_str(&self.narrowing());
+        label
+    }
+
+    /// The issue as `#123` when it is one of this repository's, else as written.
+    pub fn issue_ref(&self) -> String {
+        let issue = self.issue.as_deref().unwrap_or_default();
+        match issue.rsplit_once("/issues/") {
+            Some((_, number)) => format!("#{number}"),
+            None => issue.to_owned(),
+        }
+    }
+
+    /// What narrows the entry below its whole bucket, e.g. ` [Unexpected Pragma…] [4 listed]`.
+    pub fn narrowing(&self) -> String {
+        let mut narrowing = String::new();
         if let Some(prefix) = &self.message {
-            write!(label, " [{prefix}…]").unwrap();
+            write!(narrowing, " [{prefix}…]").unwrap();
         }
         if !self.contracts.is_empty() {
-            write!(label, " [{} listed]", self.contracts.len()).unwrap();
+            write!(narrowing, " [{} listed]", self.contracts.len()).unwrap();
         }
-        label
+        narrowing
     }
 }
 
