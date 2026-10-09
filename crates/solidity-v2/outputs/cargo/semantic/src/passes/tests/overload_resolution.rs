@@ -1,12 +1,9 @@
-use slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind;
-use slang_solidity_v2_common::diagnostics::kinds::resolution::{
-    AmbiguousReference, MemberNotFound,
-};
+use slang_solidity_v2_common::diagnostics::kinds::resolution::AmbiguousReference;
 use slang_solidity_v2_common::nodes::NodeId;
 use slang_solidity_v2_common::versions::LanguageVersion;
 use slang_solidity_v2_ir::ir;
 
-use super::support::{Analyse, Analysis, diagnostic_kind, diagnostic_kinds, find_function};
+use super::support::{Analyse, Analysis, diagnostic_kind};
 use crate::binder::{Binder, Resolution};
 use crate::types::{
     FunctionType, FunctionTypeMutability, FunctionTypeVisibility, Type, TypeRegistry,
@@ -219,86 +216,5 @@ contract C {
         vec![Resolution::Definition(callbacks[1])],
         resolutions,
         "expected the overload taking an internal function"
-    );
-}
-
-/// A storage array of structs is attached to a function taking it in memory:
-/// only the data location of the array and its elements differs.
-#[test]
-fn test_storage_fixed_size_array_of_structs_attaches_to_memory_parameter() {
-    const SOURCE: &str = r###"
-pragma solidity *;
-library L {
-    struct S {
-        int104 v;
-    }
-
-    function cur(S[2] memory c) internal pure returns (int104) {
-        return c[0].v;
-    }
-}
-
-contract C {
-    using L for L.S[2];
-    L.S[2] s;
-
-    function test() internal view returns (int104) {
-        return s.cur();
-    }
-}
-    "###;
-
-    let analysis = Analysis::of_source(SOURCE)
-        .run(Analyse::References)
-        .expect_no_diagnostics();
-
-    let cur = find_function(&analysis.find_library("L").members, "cur")
-        .expect("no function `cur` in `L`")
-        .id();
-    assert_eq!(
-        vec![Resolution::Definition(cur)],
-        resolutions_of(analysis.binder(), "cur"),
-    );
-}
-
-/// Attaching ignores data locations but not element types: a `uint8` array is
-/// not a `uint256` array, even though `uint8` widens to `uint256`.
-#[test]
-fn test_array_with_narrower_elements_does_not_attach() {
-    const SOURCE: &str = r###"
-pragma solidity *;
-library L {
-    function g(uint256[] memory c) internal pure returns (uint256) {
-        return c.length;
-    }
-
-    function h(uint256[2] memory c) internal pure returns (uint256) {
-        return c[0];
-    }
-}
-
-contract C {
-    using L for uint8[];
-    using L for uint8[2];
-    uint8[] a;
-    uint8[2] b;
-
-    function test() internal view returns (uint256) {
-        return a.g() + b.h();
-    }
-}
-    "###;
-
-    let analysis = Analysis::of_source(SOURCE).run(Analyse::References);
-    assert_eq!(
-        vec![
-            DiagnosticKind::from(MemberNotFound {
-                name: "g".to_owned()
-            }),
-            DiagnosticKind::from(MemberNotFound {
-                name: "h".to_owned()
-            }),
-        ],
-        diagnostic_kinds(&analysis.diagnostics),
     );
 }

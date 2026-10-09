@@ -504,59 +504,12 @@ impl TypeRegistry {
         from_type_id: TypeId,
         to_type_id: TypeId,
     ) -> bool {
-        if from_type_id == to_type_id {
-            return true;
-        }
-        let from_type = self.get_type_by_id(from_type_id);
-        let to_type = self.get_type_by_id(to_type_id);
-
         // TODO(validation) SDR[60]: we're assuming here that for external calls every
         // location is implicitly convertible to any other (although
         // reallistically the targets can be memory and calldata only). Verify
         // this assumption.
-        match (from_type, to_type) {
-            (
-                Type::Array(ArrayType {
-                    element_type: from_element_type,
-                    ..
-                }),
-                Type::Array(ArrayType {
-                    element_type: to_element_type,
-                    ..
-                }),
-            ) => self.equal_ignoring_location(*from_element_type, *to_element_type),
-
-            (
-                Type::FixedSizeArray(FixedSizeArrayType {
-                    element_type: from_element_type,
-                    size: from_size,
-                    ..
-                }),
-                Type::FixedSizeArray(FixedSizeArrayType {
-                    element_type: to_element_type,
-                    size: to_size,
-                    ..
-                }),
-            ) => {
-                from_size == to_size
-                    && self.equal_ignoring_location(*from_element_type, *to_element_type)
-            }
-
-            (
-                Type::Struct(StructType {
-                    definition_id: from_definition,
-                    ..
-                }),
-                Type::Struct(StructType {
-                    definition_id: to_definition,
-                    ..
-                }),
-            ) => from_definition == to_definition,
-
-            (Type::Bytes(_), Type::Bytes(_)) | (Type::String(_), Type::String(_)) => true,
-
-            _ => self.implicitly_convertible_to(from_type_id, to_type_id),
-        }
+        self.equal_ignoring_location(from_type_id, to_type_id)
+            || self.implicitly_convertible_to(from_type_id, to_type_id)
     }
 
     // The ABI boundary decodes a calldata-located reference into fresh memory,
