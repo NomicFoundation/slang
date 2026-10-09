@@ -448,6 +448,18 @@ mod tests {
     }
 
     #[test]
+    fn an_abi_entry_pairs_with_the_same_keyed_entry_it_equals() {
+        // solc before 0.8.20 leaves the library's `Moved` out; the contract's own pairs.
+        let record: CorpusContract = serde_json::from_str(
+            r#"{"name": "x", "chain_id": 0, "version": "0.8.19", "target": "a.sol", "target_contract": "C", "sources": {"a.sol": "library L { event Moved(address to, uint256 value); function f() internal { emit Moved(address(0), 1); } } contract C { event Moved(address from, uint256 amount); function g() external { L.f(); emit Moved(address(0), 2); } }"}, "artifacts": {"abi": [{"anonymous": false, "inputs": [{"indexed": false, "internalType": "address", "name": "from", "type": "address"}, {"indexed": false, "internalType": "uint256", "name": "amount", "type": "uint256"}], "name": "Moved", "type": "event"}, {"inputs": [], "name": "g", "outputs": [], "stateMutability": "nonpayable", "type": "function"}]}}"#,
+        )
+        .unwrap();
+        let outcome = check(&record, Path::new("0_x.json"), false);
+        let keys: Vec<String> = outcome.failures.iter().map(outcome::Failure::key).collect();
+        assert_eq!(keys, ["abi:extra"]);
+    }
+
+    #[test]
     fn unsupported_versions_and_targets_are_skips() {
         let mut record: CorpusContract = serde_json::from_str(
             r#"{"name":"x","chain_id":0,"version":"0.7.6","target":"a.sol","sources":{"a.sol":"contract A {}"}}"#,
