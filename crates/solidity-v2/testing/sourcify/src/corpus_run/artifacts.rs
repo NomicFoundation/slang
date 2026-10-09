@@ -236,7 +236,8 @@ impl TypesWalk<'_> {
             mismatch("label", slang.label(), field("label"));
         }
         let number_of_bytes = match slang.size() {
-            StorageSize::Slots(slots) => slots.saturating_mul(U256::from(32)).to_string(),
+            // solc computes the byte count modulo 2^256, so a `uint256[2**255]` gap is 0 bytes.
+            StorageSize::Slots(slots) => slots.wrapping_mul(U256::from(32)).to_string(),
             StorageSize::Bytes(bytes) => bytes.to_string(),
         };
         if number_of_bytes != field("numberOfBytes") {
