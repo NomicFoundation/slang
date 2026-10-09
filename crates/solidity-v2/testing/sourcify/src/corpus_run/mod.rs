@@ -37,7 +37,11 @@ pub fn testdata_corpus_dir() -> PathBuf {
 /// The checks against the record's solc artifacts, each skipped on its own when the
 /// artifacts or the target contract are missing. A skipped layout check skips its
 /// types check with it.
-const ARTIFACT_CHECKS: [Check; 2] = [Check::StorageLayout, Check::TransientStorageLayout];
+const ARTIFACT_CHECKS: [Check; 3] = [
+    Check::Abi,
+    Check::StorageLayout,
+    Check::TransientStorageLayout,
+];
 
 fn default_expected_failures() -> PathBuf {
     Path::new(env!("CARGO_MANIFEST_DIR")).join("expected-failures.toml")
@@ -197,6 +201,12 @@ fn check(record: &CorpusContract, path: &Path, print_diagnostics: bool) -> Outco
         match &record.artifacts {
             Some(artifacts) => match artifacts::target_definition(&unit, record) {
                 Ok(target) => {
+                    match artifacts::check_abi(&target, artifacts) {
+                        Ok(check_failures) => failures.extend(check_failures),
+                        Err(reason) => {
+                            skipped_checks.insert(Check::Abi.to_string(), reason);
+                        }
+                    }
                     for layout in [Layout::Storage, Layout::Transient] {
                         match artifacts::check_storage_layout(&target, artifacts, layout) {
                             Ok(check_failures) => failures.extend(check_failures),
@@ -391,6 +401,48 @@ mod tests {
                 "storage_types:[*].type.members.offset",
                 "storage_types:[*].type.members.slot",
                 "storage_types:[*].type.numberOfBytes",
+            ]
+        );
+    }
+
+    #[test]
+    fn abi_mismatches_are_bucketed_by_kind() {
+        let path = testdata_corpus_dir().join("contracts/0_abi.json");
+        let mut record = corpus::read_contract(&path).unwrap();
+        let abi = record
+            .artifacts
+            .as_mut()
+            .unwrap()
+            .pointer_mut("/abi")
+            .unwrap()
+            .as_array_mut()
+            .unwrap();
+        let index = |abi: &[serde_json::Value], name: &str| {
+            abi.iter().position(|entry| entry["name"] == name).unwrap()
+        };
+        let place = index(abi, "place");
+        abi[place]["stateMutability"] = "view".into();
+        let rejected = index(abi, "Rejected");
+        abi[rejected]["inputs"][0]["components"][1]["internalType"] = "uint256".into();
+        let zap = index(abi, "zap");
+        abi.remove(zap);
+        abi.push(
+            serde_json::json!({"type": "function", "name": "ghost", "inputs": [],
+            "outputs": [], "stateMutability": "nonpayable"}),
+        );
+        let (orders, total) = (index(abi, "orders"), index(abi, "total"));
+        abi.swap(orders, total);
+
+        let outcome = check(&record, &path, false);
+        let keys: Vec<String> = outcome.failures.iter().map(outcome::Failure::key).collect();
+        assert_eq!(
+            keys,
+            [
+                "abi:[*].inputs.components.internalType",
+                "abi:[*].stateMutability",
+                "abi:extra",
+                "abi:missing",
+                "abi:order",
             ]
         );
     }

@@ -15,6 +15,8 @@ pub enum Check {
     Bind,
     /// Structural, type-system and semantic errors.
     Validate,
+    /// The target contract's ABI JSON against solc's `abi` artifact, order included.
+    Abi,
     /// The target contract's storage slots against solc's `storageLayout` artifact.
     StorageLayout,
     /// Each storage item's type against solc's types table: label, size, encoding, and
@@ -44,6 +46,7 @@ impl std::fmt::Display for Check {
             Check::Parse => f.write_str("parse"),
             Check::Bind => f.write_str("bind"),
             Check::Validate => f.write_str("validate"),
+            Check::Abi => f.write_str("abi"),
             Check::StorageLayout => f.write_str("storage_layout"),
             Check::StorageTypes => f.write_str("storage_types"),
             Check::TransientStorageLayout => f.write_str("transient_storage_layout"),
