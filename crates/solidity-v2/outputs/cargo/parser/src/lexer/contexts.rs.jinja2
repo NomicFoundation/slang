@@ -42,6 +42,8 @@ impl<'source> ContextWrapper<'source> {
     }
     {%- endfor %}
 
+    // Always inlined into the parser's hot loop
+    #[inline(always)]
     pub fn next_lexeme(&mut self) -> Option<Lexeme> {
         let (kind, range) = match self {
             {%- for context in model.parser.lexer.contexts %}

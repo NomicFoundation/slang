@@ -52,6 +52,8 @@ impl<'source> ContextWrapper<'source> {
         }
     }
 
+    // Always inlined into the parser's hot loop
+    #[inline(always)]
     pub fn next_lexeme(&mut self) -> Option<Lexeme> {
         let (kind, range) = match self {
             Self::Pragma(lexer) => match lexer.next() {
