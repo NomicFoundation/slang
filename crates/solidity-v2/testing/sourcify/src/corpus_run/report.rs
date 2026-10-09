@@ -16,6 +16,7 @@ const LIST_CONTRACTS_AT: usize = 50;
 /// One contract's failure in a bucket.
 pub struct Occurrence {
     pub contract: String,
+    pub version: String,
     pub failure: Failure,
 }
 
@@ -115,6 +116,7 @@ impl Summary {
             let bucket = self.buckets.entry(failure.key()).or_default();
             bucket.occurrences.push(Occurrence {
                 contract: outcome.id.clone(),
+                version: outcome.version.clone(),
                 failure: failure.clone(),
             });
         }
@@ -130,9 +132,13 @@ impl Summary {
         for (key, bucket) in &self.buckets {
             let mut bucket_claims = Vec::with_capacity(bucket.occurrences.len());
             for occurrence in &bucket.occurrences {
-                let claim = entries
-                    .iter()
-                    .position(|entry| entry.matches(&occurrence.contract, &occurrence.failure));
+                let claim = entries.iter().position(|entry| {
+                    entry.matches(
+                        &occurrence.contract,
+                        &occurrence.version,
+                        &occurrence.failure,
+                    )
+                });
                 match claim {
                     Some(index) => claimed[index] += 1,
                     None => unexpected
@@ -546,6 +552,23 @@ mod tests {
             "{report}"
         );
         assert!(report[deliberate..].contains("on purpose"), "{report}");
+    }
+
+    #[test]
+    fn an_entry_bounded_below_a_version_leaves_later_versions_unexpected() {
+        let mut summary = Summary::default();
+        let mut old = outcome("old", vec![failure(Check::Abi, "extra")], None);
+        old.version = "0.8.19".to_owned();
+        let mut new = outcome("new", vec![failure(Check::Abi, "extra")], None);
+        new.version = "0.8.20".to_owned();
+        summary.add(&old);
+        summary.add(&new);
+        let expected = expected(
+            "[[failures]]\ncheck = \"abi\"\ncode = \"extra\"\nreason = \"r\"\ndeliberate = true\nbelow = \"0.8.20\"\n",
+        );
+        let gate = summary.gate(&expected, true);
+        assert_eq!(gate.unexpected["abi:extra"].examples, ["new"]);
+        assert!(gate.stale.is_empty());
     }
 
     #[test]
