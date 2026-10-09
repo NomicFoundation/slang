@@ -1,4 +1,3 @@
-use std::fmt::Write;
 use std::ops::Range;
 
 pub use contract_data::ContractReference;
@@ -17,23 +16,20 @@ pub use storage_layout::{
     StorageLayoutBuilder, StorageMember, StoragePosition, StorageSize, StorageTypeKind,
     StorageTypeLayout, StorageTypeTable,
 };
+pub use types::{AbiNameError, AbiTypeSpelling};
 
 use crate::binder::{Binder, BinderCapacities, Definition, Reference};
 use crate::passes::{
     p1_collect_definitions, p2_linearise_contracts, p3_type_definitions, p4_compute_linearisations,
     p5_resolve_references, p6_resolve_yul, p7_contract_properties, p8_code_analysis,
 };
-use crate::types::{
-    ArraySliceType, ArrayType, ByteArrayType, ContractType, DataLocation, EnumType, ErrorType,
-    EventType, FixedPointNumberType, FixedSizeArrayType, FunctionType, FunctionTypeMutability,
-    IntegerType, InterfaceType, LibraryType, MappingType, MetaType, StructType, TupleType, Type,
-    TypeId, TypeRegistry, UserDefinedValueType, UserMetaType,
-};
+use crate::types::TypeRegistry;
 
 mod contract_data;
 pub(crate) mod dispatch;
 mod file_node_mapper;
 mod storage_layout;
+mod types;
 
 /// Trait for files that can be used as input to the semantic analysis passes.
 pub trait SemanticFile {
@@ -298,267 +294,5 @@ impl SemanticContext {
             .binder()
             .find_reference_by_identifier_node_id(node_id)?;
         reference.resolution.as_definition_id()
-    }
-
-    /// Qualifies a nested definition with its enclosing scope, as solc's
-    /// `canonicalName` does: `L.S`, `C.E`.
-    pub fn definition_canonical_name(&self, definition_id: NodeId) -> String {
-        let mut name = String::new();
-        self.write_definition_canonical_name(definition_id, &mut name);
-        name
-    }
-
-    fn write_definition_canonical_name(&self, definition_id: NodeId, out: &mut String) {
-        if let Some(enclosing) = self.binder.enclosing_definition_node_id(definition_id) {
-            self.write_definition_canonical_name(enclosing, out);
-            out.push('.');
-        }
-        out.push_str(
-            self.binder
-                .find_definition_by_id(definition_id)
-                .unwrap()
-                .identifier()
-                .unparse(),
-        );
-    }
-
-    pub fn type_internal_name(&self, type_id: TypeId) -> String {
-        let mut name = String::new();
-        self.write_type_internal_name(type_id, &mut name);
-        name
-    }
-
-    fn write_type_internal_name(&self, type_id: TypeId, out: &mut String) {
-        match self.types.get_type_by_id(type_id) {
-            Type::Address(_) => out.push_str("address"),
-            Type::Array(ArrayType { element_type, .. }) => {
-                self.write_type_internal_name(*element_type, out);
-                out.push_str("[]");
-            }
-            Type::ArraySlice(ArraySliceType { array_type_id }) => {
-                self.write_type_internal_name(*array_type_id, out);
-                out.push_str(" slice");
-            }
-            Type::Boolean => out.push_str("bool"),
-            Type::ByteArray(ByteArrayType { width }) => write!(out, "bytes{width}").unwrap(),
-            Type::Bytes(_) => out.push_str("bytes"),
-            Type::FixedPointNumber(FixedPointNumberType {
-                is_signed,
-                bits,
-                decimal_places,
-            }) => write!(
-                out,
-                "{prefix}{bits}x{decimal_places}",
-                prefix = if *is_signed { "fixed" } else { "ufixed" },
-            )
-            .unwrap(),
-            Type::FixedSizeArray(FixedSizeArrayType {
-                element_type, size, ..
-            }) => {
-                self.write_type_internal_name(*element_type, out);
-                write!(out, "[{size}]").unwrap();
-            }
-            Type::Function(_) => out.push_str("function"),
-            Type::Integer(IntegerType { is_signed, bits }) => write!(
-                out,
-                "{prefix}{bits}",
-                prefix = if *is_signed { "int" } else { "uint" }
-            )
-            .unwrap(),
-            Type::Literal(_) => out.push_str("literal"),
-            Type::Mapping(MappingType {
-                key_type_id,
-                value_type_id,
-            }) => {
-                out.push_str("mapping(");
-                self.write_type_internal_name(*key_type_id, out);
-                out.push_str(" => ");
-                self.write_type_internal_name(*value_type_id, out);
-                out.push(')');
-            }
-            Type::String(_) => out.push_str("string"),
-            Type::Tuple(TupleType { types }) => {
-                out.push('(');
-                for (index, type_id) in types.iter().enumerate() {
-                    if index > 0 {
-                        out.push(',');
-                    }
-                    self.write_type_internal_name(*type_id, out);
-                }
-                out.push(')');
-            }
-            Type::Contract(ContractType { definition_id })
-            | Type::Enum(EnumType { definition_id })
-            | Type::Interface(InterfaceType { definition_id })
-            | Type::Library(LibraryType { definition_id })
-            | Type::Struct(StructType { definition_id, .. })
-            | Type::UserDefinedValue(UserDefinedValueType { definition_id }) => {
-                self.write_definition_canonical_name(*definition_id, out);
-            }
-            Type::Error(ErrorType { definition_id }) => {
-                out.push_str("error(");
-                self.write_definition_canonical_name(*definition_id, out);
-                out.push(')');
-            }
-            Type::Event(EventType { definition_id }) => {
-                out.push_str("event(");
-                self.write_definition_canonical_name(*definition_id, out);
-                out.push(')');
-            }
-            // Meta-types print in solc's `type(T)` notation.
-            Type::MetaType(MetaType { type_id }) => {
-                out.push_str("type(");
-                self.write_type_internal_name(*type_id, out);
-                out.push(')');
-            }
-            Type::UserMetaType(UserMetaType { definition_id }) => {
-                out.push_str("type(");
-                self.write_definition_canonical_name(*definition_id, out);
-                out.push(')');
-            }
-        }
-    }
-
-    /// The type as solc's `Type::toString(true)` spells it, which is the JSON ABI `internalType`
-    /// and the storage layout label: a kind prefix on user-defined types (`struct C.S`,
-    /// `enum C.E`, `contract I`), `address payable`, and function types with their parameters,
-    /// mutability, `external` and returns; never a data location. Everything else spells as
-    /// [`Self::type_internal_name`].
-    pub fn type_abi_internal_name(&self, type_id: TypeId) -> String {
-        // Sized on the ABI benchmarks: most names fit without the buffer regrowing.
-        let mut name = String::with_capacity(32);
-        self.write_type_abi_internal_name(type_id, &mut name);
-        name
-    }
-
-    fn write_type_abi_internal_name(&self, type_id: TypeId, out: &mut String) {
-        match self.types.get_type_by_id(type_id) {
-            Type::Address(address) if address.is_payable => out.push_str("address payable"),
-            Type::Array(ArrayType { element_type, .. }) => {
-                self.write_type_abi_internal_name(*element_type, out);
-                out.push_str("[]");
-            }
-            Type::Contract(ContractType { definition_id })
-            | Type::Interface(InterfaceType { definition_id }) => {
-                out.push_str("contract ");
-                self.write_definition_canonical_name(*definition_id, out);
-            }
-            Type::Enum(EnumType { definition_id }) => {
-                out.push_str("enum ");
-                self.write_definition_canonical_name(*definition_id, out);
-            }
-            Type::FixedSizeArray(FixedSizeArrayType {
-                element_type, size, ..
-            }) => {
-                self.write_type_abi_internal_name(*element_type, out);
-                write!(out, "[{size}]").unwrap();
-            }
-            Type::Function(function_type) => {
-                self.write_function_type_abi_internal_name(function_type, out);
-            }
-            Type::Mapping(MappingType {
-                key_type_id,
-                value_type_id,
-            }) => {
-                out.push_str("mapping(");
-                self.write_type_abi_internal_name(*key_type_id, out);
-                out.push_str(" => ");
-                self.write_type_abi_internal_name(*value_type_id, out);
-                out.push(')');
-            }
-            Type::Struct(StructType { definition_id, .. }) => {
-                out.push_str("struct ");
-                self.write_definition_canonical_name(*definition_id, out);
-            }
-            _ => self.write_type_internal_name(type_id, out),
-        }
-    }
-
-    fn write_type_abi_internal_names(&self, type_ids: &[TypeId], out: &mut String) {
-        for (index, type_id) in type_ids.iter().enumerate() {
-            if index > 0 {
-                out.push(',');
-            }
-            self.write_type_abi_internal_name(*type_id, out);
-        }
-    }
-
-    /// `function (T1,T2) [pure|view|payable] [external] [returns (R1,R2)]`: `nonpayable` and
-    /// `internal` are implied by their absence, as in solc.
-    fn write_function_type_abi_internal_name(
-        &self,
-        function_type: &FunctionType,
-        out: &mut String,
-    ) {
-        out.push_str("function (");
-        self.write_type_abi_internal_names(&function_type.parameter_types, out);
-        out.push(')');
-        out.push_str(match function_type.mutability {
-            FunctionTypeMutability::Pure => " pure",
-            FunctionTypeMutability::View => " view",
-            FunctionTypeMutability::Payable => " payable",
-            FunctionTypeMutability::NonPayable => "",
-        });
-        if function_type.is_externally_visible() {
-            out.push_str(" external");
-        }
-        if let Type::Tuple(TupleType { types }) =
-            self.types.get_type_by_id(function_type.return_type)
-        {
-            // An empty tuple is not printed
-            if !types.is_empty() {
-                out.push_str(" returns (");
-                self.write_type_abi_internal_names(types, out);
-                out.push(')');
-            }
-        } else {
-            out.push_str(" returns (");
-            self.write_type_abi_internal_name(function_type.return_type, out);
-            out.push(')');
-        }
-    }
-
-    pub fn type_library_name(&self, type_id: TypeId) -> Option<String> {
-        let mut name = self.type_library_element_name(type_id)?;
-        if self.types.get_type_by_id(type_id).data_location() == Some(DataLocation::Storage) {
-            name.push_str(" storage");
-        }
-        Some(name)
-    }
-
-    /// A user-defined value type is spelled as the type it wraps, under an
-    /// array as well as on its own. A mapping keeps the wrapper's name
-    /// (matching solc, which has no ABI spelling for one).
-    fn type_library_element_name(&self, type_id: TypeId) -> Option<String> {
-        let name = match self.types.get_type_by_id(type_id) {
-            Type::UserDefinedValue(UserDefinedValueType { definition_id }) => {
-                self.type_internal_name(self.user_defined_value_target_type_id(*definition_id)?)
-            }
-            Type::Array(ArrayType { element_type, .. }) => {
-                format!(
-                    "{element}[]",
-                    element = self.type_library_element_name(*element_type)?
-                )
-            }
-            Type::FixedSizeArray(FixedSizeArrayType {
-                element_type, size, ..
-            }) => {
-                format!(
-                    "{element}[{size}]",
-                    element = self.type_library_element_name(*element_type)?
-                )
-            }
-            _ => self.type_internal_name(type_id),
-        };
-        Some(name)
-    }
-
-    fn user_defined_value_target_type_id(&self, definition_id: NodeId) -> Option<TypeId> {
-        let Definition::UserDefinedValueType(user_defined_value) =
-            self.binder.find_definition_by_id(definition_id)?
-        else {
-            return None;
-        };
-        user_defined_value.target_type_id
     }
 }

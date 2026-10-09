@@ -12,12 +12,11 @@
 //!
 //! then appends the encoding of every transitively-referenced struct. A
 //! struct-typed member is referred to by the struct's *name*, whereas a leaf
-//! member uses its ABI type spelling — so the example leans on `AbiType` for
-//! leaves and walks the AST for the struct (and array-of-struct) members.
+//! member uses its ABI type spelling — so the example spells leaves from their
+//! AST types and walks the AST for the struct (and array-of-struct) members.
 
 use slang_solidity_v2_common::collections::OrderedSet;
 
-use crate::abi::AbiType;
 use crate::ast::{Definition, StructDefinition, Type};
 use crate::define_fixture;
 use crate::tests::fixtures;
@@ -47,9 +46,9 @@ struct Person {
 
 /// The EIP-712 type string for a single member's type, or `None` if it has no
 /// representation. Struct (and array-of-struct) members are referred to by the
-/// struct's declared name; leaf members go through `AbiType`. Because EIP-712's
-/// type system is narrower than the ABI's, `function` and fixed-point types —
-/// which are valid `AbiType`s — are rejected here.
+/// struct's declared name; leaf members are spelled as their ABI types. Because
+/// EIP-712's type system is narrower than the ABI's, `function` and fixed-point
+/// types are rejected here.
 fn member_type_string(ty: &Type) -> Option<String> {
     match ty {
         Type::Struct(struct_type) => {
@@ -64,11 +63,20 @@ fn member_type_string(ty: &Type) -> Option<String> {
             member_type_string(&array.element_type())?,
             array.size()
         )),
-        elementary => match AbiType::try_from(elementary).ok()? {
-            // Valid ABI types, but not part of EIP-712's type system.
-            AbiType::Function | AbiType::FixedPointNumber { .. } => None,
-            abi => Some(abi.to_string()),
-        },
+        Type::Address(_) | Type::Contract(_) | Type::Interface(_) => Some("address".to_owned()),
+        Type::Boolean(_) => Some("bool".to_owned()),
+        Type::Bytes(_) => Some("bytes".to_owned()),
+        Type::String(_) => Some("string".to_owned()),
+        Type::ByteArray(byte_array) => Some(format!("bytes{}", byte_array.width())),
+        Type::Integer(integer) => Some(format!(
+            "{}int{}",
+            if integer.is_signed() { "" } else { "u" },
+            integer.bits()
+        )),
+        Type::Enum(_) => Some("uint8".to_owned()),
+        Type::UserDefinedValue(udvt) => member_type_string(&udvt.target_type()?),
+        // Not part of EIP-712's type system, or not an ABI type at all.
+        _ => None,
     }
 }
 
@@ -137,9 +145,7 @@ fn derives_encode_type_from_ast_and_abi() {
     // Exercises the whole surface at once: multi-file navigation, resolving a
     // member's struct type back to its declaration (through the `P` import
     // alias, so the name is `Person`), array-of-struct members, leaf members
-    // via `AbiType`, and `NodeId`-based dedup (`Person` is reached twice). The
-    // name lookup only picks the entry point; dependency resolution never
-    // round-trips through a name.
+    // spelled from their AST types, and `NodeId`-based dedup (`Person` is reached twice).
     let unit = Eip712::build_compilation_unit();
     assert_eq!(
         encode_type(&fixtures::find_struct(&unit, "Mail")),

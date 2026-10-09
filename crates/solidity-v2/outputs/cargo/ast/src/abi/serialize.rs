@@ -7,33 +7,49 @@ use std::sync::Arc;
 
 use serde::Serialize;
 use serde::ser::{SerializeMap, SerializeSeq, Serializer};
-use slang_solidity_v2_semantic::context::SemanticContext;
-use slang_solidity_v2_semantic::types::TypeId;
+use slang_solidity_v2_common::nodes::NodeId;
+use slang_solidity_v2_semantic::binder::Definition;
+use slang_solidity_v2_semantic::context::{AbiNameError, AbiTypeSpelling, SemanticContext};
+use slang_solidity_v2_semantic::types::{
+    ArraySliceType, ArrayType, FixedSizeArrayType, StructType, Type, TypeId,
+};
 
-use crate::abi::types::{AbiShape, abi_shape};
-use crate::abi::{AbiEntry, AbiMutability, AbiParameter, ContractAbi, TypeSpelling};
-use crate::ast::{StructDefinition, Type as AstType};
+use crate::abi::{AbiEntry, AbiMutability, AbiParameter, ContractAbi};
 
 impl Serialize for ContractAbi {
     fn serialize<S: Serializer>(&self, serializer: S) -> Result<S::Ok, S::Error> {
         let mut seq = serializer.serialize_seq(Some(self.entries.len()))?;
         for entry in &self.entries {
-            seq.serialize_element(entry)?;
+            seq.serialize_element(&Entry {
+                entry,
+                semantic: &self.semantic,
+            })?;
         }
         seq.end()
     }
 }
 
-impl Serialize for AbiEntry {
+/// An entry, with the context its parameters' types are written from.
+struct Entry<'a> {
+    entry: &'a AbiEntry,
+    semantic: &'a Arc<SemanticContext>,
+}
+
+impl Serialize for Entry<'_> {
     fn serialize<S: Serializer>(&self, serializer: S) -> Result<S::Ok, S::Error> {
-        let parameters = |parameters| ParameterList {
+        let parameters = |parameters, spelling| ParameterList {
             parameters,
-            spelling: TypeSpelling::Canonical,
+            spelling,
+            with_indexed: false,
+            semantic: self.semantic,
         };
-        match self {
+        match self.entry {
             AbiEntry::Constructor(constructor) => {
                 let mut map = serializer.serialize_map(Some(3))?;
-                map.serialize_entry("inputs", &parameters(constructor.inputs()))?;
+                map.serialize_entry(
+                    "inputs",
+                    &parameters(constructor.inputs(), AbiTypeSpelling::Json),
+                )?;
                 map.serialize_entry(
                     "stateMutability",
                     &Mutability(constructor.state_mutability()),
@@ -43,7 +59,7 @@ impl Serialize for AbiEntry {
             }
             AbiEntry::Error(error) => {
                 let mut map = serializer.serialize_map(Some(3))?;
-                map.serialize_entry("inputs", &parameters(error.inputs()))?;
+                map.serialize_entry("inputs", &parameters(error.inputs(), AbiTypeSpelling::Json))?;
                 map.serialize_entry("name", error.name())?;
                 map.serialize_entry("type", "error")?;
                 map.end()
@@ -51,7 +67,13 @@ impl Serialize for AbiEntry {
             AbiEntry::Event(event) => {
                 let mut map = serializer.serialize_map(Some(4))?;
                 map.serialize_entry("anonymous", &event.anonymous())?;
-                map.serialize_entry("inputs", &EventInputs(event.inputs()))?;
+                map.serialize_entry(
+                    "inputs",
+                    &ParameterList {
+                        with_indexed: true,
+                        ..parameters(event.inputs(), AbiTypeSpelling::Json)
+                    },
+                )?;
                 map.serialize_entry("name", event.name())?;
                 map.serialize_entry("type", "event")?;
                 map.end()
@@ -63,14 +85,16 @@ impl Serialize for AbiEntry {
                 map.end()
             }
             AbiEntry::Function(function) => {
-                let function_parameters = |parameters| ParameterList {
-                    parameters,
-                    spelling: function.type_spelling,
-                };
                 let mut map = serializer.serialize_map(Some(5))?;
-                map.serialize_entry("inputs", &function_parameters(function.inputs()))?;
+                map.serialize_entry(
+                    "inputs",
+                    &parameters(function.inputs(), function.type_spelling),
+                )?;
                 map.serialize_entry("name", function.name())?;
-                map.serialize_entry("outputs", &function_parameters(function.outputs()))?;
+                map.serialize_entry(
+                    "outputs",
+                    &parameters(function.outputs(), function.type_spelling),
+                )?;
                 map.serialize_entry("stateMutability", &Mutability(function.state_mutability()))?;
                 map.serialize_entry("type", "function")?;
                 map.end()
@@ -85,9 +109,13 @@ impl Serialize for AbiEntry {
     }
 }
 
+/// An entry's inputs or outputs.
 struct ParameterList<'a> {
     parameters: &'a [AbiParameter],
-    spelling: TypeSpelling,
+    spelling: AbiTypeSpelling,
+    /// Only an event's inputs carry `indexed`.
+    with_indexed: bool,
+    semantic: &'a Arc<SemanticContext>,
 }
 
 impl Serialize for ParameterList<'_> {
@@ -96,29 +124,10 @@ impl Serialize for ParameterList<'_> {
         for parameter in self.parameters {
             seq.serialize_element(&Parameter {
                 name: parameter.name().unwrap_or_default(),
-                type_id: parameter.type_id,
-                indexed: None,
+                type_id: parameter.type_id(),
+                indexed: self.with_indexed.then_some(parameter.indexed()),
                 spelling: self.spelling,
-                semantic: &parameter.semantic,
-            })?;
-        }
-        seq.end()
-    }
-}
-
-/// An event's inputs, the only parameters that carry `indexed`.
-struct EventInputs<'a>(&'a [AbiParameter]);
-
-impl Serialize for EventInputs<'_> {
-    fn serialize<S: Serializer>(&self, serializer: S) -> Result<S::Ok, S::Error> {
-        let mut seq = serializer.serialize_seq(Some(self.0.len()))?;
-        for parameter in self.0 {
-            seq.serialize_element(&Parameter {
-                name: parameter.name().unwrap_or_default(),
-                type_id: parameter.type_id,
-                indexed: Some(parameter.indexed()),
-                spelling: TypeSpelling::Canonical,
-                semantic: &parameter.semantic,
+                semantic: self.semantic,
             })?;
         }
         seq.end()
@@ -130,22 +139,21 @@ struct Parameter<'a> {
     name: &'a str,
     type_id: TypeId,
     indexed: Option<bool>,
-    spelling: TypeSpelling,
+    spelling: AbiTypeSpelling,
     semantic: &'a Arc<SemanticContext>,
 }
 
 impl Serialize for Parameter<'_> {
     fn serialize<S: Serializer>(&self, serializer: S) -> Result<S::Ok, S::Error> {
-        let value = AstType::create(self.type_id, self.semantic);
-        let definition = struct_behind(&value);
+        let struct_id = struct_behind(self.semantic, self.type_id);
         let mut map = serializer.serialize_map(Some(
-            3 + usize::from(definition.is_some()) + usize::from(self.indexed.is_some()),
+            3 + usize::from(struct_id.is_some()) + usize::from(self.indexed.is_some()),
         ))?;
-        if let Some(definition) = definition {
+        if let Some(struct_id) = struct_id {
             map.serialize_entry(
                 "components",
                 &ComponentList {
-                    definition,
+                    struct_id,
                     spelling: self.spelling,
                     semantic: self.semantic,
                 },
@@ -156,16 +164,20 @@ impl Serialize for Parameter<'_> {
         }
         map.serialize_entry(
             "internalType",
-            &self.semantic.type_abi_internal_name(self.type_id),
+            &written(|f| self.semantic.write_type_abi_internal_name(self.type_id, f)),
         )?;
         map.serialize_entry("name", self.name)?;
         map.serialize_entry(
             "type",
-            &JsonType {
-                value: &value,
-                spelling: self.spelling,
-                semantic: self.semantic,
-            },
+            &written(|f| {
+                self.semantic
+                    .write_type_abi_name(self.type_id, self.spelling, f)
+                    .map_err(|error| match error {
+                        AbiNameError::Write(error) => error,
+                        // The parameter was checked to have an ABI type when it was built.
+                        error => unreachable!("a parameter in the ABI has an ABI type: {error}"),
+                    })
+            }),
         )?;
         map.end()
     }
@@ -173,14 +185,19 @@ impl Serialize for Parameter<'_> {
 
 /// The members of the struct behind a `tuple`, in declaration order.
 struct ComponentList<'a> {
-    definition: StructDefinition,
-    spelling: TypeSpelling,
+    struct_id: NodeId,
+    spelling: AbiTypeSpelling,
     semantic: &'a Arc<SemanticContext>,
 }
 
 impl Serialize for ComponentList<'_> {
     fn serialize<S: Serializer>(&self, serializer: S) -> Result<S::Ok, S::Error> {
-        let members = &self.definition.ir_node.members;
+        let Some(Definition::Struct(definition)) =
+            self.semantic.binder().find_definition_by_id(self.struct_id)
+        else {
+            unreachable!("a struct type resolves to a struct definition");
+        };
+        let members = &definition.ir_node.members;
         let mut seq = serializer.serialize_seq(Some(members.len()))?;
         for member in members.iter() {
             seq.serialize_element(&Parameter {
@@ -200,59 +217,38 @@ impl Serialize for ComponentList<'_> {
     }
 }
 
-/// The JSON-ABI `type` string: a struct is `tuple`, `tuple[]` or `tuple[N]`, everything else its
-/// ABI type, with enums, contracts and interfaces spelled as [`TypeSpelling`] says.
-struct JsonType<'a> {
-    value: &'a AstType,
-    spelling: TypeSpelling,
-    semantic: &'a SemanticContext,
+/// The struct behind a `tuple` type, through any arrays.
+fn struct_behind(semantic: &SemanticContext, type_id: TypeId) -> Option<NodeId> {
+    match semantic.types().get_type_by_id(type_id) {
+        Type::Array(ArrayType { element_type, .. })
+        | Type::FixedSizeArray(FixedSizeArrayType { element_type, .. }) => {
+            struct_behind(semantic, *element_type)
+        }
+        Type::ArraySlice(ArraySliceType { array_type_id }) => {
+            struct_behind(semantic, *array_type_id)
+        }
+        Type::Struct(StructType { definition_id, .. }) => Some(*definition_id),
+        _ => None,
+    }
 }
 
-impl fmt::Display for JsonType<'_> {
+/// Serializes as the string a closure writes, streaming it into the output instead of building
+/// it first.
+struct Written<F>(F);
+
+fn written<F: Fn(&mut fmt::Formatter<'_>) -> fmt::Result>(write: F) -> Written<F> {
+    Written(write)
+}
+
+impl<F: Fn(&mut fmt::Formatter<'_>) -> fmt::Result> fmt::Display for Written<F> {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        if matches!(self.spelling, TypeSpelling::ByName) {
-            let definition = match self.value {
-                AstType::Contract(contract) => Some(contract.definition()),
-                AstType::Enum(enum_type) => Some(enum_type.definition()),
-                AstType::Interface(interface) => Some(interface.definition()),
-                _ => None,
-            };
-            if let Some(definition) = definition {
-                return f.write_str(
-                    &self
-                        .semantic
-                        .definition_canonical_name(definition.node_id()),
-                );
-            }
-        }
-        // The parameter was checked to have an ABI representation when it was built.
-        match abi_shape(self.value).expect("a parameter in the ABI has an ABI type") {
-            AbiShape::Scalar(scalar) => scalar.fmt(f),
-            AbiShape::Array(element) => write!(f, "{}[]", self.of(&element)),
-            AbiShape::FixedSizeArray(element, size) => write!(f, "{}[{size}]", self.of(&element)),
-            AbiShape::Struct(_) => f.write_str("tuple"),
-        }
+        (self.0)(f)
     }
 }
 
-impl JsonType<'_> {
-    fn of<'b>(&'b self, value: &'b AstType) -> JsonType<'b> {
-        JsonType { value, ..*self }
-    }
-}
-
-impl Serialize for JsonType<'_> {
+impl<F: Fn(&mut fmt::Formatter<'_>) -> fmt::Result> Serialize for Written<F> {
     fn serialize<S: Serializer>(&self, serializer: S) -> Result<S::Ok, S::Error> {
         serializer.collect_str(self)
-    }
-}
-
-/// The struct behind a `tuple` type, through any arrays.
-fn struct_behind(value: &AstType) -> Option<StructDefinition> {
-    match abi_shape(value)? {
-        AbiShape::Array(element) | AbiShape::FixedSizeArray(element, _) => struct_behind(&element),
-        AbiShape::Struct(definition) => Some(definition),
-        AbiShape::Scalar(_) => None,
     }
 }
 

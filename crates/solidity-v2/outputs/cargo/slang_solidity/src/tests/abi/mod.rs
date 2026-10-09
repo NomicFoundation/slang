@@ -9,7 +9,6 @@ mod json;
 mod library;
 mod selectors;
 mod storage_layout;
-mod type_conversion;
 mod used_errors_and_events;
 
 use super::fixtures;

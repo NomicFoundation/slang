@@ -170,6 +170,12 @@ impl TypeRegistry {
         self.types.get_index(type_id.0).unwrap()
     }
 
+    /// Every type registered so far, in registration order.
+    #[cfg(test)]
+    pub(crate) fn type_ids(&self) -> impl Iterator<Item = TypeId> {
+        (0..self.types.len()).map(TypeId)
+    }
+
     pub(crate) fn implicitly_convertible_to(
         &self,
         from_type_id: TypeId,
