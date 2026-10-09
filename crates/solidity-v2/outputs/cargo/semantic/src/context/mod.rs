@@ -5,8 +5,7 @@ pub use contract_data::ContractReference;
 pub(crate) use contract_data::{ContractData, ContractLinearisations};
 pub use dispatch::VirtualTarget;
 pub(crate) use file_node_mapper::FileNodeMapper;
-use ruint::aliases::U256;
-use slang_solidity_v2_common::collections::{Set, SortedMap};
+use slang_solidity_v2_common::collections::SortedMap;
 use slang_solidity_v2_common::diagnostics::DiagnosticCollection;
 use slang_solidity_v2_common::evm_targets::EvmTarget;
 use slang_solidity_v2_common::files::FileId;
@@ -14,7 +13,10 @@ use slang_solidity_v2_common::nodes::NodeId;
 use slang_solidity_v2_common::utils::strings::strip_string_literal_quotes;
 use slang_solidity_v2_common::versions::LanguageVersion;
 use slang_solidity_v2_ir::ir;
-pub use storage_layout::{StorageLayoutBuilder, StoragePosition, StorageSize};
+pub use storage_layout::{
+    StorageLayoutBuilder, StorageMember, StoragePosition, StorageSize, StorageTypeKind,
+    StorageTypeLayout, StorageTypeTable,
+};
 
 use crate::binder::{Binder, BinderCapacities, Definition, Reference};
 use crate::passes::{
@@ -321,79 +323,98 @@ impl SemanticContext {
     }
 
     pub fn type_internal_name(&self, type_id: TypeId) -> String {
+        let mut name = String::new();
+        self.write_type_internal_name(type_id, &mut name);
+        name
+    }
+
+    fn write_type_internal_name(&self, type_id: TypeId, out: &mut String) {
         match self.types.get_type_by_id(type_id) {
-            Type::Address(_) => "address".to_string(),
+            Type::Address(_) => out.push_str("address"),
             Type::Array(ArrayType { element_type, .. }) => {
-                format!(
-                    "{element}[]",
-                    element = self.type_internal_name(*element_type)
-                )
+                self.write_type_internal_name(*element_type, out);
+                out.push_str("[]");
             }
             Type::ArraySlice(ArraySliceType { array_type_id }) => {
-                format!("{} slice", self.type_internal_name(*array_type_id))
+                self.write_type_internal_name(*array_type_id, out);
+                out.push_str(" slice");
             }
-            Type::Boolean => "bool".to_string(),
-            Type::ByteArray(ByteArrayType { width }) => format!("bytes{width}"),
-            Type::Bytes(_) => "bytes".to_string(),
+            Type::Boolean => out.push_str("bool"),
+            Type::ByteArray(ByteArrayType { width }) => write!(out, "bytes{width}").unwrap(),
+            Type::Bytes(_) => out.push_str("bytes"),
             Type::FixedPointNumber(FixedPointNumberType {
                 is_signed,
                 bits,
                 decimal_places,
-            }) => format!(
+            }) => write!(
+                out,
                 "{prefix}{bits}x{decimal_places}",
                 prefix = if *is_signed { "fixed" } else { "ufixed" },
-            ),
+            )
+            .unwrap(),
             Type::FixedSizeArray(FixedSizeArrayType {
                 element_type, size, ..
             }) => {
-                format!(
-                    "{element}[{size}]",
-                    element = self.type_internal_name(*element_type),
-                )
+                self.write_type_internal_name(*element_type, out);
+                write!(out, "[{size}]").unwrap();
             }
-            Type::Function(_) => "function".to_string(),
-            Type::Integer(IntegerType { is_signed, bits }) => format!(
+            Type::Function(_) => out.push_str("function"),
+            Type::Integer(IntegerType { is_signed, bits }) => write!(
+                out,
                 "{prefix}{bits}",
                 prefix = if *is_signed { "int" } else { "uint" }
-            ),
-            Type::Literal(_) => "literal".to_string(),
+            )
+            .unwrap(),
+            Type::Literal(_) => out.push_str("literal"),
             Type::Mapping(MappingType {
                 key_type_id,
                 value_type_id,
-            }) => format!(
-                "mapping({key_type} => {value_type})",
-                key_type = self.type_internal_name(*key_type_id),
-                value_type = self.type_internal_name(*value_type_id)
-            ),
-            Type::String(_) => "string".to_string(),
-            Type::Tuple(TupleType { types }) => format!(
-                "({types})",
-                types = types
-                    .iter()
-                    .map(|type_id| self.type_internal_name(*type_id))
-                    .collect::<Vec<_>>()
-                    .join(",")
-            ),
+            }) => {
+                out.push_str("mapping(");
+                self.write_type_internal_name(*key_type_id, out);
+                out.push_str(" => ");
+                self.write_type_internal_name(*value_type_id, out);
+                out.push(')');
+            }
+            Type::String(_) => out.push_str("string"),
+            Type::Tuple(TupleType { types }) => {
+                out.push('(');
+                for (index, type_id) in types.iter().enumerate() {
+                    if index > 0 {
+                        out.push(',');
+                    }
+                    self.write_type_internal_name(*type_id, out);
+                }
+                out.push(')');
+            }
             Type::Contract(ContractType { definition_id })
             | Type::Enum(EnumType { definition_id })
             | Type::Interface(InterfaceType { definition_id })
             | Type::Library(LibraryType { definition_id })
             | Type::Struct(StructType { definition_id, .. })
             | Type::UserDefinedValue(UserDefinedValueType { definition_id }) => {
-                self.definition_canonical_name(*definition_id)
+                self.write_definition_canonical_name(*definition_id, out);
             }
             Type::Error(ErrorType { definition_id }) => {
-                format!("error({})", self.definition_canonical_name(*definition_id))
+                out.push_str("error(");
+                self.write_definition_canonical_name(*definition_id, out);
+                out.push(')');
             }
             Type::Event(EventType { definition_id }) => {
-                format!("event({})", self.definition_canonical_name(*definition_id))
+                out.push_str("event(");
+                self.write_definition_canonical_name(*definition_id, out);
+                out.push(')');
             }
             // Meta-types print in solc's `type(T)` notation.
             Type::MetaType(MetaType { type_id }) => {
-                format!("type({})", self.type_internal_name(*type_id))
+                out.push_str("type(");
+                self.write_type_internal_name(*type_id, out);
+                out.push(')');
             }
             Type::UserMetaType(UserMetaType { definition_id }) => {
-                format!("type({})", self.definition_canonical_name(*definition_id))
+                out.push_str("type(");
+                self.write_definition_canonical_name(*definition_id, out);
+                out.push(')');
             }
         }
     }
@@ -449,7 +470,7 @@ impl SemanticContext {
                 out.push_str("struct ");
                 self.write_definition_canonical_name(*definition_id, out);
             }
-            _ => out.push_str(&self.type_internal_name(type_id)),
+            _ => self.write_type_internal_name(type_id, out),
         }
     }
 
@@ -539,93 +560,5 @@ impl SemanticContext {
             return None;
         };
         user_defined_value.target_type_id
-    }
-
-    pub(crate) const ADDRESS_BYTE_SIZE: usize = 20;
-    pub(crate) const SELECTOR_SIZE: usize = 4;
-
-    pub fn storage_size_of_type_id(&self, type_id: TypeId) -> Option<StorageSize> {
-        self.storage_size_of_type_id_impl(type_id, &mut Set::default())
-    }
-
-    fn storage_size_of_type_id_impl(
-        &self,
-        type_id: TypeId,
-        visited_structs: &mut Set<NodeId>,
-    ) -> Option<StorageSize> {
-        use StorageSize::{Bytes, Slots};
-        match self.types.get_type_by_id(type_id) {
-            Type::Address(_) | Type::Contract(_) | Type::Interface(_) => {
-                Some(Bytes(Self::ADDRESS_BYTE_SIZE))
-            }
-            Type::Boolean => Some(Bytes(1)),
-            Type::FixedPointNumber(FixedPointNumberType { bits, .. })
-            | Type::Integer(IntegerType { bits, .. }) => {
-                Some(Bytes((bits.div_ceil(8)).try_into().unwrap()))
-            }
-            Type::ByteArray(ByteArrayType { width }) => Some(Bytes((*width).try_into().unwrap())),
-            Type::Enum(_) => Some(Bytes(1)),
-            Type::Bytes(_) | Type::String(_) => Some(Slots(U256::from(1))),
-            Type::Mapping(_) => Some(Slots(U256::from(1))),
-
-            Type::Array(_) => Some(Slots(U256::from(1))),
-            Type::FixedSizeArray(FixedSizeArrayType {
-                element_type, size, ..
-            }) => Some(Slots(
-                match self.storage_size_of_type_id_impl(*element_type, visited_structs)? {
-                    Slots(slots_per_element) => size.checked_mul(slots_per_element)?,
-                    Bytes(bytes) => {
-                        let elements_per_slot = U256::from(storage_layout::SLOT_SIZE / bytes);
-                        size.div_ceil(elements_per_slot)
-                    }
-                },
-            )),
-
-            Type::Function(function_type) => {
-                if function_type.is_externally_visible() {
-                    Some(Bytes(Self::ADDRESS_BYTE_SIZE + Self::SELECTOR_SIZE))
-                } else {
-                    // NOTE: an internal function ref type is 8 bytes long, it's
-                    // opaque and its meaning not documented
-                    Some(Bytes(8))
-                }
-            }
-            Type::Struct(StructType { definition_id, .. }) => {
-                // Recursive structs are not valid Solidity, but guard against cycles
-                // to avoid unbounded recursion if malformed types reach this point.
-                // Such recursion should already have been reported by the recursive-struct analysis.
-                if !visited_structs.insert(*definition_id) {
-                    return None;
-                }
-                let Definition::Struct(struct_definition) =
-                    self.binder.find_definition_by_id(*definition_id)?
-                else {
-                    return None;
-                };
-                let mut builder = StorageLayoutBuilder::new(U256::ZERO);
-                for member in struct_definition.ir_node.members.iter() {
-                    let member_type_id = self.binder.node_typing(member.id()).as_type_id()?;
-                    let member_size =
-                        self.storage_size_of_type_id_impl(member_type_id, visited_structs)?;
-                    builder.allocate(member_size)?;
-                }
-                visited_structs.remove(definition_id);
-                Some(Slots(builder.slots_used()?))
-            }
-            Type::UserDefinedValue(UserDefinedValueType { definition_id }) => self
-                .storage_size_of_type_id_impl(
-                    self.user_defined_value_target_type_id(*definition_id)?,
-                    visited_structs,
-                ),
-
-            Type::ArraySlice(_)
-            | Type::Error(_)
-            | Type::Event(_)
-            | Type::Library(_)
-            | Type::Literal(_)
-            | Type::MetaType(_)
-            | Type::Tuple(_)
-            | Type::UserMetaType(_) => None,
-        }
     }
 }

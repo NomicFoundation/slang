@@ -305,6 +305,27 @@ impl core::fmt::Debug for slang_solidity_v2_semantic::context::StorageSize
 pub fn slang_solidity_v2_semantic::context::StorageSize::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
 impl core::marker::Copy for slang_solidity_v2_semantic::context::StorageSize
 impl core::marker::StructuralPartialEq for slang_solidity_v2_semantic::context::StorageSize
+pub enum slang_solidity_v2_semantic::context::StorageTypeKind
+pub slang_solidity_v2_semantic::context::StorageTypeKind::Bytes
+pub slang_solidity_v2_semantic::context::StorageTypeKind::DynamicArray
+pub slang_solidity_v2_semantic::context::StorageTypeKind::DynamicArray::element: slang_solidity_v2_semantic::types::TypeId
+pub slang_solidity_v2_semantic::context::StorageTypeKind::FixedSizeArray
+pub slang_solidity_v2_semantic::context::StorageTypeKind::FixedSizeArray::element: slang_solidity_v2_semantic::types::TypeId
+pub slang_solidity_v2_semantic::context::StorageTypeKind::FixedSizeArray::length: ruint::aliases::U256
+pub slang_solidity_v2_semantic::context::StorageTypeKind::Mapping
+pub slang_solidity_v2_semantic::context::StorageTypeKind::Mapping::key: slang_solidity_v2_semantic::types::TypeId
+pub slang_solidity_v2_semantic::context::StorageTypeKind::Mapping::value: slang_solidity_v2_semantic::types::TypeId
+pub slang_solidity_v2_semantic::context::StorageTypeKind::Struct
+pub slang_solidity_v2_semantic::context::StorageTypeKind::Struct::members: alloc::vec::Vec<slang_solidity_v2_semantic::context::StorageMember>
+pub slang_solidity_v2_semantic::context::StorageTypeKind::Value
+impl core::clone::Clone for slang_solidity_v2_semantic::context::StorageTypeKind
+pub fn slang_solidity_v2_semantic::context::StorageTypeKind::clone(&self) -> slang_solidity_v2_semantic::context::StorageTypeKind
+impl core::cmp::Eq for slang_solidity_v2_semantic::context::StorageTypeKind
+impl core::cmp::PartialEq for slang_solidity_v2_semantic::context::StorageTypeKind
+pub fn slang_solidity_v2_semantic::context::StorageTypeKind::eq(&self, &slang_solidity_v2_semantic::context::StorageTypeKind) -> bool
+impl core::fmt::Debug for slang_solidity_v2_semantic::context::StorageTypeKind
+pub fn slang_solidity_v2_semantic::context::StorageTypeKind::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::StructuralPartialEq for slang_solidity_v2_semantic::context::StorageTypeKind
 pub enum slang_solidity_v2_semantic::context::VirtualTarget<'a>
 pub slang_solidity_v2_semantic::context::VirtualTarget::Function(&'a slang_solidity_v2_ir::ir::nodes::FunctionDefinition)
 pub slang_solidity_v2_semantic::context::VirtualTarget::Getter(&'a slang_solidity_v2_ir::ir::nodes::StateVariableDefinition)
@@ -329,7 +350,6 @@ pub fn slang_solidity_v2_semantic::context::SemanticContext::linearised_function
 pub fn slang_solidity_v2_semantic::context::SemanticContext::linearised_state_variables(&self, slang_solidity_v2_common::nodes::NodeId) -> &[slang_solidity_v2_ir::ir::nodes::StateVariableDefinition]
 pub fn slang_solidity_v2_semantic::context::SemanticContext::resolve_reference_identifier_to_definition_id(&self, slang_solidity_v2_common::nodes::NodeId) -> core::option::Option<slang_solidity_v2_common::nodes::NodeId>
 pub fn slang_solidity_v2_semantic::context::SemanticContext::resolve_reference_identifier_to_immediate_definition_id(&self, slang_solidity_v2_common::nodes::NodeId) -> core::option::Option<slang_solidity_v2_common::nodes::NodeId>
-pub fn slang_solidity_v2_semantic::context::SemanticContext::storage_size_of_type_id(&self, slang_solidity_v2_semantic::types::TypeId) -> core::option::Option<slang_solidity_v2_semantic::context::StorageSize>
 pub fn slang_solidity_v2_semantic::context::SemanticContext::type_abi_internal_name(&self, slang_solidity_v2_semantic::types::TypeId) -> alloc::string::String
 pub fn slang_solidity_v2_semantic::context::SemanticContext::type_internal_name(&self, slang_solidity_v2_semantic::types::TypeId) -> alloc::string::String
 pub fn slang_solidity_v2_semantic::context::SemanticContext::type_library_name(&self, slang_solidity_v2_semantic::types::TypeId) -> core::option::Option<alloc::string::String>
@@ -339,6 +359,9 @@ impl slang_solidity_v2_semantic::context::SemanticContext
 pub fn slang_solidity_v2_semantic::context::SemanticContext::resolve_modifier(&self, slang_solidity_v2_common::nodes::NodeId, &slang_solidity_v2_ir::ir::nodes::ModifierInvocation) -> core::option::Option<&slang_solidity_v2_ir::ir::nodes::FunctionDefinition>
 pub fn slang_solidity_v2_semantic::context::SemanticContext::resolve_super<'a>(&'a self, slang_solidity_v2_common::nodes::NodeId, &'a slang_solidity_v2_ir::ir::nodes::FunctionDefinition, slang_solidity_v2_common::nodes::NodeId) -> core::option::Option<&'a slang_solidity_v2_ir::ir::nodes::FunctionDefinition>
 pub fn slang_solidity_v2_semantic::context::SemanticContext::resolve_virtual<'a>(&'a self, slang_solidity_v2_common::nodes::NodeId, &'a slang_solidity_v2_ir::ir::nodes::FunctionDefinition) -> core::option::Option<slang_solidity_v2_semantic::context::VirtualTarget<'a>>
+impl slang_solidity_v2_semantic::context::SemanticContext
+pub fn slang_solidity_v2_semantic::context::SemanticContext::storage_size_of_type_id(&self, slang_solidity_v2_semantic::types::TypeId) -> core::option::Option<slang_solidity_v2_semantic::context::StorageSize>
+pub fn slang_solidity_v2_semantic::context::SemanticContext::storage_type_table<T>(&self, impl core::iter::traits::collect::IntoIterator<Item = slang_solidity_v2_semantic::types::TypeId>, impl core::ops::function::FnMut(slang_solidity_v2_semantic::types::TypeId, slang_solidity_v2_semantic::context::StorageTypeLayout) -> T) -> core::option::Option<slang_solidity_v2_semantic::context::StorageTypeTable<T>>
 pub struct slang_solidity_v2_semantic::context::SourceUnitImport
 pub slang_solidity_v2_semantic::context::SourceUnitImport::node_id: slang_solidity_v2_common::nodes::NodeId
 pub slang_solidity_v2_semantic::context::SourceUnitImport::path: alloc::string::String
@@ -351,6 +374,19 @@ pub struct slang_solidity_v2_semantic::context::StorageLayoutBuilder
 impl slang_solidity_v2_semantic::context::StorageLayoutBuilder
 pub fn slang_solidity_v2_semantic::context::StorageLayoutBuilder::allocate(&mut self, slang_solidity_v2_semantic::context::StorageSize) -> core::option::Option<slang_solidity_v2_semantic::context::StoragePosition>
 pub fn slang_solidity_v2_semantic::context::StorageLayoutBuilder::new(ruint::aliases::U256) -> Self
+pub struct slang_solidity_v2_semantic::context::StorageMember
+impl slang_solidity_v2_semantic::context::StorageMember
+pub fn slang_solidity_v2_semantic::context::StorageMember::name(&self) -> &str
+pub fn slang_solidity_v2_semantic::context::StorageMember::position(&self) -> slang_solidity_v2_semantic::context::StoragePosition
+pub fn slang_solidity_v2_semantic::context::StorageMember::type_id(&self) -> slang_solidity_v2_semantic::types::TypeId
+impl core::clone::Clone for slang_solidity_v2_semantic::context::StorageMember
+pub fn slang_solidity_v2_semantic::context::StorageMember::clone(&self) -> slang_solidity_v2_semantic::context::StorageMember
+impl core::cmp::Eq for slang_solidity_v2_semantic::context::StorageMember
+impl core::cmp::PartialEq for slang_solidity_v2_semantic::context::StorageMember
+pub fn slang_solidity_v2_semantic::context::StorageMember::eq(&self, &slang_solidity_v2_semantic::context::StorageMember) -> bool
+impl core::fmt::Debug for slang_solidity_v2_semantic::context::StorageMember
+pub fn slang_solidity_v2_semantic::context::StorageMember::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::StructuralPartialEq for slang_solidity_v2_semantic::context::StorageMember
 pub struct slang_solidity_v2_semantic::context::StoragePosition
 pub slang_solidity_v2_semantic::context::StoragePosition::offset: usize
 pub slang_solidity_v2_semantic::context::StoragePosition::slot: ruint::aliases::U256
@@ -363,11 +399,23 @@ impl core::fmt::Debug for slang_solidity_v2_semantic::context::StoragePosition
 pub fn slang_solidity_v2_semantic::context::StoragePosition::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
 impl core::marker::Copy for slang_solidity_v2_semantic::context::StoragePosition
 impl core::marker::StructuralPartialEq for slang_solidity_v2_semantic::context::StoragePosition
+pub struct slang_solidity_v2_semantic::context::StorageTypeLayout
+pub slang_solidity_v2_semantic::context::StorageTypeLayout::kind: slang_solidity_v2_semantic::context::StorageTypeKind
+pub slang_solidity_v2_semantic::context::StorageTypeLayout::size: slang_solidity_v2_semantic::context::StorageSize
+impl core::clone::Clone for slang_solidity_v2_semantic::context::StorageTypeLayout
+pub fn slang_solidity_v2_semantic::context::StorageTypeLayout::clone(&self) -> slang_solidity_v2_semantic::context::StorageTypeLayout
+impl core::cmp::Eq for slang_solidity_v2_semantic::context::StorageTypeLayout
+impl core::cmp::PartialEq for slang_solidity_v2_semantic::context::StorageTypeLayout
+pub fn slang_solidity_v2_semantic::context::StorageTypeLayout::eq(&self, &slang_solidity_v2_semantic::context::StorageTypeLayout) -> bool
+impl core::fmt::Debug for slang_solidity_v2_semantic::context::StorageTypeLayout
+pub fn slang_solidity_v2_semantic::context::StorageTypeLayout::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::StructuralPartialEq for slang_solidity_v2_semantic::context::StorageTypeLayout
 pub trait slang_solidity_v2_semantic::context::SemanticFile
 pub fn slang_solidity_v2_semantic::context::SemanticFile::id(&self) -> &slang_solidity_v2_common::files::FileId
 pub fn slang_solidity_v2_semantic::context::SemanticFile::ir_root(&self) -> &slang_solidity_v2_ir::ir::nodes::SourceUnit
 pub fn slang_solidity_v2_semantic::context::SemanticFile::resolved_import_by_node_id(&self, slang_solidity_v2_common::nodes::NodeId) -> core::option::Option<&slang_solidity_v2_common::files::FileId>
 pub fn slang_solidity_v2_semantic::context::extract_imports_from_source_unit(&slang_solidity_v2_ir::ir::nodes::SourceUnit) -> alloc::vec::Vec<slang_solidity_v2_semantic::context::SourceUnitImport>
+pub type slang_solidity_v2_semantic::context::StorageTypeTable<T> = slang_solidity_v2_common::collections::aliases::SortedMap<slang_solidity_v2_semantic::types::TypeId, T>
 pub mod slang_solidity_v2_semantic::types
 pub mod slang_solidity_v2_semantic::types::literals
 pub fn slang_solidity_v2_semantic::types::literals::value_of_hex_number_expression(&slang_solidity_v2_ir::ir::nodes::HexNumberExpression) -> core::option::Option<num_bigint::bigint::BigInt>
@@ -782,8 +830,12 @@ pub struct slang_solidity_v2_semantic::types::TypeId(_)
 impl core::clone::Clone for slang_solidity_v2_semantic::types::TypeId
 pub fn slang_solidity_v2_semantic::types::TypeId::clone(&self) -> slang_solidity_v2_semantic::types::TypeId
 impl core::cmp::Eq for slang_solidity_v2_semantic::types::TypeId
+impl core::cmp::Ord for slang_solidity_v2_semantic::types::TypeId
+pub fn slang_solidity_v2_semantic::types::TypeId::cmp(&self, &slang_solidity_v2_semantic::types::TypeId) -> core::cmp::Ordering
 impl core::cmp::PartialEq for slang_solidity_v2_semantic::types::TypeId
 pub fn slang_solidity_v2_semantic::types::TypeId::eq(&self, &slang_solidity_v2_semantic::types::TypeId) -> bool
+impl core::cmp::PartialOrd for slang_solidity_v2_semantic::types::TypeId
+pub fn slang_solidity_v2_semantic::types::TypeId::partial_cmp(&self, &slang_solidity_v2_semantic::types::TypeId) -> core::option::Option<core::cmp::Ordering>
 impl core::fmt::Debug for slang_solidity_v2_semantic::types::TypeId
 pub fn slang_solidity_v2_semantic::types::TypeId::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
 impl core::hash::Hash for slang_solidity_v2_semantic::types::TypeId

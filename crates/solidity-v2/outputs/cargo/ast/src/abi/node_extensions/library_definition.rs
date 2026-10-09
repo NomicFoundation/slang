@@ -9,8 +9,7 @@ use crate::ast::{
 impl LibraryDefinitionStruct {
     /// The ABI of the library's `view` and `pure` external functions, public constants' getters,
     /// errors and events. A function that writes state or takes or returns a storage reference is
-    /// reachable only by `DELEGATECALL` from a contract and is left out. A library
-    /// has no storage of its own, so both layouts are empty.
+    /// reachable only by `DELEGATECALL` from a contract and is left out.
     pub fn compute_abi(&self) -> Option<ContractAbi> {
         let mut entries = self
             .members()
@@ -49,8 +48,6 @@ impl LibraryDefinitionStruct {
             self.ir_node.name.unparse().to_string(),
             self.get_file_id().clone(),
             entries,
-            Vec::new(),
-            Vec::new(),
             &self.semantic,
         ))
     }

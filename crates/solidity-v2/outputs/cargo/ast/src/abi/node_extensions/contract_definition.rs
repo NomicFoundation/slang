@@ -4,7 +4,7 @@ use slang_solidity_v2_ir::ir;
 use slang_solidity_v2_semantic::binder;
 use slang_solidity_v2_semantic::context::StorageLayoutBuilder;
 
-use crate::abi::{ContractAbi, StorageItem};
+use crate::abi::{ContractAbi, StorageItem, StorageKind, StorageLayout, StorageType};
 use crate::ast::{ContractDefinitionStruct, StateVariableDefinition, StateVariableMutability};
 
 impl ContractDefinitionStruct {
@@ -39,14 +39,11 @@ impl ContractDefinitionStruct {
                 entries.push(event.compute_abi_entry()?);
             }
         }
-        let (storage_layout, transient_storage_layout) = self.compute_storage_layout()?;
         Some(ContractAbi::new(
             self.ir_node.id(),
             self.ir_node.name.unparse().to_string(),
             self.get_file_id().clone(),
             entries,
-            storage_layout,
-            transient_storage_layout,
             &self.semantic,
         ))
     }
@@ -75,6 +72,33 @@ impl ContractDefinitionStruct {
         Some(interface_id)
     }
 
+    /// The items of [`Self::compute_storage_layout`], without describing their
+    /// types, for callers that only need each variable's slot and offset.
+    pub fn compute_storage_items(&self) -> Option<Vec<StorageItem>> {
+        self.lay_out_state_variables(StorageKind::Persistent, &self.linearised_state_variables())
+    }
+
+    /// The layout and types of the persistent state variables over the
+    /// contract's hierarchy.
+    pub fn compute_storage_layout(&self) -> Option<StorageLayout> {
+        let items = self.compute_storage_items()?;
+        self.describe_storage_layout(items)
+    }
+
+    /// The items of [`Self::compute_transient_storage_layout`], without
+    /// describing their types, for callers that only need each variable's slot
+    /// and offset.
+    pub fn compute_transient_storage_items(&self) -> Option<Vec<StorageItem>> {
+        self.lay_out_state_variables(StorageKind::Transient, &self.linearised_state_variables())
+    }
+
+    /// The layout and types of the transient state variables over the
+    /// contract's hierarchy.
+    pub fn compute_transient_storage_layout(&self) -> Option<StorageLayout> {
+        let items = self.compute_transient_storage_items()?;
+        self.describe_storage_layout(items)
+    }
+
     /// Retrieves the custom base slot for this contract, if specified. This is
     /// used for computing the base of the storage layout for non-transient
     /// state variables.
@@ -89,56 +113,54 @@ impl ContractDefinitionStruct {
         definition.base_slot
     }
 
-    /// Computes the layouts of both permanent and transient state variables
-    fn compute_storage_layout(&self) -> Option<(Vec<StorageItem>, Vec<StorageItem>)> {
-        let all_state_variables = self.linearised_state_variables();
-
+    /// Lays out the `kind` state variables of `state_variables`.
+    fn lay_out_state_variables(
+        &self,
+        kind: StorageKind,
+        state_variables: &[StateVariableDefinition],
+    ) -> Option<Vec<StorageItem>> {
         // TODO(validation) SDR[2]: it is an error if any contract in the hierarchy
         // other than the leaf has a custom offset layout
-        let storage_layout = self.lay_out_state_variables(
-            self.base_slot().unwrap_or(U256::ZERO),
-            all_state_variables.iter().filter(|state_variable| {
-                matches!(
-                    state_variable.attributes().mutability(),
-                    StateVariableMutability::Mutable
-                )
-            }),
-        )?;
-        let transient_storage_layout = self.lay_out_state_variables(
-            U256::ZERO,
-            all_state_variables.iter().filter(|state_variable| {
-                matches!(
-                    state_variable.attributes().mutability(),
-                    StateVariableMutability::Transient
-                )
-            }),
-        )?;
-        Some((storage_layout, transient_storage_layout))
-    }
-
-    fn lay_out_state_variables<'a>(
-        &self,
-        base_slot: U256,
-        variables: impl Iterator<Item = &'a StateVariableDefinition>,
-    ) -> Option<Vec<StorageItem>> {
-        let mut storage_layout = Vec::new();
+        let base_slot = match kind {
+            StorageKind::Persistent => self.base_slot().unwrap_or(U256::ZERO),
+            StorageKind::Transient => U256::ZERO,
+        };
+        let variables = state_variables.iter().filter(|state_variable| {
+            match state_variable.attributes().mutability() {
+                StateVariableMutability::Mutable => kind == StorageKind::Persistent,
+                StateVariableMutability::Transient => kind == StorageKind::Transient,
+                StateVariableMutability::Constant | StateVariableMutability::Immutable => false,
+            }
+        });
+        let mut items = Vec::new();
         let mut builder = StorageLayoutBuilder::new(base_slot);
         for state_variable in variables {
             let node_id = state_variable.ir_node.id();
             let variable_type_id = self.semantic.binder().node_typing(node_id).as_type_id()?;
             let variable_size = self.semantic.storage_size_of_type_id(variable_type_id)?;
             let position = builder.allocate(variable_size)?;
-
-            let label = state_variable.ir_node.name.unparse().to_string();
-            let type_name = self.semantic.type_abi_internal_name(variable_type_id);
-            storage_layout.push(StorageItem {
+            items.push(StorageItem {
                 node_id,
-                label,
+                name: state_variable.ir_node.name.unparse().to_string(),
                 slot: position.slot,
                 offset: position.offset,
-                type_name,
+                type_id: variable_type_id,
             });
         }
-        Some(storage_layout)
+        Some(items)
+    }
+
+    /// Completes `items` into a layout with the table of their types.
+    fn describe_storage_layout(&self, items: Vec<StorageItem>) -> Option<StorageLayout> {
+        let types = self.semantic.storage_type_table(
+            items.iter().map(|item| item.type_id),
+            |type_id, layout| StorageType {
+                type_id,
+                label: self.semantic.type_abi_internal_name(type_id),
+                size: layout.size,
+                kind: layout.kind,
+            },
+        )?;
+        Some(StorageLayout::new(items, types))
     }
 }

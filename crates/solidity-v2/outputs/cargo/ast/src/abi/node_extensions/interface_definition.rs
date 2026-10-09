@@ -37,8 +37,6 @@ impl InterfaceDefinitionStruct {
             self.ir_node.name.unparse().to_string(),
             self.get_file_id().clone(),
             entries,
-            Vec::new(),
-            Vec::new(),
             &self.semantic,
         ))
     }

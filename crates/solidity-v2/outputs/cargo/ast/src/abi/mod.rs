@@ -1,30 +1,33 @@
 mod node_extensions;
 mod serialize;
+mod storage_layout;
 mod types;
 
 use std::cmp::Ordering;
 use std::fmt;
 use std::sync::Arc;
 
-use ruint::aliases::U256;
 use sha3::{Digest, Keccak256};
 use slang_solidity_v2_common::files::FileId;
 use slang_solidity_v2_common::nodes::NodeId;
 use slang_solidity_v2_semantic::context::SemanticContext;
 use slang_solidity_v2_semantic::types::{FunctionTypeMutability, TypeId};
 
+pub(crate) use self::storage_layout::StorageKind;
+pub use self::storage_layout::{
+    StorageItem, StorageLayout, StorageMember, StoragePosition, StorageSize, StorageType,
+    StorageTypeKind,
+};
 pub use self::types::{AbiType, NotAnAbiType, TupleComponent};
 use crate::abi::types::{is_abi_type, type_as_abi_type};
 use crate::ast::{Definition, Type};
 
-/// Serializes as the JSON ABI, the array of its entries; the storage layouts are not part of it.
+/// Serializes as the JSON ABI, the array of its entries.
 pub struct ContractAbi {
     node_id: NodeId,
     name: String,
     file_id: FileId,
     entries: Vec<AbiEntry>,
-    storage_layout: Vec<StorageItem>,
-    transient_storage_layout: Vec<StorageItem>,
 }
 
 impl ContractAbi {
@@ -34,8 +37,6 @@ impl ContractAbi {
         name: String,
         file_id: FileId,
         mut entries: Vec<AbiEntry>,
-        storage_layout: Vec<StorageItem>,
-        transient_storage_layout: Vec<StorageItem>,
         semantic: &Arc<SemanticContext>,
     ) -> Self {
         entries.sort();
@@ -45,8 +46,6 @@ impl ContractAbi {
             name,
             file_id,
             entries,
-            storage_layout,
-            transient_storage_layout,
         }
     }
 
@@ -64,14 +63,6 @@ impl ContractAbi {
 
     pub fn entries(&self) -> &[AbiEntry] {
         &self.entries
-    }
-
-    pub fn storage_layout(&self) -> &[StorageItem] {
-        &self.storage_layout
-    }
-
-    pub fn transient_storage_layout(&self) -> &[StorageItem] {
-        &self.transient_storage_layout
     }
 }
 
@@ -417,37 +408,6 @@ impl fmt::Debug for AbiParameter {
             .field("type_id", &self.type_id)
             .field("indexed", &self.indexed)
             .finish_non_exhaustive()
-    }
-}
-
-#[derive(Clone, Debug, Eq, PartialEq)]
-pub struct StorageItem {
-    node_id: NodeId,
-    label: String,
-    slot: U256,
-    offset: usize,
-    type_name: String,
-}
-
-impl StorageItem {
-    pub fn node_id(&self) -> NodeId {
-        self.node_id
-    }
-
-    pub fn label(&self) -> &str {
-        &self.label
-    }
-
-    pub fn slot(&self) -> U256 {
-        self.slot
-    }
-
-    pub fn offset(&self) -> usize {
-        self.offset
-    }
-
-    pub fn type_name(&self) -> &str {
-        &self.type_name
     }
 }
 
