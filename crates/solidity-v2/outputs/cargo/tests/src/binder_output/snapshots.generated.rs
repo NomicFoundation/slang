@@ -602,6 +602,11 @@ mod errors {
     }
 
     #[test]
+    fn revert_inherited_via_contract_name() -> Result<()> {
+        run("errors", "revert_inherited_via_contract_name")
+    }
+
+    #[test]
     fn revert_stmt() -> Result<()> {
         run("errors", "revert_stmt")
     }
@@ -628,6 +633,11 @@ mod events {
     #[test]
     fn definitions() -> Result<()> {
         run("events", "definitions")
+    }
+
+    #[test]
+    fn emit_inherited_via_contract_name() -> Result<()> {
+        run("events", "emit_inherited_via_contract_name")
     }
 
     #[test]

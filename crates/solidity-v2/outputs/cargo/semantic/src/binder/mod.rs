@@ -146,7 +146,7 @@ pub(crate) enum ResolveOptions {
     /// Use all the linearised bases for an external lookup.
     External,
     /// Use all bases and only excludes private members in bases types (used for
-    /// general qualified member access).
+    /// identifier paths, eg. type names).
     Qualified,
     /// Starts at `node_id` and proceeds in order for an external lookup.
     This(NodeId),
@@ -943,6 +943,24 @@ impl Binder {
             | Scope::Modifier(_)
             | Scope::YulBlock(_)
             | Scope::YulFunction(_) => Resolution::Unresolved,
+        }
+    }
+
+    // A contract's type name used as a value (eg. `C.f`) only exposes what the
+    // contract itself declares; a type path such as `C.S` also reaches its bases.
+    pub(crate) fn resolve_in_scope_as_type_member(
+        &self,
+        scope_id: ScopeId,
+        symbol: &str,
+    ) -> Resolution {
+        match self.get_scope_by_id(scope_id) {
+            Scope::Contract(contract_scope) => contract_scope
+                .definitions
+                .get(symbol)
+                .map_or(Resolution::Unresolved, |definitions| {
+                    Resolution::from(definitions.as_slice())
+                }),
+            _ => self.resolve_in_scope_as_namespace(scope_id, symbol),
         }
     }
 

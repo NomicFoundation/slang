@@ -151,10 +151,13 @@ impl Pass<'_> {
                 self.binder.resolve_in_scope_as_namespace(scope_id, symbol)
             }
             Type::UserMetaType(UserMetaType { definition_id }) => {
-                find_definition_namespace_scope_id(self.binder, *definition_id)
-                    .map_or(Resolution::Unresolved, |scope_id| {
-                        self.binder.resolve_in_scope_as_namespace(scope_id, symbol)
-                    })
+                find_definition_namespace_scope_id(self.binder, *definition_id).map_or(
+                    Resolution::Unresolved,
+                    |scope_id| {
+                        self.binder
+                            .resolve_in_scope_as_type_member(scope_id, symbol)
+                    },
+                )
             }
             _ => Resolution::Unresolved,
         }
