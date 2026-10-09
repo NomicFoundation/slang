@@ -524,8 +524,7 @@ impl TypeRegistry {
                     element_type: to_element_type,
                     ..
                 }),
-            ) => self
-                .implicitly_convertible_to_for_external_call(*from_element_type, *to_element_type),
+            ) => self.equal_ignoring_location(*from_element_type, *to_element_type),
 
             (
                 Type::FixedSizeArray(FixedSizeArrayType {
@@ -538,7 +537,10 @@ impl TypeRegistry {
                     size: to_size,
                     ..
                 }),
-            ) => from_size == to_size && from_element_type == to_element_type,
+            ) => {
+                from_size == to_size
+                    && self.equal_ignoring_location(*from_element_type, *to_element_type)
+            }
 
             (
                 Type::Struct(StructType {
