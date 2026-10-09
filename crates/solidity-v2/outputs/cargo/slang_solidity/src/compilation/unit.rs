@@ -1,7 +1,7 @@
 use std::sync::Arc;
 
 use slang_solidity_v2_ast::{abi, ast};
-use slang_solidity_v2_common::collections::SortedMap;
+use slang_solidity_v2_common::collections::{SortedMap, SortedSet};
 use slang_solidity_v2_common::diagnostics::DiagnosticCollection;
 use slang_solidity_v2_common::evm_targets::EvmTarget;
 use slang_solidity_v2_common::files::FileId;
@@ -67,6 +67,29 @@ impl CompilationUnit {
         self.files
             .get(id)
             .map(|internal_file| FileStruct::create(internal_file, &self.semantic))
+    }
+
+    /// Returns the given file together with every file it imports, directly or
+    /// transitively, or `None` if the file is not part of this unit.
+    pub fn compute_file_dependencies(&self, file_id: &FileId) -> Option<SortedSet<FileId>> {
+        let file = self.files.get(file_id)?;
+
+        let mut dependencies = SortedSet::from([file_id.clone()]);
+        let mut pending = vec![file];
+
+        while let Some(file) = pending.pop() {
+            for imported_file_id in file.resolved_imports() {
+                if !dependencies.insert(imported_file_id.clone()) {
+                    continue;
+                }
+
+                if let Some(imported_file) = self.files.get(imported_file_id) {
+                    pending.push(imported_file);
+                }
+            }
+        }
+
+        Some(dependencies)
     }
 
     pub fn all_definitions(&self) -> impl Iterator<Item = ast::Definition> + use<'_> {
