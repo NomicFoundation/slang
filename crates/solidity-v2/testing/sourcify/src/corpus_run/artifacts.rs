@@ -370,9 +370,16 @@ pub fn check_abi(target: &Definition, artifacts: &Value) -> Result<Vec<Failure>,
     let mut paired: Vec<(usize, String)> = Vec::new();
     for solc_entry in solc_entries {
         let key = entry_key(solc_entry);
+        // Two entries can share a key (a library event with the contract's own
+        // signature), so an equal one is paired before any other with the key.
         let position = unpaired
             .iter()
-            .position(|entry| entry.is_some_and(|entry| entry_key(entry) == key));
+            .position(|entry| *entry == Some(solc_entry))
+            .or_else(|| {
+                unpaired
+                    .iter()
+                    .position(|entry| entry.is_some_and(|entry| entry_key(entry) == key))
+            });
         let Some(position) = position else {
             failures.add(
                 Check::Abi,
