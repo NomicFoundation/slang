@@ -3386,6 +3386,15 @@ mod structure {
         }
     }
 
+    mod deprecated_assembly_natspec {
+        use super::*;
+
+        #[test]
+        fn marker() -> Result<()> {
+            run("structure/deprecated_assembly_natspec", "marker")
+        }
+    }
+
     mod duplicate_abicoder_specifier {
         use super::*;
 
@@ -3979,11 +3988,6 @@ mod structure {
         #[test]
         fn invalid_natspec() -> Result<()> {
             run("structure/unrecognized_assembly_natspec", "invalid_natspec")
-        }
-
-        #[test]
-        fn marker() -> Result<()> {
-            run("structure/unrecognized_assembly_natspec", "marker")
         }
 
         #[test]

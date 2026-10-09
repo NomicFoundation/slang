@@ -1,0 +1,11 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 1
+
+[structure/deprecated-assembly-natspec] Warning: Marking an assembly block as memory safe with a '@solidity memory-safe-assembly' NatSpec comment is deprecated. Use the 'memory-safe' flag instead: 'assembly ("memory-safe") { ... }'.
+   ╭─[input.sol:6:9]
+   │
+ 6 │         /// @solidity memory-safe-assembly
+   │         ─────────────────┬────────────────  
+   │                          ╰────────────────── Warning occurred here.
+───╯

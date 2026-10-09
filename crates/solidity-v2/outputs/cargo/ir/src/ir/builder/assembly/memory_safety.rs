@@ -2,7 +2,7 @@
 //! with a single `/// @solidity memory-safe-assembly` line.
 
 use slang_solidity_v2_common::diagnostics::kinds::structure::{
-    DuplicateAssemblyFlag, UnrecognizedAssemblyNatSpec,
+    DeprecatedAssemblyNatSpec, DuplicateAssemblyFlag, UnrecognizedAssemblyNatSpec,
 };
 use slang_solidity_v2_common::versions::LanguageVersion;
 use slang_solidity_v2_cst::structured_cst::natspec::NatSpec;
@@ -64,13 +64,15 @@ impl<S: Source> CstToIrBuilder<'_, S> {
 
         let text = self.source.text(natspec.range.clone());
 
+        // A `///` comment includes the line break after its last line: leave it out of the
+        // reported range
+        let range =
+            natspec.range.start..natspec.range.start + text.trim_end_matches(['\r', '\n']).len();
+
         if is_memory_safe_marker(text) {
+            self.report_range(range, DeprecatedAssemblyNatSpec);
             true
         } else {
-            // A `///` comment includes the line break after its last line: leave it out of the
-            // reported range
-            let range = natspec.range.start
-                ..natspec.range.start + text.trim_end_matches(['\r', '\n']).len();
             self.report_range(range, UnrecognizedAssemblyNatSpec);
             false
         }

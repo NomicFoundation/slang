@@ -5,6 +5,7 @@ mod conflicting_mapping_parameter_name;
 mod constructor_not_in_contract;
 mod continue_outside_loop;
 mod contract_should_be_abstract;
+mod deprecated_assembly_natspec;
 mod duplicate_abicoder_specifier;
 mod duplicate_assembly_flag;
 mod duplicate_catch_clause;
@@ -72,6 +73,7 @@ pub use conflicting_mapping_parameter_name::ConflictingMappingParameterName;
 pub use constructor_not_in_contract::ConstructorNotInContract;
 pub use continue_outside_loop::ContinueOutsideLoop;
 pub use contract_should_be_abstract::ContractShouldBeAbstract;
+pub use deprecated_assembly_natspec::DeprecatedAssemblyNatSpec;
 pub use duplicate_abicoder_specifier::DuplicateAbicoderSpecifier;
 pub use duplicate_assembly_flag::DuplicateAssemblyFlag;
 pub use duplicate_catch_clause::{CatchClauseKind, DuplicateCatchClause};
@@ -218,6 +220,9 @@ define_diagnostic_kind! {
         /// The `NatSpec` comment of an assembly statement isn't the one marking it as
         /// memory safe.
         UnrecognizedAssemblyNatSpec(UnrecognizedAssemblyNatSpec),
+        /// An assembly statement is marked as memory safe with its `NatSpec` comment,
+        /// instead of the `memory-safe` flag.
+        DeprecatedAssemblyNatSpec(DeprecatedAssemblyNatSpec),
 
         /// A named parameter of a mapping type reuses a name already used by
         /// another parameter in the same or a nested mapping type.
