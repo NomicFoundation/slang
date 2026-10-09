@@ -8,8 +8,57 @@
 [[failures]]
 check = "bind"
 code = "resolution/no-matching-callable-declaration"
-reason = "An address literal argument does not select the `address` overload (`_safeMint(0xb701…, 1)`)."
-issue = "https://github.com/NomicFoundation/slang/issues/2179"
+reason = "An array literal of internal functions passed to an overloaded function selects no overload."
+issue = "https://github.com/NomicFoundation/slang/issues/2257"
+contracts = [
+  "202601_0x02247eb911876cda8da99baf64e84ea68d6293d6",
+  "202601_0x0c5f3113ce80ab85ca5aa0a6100932b2e0831b23",
+  "202601_0x0f7a345735075cd482c2b3688bd1d30eb97fc0f7",
+  "202601_0x14061ebd2ecc7b07057bff48c9fb58d7b27fb9b2",
+  "202601_0x496c1bbf1150c5d8129393c5ecdcdf8a783a0f03",
+  "202601_0x496fd88ecc6024a383edc7e8f1b636d2d342dab1",
+  "202601_0x498403132a90c052fe924f683e48e9116ffca799",
+  "202601_0x54742e0e99eaa7fcff88daf3885168fd02263058",
+  "202601_0x6923cbf469c9875bc6f2bade7ac4214ba15b5b48",
+  "202601_0x7419c61683f5287e714c6f18c207488181a35683",
+  "202601_0x8ec9f1ac47ed30244595c2228bf36b6550b9c1e7",
+  "202601_0xac95a7ee59c7e3cbbae56aacc3feba974a357d63",
+  "202601_0xca14cf7cc9da369ff1b145d3456a32dae370352a",
+  "202601_0xebbbe251c9f2f2d4210434ee2f22185effe42c58",
+]
+
+[[failures]]
+check = "bind"
+code = "resolution/no-matching-callable-declaration"
+reason = "Follow-on of #2194: a type conversion through a name an import cycle declares twice (`IIdentityV2(x)`, `IERC20Upgradeable(x)`) reads as an overloaded call."
+issue = "https://github.com/NomicFoundation/slang/issues/2194"
+contracts = [
+  "42220_0x05e9be6b03a64c6a0ff48b5bbc1d36fa058a7f5e",
+  "42220_0x2d176d1fb534d2380168f2b91610c313609ed521",
+  "42220_0x333d7dd86d9fc56a72e41d527374e85ee864b47d",
+  "42220_0x76c291aa17bb6e6754b758c7919c8cce9201cdd5",
+  "42220_0x8142417d8200757bf29686511f7e0861f2b5c929",
+  "42220_0x821e6b54e36e581816cf6c0374b35520a6f925fb",
+  "42220_0x8f408804a7dcbaf73c05afde4dea4a87c7af83d2",
+  "42220_0x9902e72d03d792b096dc660705b3dc97fcb96233",
+  "42220_0x9a4c1d2ecc7584a2436ab3758ac3208185604928",
+  "42220_0x9b704af178a9d102c39f2090d9ff34bf0e0befd0",
+  "42220_0x9f9ff3720dba5f0e67e28ecfba5e433b0d271204",
+  "42220_0xce543e1c4c1a70fdf986c7a1a31478dc76b465e7",
+  "42220_0xd3f7804ad55d455f526ca68b7978fbe52520bb4c",
+  "42220_0xe9a499b3ceed8512e67aa8b21eaacf109006207a",
+  "44787_0x164ac80626805ed4a37a331f5b375a81ecaa17d9",
+  "44787_0xf3c20c0f666c255660ef5d82284ccfacaadc1168",
+]
+
+[[failures]]
+check = "bind"
+code = "resolution/no-matching-callable-declaration"
+reason = "An event called without `emit`, which solc before 0.8.4 missed after an `emit` of an overload of the same event."
+deliberate = true
+contracts = [
+  "3_0xd38232c64b617f89a4a7a16eab4ae869aa76c424",
+]
 
 [[failures]]
 check = "bind"
