@@ -4,6 +4,7 @@ use std::fmt::Write;
 use std::path::Path;
 
 use anyhow::{Context, Result};
+use semver::Version;
 use serde::Deserialize;
 
 use super::outcome::{Check, Failure};
@@ -32,6 +33,9 @@ pub struct ExpectedFailure {
     /// Only these contracts (corpus file stems); empty means any.
     #[serde(default)]
     pub contracts: Vec<String>,
+    /// Only contracts compiled with a solc version below this one.
+    #[serde(default)]
+    pub below: Option<Version>,
 }
 
 impl ExpectedFailure {
@@ -39,7 +43,7 @@ impl ExpectedFailure {
         format!("{}:{}", self.check, self.code)
     }
 
-    pub fn matches(&self, contract: &str, failure: &Failure) -> bool {
+    pub fn matches(&self, contract: &str, version: &str, failure: &Failure) -> bool {
         self.check == failure.check
             && self.code == failure.code
             && self
@@ -47,6 +51,10 @@ impl ExpectedFailure {
                 .as_ref()
                 .is_none_or(|prefix| failure.message.starts_with(prefix))
             && (self.contracts.is_empty() || self.contracts.iter().any(|c| c == contract))
+            && self
+                .below
+                .as_ref()
+                .is_none_or(|below| Version::parse(version).is_ok_and(|version| version < *below))
     }
 
     /// How the report names the entry: the issue or "deliberate", plus its narrowing.
@@ -76,6 +84,9 @@ impl ExpectedFailure {
         }
         if !self.contracts.is_empty() {
             write!(narrowing, " [{} listed]", self.contracts.len()).unwrap();
+        }
+        if let Some(below) = &self.below {
+            write!(narrowing, " [<{below}]").unwrap();
         }
         narrowing
     }
@@ -157,8 +168,8 @@ mod tests {
             "[[failures]]\ncheck = \"bind\"\ncode = \"x\"\nreason = \"r\"\nissue = \"i\"\nmessage = \"Unexpected Pragma\"\n",
         );
         let entry = &expected.entries()[0];
-        assert!(entry.matches("a", &failure("x", "Unexpected PragmaSemicolon")));
-        assert!(!entry.matches("a", &failure("x", "Unexpected IndexedKeyword")));
+        assert!(entry.matches("a", "0.8.30", &failure("x", "Unexpected PragmaSemicolon")));
+        assert!(!entry.matches("a", "0.8.30", &failure("x", "Unexpected IndexedKeyword")));
     }
 
     #[test]
@@ -167,8 +178,8 @@ mod tests {
             "[[failures]]\ncheck = \"bind\"\ncode = \"x\"\nreason = \"r\"\ndeliberate = true\ncontracts = [\"1_0xaa\"]\n",
         );
         let entry = &expected.entries()[0];
-        assert!(entry.matches("1_0xaa", &failure("x", "m")));
-        assert!(!entry.matches("1_0xbb", &failure("x", "m")));
+        assert!(entry.matches("1_0xaa", "0.8.30", &failure("x", "m")));
+        assert!(!entry.matches("1_0xbb", "0.8.30", &failure("x", "m")));
         assert_eq!(entry.label(), "deliberate [1 listed]");
     }
 
