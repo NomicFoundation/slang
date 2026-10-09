@@ -5,50 +5,28 @@
 use ruint::aliases::U256;
 use serde::Serialize;
 use serde::ser::{SerializeMap, SerializeSeq, Serializer};
-use slang_solidity_v2_common::nodes::NodeId;
 use slang_solidity_v2_semantic::types::TypeId;
 
-use super::{StorageItem, StorageLayout, StorageMember, StorageSize, StorageType, StorageTypeKind};
+use super::{StorageLayout, StorageSize, StorageType, StorageTypeKind, StorageVariable};
 
 const SLOT_SIZE: u64 = 32;
 
 impl Serialize for StorageLayout {
     fn serialize<S: Serializer>(&self, serializer: S) -> Result<S::Ok, S::Error> {
         let mut map = serializer.serialize_map(Some(2))?;
-        map.serialize_entry("storage", &ItemList(self))?;
+        map.serialize_entry(
+            "storage",
+            &VariableList {
+                variables: &self.items,
+                layout: self,
+            },
+        )?;
         if self.types.is_empty() {
             map.serialize_entry("types", &())?;
         } else {
             map.serialize_entry("types", &TypeTable(self))?;
         }
         map.end()
-    }
-}
-
-struct ItemList<'a>(&'a StorageLayout);
-
-impl Serialize for ItemList<'_> {
-    fn serialize<S: Serializer>(&self, serializer: S) -> Result<S::Ok, S::Error> {
-        let layout = self.0;
-        let mut seq = serializer.serialize_seq(Some(layout.items.len()))?;
-        for StorageItem {
-            node_id,
-            name,
-            slot,
-            offset,
-            type_id,
-        } in &layout.items
-        {
-            seq.serialize_element(&Variable {
-                node_id: *node_id,
-                name,
-                slot: *slot,
-                offset: *offset,
-                type_id: *type_id,
-                layout,
-            })?;
-        }
-        seq.end()
     }
 }
 
@@ -74,25 +52,40 @@ impl Serialize for TypeTable<'_> {
     }
 }
 
-/// A state variable or struct member, with its slot and offset.
+/// State variables or struct members, in the order they are laid out.
+struct VariableList<'a> {
+    variables: &'a [StorageVariable],
+    layout: &'a StorageLayout,
+}
+
+impl Serialize for VariableList<'_> {
+    fn serialize<S: Serializer>(&self, serializer: S) -> Result<S::Ok, S::Error> {
+        let mut seq = serializer.serialize_seq(Some(self.variables.len()))?;
+        for variable in self.variables {
+            seq.serialize_element(&Variable {
+                variable,
+                layout: self.layout,
+            })?;
+        }
+        seq.end()
+    }
+}
+
 struct Variable<'a> {
-    node_id: NodeId,
-    name: &'a str,
-    slot: U256,
-    offset: usize,
-    type_id: TypeId,
+    variable: &'a StorageVariable,
     layout: &'a StorageLayout,
 }
 
 impl Serialize for Variable<'_> {
     fn serialize<S: Serializer>(&self, serializer: S) -> Result<S::Ok, S::Error> {
+        let Self { variable, layout } = self;
         let mut map = serializer.serialize_map(Some(6))?;
-        map.serialize_entry("astId", &u64::from(self.node_id))?;
-        map.serialize_entry("contract", &self.layout.contract)?;
-        map.serialize_entry("label", self.name)?;
-        map.serialize_entry("offset", &self.offset)?;
-        map.serialize_entry("slot", &self.slot.to_string())?;
-        map.serialize_entry("type", identifier_of(self.layout, self.type_id))?;
+        map.serialize_entry("astId", &u64::from(variable.node_id()))?;
+        map.serialize_entry("contract", &layout.contract)?;
+        map.serialize_entry("label", variable.name())?;
+        map.serialize_entry("offset", &variable.offset())?;
+        map.serialize_entry("slot", &variable.slot().to_string())?;
+        map.serialize_entry("type", identifier_of(layout, variable.type_id()))?;
         map.end()
     }
 }
@@ -146,34 +139,17 @@ impl Serialize for TypeEntry<'_> {
             StorageTypeKind::Struct { members } => {
                 map.serialize_entry("encoding", "inplace")?;
                 map.serialize_entry("label", label)?;
-                map.serialize_entry("members", &MemberList { members, layout })?;
+                map.serialize_entry(
+                    "members",
+                    &VariableList {
+                        variables: members,
+                        layout,
+                    },
+                )?;
                 map.serialize_entry("numberOfBytes", &number_of_bytes)?;
             }
         }
         map.end()
-    }
-}
-
-struct MemberList<'a> {
-    members: &'a [StorageMember],
-    layout: &'a StorageLayout,
-}
-
-impl Serialize for MemberList<'_> {
-    fn serialize<S: Serializer>(&self, serializer: S) -> Result<S::Ok, S::Error> {
-        let mut seq = serializer.serialize_seq(Some(self.members.len()))?;
-        for member in self.members {
-            let position = member.position();
-            seq.serialize_element(&Variable {
-                node_id: member.node_id(),
-                name: member.name(),
-                slot: position.slot,
-                offset: position.offset,
-                type_id: member.type_id(),
-                layout: self.layout,
-            })?;
-        }
-        seq.end()
     }
 }
 

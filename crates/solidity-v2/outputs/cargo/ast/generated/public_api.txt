@@ -2,10 +2,10 @@
 
 pub mod slang_solidity_v2_ast
 pub mod slang_solidity_v2_ast::abi
-pub use slang_solidity_v2_ast::abi::StorageMember
 pub use slang_solidity_v2_ast::abi::StoragePosition
 pub use slang_solidity_v2_ast::abi::StorageSize
 pub use slang_solidity_v2_ast::abi::StorageTypeKind
+pub use slang_solidity_v2_ast::abi::StorageVariable
 pub enum slang_solidity_v2_ast::abi::AbiEntry
 pub slang_solidity_v2_ast::abi::AbiEntry::Constructor(slang_solidity_v2_ast::abi::AbiConstructor)
 pub slang_solidity_v2_ast::abi::AbiEntry::Error(slang_solidity_v2_ast::abi::AbiError)
@@ -157,25 +157,10 @@ impl core::fmt::Display for slang_solidity_v2_ast::abi::NotAnAbiType
 pub fn slang_solidity_v2_ast::abi::NotAnAbiType::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
 impl core::marker::Copy for slang_solidity_v2_ast::abi::NotAnAbiType
 impl core::marker::StructuralPartialEq for slang_solidity_v2_ast::abi::NotAnAbiType
-pub struct slang_solidity_v2_ast::abi::StorageItem
-impl slang_solidity_v2_ast::abi::StorageItem
-pub fn slang_solidity_v2_ast::abi::StorageItem::name(&self) -> &str
-pub fn slang_solidity_v2_ast::abi::StorageItem::node_id(&self) -> slang_solidity_v2_common::nodes::NodeId
-pub fn slang_solidity_v2_ast::abi::StorageItem::offset(&self) -> usize
-pub fn slang_solidity_v2_ast::abi::StorageItem::slot(&self) -> ruint::aliases::U256
-pub fn slang_solidity_v2_ast::abi::StorageItem::type_id(&self) -> slang_solidity_v2_semantic::types::TypeId
-impl core::clone::Clone for slang_solidity_v2_ast::abi::StorageItem
-pub fn slang_solidity_v2_ast::abi::StorageItem::clone(&self) -> slang_solidity_v2_ast::abi::StorageItem
-impl core::cmp::Eq for slang_solidity_v2_ast::abi::StorageItem
-impl core::cmp::PartialEq for slang_solidity_v2_ast::abi::StorageItem
-pub fn slang_solidity_v2_ast::abi::StorageItem::eq(&self, &slang_solidity_v2_ast::abi::StorageItem) -> bool
-impl core::fmt::Debug for slang_solidity_v2_ast::abi::StorageItem
-pub fn slang_solidity_v2_ast::abi::StorageItem::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
-impl core::marker::StructuralPartialEq for slang_solidity_v2_ast::abi::StorageItem
 pub struct slang_solidity_v2_ast::abi::StorageLayout
 impl slang_solidity_v2_ast::abi::StorageLayout
 pub fn slang_solidity_v2_ast::abi::StorageLayout::contract(&self) -> &str
-pub fn slang_solidity_v2_ast::abi::StorageLayout::items(&self) -> &[slang_solidity_v2_ast::abi::StorageItem]
+pub fn slang_solidity_v2_ast::abi::StorageLayout::items(&self) -> &[slang_solidity_v2_semantic::context::storage_layout::StorageVariable]
 pub fn slang_solidity_v2_ast::abi::StorageLayout::storage_type(&self, slang_solidity_v2_semantic::types::TypeId) -> core::option::Option<&slang_solidity_v2_ast::abi::StorageType>
 pub fn slang_solidity_v2_ast::abi::StorageLayout::types(&self) -> impl core::iter::traits::exact_size::ExactSizeIterator<Item = &slang_solidity_v2_ast::abi::StorageType>
 impl core::clone::Clone for slang_solidity_v2_ast::abi::StorageLayout
@@ -1878,9 +1863,9 @@ pub fn slang_solidity_v2_ast::ast::ContractDefinitionStruct::references(&self) -
 impl slang_solidity_v2_ast::ast::ContractDefinitionStruct
 pub fn slang_solidity_v2_ast::ast::ContractDefinitionStruct::compute_abi(&self) -> core::option::Option<slang_solidity_v2_ast::abi::ContractAbi>
 pub fn slang_solidity_v2_ast::ast::ContractDefinitionStruct::compute_interface_id(&self) -> core::option::Option<u32>
-pub fn slang_solidity_v2_ast::ast::ContractDefinitionStruct::compute_storage_items(&self) -> core::option::Option<alloc::vec::Vec<slang_solidity_v2_ast::abi::StorageItem>>
+pub fn slang_solidity_v2_ast::ast::ContractDefinitionStruct::compute_storage_items(&self) -> core::option::Option<alloc::vec::Vec<slang_solidity_v2_semantic::context::storage_layout::StorageVariable>>
 pub fn slang_solidity_v2_ast::ast::ContractDefinitionStruct::compute_storage_layout(&self) -> core::option::Option<slang_solidity_v2_ast::abi::StorageLayout>
-pub fn slang_solidity_v2_ast::ast::ContractDefinitionStruct::compute_transient_storage_items(&self) -> core::option::Option<alloc::vec::Vec<slang_solidity_v2_ast::abi::StorageItem>>
+pub fn slang_solidity_v2_ast::ast::ContractDefinitionStruct::compute_transient_storage_items(&self) -> core::option::Option<alloc::vec::Vec<slang_solidity_v2_semantic::context::storage_layout::StorageVariable>>
 pub fn slang_solidity_v2_ast::ast::ContractDefinitionStruct::compute_transient_storage_layout(&self) -> core::option::Option<slang_solidity_v2_ast::abi::StorageLayout>
 impl slang_solidity_v2_ast::ast::ContractDefinitionStruct
 pub fn slang_solidity_v2_ast::ast::ContractDefinitionStruct::constructor(&self) -> core::option::Option<slang_solidity_v2_ast::ast::FunctionDefinition>

@@ -13,11 +13,10 @@ use slang_solidity_v2_common::nodes::NodeId;
 use slang_solidity_v2_semantic::context::SemanticContext;
 use slang_solidity_v2_semantic::types::{FunctionTypeMutability, TypeId};
 
-pub use self::storage_layout::{
-    StorageItem, StorageLayout, StorageMember, StoragePosition, StorageSize, StorageType,
-    StorageTypeKind,
-};
 pub(crate) use self::storage_layout::{StorageKind, storage_type_identifier};
+pub use self::storage_layout::{
+    StorageLayout, StoragePosition, StorageSize, StorageType, StorageTypeKind, StorageVariable,
+};
 pub use self::types::{AbiType, NotAnAbiType, TupleComponent};
 use crate::abi::types::{is_abi_type, type_as_abi_type};
 use crate::ast::{Definition, Type};
