@@ -144,7 +144,7 @@ impl ContractData {
             .expect("contract_id is a registered contract or interface")
     }
 
-    pub(super) fn all_contracts(&self) -> impl Iterator<Item = &ir::ContractDefinition> {
+    pub(crate) fn all_contracts(&self) -> impl Iterator<Item = &ir::ContractDefinition> {
         self.contracts.iter()
     }
 

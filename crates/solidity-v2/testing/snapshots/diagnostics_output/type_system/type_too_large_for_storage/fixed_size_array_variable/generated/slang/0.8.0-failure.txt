@@ -1,0 +1,11 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 1
+
+[type-system/type-too-large-for-storage] Error: Type too large for storage.
+   ╭─[input.sol:6:5]
+   │
+ 6 │     uint256[2 ** 255][2] a;
+   │     ───────────┬───────────  
+   │                ╰───────────── Error occurred here.
+───╯

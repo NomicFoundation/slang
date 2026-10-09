@@ -13,6 +13,7 @@ use slang_solidity_v2_common::nodes::NodeId;
 use slang_solidity_v2_common::utils::strings::strip_string_literal_quotes;
 use slang_solidity_v2_common::versions::LanguageVersion;
 use slang_solidity_v2_ir::ir;
+pub(crate) use storage_layout::{NoStorageSize, StorageAnalyzer};
 pub use storage_layout::{
     StorageLayoutBuilder, StorageMember, StoragePosition, StorageSize, StorageTypeKind,
     StorageTypeLayout, StorageTypeTable,
@@ -531,9 +532,11 @@ impl SemanticContext {
     /// (matching solc, which has no ABI spelling for one).
     fn type_library_element_name(&self, type_id: TypeId) -> Option<String> {
         let name = match self.types.get_type_by_id(type_id) {
-            Type::UserDefinedValue(UserDefinedValueType { definition_id }) => {
-                self.type_internal_name(self.user_defined_value_target_type_id(*definition_id)?)
-            }
+            Type::UserDefinedValue(UserDefinedValueType { definition_id }) => self
+                .type_internal_name(
+                    self.binder
+                        .user_defined_value_target_type_id(*definition_id)?,
+                ),
             Type::Array(ArrayType { element_type, .. }) => {
                 format!(
                     "{element}[]",
@@ -553,12 +556,23 @@ impl SemanticContext {
         Some(name)
     }
 
-    fn user_defined_value_target_type_id(&self, definition_id: NodeId) -> Option<TypeId> {
-        let Definition::UserDefinedValueType(user_defined_value) =
-            self.binder.find_definition_by_id(definition_id)?
-        else {
-            return None;
-        };
-        user_defined_value.target_type_id
+    pub fn storage_size_of_type_id(&self, type_id: TypeId) -> Option<StorageSize> {
+        self.storage_analyzer().storage_size_of_type_id(type_id)
+    }
+
+    /// The type table of a storage layout: `roots` (the types of its state
+    /// variables) and every type those refer to, each with `describe` applied
+    /// to how it is laid out. `None` when one of them cannot be stored or
+    /// overflows storage.
+    pub fn storage_type_table<T>(
+        &self,
+        roots: impl IntoIterator<Item = TypeId>,
+        describe: impl FnMut(TypeId, StorageTypeLayout) -> T,
+    ) -> Option<StorageTypeTable<T>> {
+        self.storage_analyzer().storage_type_table(roots, describe)
+    }
+
+    fn storage_analyzer(&self) -> StorageAnalyzer<'_> {
+        StorageAnalyzer::new(&self.binder, &self.types)
     }
 }
