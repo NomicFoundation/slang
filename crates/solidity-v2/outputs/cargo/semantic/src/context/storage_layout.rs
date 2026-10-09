@@ -58,33 +58,61 @@ pub enum StorageTypeKind {
     /// the slot.
     Mapping { key: TypeId, value: TypeId },
     /// A struct, with its members stored in place, in declaration order.
-    Struct { members: Vec<StorageMember> },
+    Struct { members: Vec<StorageVariable> },
 }
 
-/// A struct member, and its position relative to the start of the struct. The
-/// `type_id` is guaranteed to have the `Storage` location in the registry,
-/// regardless of how the originating struct member is typed in the `Binder`.
+/// A state variable or struct member, and where it is stored. The `type_id` is
+/// guaranteed to have the `Storage` location in the registry, regardless of how
+/// a struct member is typed in the `Binder`.
 #[derive(Clone, Debug, Eq, PartialEq)]
-pub struct StorageMember {
-    pub(crate) name: String,
-    pub(crate) type_id: TypeId,
-    pub(crate) position: StoragePosition,
+pub struct StorageVariable {
+    node_id: NodeId,
+    name: String,
+    type_id: TypeId,
+    position: StoragePosition,
 }
 
-impl StorageMember {
-    /// The member's name.
+impl StorageVariable {
+    /// A variable at `position`, measured as [`Self::position`] describes.
+    /// `type_id` must have the `Storage` location.
+    pub fn new(node_id: NodeId, name: String, type_id: TypeId, position: StoragePosition) -> Self {
+        Self {
+            node_id,
+            name,
+            type_id,
+            position,
+        }
+    }
+
+    pub fn node_id(&self) -> NodeId {
+        self.node_id
+    }
+
+    /// The variable's name.
     pub fn name(&self) -> &str {
         &self.name
     }
 
-    /// The member's type, as it is in storage.
+    /// The variable's type, as it is in storage.
     pub fn type_id(&self) -> TypeId {
         self.type_id
     }
 
-    /// Where the member starts, relative to the start of the struct.
+    /// Where the variable starts: in the contract's storage, past its base
+    /// slot, for a state variable, and relative to the start of the struct for
+    /// a struct member.
     pub fn position(&self) -> StoragePosition {
         self.position
+    }
+
+    /// The slot of [`Self::position`].
+    pub fn slot(&self) -> U256 {
+        self.position.slot
+    }
+
+    /// The byte offset within the slot of [`Self::position`].
+    pub fn offset(&self) -> usize {
+        self.position.offset
     }
 }
 
@@ -323,11 +351,12 @@ impl SemanticContext {
                     struct_definition,
                     &mut Set::default(),
                     |member, type_id, position| {
-                        members.push(StorageMember {
-                            name: member.name.unparse().to_string(),
-                            type_id: self.types.storage_type_id(type_id),
+                        members.push(StorageVariable::new(
+                            member.id(),
+                            member.name.unparse().to_string(),
+                            self.types.storage_type_id(type_id),
                             position,
-                        });
+                        ));
                     },
                 )?;
                 return Some(StorageTypeLayout {

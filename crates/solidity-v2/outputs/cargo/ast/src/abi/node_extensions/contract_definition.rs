@@ -4,7 +4,9 @@ use slang_solidity_v2_ir::ir;
 use slang_solidity_v2_semantic::binder;
 use slang_solidity_v2_semantic::context::StorageLayoutBuilder;
 
-use crate::abi::{ContractAbi, StorageItem, StorageKind, StorageLayout, StorageType};
+use crate::abi::{
+    ContractAbi, StorageKind, StorageLayout, StorageType, StorageVariable, storage_type_identifier,
+};
 use crate::ast::{ContractDefinitionStruct, StateVariableDefinition, StateVariableMutability};
 
 impl ContractDefinitionStruct {
@@ -74,7 +76,7 @@ impl ContractDefinitionStruct {
 
     /// The items of [`Self::compute_storage_layout`], without describing their
     /// types, for callers that only need each variable's slot and offset.
-    pub fn compute_storage_items(&self) -> Option<Vec<StorageItem>> {
+    pub fn compute_storage_items(&self) -> Option<Vec<StorageVariable>> {
         self.lay_out_state_variables(StorageKind::Persistent, &self.linearised_state_variables())
     }
 
@@ -88,7 +90,7 @@ impl ContractDefinitionStruct {
     /// The items of [`Self::compute_transient_storage_layout`], without
     /// describing their types, for callers that only need each variable's slot
     /// and offset.
-    pub fn compute_transient_storage_items(&self) -> Option<Vec<StorageItem>> {
+    pub fn compute_transient_storage_items(&self) -> Option<Vec<StorageVariable>> {
         self.lay_out_state_variables(StorageKind::Transient, &self.linearised_state_variables())
     }
 
@@ -118,7 +120,7 @@ impl ContractDefinitionStruct {
         &self,
         kind: StorageKind,
         state_variables: &[StateVariableDefinition],
-    ) -> Option<Vec<StorageItem>> {
+    ) -> Option<Vec<StorageVariable>> {
         // TODO(validation) SDR[2]: it is an error if any contract in the hierarchy
         // other than the leaf has a custom offset layout
         let base_slot = match kind {
@@ -139,28 +141,33 @@ impl ContractDefinitionStruct {
             let variable_type_id = self.semantic.binder().node_typing(node_id).as_type_id()?;
             let variable_size = self.semantic.storage_size_of_type_id(variable_type_id)?;
             let position = builder.allocate(variable_size)?;
-            items.push(StorageItem {
+            items.push(StorageVariable::new(
                 node_id,
-                name: state_variable.ir_node.name.unparse().to_string(),
-                slot: position.slot,
-                offset: position.offset,
-                type_id: variable_type_id,
-            });
+                state_variable.ir_node.name.unparse().to_string(),
+                variable_type_id,
+                position,
+            ));
         }
         Some(items)
     }
 
     /// Completes `items` into a layout with the table of their types.
-    fn describe_storage_layout(&self, items: Vec<StorageItem>) -> Option<StorageLayout> {
+    fn describe_storage_layout(&self, items: Vec<StorageVariable>) -> Option<StorageLayout> {
         let types = self.semantic.storage_type_table(
-            items.iter().map(|item| item.type_id),
+            items.iter().map(StorageVariable::type_id),
             |type_id, layout| StorageType {
                 type_id,
+                identifier: storage_type_identifier(&self.semantic, type_id),
                 label: self.semantic.type_abi_internal_name(type_id),
                 size: layout.size,
                 kind: layout.kind,
             },
         )?;
-        Some(StorageLayout::new(items, types))
+        let contract = format!(
+            "{file_id}:{name}",
+            file_id = self.get_file_id(),
+            name = self.ir_node.name.unparse(),
+        );
+        Some(StorageLayout::new(contract, items, types))
     }
 }
