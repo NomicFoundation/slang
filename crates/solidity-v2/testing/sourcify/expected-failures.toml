@@ -63,8 +63,120 @@ contracts = [
 [[failures]]
 check = "bind"
 code = "resolution/member-not-found"
-reason = "An address literal argument does not select the `address` overload of a library or contract member (`Clones.clone(0xeA34…)`, #2179); `type(AbstractContract).interfaceId` is not found (#2180); `C.Error.selector` that solc 0.8.35 rejects too."
-issue = "https://github.com/NomicFoundation/slang/issues/2179"
+reason = "An overloaded external library function attached with `using`, called on a `memory` struct for a `calldata` parameter."
+issue = "https://github.com/NomicFoundation/slang/issues/2150"
+contracts = [
+  "137_0x6eef13b30db3e2d423ba79f53e90533a3c3f56c6",
+  "1_0x1f58f1ba43a88b4ff3b4265449b26e28c08395ad",
+  "1_0x2801c435bd92cf6d8879403adee0a27db5b7ba6b",
+  "1_0x2b418d9b1e0c203ab93c8b5a54258bb3e6babbc6",
+  "1_0xc940ede0eeefbea70d36ed3ee368ef2604103214",
+  "421614_0x6672108e3af46544bd7033f354ec220838744e64",
+  "421614_0x81e2ea4f8e3d9cf4e791cf4f016c1ad1df87ae00",
+  "56_0x599547680f47d8596119452e4d44ff6659b7bf0d",
+  "56_0x70e9d815984b6c9395975b5106151e86d6142bec",
+  "56_0x963037a969b27398a1c26dfb77c17cb9304dfcc7",
+  "56_0xf4ab3514cb05dd280ae10237d46bdfe5efc2b2d1",
+  "84532_0x2a71c82a21ed18ab63d0c7703e904a4f60e10eec",
+  "84532_0xc9c7db6fe853df6f2f73649aaf0b2b9ab211e84e",
+]
+
+[[failures]]
+check = "bind"
+code = "resolution/member-not-found"
+reason = "`using L for function(...) internal` does not attach to a private function."
+issue = "https://github.com/NomicFoundation/slang/issues/2259"
+contracts = [
+  "10_0x000000c9ec71b1a39055ec631200ed0022140074",
+  "10_0x1fccc0807f25a58eb531a0b5b4bf3dce88808ed7",
+  "10_0x7dffc9e7db5a96887666c1a6d215e5d3fb306d69",
+  "421614_0x9664f940484599a9f49b9dae0f0cfc9c37efe42c",
+  "84532_0x007b00eba70000fd1000605796005084920af63f",
+  "84532_0x115513dd91e9d8a18a9b1469307d219830dc37fd",
+  "84532_0x238391f4b833db9c65912f632cd4160414d763aa",
+  "84532_0x87e0a610fc3105e2e9eef1ec4627fc5b89b6b9af",
+  "84532_0x9e7345ab96ffe58078dce6dc04c05809225211a7",
+  "84532_0xb0567293b367e8ed99cd44cda1743980f2e6bbb2",
+  "84532_0xc226aea0957bd2903a619272786e1dd4535932d1",
+]
+
+[[failures]]
+check = "bind"
+code = "resolution/member-not-found"
+reason = "Overload resolution rejects a `memory` nested fixed-size array for a `calldata` parameter."
+issue = "https://github.com/NomicFoundation/slang/issues/2260"
+contracts = [
+  "11155111_0xe4fcec094c289e06e4bbd03b24754e8d4cdd3ac9",
+  "137_0x3fb8d15312a7f2bfc1b22578213dda4957c2f952",
+  "17000_0x1478091c136bf980537cc178001fd73b9083e21b",
+  "1_0x0c3da2182774e2a05b372d1bfd9ce60b83f49c3e",
+  "1_0x18f365ecce58fa865ec9fb027e9175125db93b91",
+  "1_0x3321496ae7ce0f8dc8e33805166eb79daac10623",
+  "1_0xa491c847cf84002768d86e89c20e50d5427e7d53",
+  "252_0x0fd66456f10d9b850f37fa129236176b4f982864",
+  "252_0x519bd566886a22f080c94b05ccc9f35902ec031b",
+  "252_0xa46d25eebde2d136a14601ac2e0e0de8409114d1",
+  "252_0xafd0ce42cb528e6e688f8116e0dbca80635d3f68",
+]
+
+[[failures]]
+check = "bind"
+code = "resolution/member-not-found"
+reason = "A storage fixed-size array of structs for an attached function's `memory` parameter."
+issue = "https://github.com/NomicFoundation/slang/issues/2251"
+contracts = [
+  "42161_0x0a3ae8b5a388d72ebf1e776fe7e5e0d98a61b474",
+  "42161_0x4061106e15672785947c82fb9ae9c5fc67dc3fcf",
+  "42161_0x5092808ad669e6064c74f1d2bc85bf096d3ee99f",
+  "42161_0xef59e0001e0bd65bd4373357536cd5b19a511dff",
+  "84532_0x0ca9715b3e481c3c356f0af74ea9817d5d18ab1e",
+  "84532_0x20e8ae998b5350679e6a9f32401ee3fbd800e2e7",
+  "84532_0x7ada2079664cf1e6a8d66f4b756aa48ec6c2b41c",
+  "84532_0xdd9d2e874e24cd11586fabe13f86fb4ed65f243a",
+]
+
+[[failures]]
+check = "bind"
+code = "resolution/member-not-found"
+reason = "A public state variable's getter next to an inherited function of the same name."
+issue = "https://github.com/NomicFoundation/slang/issues/2261"
+contracts = [
+  "11155111_0x2947e47abfd9b3de3c8667de04a45053ec4c19cf",
+  "11155111_0x73998993d3d9a8aaff3fd2151a586a27ccf4b138",
+  "11155111_0x9d4acf5021d48f16096d01f1d7b390be300236b5",
+  "11155111_0xc04aca9f0a515820f0adad08a3e248a198d8b299",
+  "1_0x4b62ec784479c5520ec77de8d10c1a85d8f0850a",
+]
+
+[[failures]]
+check = "bind"
+code = "resolution/member-not-found"
+reason = "Records solc rejects too when compiling all their sources: a broken file next to the target."
+deliberate = true
+contracts = [
+  "1_0x4ce0b8ce7104f02bd10a742f7c6b46dd891a6cc4",
+  "1_0x5d2c6215555b36889ef235c6d5ccde22e9964e6a",
+  "1_0x870464fe2ea3a6b3c242f30bda1f1efddf580890",
+  "50_0x70b58050a60fd3e00586dcac37498dbdd1173e38",
+  "56_0x17414c35d28a6be093a945c70afd638dd5b726c0",
+  "56_0x69d890f783a6662e8554c8f71d1daeda1baddda2",
+  "56_0x7d42f3e6cd1c8e9e1020d9e26746bb2ab64fa096",
+  "56_0x80e4dd3ba70dce6c58b7dc838dff9b02f1e4809b",
+  "56_0x9d54c57f4c4c1e2cbee3b947fb5684313588c8d8",
+  "56_0xcdc3d935b2349cf282e5517a8126b0fa890631e5",
+  "56_0xe576b06fca463d1141636fadad2ee46b5c4d0b4a",
+  "56_0xfd09c6bcd60a9e3b83b8a1cf23236f28bf934efd",
+  "97_0x1c2ad2e305e1df48dc1b6b60740904841a4c38b6",
+]
+
+[[failures]]
+check = "bind"
+code = "resolution/member-not-found"
+reason = "Follow-on of the trailing-dot pragma rejected on purpose: a member of the file that failed to parse."
+deliberate = true
+contracts = [
+  "11155111_0x19e2b7829b7338f89b574289a29cc8b8ef7c4acb",
+]
 
 [[failures]]
 check = "bind"
