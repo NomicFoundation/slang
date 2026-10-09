@@ -16,6 +16,7 @@ const LIST_CONTRACTS_AT: usize = 50;
 /// One contract's failure in a bucket.
 pub struct Occurrence {
     pub contract: String,
+    pub version: String,
     pub failure: Failure,
 }
 
@@ -78,6 +79,8 @@ pub struct Summary {
     /// Panic message and location -> contracts.
     pub panics: SortedMap<String, Tally>,
     pub skips: SortedMap<String, Tally>,
+    /// `check: reason` -> contracts the check could not run on.
+    pub skipped_checks: SortedMap<String, Tally>,
 }
 
 impl Summary {
@@ -103,10 +106,17 @@ impl Summary {
         } else if outcome.panic.is_none() {
             self.failed += 1;
         }
+        for (check, reason) in &outcome.skipped_checks {
+            self.skipped_checks
+                .entry(format!("{check}: {reason}"))
+                .or_default()
+                .add(&outcome.id, "");
+        }
         for failure in &outcome.failures {
             let bucket = self.buckets.entry(failure.key()).or_default();
             bucket.occurrences.push(Occurrence {
                 contract: outcome.id.clone(),
+                version: outcome.version.clone(),
                 failure: failure.clone(),
             });
         }
@@ -122,9 +132,13 @@ impl Summary {
         for (key, bucket) in &self.buckets {
             let mut bucket_claims = Vec::with_capacity(bucket.occurrences.len());
             for occurrence in &bucket.occurrences {
-                let claim = entries
-                    .iter()
-                    .position(|entry| entry.matches(&occurrence.contract, &occurrence.failure));
+                let claim = entries.iter().position(|entry| {
+                    entry.matches(
+                        &occurrence.contract,
+                        &occurrence.version,
+                        &occurrence.failure,
+                    )
+                });
                 match claim {
                     Some(index) => claimed[index] += 1,
                     None => unexpected
@@ -167,7 +181,11 @@ impl Summary {
         for category in Category::ALL {
             census.write_table(&mut out, category);
         }
-        for (title, map) in [("Panics", &self.panics), ("Skipped", &self.skips)] {
+        for (title, map) in [
+            ("Panics", &self.panics),
+            ("Skipped", &self.skips),
+            ("Checks skipped", &self.skipped_checks),
+        ] {
             if map.is_empty() {
                 continue;
             }
@@ -448,6 +466,7 @@ mod tests {
             panic: panic.map(str::to_owned),
             failures,
             warnings: 0,
+            skipped_checks: SortedMap::new(),
         }
     }
 
@@ -533,6 +552,23 @@ mod tests {
             "{report}"
         );
         assert!(report[deliberate..].contains("on purpose"), "{report}");
+    }
+
+    #[test]
+    fn an_entry_bounded_below_a_version_leaves_later_versions_unexpected() {
+        let mut summary = Summary::default();
+        let mut old = outcome("old", vec![failure(Check::Abi, "extra")], None);
+        old.version = "0.8.19".to_owned();
+        let mut new = outcome("new", vec![failure(Check::Abi, "extra")], None);
+        new.version = "0.8.20".to_owned();
+        summary.add(&old);
+        summary.add(&new);
+        let expected = expected(
+            "[[failures]]\ncheck = \"abi\"\ncode = \"extra\"\nreason = \"r\"\ndeliberate = true\nbelow = \"0.8.20\"\n",
+        );
+        let gate = summary.gate(&expected, true);
+        assert_eq!(gate.unexpected["abi:extra"].examples, ["new"]);
+        assert!(gate.stale.is_empty());
     }
 
     #[test]
