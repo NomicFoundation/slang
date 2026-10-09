@@ -1,0 +1,23 @@
+[package]
+name = "solidity_v2_testing_sourcify"
+version.workspace = true
+rust-version.workspace = true
+edition.workspace = true
+publish = false
+
+[dependencies]
+anyhow = { workspace = true }
+clap = { workspace = true }
+infra_utils = { workspace = true }
+rayon = { workspace = true }
+semver = { workspace = true }
+serde = { workspace = true }
+serde_json = { workspace = true }
+slang_solidity_v2 = { workspace = true }
+slang_solidity_v2_common = { workspace = true }
+solidity_testing_utils = { workspace = true }
+solidity_v2_testing_utils = { workspace = true }
+toml = { workspace = true }
+
+[lints]
+workspace = true
