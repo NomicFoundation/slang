@@ -20,6 +20,8 @@ impl<'source> Lexer<'source> {
         }
     }
 
+    // Always inlined into the parser's hot loop
+    #[inline(always)]
     pub fn next_lexeme(&mut self) -> Option<Lexeme> {
         let lexeme = self.context.next_lexeme()?;
 
