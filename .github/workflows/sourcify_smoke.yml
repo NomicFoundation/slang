@@ -41,9 +41,14 @@ jobs:
       - name: "Run the PR-tier corpus subset"
         env:
           GH_TOKEN: "${{ github.token }}"
+        # The census reaches the job summary whichever way the gate goes.
         run: |
-          ./bin/task sourcify:pr
-          cat target/sourcify/report.md >> "$GITHUB_STEP_SUMMARY"
+          status=0
+          ./bin/task sourcify:pr || status=$?
+          if [ -f target/sourcify/report.md ]; then
+            cat target/sourcify/report.md >> "$GITHUB_STEP_SUMMARY"
+          fi
+          exit "$status"
 
       - name: "Upload results"
         if: "!cancelled()"

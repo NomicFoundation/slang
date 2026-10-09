@@ -154,13 +154,12 @@ jobs:
           pattern: "sourcify-results-*"
           path: "target/sourcify/results"
 
-      # The gate: a failure bucket outside expected-failures.toml, or a listed bucket that
-      # no longer fires anywhere in the corpus, fails the run.
+      # Census and verdict, whichever way the gate goes; the "Gate" step fails the job.
       - name: "Report"
         run: |
           chmod +x ./target/release/solidity_v2_testing_sourcify
           find target/sourcify/results -name '*.jsonl' -print0 \
-            | xargs -0 ./target/release/solidity_v2_testing_sourcify report --stale-check --report target/sourcify/report.md
+            | xargs -0 ./target/release/solidity_v2_testing_sourcify report --stale-check --report-only --report target/sourcify/report.md
           {
             echo "## Sourcify corpus: ${SHARD_COUNT} shards, $(find target/sourcify/results -name '*.jsonl' | wc -l) assets"
             cat target/sourcify/report.md
@@ -194,3 +193,10 @@ jobs:
           else
             gh api "repos/${GITHUB_REPOSITORY}/issues/${PR_NUMBER}/comments" -F body=@comment.md > /dev/null
           fi
+
+      # A failure bucket outside expected-failures.toml, or a listed bucket that no longer
+      # fires anywhere in the corpus, fails the run.
+      - name: "Gate"
+        run: |
+          find target/sourcify/results -name '*.jsonl' -print0 \
+            | xargs -0 ./target/release/solidity_v2_testing_sourcify report --stale-check > /dev/null

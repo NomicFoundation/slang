@@ -262,7 +262,7 @@ pub struct Gate {
 }
 
 impl Gate {
-    pub fn verdict(&self) -> Result<(), String> {
+    fn problems(&self) -> Vec<String> {
         let mut problems = Vec::new();
         if self.panicked > 0 {
             problems.push(format!("{} contract(s) panicked", self.panicked));
@@ -293,11 +293,30 @@ impl Gate {
                 self.too_broad.join(", ")
             ));
         }
+        problems
+    }
+
+    pub fn verdict(&self) -> Result<(), String> {
+        let problems = self.problems();
         if problems.is_empty() {
             Ok(())
         } else {
             Err(problems.join("; "))
         }
+    }
+
+    /// The verdict as the report's closing section, so a failed gate reads in the
+    /// census itself and not only in the exit code.
+    pub fn markdown(&self) -> String {
+        let problems = self.problems();
+        if problems.is_empty() {
+            return "**Gate: passed.**\n".to_owned();
+        }
+        let mut markdown = "**Gate: failed.**\n\n".to_owned();
+        for problem in problems {
+            writeln!(markdown, "- {problem}").expect("writing to a String cannot fail");
+        }
+        markdown
     }
 }
 
