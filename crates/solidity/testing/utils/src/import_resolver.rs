@@ -62,9 +62,15 @@ impl ImportResolver {
     }
 
     pub fn get_source_id(&self, virtual_path: &str) -> Option<String> {
+        // `a//b.sol` and `a/b.sol` can both be source units, and solc keeps them apart.
         self.source_maps
             .iter()
-            .find(|source| source.matches_virtual_path(virtual_path))
+            .find(|source| source.virtual_path == virtual_path)
+            .or_else(|| {
+                self.source_maps
+                    .iter()
+                    .find(|source| source.matches_virtual_path(virtual_path))
+            })
             .map(|source| source.source_id.clone())
     }
 
@@ -277,6 +283,20 @@ mod test {
             ],
         );
         test_import(&resolver, "entry", "solmate/utils/Math.sol", "target");
+    }
+
+    #[test]
+    fn a_double_slash_import_prefers_its_own_source_unit() {
+        let resolver = new_resolver(
+            &["@oz/=lib/oz/"],
+            &[
+                ("src/Game.sol", "entry"),
+                ("lib/oz/utils/Safe.sol", "single"),
+                ("lib/oz/utils//Safe.sol", "double"),
+            ],
+        );
+        test_import(&resolver, "entry", "@oz/utils//Safe.sol", "double");
+        test_import(&resolver, "entry", "@oz/utils/Safe.sol", "single");
     }
 
     #[test]
