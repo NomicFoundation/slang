@@ -4,7 +4,7 @@
   "version": "0.8.30",
   "target": "Layouts.sol",
   "sources": {
-    "Layouts.sol": "// SPDX-License-Identifier: MIT\npragma solidity ^0.8.28;\n\ntype Price is uint128;\n\nenum Side { Buy, Sell }\n\ninterface IToken {}\n\ncontract Layouts {\n    struct Inner {\n        uint8 small;\n        address owner;\n        bool flag;\n        uint256 wide;\n    }\n\n    struct Outer {\n        Inner inner;\n        string name;\n        Inner[] list;\n        uint16[3] triple;\n    }\n\n    struct Node {\n        uint256 value;\n        Node[] children;\n    }\n\n    uint8 a;\n    Side side;\n    Price price;\n    IToken token;\n    bytes data;\n    string text;\n    uint16[3] fixedValues;\n    uint256[][2] nested;\n    Inner[] inners;\n    Outer outer;\n    mapping(address => mapping(uint256 => Outer)) books;\n    mapping(uint256 => Node) nodes;\n    function(uint256) internal returns (bool) callback;\n\n    uint64 transient counter;\n    bool transient locked;\n    address transient caller;\n}\n"
+    "Layouts.sol": "// SPDX-License-Identifier: MIT\npragma solidity ^0.8.28;\n\ntype Price is uint128;\n\nenum Side { Buy, Sell }\n\ninterface IToken {}\n\ncontract Layouts {\n    struct Inner {\n        uint8 small;\n        address owner;\n        bool flag;\n        uint256 wide;\n    }\n\n    struct Outer {\n        Inner inner;\n        string name;\n        Inner[] list;\n        uint16[3] triple;\n    }\n\n    struct Node {\n        uint256 value;\n        Node[] children;\n    }\n\n    uint8 a;\n    Side side;\n    Price price;\n    IToken token;\n    bytes data;\n    string text;\n    uint16[3] fixedValues;\n    uint256[][2] nested;\n    Inner[] inners;\n    Outer outer;\n    mapping(address => mapping(uint256 => Outer)) books;\n    mapping(uint256 => Node) nodes;\n    function(uint256) internal returns (bool) callback;\n    uint256[2**255] gap;\n\n    uint64 transient counter;\n    bool transient locked;\n    address transient caller;\n}\n"
   },
   "artifacts": {
     "abi": [],
@@ -113,6 +113,14 @@
           "offset": 0,
           "slot": "15",
           "type": "t_function_internal_nonpayable(t_uint256)returns(t_bool)"
+        },
+        {
+          "astId": 94,
+          "contract": "Layouts.sol:Layouts",
+          "label": "gap",
+          "offset": 0,
+          "slot": "16",
+          "type": "t_array(t_uint256)57896044618658097711785492504343953926634992332820282019728792003956564819968_storage"
         }
       ],
       "types": {
@@ -144,6 +152,12 @@
           "encoding": "inplace",
           "label": "uint16[3]",
           "numberOfBytes": "32"
+        },
+        "t_array(t_uint256)57896044618658097711785492504343953926634992332820282019728792003956564819968_storage": {
+          "base": "t_uint256",
+          "encoding": "inplace",
+          "label": "uint256[57896044618658097711785492504343953926634992332820282019728792003956564819968]",
+          "numberOfBytes": "0"
         },
         "t_array(t_uint256)dyn_storage": {
           "base": "t_uint256",
@@ -328,7 +342,7 @@
     "transientStorageLayout": {
       "storage": [
         {
-          "astId": 90,
+          "astId": 96,
           "contract": "Layouts.sol:Layouts",
           "label": "counter",
           "offset": 0,
@@ -336,7 +350,7 @@
           "type": "t_uint64"
         },
         {
-          "astId": 92,
+          "astId": 98,
           "contract": "Layouts.sol:Layouts",
           "label": "locked",
           "offset": 8,
@@ -344,7 +358,7 @@
           "type": "t_bool"
         },
         {
-          "astId": 94,
+          "astId": 100,
           "contract": "Layouts.sol:Layouts",
           "label": "caller",
           "offset": 9,
