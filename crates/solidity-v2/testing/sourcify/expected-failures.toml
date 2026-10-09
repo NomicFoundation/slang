@@ -190,36 +190,6 @@ contracts = [
 
 [[failures]]
 check = "validate"
-code = "type-system/receive-function-parameters"
-reason = "`function receive(address, uint256)` is an ordinary function in solc; Slang's IR classifies it as the receive function. Fixed on main after this harness's base."
-issue = "https://github.com/NomicFoundation/slang/issues/2129"
-contracts = [
-  "10_0x450441d90715c79870f48105c2ea445110e2f509",
-  "11155111_0xdc6e17d3cf1d5d37682043973e9c6ea70e2f4267",
-  "40_0xbb3d452f166201d59efc363a57fcbb749d704838",
-  "41_0x4fc8404cf7df274febf4cff31f3da8c2fac9a40b",
-  "41_0xcadf84bb9b1f9e1f875b1fb7f5b933c7f2e1502e",
-  "4_0x0ff21ce329d25ad007cd1f196325136bb7a68898",
-  "4_0x6d73dfa3680b5e6035bea3fb2cc761a79ba0eafa",
-  "4_0x805f20f38aba8d3ee15b50d634913d06bf88be5e",
-  "4_0xf635bdb931ea882268d1ecf749709eb77b7b452c",
-  "5_0xedc44269708984f43e251de4bd5702a61c1dae4d",
-]
-
-[[failures]]
-check = "validate"
-code = "structure/multiple-receive-functions"
-reason = "Same as `receive-function-parameters`: the misclassified `function receive(...)` next to a real `receive()`."
-issue = "https://github.com/NomicFoundation/slang/issues/2129"
-contracts = [
-  "137_0xf023b9f32048826f7267a8423171c513ddee0c21",
-  "40_0xbb3d452f166201d59efc363a57fcbb749d704838",
-  "41_0x4fc8404cf7df274febf4cff31f3da8c2fac9a40b",
-  "41_0xcadf84bb9b1f9e1f875b1fb7f5b933c7f2e1502e",
-]
-
-[[failures]]
-check = "validate"
 code = "semantic/linearisation-impossible"
 reason = "Not a divergence: this record bundles sources solc rejects for the same reason; the verified target is a single library. The harness compiles every file in a record, not the target's import closure."
 deliberate = true
@@ -273,3 +243,19 @@ code = "resolution/identifier-not-library-name"
 reason = "Follow-on of the trailing-dot pragma rejected on purpose: a `using` directive naming a library from the file that failed to parse."
 deliberate = true
 contracts = ["11155111_0x19e2b7829b7338f89b574289a29cc8b8ef7c4acb"]
+
+[[failures]]
+check = "validate"
+code = "type-system/explicit-conversion-not-allowed"
+reason = "`abi.decode(data, (address))` is `address payable` in solc but `address` in Slang, so converting it to a contract with a payable `receive` or `fallback` is rejected."
+issue = "https://github.com/NomicFoundation/slang/issues/2253"
+contracts = [
+  "11155111_0x19bcd745544026e1b30b6331cabcc9c31a84a0a9",
+  "11155111_0xe8a769be9f4c4359b6e750074ab92b9890ba64dd",
+  "11155111_0xf5c9941b64ac207cc5c66278ef2f705b666882e3",
+  "1_0x0751a38cf098a28b4f61200f4e1630e1fa379514",
+  "1_0x1e4f2fd3f9e0083a97c10119144ed42fb7cce04d",
+  "1_0x5912a76d41eab6ca1a9b8e4bd79ed7151416ebc5",
+  "1_0x5be35b691f8275556b05ddf578e491a63c214889",
+  "1_0xe4fe7c08f22de2db8edb31dee53ed30e88dbaf6c",
+]
