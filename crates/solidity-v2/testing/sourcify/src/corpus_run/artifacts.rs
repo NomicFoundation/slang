@@ -1,5 +1,5 @@
 //! Output checks against the solc artifacts a corpus record carries for its target
-//! contract: its storage and transient storage layouts.
+//! contract: its ABI, and its storage and transient storage layouts.
 
 use ruint::aliases::U256;
 use serde_json::Value;
@@ -341,6 +341,120 @@ impl TypesWalk<'_> {
                 &format!("{path} member `{label}`"),
                 failures,
             );
+        }
+    }
+}
+
+/// Compares the target's ABI JSON with solc's `abi`: entries are paired by type, name
+/// and input types, each pair must match field by field, and the pairs must come in
+/// solc's order.
+pub fn check_abi(target: &Definition, artifacts: &Value) -> Result<Vec<Failure>, String> {
+    let solc_entries = artifacts
+        .pointer("/abi")
+        .and_then(Value::as_array)
+        .ok_or_else(|| "no abi in the artifacts".to_owned())?;
+    let abi = match target {
+        Definition::Contract(contract) => contract.compute_abi(),
+        Definition::Library(library) => library.compute_abi(),
+        _ => None,
+    }
+    .ok_or_else(|| "Slang computed no ABI for the target".to_owned())?;
+    let slang_json = serde_json::to_value(&abi).map_err(|error| error.to_string())?;
+    let mut unpaired: Vec<Option<&Value>> = slang_json
+        .as_array()
+        .map(|entries| entries.iter().map(Some).collect())
+        .unwrap_or_default();
+
+    let mut failures = Failures::default();
+    // (position in Slang's list, key) of each paired entry, in solc's order.
+    let mut paired: Vec<(usize, String)> = Vec::new();
+    for solc_entry in solc_entries {
+        let key = entry_key(solc_entry);
+        let position = unpaired
+            .iter()
+            .position(|entry| entry.is_some_and(|entry| entry_key(entry) == key));
+        let Some(position) = position else {
+            failures.add(
+                Check::Abi,
+                "missing".to_owned(),
+                format!("solc has `{key}`, slang does not"),
+            );
+            continue;
+        };
+        let slang_entry = unpaired[position].take().expect("an unpaired entry");
+        compare_fields(&key, "", slang_entry, solc_entry, &mut failures);
+        paired.push((position, key));
+    }
+    for entry in unpaired.into_iter().flatten() {
+        failures.add(
+            Check::Abi,
+            "extra".to_owned(),
+            format!("slang has `{}`, solc does not", entry_key(entry)),
+        );
+    }
+    if let Some(pair) = paired.windows(2).find(|pair| pair[0].0 > pair[1].0) {
+        failures.add(
+            Check::Abi,
+            "order".to_owned(),
+            format!(
+                "solc lists `{}` before `{}`, slang after",
+                pair[0].1, pair[1].1
+            ),
+        );
+    }
+    Ok(failures.into_vec())
+}
+
+/// `type name(input types)`, with a tuple spelled by its components, which tells
+/// overloads apart.
+fn entry_key(entry: &Value) -> String {
+    let inputs = entry["inputs"].as_array().map_or(&[][..], Vec::as_slice);
+    format!(
+        "{} {}({})",
+        entry["type"].as_str().unwrap_or_default(),
+        entry["name"].as_str().unwrap_or_default(),
+        parameter_types(inputs)
+    )
+}
+
+fn parameter_types(parameters: &[Value]) -> String {
+    parameters
+        .iter()
+        .map(|parameter| {
+            let spelled = parameter["type"].as_str().unwrap_or_default();
+            match parameter["components"].as_array() {
+                Some(components) => format!("{spelled}({})", parameter_types(components)),
+                None => spelled.to_owned(),
+            }
+        })
+        .collect::<Vec<_>>()
+        .join(",")
+}
+
+/// Reports every field of an entry or parameter that differs, as `[*].<path>`; the
+/// parameter lists are compared parameter by parameter, down through `components`.
+fn compare_fields(key: &str, path: &str, slang: &Value, solc: &Value, failures: &mut Failures) {
+    let (Some(slang_fields), Some(solc_fields)) = (slang.as_object(), solc.as_object()) else {
+        return;
+    };
+    let mut names: Vec<&String> = slang_fields.keys().chain(solc_fields.keys()).collect();
+    names.sort();
+    names.dedup();
+    for name in names {
+        let field = format!("{path}{name}");
+        let (slang_value, solc_value) = (&slang[name.as_str()], &solc[name.as_str()]);
+        match (slang_value.as_array(), solc_value.as_array()) {
+            (Some(slang_list), Some(solc_list)) if slang_list.len() == solc_list.len() => {
+                for (slang_item, solc_item) in slang_list.iter().zip(solc_list) {
+                    compare_fields(key, &format!("{field}."), slang_item, solc_item, failures);
+                }
+            }
+            _ if slang_value != solc_value => failures.add(
+                Check::Abi,
+                format!("[*].{field}"),
+                format!("`{key}` {field}: slang `{slang_value}`, solc `{solc_value}`"),
+            ),
+            _ => {}
         }
     }
 }
