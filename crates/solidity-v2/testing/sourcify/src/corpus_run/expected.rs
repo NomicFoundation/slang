@@ -1,10 +1,10 @@
 //! The failure buckets a corpus run tolerates, checked in next to the crate.
 
-use std::collections::BTreeMap;
 use std::path::Path;
 
 use anyhow::{Context, Result};
 use serde::Deserialize;
+use slang_solidity_v2_common::collections::SortedMap;
 
 use super::outcome::Check;
 
@@ -47,7 +47,7 @@ impl ExpectedFailures {
         Ok(expected)
     }
 
-    pub fn by_key(&self) -> BTreeMap<String, &ExpectedFailure> {
+    pub fn by_key(&self) -> SortedMap<String, &ExpectedFailure> {
         self.failures
             .iter()
             .map(|failure| (format!("{}:{}", failure.check, failure.code), failure))

@@ -1,9 +1,8 @@
 //! What one corpus contract produced, and the classification of its diagnostics.
 
-use std::collections::BTreeMap;
-
 use serde::{Deserialize, Serialize};
 use slang_solidity_v2::diagnostics::{DiagnosticExtensions, DiagnosticKind, DiagnosticSeverity};
+use slang_solidity_v2_common::collections::SortedMap;
 
 /// Every check groups the error diagnostics of one subsystem, so a failure names the
 /// layer at fault and the gate can be turned on per layer.
@@ -87,7 +86,7 @@ pub fn classify<'a>(
     diagnostics: impl Iterator<Item = &'a DiagnosticKind>,
 ) -> (Vec<Failure>, usize) {
     let mut warnings = 0;
-    let mut buckets: BTreeMap<(Check, &'static str), Failure> = BTreeMap::new();
+    let mut buckets: SortedMap<(Check, &'static str), Failure> = SortedMap::new();
     for kind in diagnostics {
         if kind.severity() != DiagnosticSeverity::Error {
             warnings += 1;

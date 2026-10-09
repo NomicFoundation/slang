@@ -1,8 +1,9 @@
 //! Aggregates outcomes into the census and applies the expected-failures gate.
 
 use std::cmp::Reverse;
-use std::collections::BTreeMap;
 use std::fmt::Write;
+
+use slang_solidity_v2_common::collections::SortedMap;
 
 use super::expected::ExpectedFailures;
 use super::outcome::{Check, Outcome};
@@ -37,12 +38,12 @@ pub struct Summary {
     pub failed: usize,
     pub skipped: usize,
     pub panicked: usize,
-    pub failed_by_check: BTreeMap<Check, usize>,
+    pub failed_by_check: SortedMap<Check, usize>,
     /// `check:code` -> bucket.
-    pub buckets: BTreeMap<String, Bucket>,
+    pub buckets: SortedMap<String, Bucket>,
     /// Panic message and location -> bucket.
-    pub panics: BTreeMap<String, Bucket>,
-    pub skips: BTreeMap<String, Bucket>,
+    pub panics: SortedMap<String, Bucket>,
+    pub skips: SortedMap<String, Bucket>,
 }
 
 impl Summary {
