@@ -125,12 +125,13 @@ pub fn report(cmd: &ReportCommand) -> Result<()> {
 }
 
 fn finish(summary: &Summary, expected: &ExpectedFailures, options: &ReportOptions) -> Result<()> {
-    let markdown = summary.markdown(expected);
+    let gate = summary.gate(expected, options.stale_check);
+    let markdown = format!("{}\n{}", summary.markdown(expected), gate.markdown());
     println!("{markdown}");
     if let Some(path) = &options.report {
         std::fs::write(path, &markdown).with_context(|| format!("Could not write {path:?}"))?;
     }
-    match summary.gate(expected, options.stale_check).verdict() {
+    match gate.verdict() {
         Ok(()) => Ok(()),
         Err(problems) if options.report_only => {
             println!("Report only, not failing: {problems}");
@@ -253,6 +254,31 @@ fn take_panic_message() -> String {
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn a_failed_gate_is_written_into_the_report() {
+        let record: CorpusContract = serde_json::from_str(
+            r#"{"name":"x","chain_id":0,"version":"0.8.30","target":"a.sol",
+                "sources":{"a.sol":"import \"./missing.sol\"; contract A {}"}}"#,
+        )
+        .unwrap();
+        let mut summary = Summary::default();
+        summary.add(&check(&record, Path::new("0_x.json"), false));
+        let path = std::env::temp_dir().join(format!("sourcify-gate-{}.md", std::process::id()));
+        let options = ReportOptions {
+            report: Some(path.clone()),
+            expected_failures: None,
+            report_only: true,
+            stale_check: false,
+        };
+        let expected: ExpectedFailures = toml::from_str("").unwrap();
+
+        finish(&summary, &expected, &options).unwrap();
+        let report = std::fs::read_to_string(&path).unwrap();
+        std::fs::remove_file(&path).unwrap();
+        assert!(report.contains("**Gate: failed.**"), "{report}");
+        assert!(report.contains("- unexpected failures: bind:"), "{report}");
+    }
 
     #[test]
     fn testdata_corpus_passes_every_check() {

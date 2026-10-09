@@ -1,12 +1,12 @@
 //! The failure buckets a corpus run tolerates, checked in next to the crate.
 
+use std::fmt::Write;
 use std::path::Path;
 
 use anyhow::{Context, Result};
 use serde::Deserialize;
-use slang_solidity_v2_common::collections::SortedMap;
 
-use super::outcome::Check;
+use super::outcome::{Check, Failure};
 
 #[derive(Debug, Deserialize)]
 pub struct ExpectedFailures {
@@ -14,6 +14,8 @@ pub struct ExpectedFailures {
     failures: Vec<ExpectedFailure>,
 }
 
+/// One tolerated bucket: a diagnostic code, narrowed to a message prefix and/or a
+/// list of contracts when the code also fires for reasons the entry does not cover.
 #[derive(Debug, Deserialize)]
 pub struct ExpectedFailure {
     pub check: Check,
@@ -24,6 +26,59 @@ pub struct ExpectedFailure {
     pub issue: Option<String>,
     #[serde(default)]
     pub deliberate: bool,
+    /// Only failures whose first message starts with this.
+    #[serde(default)]
+    pub message: Option<String>,
+    /// Only these contracts (corpus file stems); empty means any.
+    #[serde(default)]
+    pub contracts: Vec<String>,
+}
+
+impl ExpectedFailure {
+    pub fn key(&self) -> String {
+        format!("{}:{}", self.check, self.code)
+    }
+
+    pub fn matches(&self, contract: &str, failure: &Failure) -> bool {
+        self.check == failure.check
+            && self.code == failure.code
+            && self
+                .message
+                .as_ref()
+                .is_none_or(|prefix| failure.message.starts_with(prefix))
+            && (self.contracts.is_empty() || self.contracts.iter().any(|c| c == contract))
+    }
+
+    /// How the report names the entry: the issue or "deliberate", plus its narrowing.
+    pub fn label(&self) -> String {
+        let mut label = match &self.issue {
+            Some(issue) if !self.deliberate => issue.clone(),
+            _ => "deliberate".to_owned(),
+        };
+        label.push_str(&self.narrowing());
+        label
+    }
+
+    /// The issue as `#123` when it is one of this repository's, else as written.
+    pub fn issue_ref(&self) -> String {
+        let issue = self.issue.as_deref().unwrap_or_default();
+        match issue.rsplit_once("/issues/") {
+            Some((_, number)) => format!("#{number}"),
+            None => issue.to_owned(),
+        }
+    }
+
+    /// What narrows the entry below its whole bucket, e.g. ` [Unexpected Pragma…] [4 listed]`.
+    pub fn narrowing(&self) -> String {
+        let mut narrowing = String::new();
+        if let Some(prefix) = &self.message {
+            write!(narrowing, " [{prefix}…]").unwrap();
+        }
+        if !self.contracts.is_empty() {
+            write!(narrowing, " [{} listed]", self.contracts.len()).unwrap();
+        }
+        narrowing
+    }
 }
 
 impl ExpectedFailures {
@@ -39,25 +94,34 @@ impl ExpectedFailures {
                 .is_some_and(|issue| !issue.is_empty());
             anyhow::ensure!(
                 !failure.reason.is_empty() && (tracked || failure.deliberate),
-                "{path:?}: {check}:{code} needs a reason and an issue (or `deliberate = true`)",
-                check = failure.check,
-                code = failure.code
+                "{path:?}: {key} needs a reason and an issue (or `deliberate = true`)",
+                key = failure.key()
             );
         }
         Ok(expected)
     }
 
-    pub fn by_key(&self) -> SortedMap<String, &ExpectedFailure> {
-        self.failures
-            .iter()
-            .map(|failure| (format!("{}:{}", failure.check, failure.code), failure))
-            .collect()
+    pub fn entries(&self) -> &[ExpectedFailure] {
+        &self.failures
     }
 }
 
 #[cfg(test)]
 mod tests {
-    use super::ExpectedFailures;
+    use super::*;
+
+    fn parse(entries: &str) -> ExpectedFailures {
+        toml::from_str(entries).unwrap()
+    }
+
+    fn failure(code: &str, message: &str) -> Failure {
+        Failure {
+            check: Check::Bind,
+            code: code.to_owned(),
+            count: 1,
+            message: message.to_owned(),
+        }
+    }
 
     #[test]
     fn entries_need_a_reason_and_an_issue() {
@@ -88,16 +152,24 @@ mod tests {
     }
 
     #[test]
-    fn keys_join_check_and_code() {
-        let dir = tempfile_dir();
-        let path = dir.join("expected.toml");
-        std::fs::write(
-            &path,
-            "[[failures]]\ncheck = \"bind\"\ncode = \"identifier-not-found\"\nreason = \"r\"\nissue = \"i\"\n",
-        )
-        .unwrap();
-        let expected = ExpectedFailures::load(&path).unwrap();
-        assert!(expected.by_key().contains_key("bind:identifier-not-found"));
+    fn a_message_prefix_narrows_the_entry() {
+        let expected = parse(
+            "[[failures]]\ncheck = \"bind\"\ncode = \"x\"\nreason = \"r\"\nissue = \"i\"\nmessage = \"Unexpected Pragma\"\n",
+        );
+        let entry = &expected.entries()[0];
+        assert!(entry.matches("a", &failure("x", "Unexpected PragmaSemicolon")));
+        assert!(!entry.matches("a", &failure("x", "Unexpected IndexedKeyword")));
+    }
+
+    #[test]
+    fn a_contract_list_narrows_the_entry() {
+        let expected = parse(
+            "[[failures]]\ncheck = \"bind\"\ncode = \"x\"\nreason = \"r\"\ndeliberate = true\ncontracts = [\"1_0xaa\"]\n",
+        );
+        let entry = &expected.entries()[0];
+        assert!(entry.matches("1_0xaa", &failure("x", "m")));
+        assert!(!entry.matches("1_0xbb", &failure("x", "m")));
+        assert_eq!(entry.label(), "deliberate [1 listed]");
     }
 
     fn tempfile_dir() -> std::path::PathBuf {
