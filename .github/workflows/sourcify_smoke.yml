@@ -32,17 +32,20 @@ jobs:
           infra-setup: "false"
           sfw-optional: "true"
 
-      - name: "Build sourcify binary"
-        run: "${SFW_PREFIX:-} ./scripts/bin/with-hermit cargo build --locked --release --bin solidity_testing_sourcify"
+      - name: "Smoke Test > Build sourcify binary"
+        run: "${SFW_PREFIX:-} ./scripts/bin/with-hermit cargo build --locked --bin solidity_testing_sourcify"
+
+      - name: "Build v2 sourcify binary"
+        run: "${SFW_PREFIX:-} ./scripts/bin/with-hermit cargo build --locked --release --bin solidity_v2_testing_sourcify"
 
       - name: "Run in-repo corpus test cases"
-        run: "./scripts/bin/with-hermit ./target/release/solidity_testing_sourcify run-corpus crates/solidity/testing/sourcify/testdata/corpus"
+        run: "./scripts/bin/with-hermit ./target/release/solidity_v2_testing_sourcify run-corpus crates/solidity-v2/testing/sourcify/testdata/corpus"
 
       - name: "Download pinned corpus snapshot"
         env:
           GH_TOKEN: "${{ github.token }}"
         run: |
-          lock="crates/solidity/testing/sourcify/corpus.lock"
+          lock="crates/solidity-v2/testing/sourcify/corpus.lock"
           field() { sed -n "s/^$1 = \"\(.*\)\"$/\1/p" "$lock"; }
           gh release download "$(field tag)" --repo "$(field repo)" --pattern "$(field asset)" --output corpus.tar.xz
           echo "$(field sha256)  corpus.tar.xz" | sha256sum --check
@@ -52,7 +55,7 @@ jobs:
 
       - name: "Run pinned corpus snapshot"
         run: |
-          ./scripts/bin/with-hermit ./target/release/solidity_testing_sourcify run-corpus target/corpus \
+          ./scripts/bin/with-hermit ./target/release/solidity_v2_testing_sourcify run-corpus target/corpus \
             --out target/sourcify-results.jsonl --report target/sourcify-report.md
           cat target/sourcify-report.md >> "$GITHUB_STEP_SUMMARY"
 

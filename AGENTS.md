@@ -55,6 +55,7 @@ Additionally, the repository also contains the crates for the under-development 
         └── testing/
             ├── snapshots/          Golden files: cst_output/, binder_output/, diagnostics_output/
             ├── solc/               solc comparison suite (results.generated.json)
+            ├── sourcify/           Sourcify corpus runner (run-corpus, expected-failures.toml)
             └── utils/              Test utilities and V1 comparison tooling
 ```
 

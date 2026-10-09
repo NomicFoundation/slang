@@ -16,14 +16,7 @@ use {
 };
 
 #[derive(
-    Clone,
-    Copy,
-    Debug,
-    Eq,
-    PartialEq,
-    serde::Serialize,
-    strum::IntoStaticStr,
-    strum::EnumString,
+    Clone, Copy, Debug, Eq, PartialEq, serde::Serialize, strum::IntoStaticStr, strum::EnumString,
 )]
 pub enum NonterminalKind {
     Module,
@@ -31,14 +24,7 @@ pub enum NonterminalKind {
     PassStatement,
 }
 #[derive(
-    Clone,
-    Copy,
-    Debug,
-    Eq,
-    PartialEq,
-    serde::Serialize,
-    strum::IntoStaticStr,
-    strum::EnumString,
+    Clone, Copy, Debug, Eq, PartialEq, serde::Serialize, strum::IntoStaticStr, strum::EnumString,
 )]
 pub enum TerminalKind {
     Identifier,

@@ -5,13 +5,13 @@
 //! `corpus.lock`) and by hand under `testdata/corpus`. Each record carries what a
 //! solc standard-JSON input needs, so solx consumes the same snapshots.
 
-use std::collections::BTreeMap;
 use std::fs;
 use std::path::{Path, PathBuf};
 
 use anyhow::{Context, Result};
 use serde::{Deserialize, Serialize};
 use serde_json::Value;
+use slang_solidity_v2_common::collections::SortedMap;
 
 pub const FORMAT_VERSION: u32 = 1;
 
@@ -36,7 +36,7 @@ pub struct CorpusContract {
     #[serde(default, skip_serializing_if = "Vec::is_empty")]
     pub remappings: Vec<String>,
     /// Virtual path -> source content.
-    pub sources: BTreeMap<String, String>,
+    pub sources: SortedMap<String, String>,
     /// The contract's original solc `compiler_settings`, verbatim.
     #[serde(default, skip_serializing_if = "Value::is_null")]
     pub settings: Value,
@@ -100,7 +100,7 @@ pub fn read_contract(path: &Path) -> Result<CorpusContract> {
 
 #[cfg(test)]
 mod tests {
-    use std::collections::HashSet;
+    use slang_solidity_v2_common::collections::Set;
 
     use super::Corpus;
     use crate::corpus_run::testdata_corpus_dir;
@@ -109,11 +109,11 @@ mod tests {
     fn shards_partition_the_corpus() {
         let corpus = Corpus::open(&testdata_corpus_dir()).unwrap();
 
-        let all: HashSet<_> = corpus.shard(1, 0).collect();
+        let all: Set<_> = corpus.shard(1, 0).collect();
         let sharded: Vec<_> = (0..2).flat_map(|index| corpus.shard(2, index)).collect();
 
         assert_eq!(sharded.len(), all.len());
-        assert_eq!(sharded.iter().copied().collect::<HashSet<_>>(), all);
+        assert_eq!(sharded.iter().copied().collect::<Set<_>>(), all);
         assert_eq!(all.len(), corpus.manifest.contract_count);
     }
 }

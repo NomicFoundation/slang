@@ -7,7 +7,7 @@ use slang_solidity_v2::utils::{EvmTarget, LanguageVersion};
 use solidity_testing_utils::import_resolver::{
     ImportRemap, ImportResolver as CorpusResolver, SourceMap,
 };
-use solidity_v2_testing_utils::evm_targets::{default_evm_target, parse_evm_target_name};
+use solidity_v2_testing_utils::evm_targets::parse_evm_target_name;
 
 use crate::corpus::CorpusContract;
 
@@ -48,7 +48,7 @@ pub fn evm_target(record: &CorpusContract, version: LanguageVersion) -> Result<E
         Some(name) => {
             parse_evm_target_name(name).ok_or_else(|| Skip::UnknownEvmTarget(name.to_owned()))
         }
-        None => Ok(default_evm_target(version)),
+        None => Ok(version.default_evm_target()),
     }
 }
 
