@@ -19,6 +19,7 @@ pub fn slang_solidity_v2::compilation::CompilationUnit::all_contracts(&self) -> 
 pub fn slang_solidity_v2::compilation::CompilationUnit::all_definitions(&self) -> impl core::iter::traits::iterator::Iterator<Item = slang_solidity_v2_ast::ast::definitions::Definition> + use<'_>
 pub fn slang_solidity_v2::compilation::CompilationUnit::all_references(&self) -> impl core::iter::traits::iterator::Iterator<Item = slang_solidity_v2_ast::ast::references::Reference> + use<'_>
 pub fn slang_solidity_v2::compilation::CompilationUnit::compute_contracts_abi(&self) -> alloc::vec::Vec<slang_solidity_v2_ast::abi::ContractAbi>
+pub fn slang_solidity_v2::compilation::CompilationUnit::compute_file_dependencies(&self, &slang_solidity_v2_common::files::FileId) -> core::option::Option<slang_solidity_v2_common::collections::aliases::SortedSet<slang_solidity_v2_common::files::FileId>>
 pub fn slang_solidity_v2::compilation::CompilationUnit::diagnostics(&self) -> &slang_solidity_v2_common::diagnostics::collection::DiagnosticCollection
 pub fn slang_solidity_v2::compilation::CompilationUnit::evm_target(&self) -> slang_solidity_v2_common::evm_targets::target::EvmTarget
 pub fn slang_solidity_v2::compilation::CompilationUnit::file(&self, &slang_solidity_v2_common::files::FileId) -> core::option::Option<slang_solidity_v2::compilation::File>
