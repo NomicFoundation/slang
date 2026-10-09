@@ -16,6 +16,7 @@ use std::sync::atomic::{AtomicUsize, Ordering};
 use std::time::Instant;
 
 use anyhow::{Context, Result};
+use artifacts::Layout;
 use expected::ExpectedFailures;
 use infra_utils::terminal::Terminal;
 use outcome::{Check, Outcome, classify};
@@ -32,6 +33,11 @@ use crate::corpus::{self, Corpus, CorpusContract};
 pub fn testdata_corpus_dir() -> PathBuf {
     Path::new(env!("CARGO_MANIFEST_DIR")).join("testdata/corpus")
 }
+
+/// The checks against the record's solc artifacts, each skipped on its own when the
+/// artifacts or the target contract are missing. A skipped layout check skips its
+/// types check with it.
+const ARTIFACT_CHECKS: [Check; 2] = [Check::StorageLayout, Check::TransientStorageLayout];
 
 fn default_expected_failures() -> PathBuf {
     Path::new(env!("CARGO_MANIFEST_DIR")).join("expected-failures.toml")
@@ -183,21 +189,26 @@ fn check(record: &CorpusContract, path: &Path, print_diagnostics: bool) -> Outco
                 .map(|diagnostic| diagnostic.kind()),
         );
         let mut skipped_checks = SortedMap::new();
-        match &record.artifacts {
-            Some(artifacts) => match artifacts::target_abi(&unit, record) {
-                Ok(abi) => match artifacts::check_storage_layout(&abi, artifacts) {
-                    Ok(storage_failures) => failures.extend(storage_failures),
-                    Err(reason) => {
-                        skipped_checks.insert(Check::StorageLayout.to_string(), reason);
-                    }
-                },
-                Err(reason) => {
-                    skipped_checks.insert(Check::StorageLayout.to_string(), reason);
-                }
-            },
-            None => {
-                skipped_checks.insert(Check::StorageLayout.to_string(), "no artifacts".to_owned());
+        let mut skip_all = |reason: &str| {
+            for check in ARTIFACT_CHECKS {
+                skipped_checks.insert(check.to_string(), reason.to_owned());
             }
+        };
+        match &record.artifacts {
+            Some(artifacts) => match artifacts::target_definition(&unit, record) {
+                Ok(target) => {
+                    for layout in [Layout::Storage, Layout::Transient] {
+                        match artifacts::check_storage_layout(&target, artifacts, layout) {
+                            Ok(check_failures) => failures.extend(check_failures),
+                            Err(reason) => {
+                                skipped_checks.insert(layout.checks().0.to_string(), reason);
+                            }
+                        }
+                    }
+                }
+                Err(reason) => skip_all(&reason),
+            },
+            None => skip_all("no artifacts"),
         }
         (failures, warnings, skipped_checks)
     }));
@@ -335,11 +346,12 @@ mod tests {
     fn storage_mismatches_count_once_per_contract_and_code() {
         let record: CorpusContract = serde_json::from_str(
             r#"{"name":"x","chain_id":0,"version":"0.8.30","target":"a.sol",
-                "sources":{"a.sol":"contract A { uint256 a; uint256 b; }"},
+                "sources":{"a.sol":"contract A { uint256 a; int256 b; }"},
                 "artifacts":{"storageLayout":{
                     "storage":[{"label":"a","offset":0,"slot":"0","type":"t_x"},
-                               {"label":"b","offset":0,"slot":"1","type":"t_x"}],
-                    "types":{"t_x":{"label":"uint128"}}}}}"#,
+                               {"label":"b","offset":0,"slot":"1","type":"t_y"}],
+                    "types":{"t_x":{"encoding":"inplace","label":"uint128","numberOfBytes":"32"},
+                             "t_y":{"encoding":"inplace","label":"int128","numberOfBytes":"32"}}}}}"#,
         )
         .unwrap();
         let outcome = check(&record, Path::new("0_x.json"), false);
@@ -348,7 +360,39 @@ mod tests {
             .iter()
             .map(|failure| (failure.key(), failure.count))
             .collect();
-        assert_eq!(failures, [("storage_types:[*].type".to_owned(), 2)]);
+        assert_eq!(failures, [("storage_types:[*].type.label".to_owned(), 2)]);
+    }
+
+    #[test]
+    fn storage_types_are_compared_through_nested_types() {
+        let path = testdata_corpus_dir().join("contracts/0_storage_types.json");
+        let mut record = corpus::read_contract(&path).unwrap();
+        let types = record
+            .artifacts
+            .as_mut()
+            .unwrap()
+            .pointer_mut("/storageLayout/types")
+            .unwrap();
+        // Each entry is only reachable through an array base, a mapping value or a
+        // struct member, the last one through a recursive struct.
+        types["t_struct(Inner)16_storage"]["members"][2]["offset"] = 20.into();
+        types["t_struct(Node)37_storage"]["members"][1]["slot"] = "2".into();
+        types["t_array(t_uint256)dyn_storage"]["encoding"] = "inplace".into();
+        types["t_uint16"]["label"] = "uint8".into();
+        types["t_array(t_struct(Node)37_storage)dyn_storage"]["numberOfBytes"] = "64".into();
+
+        let outcome = check(&record, &path, false);
+        let keys: Vec<String> = outcome.failures.iter().map(outcome::Failure::key).collect();
+        assert_eq!(
+            keys,
+            [
+                "storage_types:[*].type.encoding",
+                "storage_types:[*].type.label",
+                "storage_types:[*].type.members.offset",
+                "storage_types:[*].type.members.slot",
+                "storage_types:[*].type.numberOfBytes",
+            ]
+        );
     }
 
     #[test]

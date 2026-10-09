@@ -4246,6 +4246,7 @@ dependencies = [
  "clap",
  "infra_utils",
  "rayon",
+ "ruint",
  "semver 1.0.28",
  "serde",
  "serde_json",

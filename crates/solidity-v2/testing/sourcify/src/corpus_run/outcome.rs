@@ -17,8 +17,13 @@ pub enum Check {
     Validate,
     /// The target contract's storage slots against solc's `storageLayout` artifact.
     StorageLayout,
-    /// The spelling of each storage item's type against solc's type label.
+    /// Each storage item's type against solc's types table: label, size, encoding, and
+    /// the types it is made of.
     StorageTypes,
+    /// The target contract's transient slots against solc's `transientStorageLayout`.
+    TransientStorageLayout,
+    /// Each transient item's type against solc's types table, as for storage.
+    TransientStorageTypes,
 }
 
 impl Check {
@@ -41,6 +46,8 @@ impl std::fmt::Display for Check {
             Check::Validate => f.write_str("validate"),
             Check::StorageLayout => f.write_str("storage_layout"),
             Check::StorageTypes => f.write_str("storage_types"),
+            Check::TransientStorageLayout => f.write_str("transient_storage_layout"),
+            Check::TransientStorageTypes => f.write_str("transient_storage_types"),
         }
     }
 }

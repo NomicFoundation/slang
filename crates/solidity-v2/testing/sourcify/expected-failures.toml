@@ -420,9 +420,3 @@ contracts = [
   "1_0x5be35b691f8275556b05ddf578e491a63c214889",
   "1_0xe4fe7c08f22de2db8edb31dee53ed30e88dbaf6c",
 ]
-
-[[failures]]
-check = "storage_types"
-code = "[*].type"
-reason = "Slang spells storage types without solc's label conventions: no `struct `/`enum `/`contract ` kind prefix, `address payable` as `address`, and a function type as `function` without its signature."
-issue = "https://github.com/NomicFoundation/slang/issues/2196"
