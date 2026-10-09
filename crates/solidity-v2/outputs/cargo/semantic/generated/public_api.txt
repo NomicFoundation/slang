@@ -377,6 +377,7 @@ pub fn slang_solidity_v2_semantic::context::StorageLayoutBuilder::new(ruint::ali
 pub struct slang_solidity_v2_semantic::context::StorageMember
 impl slang_solidity_v2_semantic::context::StorageMember
 pub fn slang_solidity_v2_semantic::context::StorageMember::name(&self) -> &str
+pub fn slang_solidity_v2_semantic::context::StorageMember::node_id(&self) -> slang_solidity_v2_common::nodes::NodeId
 pub fn slang_solidity_v2_semantic::context::StorageMember::position(&self) -> slang_solidity_v2_semantic::context::StoragePosition
 pub fn slang_solidity_v2_semantic::context::StorageMember::type_id(&self) -> slang_solidity_v2_semantic::types::TypeId
 impl core::clone::Clone for slang_solidity_v2_semantic::context::StorageMember

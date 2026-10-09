@@ -4,7 +4,9 @@ use slang_solidity_v2_ir::ir;
 use slang_solidity_v2_semantic::binder;
 use slang_solidity_v2_semantic::context::StorageLayoutBuilder;
 
-use crate::abi::{ContractAbi, StorageItem, StorageKind, StorageLayout, StorageType};
+use crate::abi::{
+    ContractAbi, StorageItem, StorageKind, StorageLayout, StorageType, storage_type_identifier,
+};
 use crate::ast::{ContractDefinitionStruct, StateVariableDefinition, StateVariableMutability};
 
 impl ContractDefinitionStruct {
@@ -156,11 +158,17 @@ impl ContractDefinitionStruct {
             items.iter().map(|item| item.type_id),
             |type_id, layout| StorageType {
                 type_id,
+                identifier: storage_type_identifier(&self.semantic, type_id),
                 label: self.semantic.type_abi_internal_name(type_id),
                 size: layout.size,
                 kind: layout.kind,
             },
         )?;
-        Some(StorageLayout::new(items, types))
+        let contract = format!(
+            "{file_id}:{name}",
+            file_id = self.get_file_id(),
+            name = self.ir_node.name.unparse(),
+        );
+        Some(StorageLayout::new(contract, items, types))
     }
 }

@@ -1,3 +1,6 @@
+mod identifier;
+mod serialize;
+
 use ruint::aliases::U256;
 use slang_solidity_v2_common::nodes::NodeId;
 use slang_solidity_v2_semantic::context::StorageTypeTable;
@@ -5,6 +8,8 @@ pub use slang_solidity_v2_semantic::context::{
     StorageMember, StoragePosition, StorageSize, StorageTypeKind,
 };
 use slang_solidity_v2_semantic::types::TypeId;
+
+pub(crate) use self::identifier::storage_type_identifier;
 
 /// Which storage a layout describes: the persistent storage, or the transient
 /// storage that is cleared at the end of each transaction.
@@ -15,16 +20,32 @@ pub(crate) enum StorageKind {
 }
 
 /// The state variables of one kind of storage, and the types they are laid
-/// out with.
+/// out with. Serializes as the JSON storage layout, an object with the
+/// `storage` items and the `types` table keyed by [`StorageType::identifier`].
 #[derive(Clone, Debug, Default, Eq, PartialEq)]
 pub struct StorageLayout {
+    contract: String,
     items: Vec<StorageItem>,
     types: StorageTypeTable<StorageType>,
 }
 
 impl StorageLayout {
-    pub(crate) fn new(items: Vec<StorageItem>, types: StorageTypeTable<StorageType>) -> Self {
-        Self { items, types }
+    pub(crate) fn new(
+        contract: String,
+        items: Vec<StorageItem>,
+        types: StorageTypeTable<StorageType>,
+    ) -> Self {
+        Self {
+            contract,
+            items,
+            types,
+        }
+    }
+
+    /// The contract whose state variables these are, qualified by its file
+    /// as `file:Name`.
+    pub fn contract(&self) -> &str {
+        &self.contract
     }
 
     /// The state variables, in the order they are laid out.
@@ -84,6 +105,7 @@ impl StorageItem {
 #[derive(Clone, Debug, Eq, PartialEq)]
 pub struct StorageType {
     pub(super) type_id: TypeId,
+    pub(super) identifier: String,
     pub(super) label: String,
     pub(super) size: StorageSize,
     pub(super) kind: StorageTypeKind,
@@ -92,6 +114,13 @@ pub struct StorageType {
 impl StorageType {
     pub fn type_id(&self) -> TypeId {
         self.type_id
+    }
+
+    /// The type's key in the JSON type table, e.g. `t_uint256` or
+    /// `t_struct(S)12_storage`. A user-defined type ends with the node id of
+    /// its definition.
+    pub fn identifier(&self) -> &str {
+        &self.identifier
     }
 
     /// The type's name as a storage layout spells it, e.g. `struct C.S` or

@@ -66,12 +66,17 @@ pub enum StorageTypeKind {
 /// regardless of how the originating struct member is typed in the `Binder`.
 #[derive(Clone, Debug, Eq, PartialEq)]
 pub struct StorageMember {
+    pub(crate) node_id: NodeId,
     pub(crate) name: String,
     pub(crate) type_id: TypeId,
     pub(crate) position: StoragePosition,
 }
 
 impl StorageMember {
+    pub fn node_id(&self) -> NodeId {
+        self.node_id
+    }
+
     /// The member's name.
     pub fn name(&self) -> &str {
         &self.name
@@ -324,6 +329,7 @@ impl SemanticContext {
                     &mut Set::default(),
                     |member, type_id, position| {
                         members.push(StorageMember {
+                            node_id: member.id(),
                             name: member.name.unparse().to_string(),
                             type_id: self.types.storage_type_id(type_id),
                             position,
