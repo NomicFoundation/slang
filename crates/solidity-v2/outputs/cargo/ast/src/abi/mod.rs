@@ -8,12 +8,11 @@ use std::sync::Arc;
 
 use ruint::aliases::U256;
 use sha3::{Digest, Keccak256};
-use slang_solidity_v2_common::collections::SortedMap;
 use slang_solidity_v2_common::files::FileId;
 use slang_solidity_v2_common::nodes::NodeId;
 use slang_solidity_v2_semantic::context::SemanticContext;
 pub use slang_solidity_v2_semantic::context::{
-    StorageMember, StoragePosition, StorageSize, StorageTypeKind,
+    StorageMember, StoragePosition, StorageSize, StorageTypeKind, StorageTypeTable,
 };
 use slang_solidity_v2_semantic::types::{FunctionTypeMutability, TypeId};
 
@@ -21,14 +20,12 @@ pub use self::types::{AbiType, NotAnAbiType, TupleComponent};
 use crate::abi::types::{is_abi_type, type_as_abi_type};
 use crate::ast::{Definition, Type};
 
-/// Serializes as the JSON ABI, the array of its entries; the storage layouts are not part of it.
+/// Serializes as the JSON ABI, the array of its entries.
 pub struct ContractAbi {
     node_id: NodeId,
     name: String,
     file_id: FileId,
     entries: Vec<AbiEntry>,
-    storage_layout: StorageLayout,
-    transient_storage_layout: StorageLayout,
 }
 
 impl ContractAbi {
@@ -38,8 +35,6 @@ impl ContractAbi {
         name: String,
         file_id: FileId,
         mut entries: Vec<AbiEntry>,
-        storage_layout: StorageLayout,
-        transient_storage_layout: StorageLayout,
         semantic: &Arc<SemanticContext>,
     ) -> Self {
         entries.sort();
@@ -49,8 +44,6 @@ impl ContractAbi {
             name,
             file_id,
             entries,
-            storage_layout,
-            transient_storage_layout,
         }
     }
 
@@ -68,14 +61,6 @@ impl ContractAbi {
 
     pub fn entries(&self) -> &[AbiEntry] {
         &self.entries
-    }
-
-    pub fn storage_layout(&self) -> &StorageLayout {
-        &self.storage_layout
-    }
-
-    pub fn transient_storage_layout(&self) -> &StorageLayout {
-        &self.transient_storage_layout
     }
 }
 
@@ -427,7 +412,7 @@ impl fmt::Debug for AbiParameter {
 /// Which storage a layout describes: the persistent storage, or the transient
 /// storage that is cleared at the end of each transaction.
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
-pub enum StorageKind {
+pub(crate) enum StorageKind {
     Persistent,
     Transient,
 }
@@ -437,11 +422,11 @@ pub enum StorageKind {
 #[derive(Clone, Debug, Default, Eq, PartialEq)]
 pub struct StorageLayout {
     items: Vec<StorageItem>,
-    types: SortedMap<TypeId, StorageType>,
+    types: StorageTypeTable<StorageType>,
 }
 
 impl StorageLayout {
-    pub(crate) fn new(items: Vec<StorageItem>, types: SortedMap<TypeId, StorageType>) -> Self {
+    pub(crate) fn new(items: Vec<StorageItem>, types: StorageTypeTable<StorageType>) -> Self {
         Self { items, types }
     }
 

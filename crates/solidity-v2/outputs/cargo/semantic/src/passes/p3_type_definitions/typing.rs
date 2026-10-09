@@ -188,23 +188,23 @@ impl Pass<'_> {
     /// storage from `type_id`, the type of a state variable, so a storage
     /// layout names one type id per type. Struct members are typed with an
     /// `Inherited` location; everything else a state variable reaches is
-    /// already typed in storage. `relocated_structs` holds the structs already
+    /// already typed in storage. `registered_structs` holds the structs already
     /// handled, which also stops at recursive ones.
-    pub(super) fn register_storage_relocations(
+    pub(super) fn register_struct_member_types_in_storage(
         &mut self,
         type_id: TypeId,
-        relocated_structs: &mut Set<NodeId>,
+        registered_structs: &mut Set<NodeId>,
     ) {
         match self.types.get_type_by_id(type_id) {
             Type::Array(ArrayType { element_type, .. })
             | Type::FixedSizeArray(FixedSizeArrayType { element_type, .. }) => {
-                self.register_storage_relocations(*element_type, relocated_structs);
+                self.register_struct_member_types_in_storage(*element_type, registered_structs);
             }
             Type::Mapping(MappingType { value_type_id, .. }) => {
-                self.register_storage_relocations(*value_type_id, relocated_structs);
+                self.register_struct_member_types_in_storage(*value_type_id, registered_structs);
             }
             Type::Struct(StructType { definition_id, .. }) => {
-                if !relocated_structs.insert(*definition_id) {
+                if !registered_structs.insert(*definition_id) {
                     return;
                 }
                 let Some(Definition::Struct(struct_definition)) =
@@ -219,8 +219,13 @@ impl Pass<'_> {
                     .filter_map(|member| self.binder.node_typing(member.id()).as_type_id())
                     .collect();
                 for member_type_id in member_type_ids {
-                    let storage_type_id = self.types.register_storage_relocation(member_type_id);
-                    self.register_storage_relocations(storage_type_id, relocated_structs);
+                    let storage_type_id = self
+                        .types
+                        .register_inherited_to_storage_type_mapping(member_type_id);
+                    self.register_struct_member_types_in_storage(
+                        storage_type_id,
+                        registered_structs,
+                    );
                 }
             }
             _ => {}

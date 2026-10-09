@@ -351,7 +351,7 @@ pub fn slang_solidity_v2_semantic::context::SemanticContext::linearised_state_va
 pub fn slang_solidity_v2_semantic::context::SemanticContext::resolve_reference_identifier_to_definition_id(&self, slang_solidity_v2_common::nodes::NodeId) -> core::option::Option<slang_solidity_v2_common::nodes::NodeId>
 pub fn slang_solidity_v2_semantic::context::SemanticContext::resolve_reference_identifier_to_immediate_definition_id(&self, slang_solidity_v2_common::nodes::NodeId) -> core::option::Option<slang_solidity_v2_common::nodes::NodeId>
 pub fn slang_solidity_v2_semantic::context::SemanticContext::storage_size_of_type_id(&self, slang_solidity_v2_semantic::types::TypeId) -> core::option::Option<slang_solidity_v2_semantic::context::StorageSize>
-pub fn slang_solidity_v2_semantic::context::SemanticContext::storage_type_table<T>(&self, impl core::iter::traits::collect::IntoIterator<Item = slang_solidity_v2_semantic::types::TypeId>, impl core::ops::function::FnMut(slang_solidity_v2_semantic::types::TypeId, slang_solidity_v2_semantic::context::StorageTypeLayout) -> T) -> core::option::Option<slang_solidity_v2_common::collections::aliases::SortedMap<slang_solidity_v2_semantic::types::TypeId, T>>
+pub fn slang_solidity_v2_semantic::context::SemanticContext::storage_type_table<T>(&self, impl core::iter::traits::collect::IntoIterator<Item = slang_solidity_v2_semantic::types::TypeId>, impl core::ops::function::FnMut(slang_solidity_v2_semantic::types::TypeId, slang_solidity_v2_semantic::context::StorageTypeLayout) -> T) -> core::option::Option<slang_solidity_v2_semantic::context::StorageTypeTable<T>>
 pub fn slang_solidity_v2_semantic::context::SemanticContext::type_abi_internal_name(&self, slang_solidity_v2_semantic::types::TypeId) -> alloc::string::String
 pub fn slang_solidity_v2_semantic::context::SemanticContext::type_internal_name(&self, slang_solidity_v2_semantic::types::TypeId) -> alloc::string::String
 pub fn slang_solidity_v2_semantic::context::SemanticContext::type_library_name(&self, slang_solidity_v2_semantic::types::TypeId) -> core::option::Option<alloc::string::String>
@@ -376,7 +376,6 @@ pub fn slang_solidity_v2_semantic::context::StorageLayoutBuilder::new(ruint::ali
 pub struct slang_solidity_v2_semantic::context::StorageMember
 impl slang_solidity_v2_semantic::context::StorageMember
 pub fn slang_solidity_v2_semantic::context::StorageMember::name(&self) -> &str
-pub fn slang_solidity_v2_semantic::context::StorageMember::node_id(&self) -> slang_solidity_v2_common::nodes::NodeId
 pub fn slang_solidity_v2_semantic::context::StorageMember::position(&self) -> slang_solidity_v2_semantic::context::StoragePosition
 pub fn slang_solidity_v2_semantic::context::StorageMember::type_id(&self) -> slang_solidity_v2_semantic::types::TypeId
 impl core::clone::Clone for slang_solidity_v2_semantic::context::StorageMember
@@ -415,6 +414,7 @@ pub fn slang_solidity_v2_semantic::context::SemanticFile::id(&self) -> &slang_so
 pub fn slang_solidity_v2_semantic::context::SemanticFile::ir_root(&self) -> &slang_solidity_v2_ir::ir::nodes::SourceUnit
 pub fn slang_solidity_v2_semantic::context::SemanticFile::resolved_import_by_node_id(&self, slang_solidity_v2_common::nodes::NodeId) -> core::option::Option<&slang_solidity_v2_common::files::FileId>
 pub fn slang_solidity_v2_semantic::context::extract_imports_from_source_unit(&slang_solidity_v2_ir::ir::nodes::SourceUnit) -> alloc::vec::Vec<slang_solidity_v2_semantic::context::SourceUnitImport>
+pub type slang_solidity_v2_semantic::context::StorageTypeTable<T> = slang_solidity_v2_common::collections::aliases::SortedMap<slang_solidity_v2_semantic::types::TypeId, T>
 pub mod slang_solidity_v2_semantic::types
 pub mod slang_solidity_v2_semantic::types::literals
 pub fn slang_solidity_v2_semantic::types::literals::value_of_hex_number_expression(&slang_solidity_v2_ir::ir::nodes::HexNumberExpression) -> core::option::Option<num_bigint::bigint::BigInt>

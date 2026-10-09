@@ -24,8 +24,6 @@ fn storage_references_and_internal_functions_are_left_out() {
         .expect("the ABI is computable");
     // `f` and `g` write state and `i` is internal.
     assert_eq!(entry_names(&abi), ["function h", "function j"]);
-    assert!(abi.storage_layout().items().is_empty());
-    assert!(abi.transient_storage_layout().items().is_empty());
 }
 
 /// A `view` function that takes or returns a storage reference is reachable only by

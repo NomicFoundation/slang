@@ -20,6 +20,7 @@ pub use storage_layout::{
 };
 
 use crate::binder::{Binder, BinderCapacities, Definition, Reference, StructDefinition};
+pub use crate::context::storage_layout::StorageTypeTable;
 use crate::passes::{
     p1_collect_definitions, p2_linearise_contracts, p3_type_definitions, p4_compute_linearisations,
     p5_resolve_references, p6_resolve_yul, p7_contract_properties, p8_code_analysis,
@@ -674,7 +675,7 @@ impl SemanticContext {
         &self,
         roots: impl IntoIterator<Item = TypeId>,
         mut describe: impl FnMut(TypeId, StorageTypeLayout) -> T,
-    ) -> Option<SortedMap<TypeId, T>> {
+    ) -> Option<StorageTypeTable<T>> {
         let mut table = SortedMap::default();
         for type_id in roots {
             self.add_to_storage_type_table(type_id, &mut table, &mut describe)?;
@@ -688,7 +689,7 @@ impl SemanticContext {
     fn add_to_storage_type_table<T>(
         &self,
         type_id: TypeId,
-        table: &mut SortedMap<TypeId, T>,
+        table: &mut StorageTypeTable<T>,
         describe: &mut impl FnMut(TypeId, StorageTypeLayout) -> T,
     ) -> Option<()> {
         if table.contains_key(&type_id) {
@@ -732,7 +733,6 @@ impl SemanticContext {
                     &mut Set::default(),
                     |member, type_id, position| {
                         members.push(StorageMember {
-                            node_id: member.id(),
                             name: member.name.unparse().to_string(),
                             type_id: self.types.storage_type_id(type_id),
                             position,

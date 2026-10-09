@@ -1,5 +1,5 @@
 use ruint::aliases::U256;
-use slang_solidity_v2_common::nodes::NodeId;
+use slang_solidity_v2_common::collections::SortedMap;
 
 use crate::types::TypeId;
 
@@ -22,10 +22,12 @@ pub struct StoragePosition {
     pub offset: usize,
 }
 
+/// The output type of `storage_type_table`, used to compute the type table for
+/// a contract storage layout.
+pub type StorageTypeTable<T> = SortedMap<TypeId, T>;
+
 /// How a type is laid out in storage: its size, and how its contents are
-/// arranged. Every `TypeId` it refers to is the type as it is in storage, so
-/// a struct member and a state variable of the same type share one, and is
-/// described in the same type table.
+/// arranged.
 #[derive(Clone, Debug, Eq, PartialEq)]
 pub struct StorageTypeLayout {
     pub size: StorageSize,
@@ -52,20 +54,17 @@ pub enum StorageTypeKind {
     Struct { members: Vec<StorageMember> },
 }
 
-/// A struct member, and its position relative to the start of the struct.
+/// A struct member, and its position relative to the start of the struct. The
+/// `type_id` is guaranteed to have the `Storage` location in the registry,
+/// regardless of how the originating struct member is typed in the `Binder`.
 #[derive(Clone, Debug, Eq, PartialEq)]
 pub struct StorageMember {
-    pub(crate) node_id: NodeId,
     pub(crate) name: String,
     pub(crate) type_id: TypeId,
     pub(crate) position: StoragePosition,
 }
 
 impl StorageMember {
-    pub fn node_id(&self) -> NodeId {
-        self.node_id
-    }
-
     /// The member's name.
     pub fn name(&self) -> &str {
         &self.name

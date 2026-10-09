@@ -6,6 +6,7 @@ pub use slang_solidity_v2_ast::abi::StorageMember
 pub use slang_solidity_v2_ast::abi::StoragePosition
 pub use slang_solidity_v2_ast::abi::StorageSize
 pub use slang_solidity_v2_ast::abi::StorageTypeKind
+pub use slang_solidity_v2_ast::abi::StorageTypeTable
 pub enum slang_solidity_v2_ast::abi::AbiEntry
 pub slang_solidity_v2_ast::abi::AbiEntry::Constructor(slang_solidity_v2_ast::abi::AbiConstructor)
 pub slang_solidity_v2_ast::abi::AbiEntry::Error(slang_solidity_v2_ast::abi::AbiError)
@@ -68,18 +69,6 @@ pub fn slang_solidity_v2_ast::abi::AbiType::fmt(&self, &mut core::fmt::Formatter
 impl core::hash::Hash for slang_solidity_v2_ast::abi::AbiType
 pub fn slang_solidity_v2_ast::abi::AbiType::hash<__H: core::hash::Hasher>(&self, &mut __H)
 impl core::marker::StructuralPartialEq for slang_solidity_v2_ast::abi::AbiType
-pub enum slang_solidity_v2_ast::abi::StorageKind
-pub slang_solidity_v2_ast::abi::StorageKind::Persistent
-pub slang_solidity_v2_ast::abi::StorageKind::Transient
-impl core::clone::Clone for slang_solidity_v2_ast::abi::StorageKind
-pub fn slang_solidity_v2_ast::abi::StorageKind::clone(&self) -> slang_solidity_v2_ast::abi::StorageKind
-impl core::cmp::Eq for slang_solidity_v2_ast::abi::StorageKind
-impl core::cmp::PartialEq for slang_solidity_v2_ast::abi::StorageKind
-pub fn slang_solidity_v2_ast::abi::StorageKind::eq(&self, &slang_solidity_v2_ast::abi::StorageKind) -> bool
-impl core::fmt::Debug for slang_solidity_v2_ast::abi::StorageKind
-pub fn slang_solidity_v2_ast::abi::StorageKind::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
-impl core::marker::Copy for slang_solidity_v2_ast::abi::StorageKind
-impl core::marker::StructuralPartialEq for slang_solidity_v2_ast::abi::StorageKind
 pub struct slang_solidity_v2_ast::abi::AbiConstructor
 impl slang_solidity_v2_ast::abi::AbiConstructor
 pub fn slang_solidity_v2_ast::abi::AbiConstructor::inputs(&self) -> &[slang_solidity_v2_ast::abi::AbiParameter]
@@ -154,8 +143,6 @@ pub fn slang_solidity_v2_ast::abi::ContractAbi::entries(&self) -> &[slang_solidi
 pub fn slang_solidity_v2_ast::abi::ContractAbi::file_id(&self) -> &slang_solidity_v2_common::files::FileId
 pub fn slang_solidity_v2_ast::abi::ContractAbi::name(&self) -> &str
 pub fn slang_solidity_v2_ast::abi::ContractAbi::node_id(&self) -> slang_solidity_v2_common::nodes::NodeId
-pub fn slang_solidity_v2_ast::abi::ContractAbi::storage_layout(&self) -> &slang_solidity_v2_ast::abi::StorageLayout
-pub fn slang_solidity_v2_ast::abi::ContractAbi::transient_storage_layout(&self) -> &slang_solidity_v2_ast::abi::StorageLayout
 impl serde_core::ser::Serialize for slang_solidity_v2_ast::abi::ContractAbi
 pub fn slang_solidity_v2_ast::abi::ContractAbi::serialize<S: serde_core::ser::Serializer>(&self, S) -> core::result::Result<<S as serde_core::ser::Serializer>::Ok, <S as serde_core::ser::Serializer>::Error>
 #[non_exhaustive] pub struct slang_solidity_v2_ast::abi::NotAnAbiType
@@ -1888,8 +1875,10 @@ pub fn slang_solidity_v2_ast::ast::ContractDefinitionStruct::references(&self) -
 impl slang_solidity_v2_ast::ast::ContractDefinitionStruct
 pub fn slang_solidity_v2_ast::ast::ContractDefinitionStruct::compute_abi(&self) -> core::option::Option<slang_solidity_v2_ast::abi::ContractAbi>
 pub fn slang_solidity_v2_ast::ast::ContractDefinitionStruct::compute_interface_id(&self) -> core::option::Option<u32>
-pub fn slang_solidity_v2_ast::ast::ContractDefinitionStruct::compute_storage_items(&self, slang_solidity_v2_ast::abi::StorageKind) -> core::option::Option<alloc::vec::Vec<slang_solidity_v2_ast::abi::StorageItem>>
-pub fn slang_solidity_v2_ast::ast::ContractDefinitionStruct::compute_storage_layout(&self, slang_solidity_v2_ast::abi::StorageKind) -> core::option::Option<slang_solidity_v2_ast::abi::StorageLayout>
+pub fn slang_solidity_v2_ast::ast::ContractDefinitionStruct::compute_storage_items(&self) -> core::option::Option<alloc::vec::Vec<slang_solidity_v2_ast::abi::StorageItem>>
+pub fn slang_solidity_v2_ast::ast::ContractDefinitionStruct::compute_storage_layout(&self) -> core::option::Option<slang_solidity_v2_ast::abi::StorageLayout>
+pub fn slang_solidity_v2_ast::ast::ContractDefinitionStruct::compute_transient_storage_items(&self) -> core::option::Option<alloc::vec::Vec<slang_solidity_v2_ast::abi::StorageItem>>
+pub fn slang_solidity_v2_ast::ast::ContractDefinitionStruct::compute_transient_storage_layout(&self) -> core::option::Option<slang_solidity_v2_ast::abi::StorageLayout>
 impl slang_solidity_v2_ast::ast::ContractDefinitionStruct
 pub fn slang_solidity_v2_ast::ast::ContractDefinitionStruct::constructor(&self) -> core::option::Option<slang_solidity_v2_ast::ast::FunctionDefinition>
 pub fn slang_solidity_v2_ast::ast::ContractDefinitionStruct::creation_bytecode_dependencies(&self) -> alloc::vec::Vec<slang_solidity_v2_ast::ast::Definition>

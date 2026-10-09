@@ -39,14 +39,11 @@ impl ContractDefinitionStruct {
                 entries.push(event.compute_abi_entry()?);
             }
         }
-        let (storage_layout, transient_storage_layout) = self.compute_storage_layouts()?;
         Some(ContractAbi::new(
             self.ir_node.id(),
             self.ir_node.name.unparse().to_string(),
             self.get_file_id().clone(),
             entries,
-            storage_layout,
-            transient_storage_layout,
             &self.semantic,
         ))
     }
@@ -75,19 +72,31 @@ impl ContractDefinitionStruct {
         Some(interface_id)
     }
 
-    /// The layout of the `kind` state variables over the contract's
-    /// hierarchy, as in [`ContractAbi::storage_layout`] and
-    /// [`ContractAbi::transient_storage_layout`], without computing the rest
-    /// of the ABI.
-    pub fn compute_storage_layout(&self, kind: StorageKind) -> Option<StorageLayout> {
-        let items = self.lay_out_state_variables(kind, &self.linearised_state_variables())?;
+    /// The items of [`Self::compute_storage_layout`], without describing their
+    /// types, for callers that only need each variable's slot and offset.
+    pub fn compute_storage_items(&self) -> Option<Vec<StorageItem>> {
+        self.lay_out_state_variables(StorageKind::Persistent, &self.linearised_state_variables())
+    }
+
+    /// The layout and types of the persistent state variables over the
+    /// contract's hierarchy.
+    pub fn compute_storage_layout(&self) -> Option<StorageLayout> {
+        let items = self.compute_storage_items()?;
         self.describe_storage_layout(items)
     }
 
-    /// The items of [`Self::compute_storage_layout`], without describing their
-    /// types, for callers that only need each variable's slot and offset.
-    pub fn compute_storage_items(&self, kind: StorageKind) -> Option<Vec<StorageItem>> {
-        self.lay_out_state_variables(kind, &self.linearised_state_variables())
+    /// The items of [`Self::compute_transient_storage_layout`], without
+    /// describing their types, for callers that only need each variable's slot
+    /// and offset.
+    pub fn compute_transient_storage_items(&self) -> Option<Vec<StorageItem>> {
+        self.lay_out_state_variables(StorageKind::Transient, &self.linearised_state_variables())
+    }
+
+    /// The layout and types of the transient state variables over the
+    /// contract's hierarchy.
+    pub fn compute_transient_storage_layout(&self) -> Option<StorageLayout> {
+        let items = self.compute_transient_storage_items()?;
+        self.describe_storage_layout(items)
     }
 
     /// Retrieves the custom base slot for this contract, if specified. This is
@@ -102,19 +111,6 @@ impl ContractDefinitionStruct {
             unreachable!("definition is not a contract");
         };
         definition.base_slot
-    }
-
-    /// Computes the layouts of both the persistent and the transient state
-    /// variables, linearising them once.
-    fn compute_storage_layouts(&self) -> Option<(StorageLayout, StorageLayout)> {
-        let state_variables = self.linearised_state_variables();
-        let items = self.lay_out_state_variables(StorageKind::Persistent, &state_variables)?;
-        let transient_items =
-            self.lay_out_state_variables(StorageKind::Transient, &state_variables)?;
-        Some((
-            self.describe_storage_layout(items)?,
-            self.describe_storage_layout(transient_items)?,
-        ))
     }
 
     /// Lays out the `kind` state variables of `state_variables`.

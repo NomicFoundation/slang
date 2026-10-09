@@ -46,7 +46,7 @@ pub fn run(
     // `by_value_dependencies` no longer needs to be kept.
     recursive_structs::mark_recursive_structs(binder, types);
 
-    let mut relocated_structs = Set::default();
+    let mut storage_registered_structs = Set::default();
     for file in files {
         Pass::visit_file_state_variables(
             file,
@@ -55,7 +55,7 @@ pub fn run(
             types,
             file_node_mapper,
             diagnostics,
-            &mut relocated_structs,
+            &mut storage_registered_structs,
         );
     }
 }
@@ -111,8 +111,8 @@ impl<'a> Pass<'a> {
     // storage forms of the types they store, and computes and registers the
     // types of the getter functions for public ones. Both need all struct
     // fields typed already, thus why this cannot happen concurrently with the
-    // typing of the definitions in the main pass. `relocated_structs` carries
-    // the structs already handled across files.
+    // typing of the definitions in the main pass. `storage_registered_structs`
+    // carries the structs already handled across files.
     fn visit_file_state_variables(
         file: &'a impl SemanticFile,
         binder: &'a mut Binder,
@@ -120,7 +120,7 @@ impl<'a> Pass<'a> {
         types: &'a mut TypeRegistry,
         file_node_mapper: &'a FileNodeMapper,
         diagnostics: &'a mut DiagnosticCollection,
-        relocated_structs: &mut Set<NodeId>,
+        storage_registered_structs: &mut Set<NodeId>,
     ) {
         let mut pass = Self {
             scope_stack: Vec::new(),
@@ -132,13 +132,13 @@ impl<'a> Pass<'a> {
             current_receiver_type: None,
             nested_mappings_to_skip: 0,
         };
-        pass.type_state_variables_from(file.ir_root(), relocated_structs);
+        pass.type_state_variables_from(file.ir_root(), storage_registered_structs);
     }
 
     fn type_state_variables_from(
         &mut self,
         source_unit: &ir::SourceUnit,
-        relocated_structs: &mut Set<NodeId>,
+        storage_registered_structs: &mut Set<NodeId>,
     ) {
         for source_unit_member in source_unit.members.iter() {
             let (receiver_type, members) = match source_unit_member {
@@ -169,7 +169,10 @@ impl<'a> Pass<'a> {
                     state_var_definition.attributes.mutability,
                     ir::StateVariableMutability::Mutable | ir::StateVariableMutability::Transient
                 ) {
-                    self.register_storage_relocations(type_id, relocated_structs);
+                    self.register_struct_member_types_in_storage(
+                        type_id,
+                        storage_registered_structs,
+                    );
                 }
                 if !matches!(
                     state_var_definition.attributes.visibility,
