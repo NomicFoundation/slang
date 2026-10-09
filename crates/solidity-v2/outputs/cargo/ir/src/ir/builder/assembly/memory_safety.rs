@@ -1,7 +1,9 @@
 //! Whether an assembly statement is marked as memory safe: with the `("memory-safe")` flag, or
 //! with a single `/// @solidity memory-safe-assembly` line.
 
-use slang_solidity_v2_common::diagnostics::kinds::structure::DuplicateAssemblyFlag;
+use slang_solidity_v2_common::diagnostics::kinds::structure::{
+    DuplicateAssemblyFlag, UnrecognizedAssemblyNatSpec,
+};
 use slang_solidity_v2_common::versions::LanguageVersion;
 use slang_solidity_v2_cst::structured_cst::natspec::NatSpec;
 use slang_solidity_v2_cst::structured_cst::nodes as input;
@@ -60,7 +62,18 @@ impl<S: Source> CstToIrBuilder<'_, S> {
             return false;
         };
 
-        is_memory_safe_marker(self.source.text(natspec.range.clone()))
+        let text = self.source.text(natspec.range.clone());
+
+        if is_memory_safe_marker(text) {
+            true
+        } else {
+            // A `///` comment includes the line break after its last line: leave it out of the
+            // reported range
+            let range = natspec.range.start
+                ..natspec.range.start + text.trim_end_matches(['\r', '\n']).len();
+            self.report_range(range, UnrecognizedAssemblyNatSpec);
+            false
+        }
     }
 }
 

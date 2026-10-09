@@ -1,0 +1,11 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 1
+
+[Warning 2424] Warning: Natspec memory-safe-assembly special comment for inline assembly is deprecated and scheduled for removal. Use the memory-safe block annotation instead.
+   ╭─[input.sol:7:9]
+   │
+ 7 │         assembly {}
+   │         ─────┬─────  
+   │              ╰─────── Warning occurred here.
+───╯

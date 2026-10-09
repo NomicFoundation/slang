@@ -65,11 +65,7 @@ impl<S: Source> CstToIrBuilder<'_, S> {
                 }
             };
             if *seen {
-                self.diagnostics.push(
-                    self.file_id.to_owned(),
-                    item.calculate_text_range().unwrap_or_default(),
-                    DuplicateCatchClause { kind },
-                );
+                self.report(item, DuplicateCatchClause { kind });
             }
             *seen = true;
 
@@ -114,11 +110,7 @@ impl<S: Source> CstToIrBuilder<'_, S> {
             Some("Error") => output::CatchClauseKind::Error,
             Some("Panic") if panic_allowed => output::CatchClauseKind::Panic,
             Some(_) => {
-                self.diagnostics.push(
-                    self.file_id.to_owned(),
-                    source.calculate_text_range().unwrap(),
-                    InvalidCatchClauseName { panic_allowed },
-                );
+                self.report(source, InvalidCatchClauseName { panic_allowed });
                 return None;
             }
             None => output::CatchClauseKind::LowLevel,
