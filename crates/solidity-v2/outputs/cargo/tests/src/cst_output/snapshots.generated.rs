@@ -1437,6 +1437,11 @@ mod mapping_type {
     fn unnamed() -> Result<()> {
         run("MappingType", "unnamed")
     }
+
+    #[test]
+    fn var_key_type() -> Result<()> {
+        run("MappingType", "var_key_type")
+    }
 }
 
 mod modifier_definition {
