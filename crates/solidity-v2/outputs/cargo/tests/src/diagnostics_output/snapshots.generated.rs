@@ -5867,6 +5867,22 @@ mod type_system {
         }
 
         #[test]
+        fn inline_array_assignment() -> Result<()> {
+            run(
+                "type_system/expression_not_an_lvalue",
+                "inline_array_assignment",
+            )
+        }
+
+        #[test]
+        fn inline_array_increment() -> Result<()> {
+            run(
+                "type_system/expression_not_an_lvalue",
+                "inline_array_increment",
+            )
+        }
+
+        #[test]
         fn nested_tuple_component() -> Result<()> {
             run(
                 "type_system/expression_not_an_lvalue",
