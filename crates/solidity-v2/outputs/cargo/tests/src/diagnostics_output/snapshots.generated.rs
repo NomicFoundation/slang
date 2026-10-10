@@ -4505,6 +4505,14 @@ mod syntax {
         use super::*;
 
         #[test]
+        fn constant_transient_state_variable() -> Result<()> {
+            run(
+                "syntax/multiple_mutability_specifiers",
+                "constant_transient_state_variable",
+            )
+        }
+
+        #[test]
         fn constructors() -> Result<()> {
             run("syntax/multiple_mutability_specifiers", "constructors")
         }
@@ -4525,6 +4533,14 @@ mod syntax {
         #[test]
         fn functions() -> Result<()> {
             run("syntax/multiple_mutability_specifiers", "functions")
+        }
+
+        #[test]
+        fn immutable_transient_state_variable() -> Result<()> {
+            run(
+                "syntax/multiple_mutability_specifiers",
+                "immutable_transient_state_variable",
+            )
         }
 
         #[test]

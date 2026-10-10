@@ -1,0 +1,19 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 2
+
+[DeclarationError 2197] Error: Transient cannot be used as data location for constant or immutable variables.
+   ╭─[input.sol:7:5]
+   │
+ 7 │     int constant public transient x = 0;
+   │     ─────────────────┬─────────────────  
+   │                      ╰─────────────────── Error occurred here.
+───╯
+
+[DeclarationError 9825] Error: Initialization of transient storage state variables is not supported.
+   ╭─[input.sol:7:5]
+   │
+ 7 │     int constant public transient x = 0;
+   │     ─────────────────┬─────────────────  
+   │                      ╰─────────────────── Error occurred here.
+───╯

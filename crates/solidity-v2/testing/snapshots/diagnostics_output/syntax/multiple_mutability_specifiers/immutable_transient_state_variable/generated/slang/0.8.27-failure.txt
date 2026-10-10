@@ -1,0 +1,11 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 1
+
+[syntax/multiple-mutability-specifiers] Error: Only a single mutability specifier can be provided.
+   ╭─[input.sol:7:27]
+   │
+ 7 │     uint public immutable transient x;
+   │                           ────┬────  
+   │                               ╰────── Error occurred here.
+───╯
