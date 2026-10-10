@@ -1484,6 +1484,11 @@ mod resolution {
         }
 
         #[test]
+        fn member_on_uncalled_getter() -> Result<()> {
+            run("resolution/member_not_found", "member_on_uncalled_getter")
+        }
+
+        #[test]
         fn min_on_contract_meta_type() -> Result<()> {
             run("resolution/member_not_found", "min_on_contract_meta_type")
         }
