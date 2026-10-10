@@ -1,0 +1,11 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 1
+
+[TypeError 8820] Error: Member "value" is only available for payable functions.
+   ╭─[input.sol:8:9]
+   │
+ 8 │         keccak256.value();
+   │         ───────┬───────  
+   │                ╰───────── Error occurred here.
+───╯

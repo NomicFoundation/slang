@@ -1605,8 +1605,21 @@ mod resolution {
         }
 
         #[test]
+        fn value_on_built_in_function() -> Result<()> {
+            run("resolution/member_not_found", "value_on_built_in_function")
+        }
+
+        #[test]
         fn value_on_library_function() -> Result<()> {
             run("resolution/member_not_found", "value_on_library_function")
+        }
+
+        #[test]
+        fn value_on_non_payable_function() -> Result<()> {
+            run(
+                "resolution/member_not_found",
+                "value_on_non_payable_function",
+            )
         }
     }
 
