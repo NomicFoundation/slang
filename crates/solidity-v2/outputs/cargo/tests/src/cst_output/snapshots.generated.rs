@@ -2211,6 +2211,16 @@ mod type_name {
     }
 
     #[test]
+    fn address_pure() -> Result<()> {
+        run("TypeName", "address_pure")
+    }
+
+    #[test]
+    fn address_view() -> Result<()> {
+        run("TypeName", "address_view")
+    }
+
+    #[test]
     fn byte() -> Result<()> {
         run("TypeName", "byte")
     }
