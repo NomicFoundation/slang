@@ -1,0 +1,11 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 1
+
+[syntax/unexpected-terminal] Error: Unexpected IndexedKeyword. One of AtKeyword, CloseParen, Comma, ErrorKeyword, FromKeyword, GlobalKeyword, Identifier, LayoutKeyword, RevertKeyword, TransientKeyword was expected
+   ╭─[input.sol:7:27]
+   │
+ 7 │     event e1(uint indexed indexed a);
+   │                           ───┬───  
+   │                              ╰───── Error occurred here.
+───╯

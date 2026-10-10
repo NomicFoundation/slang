@@ -1,0 +1,11 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 1
+
+[ParserError 5399] Error: Indexed already specified.
+   ╭─[input.sol:7:27]
+   │
+ 7 │     event e1(uint indexed indexed a);
+   │                           ───┬───  
+   │                              ╰───── Error occurred here.
+───╯

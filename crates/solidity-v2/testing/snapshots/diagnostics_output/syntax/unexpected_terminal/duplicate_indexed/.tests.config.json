@@ -1,0 +1,11 @@
+{
+  "expected_solc_divergence": [
+    {
+      "specifier": {
+        "type": "Till",
+        "till": "0.8.18"
+      },
+      "reason": "Before '0.8.18' solc accepts a repeated `indexed` on an event parameter, and only reports it as an error since. Slang implements the '0.8.18' semantics for every version, so it also rejects this program on '0.8.0' to '0.8.17'."
+    }
+  ]
+}

@@ -4697,6 +4697,11 @@ mod syntax {
         use super::*;
 
         #[test]
+        fn duplicate_indexed() -> Result<()> {
+            run("syntax/unexpected_terminal", "duplicate_indexed")
+        }
+
+        #[test]
         fn in_expression() -> Result<()> {
             run("syntax/unexpected_terminal", "in_expression")
         }
