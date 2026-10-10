@@ -775,6 +775,11 @@ mod expression {
     }
 
     #[test]
+    fn inline_array_empty_cells() -> Result<()> {
+        run("Expression", "inline_array_empty_cells")
+    }
+
+    #[test]
     fn keyword_alias() -> Result<()> {
         run("Expression", "keyword_alias")
     }
