@@ -1074,6 +1074,16 @@ mod expression {
     }
 
     #[test]
+    fn type_with_no_arguments() -> Result<()> {
+        run("Expression", "type_with_no_arguments")
+    }
+
+    #[test]
+    fn type_with_two_arguments() -> Result<()> {
+        run("Expression", "type_with_two_arguments")
+    }
+
+    #[test]
     fn underscore_is_identifier() -> Result<()> {
         run("Expression", "underscore_is_identifier")
     }

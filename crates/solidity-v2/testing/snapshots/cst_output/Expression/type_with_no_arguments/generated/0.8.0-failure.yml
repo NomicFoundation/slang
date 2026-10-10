@@ -1,0 +1,23 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Source: >
+  1  │ // https://github.com/argotorg/solidity/blob/v0.8.0/test/libsolidity/syntaxTests/metaTypes/noArgForType.sol │ 0..107
+  2  │                                                                                                             │ 108..108
+  3  │ contract Test {                                                                                             │ 109..124
+  4  │     function creation() public pure returns (bytes memory) {                                                │ 125..185
+  5  │         type();                                                                                             │ 186..201
+  6  │     }                                                                                                       │ 202..207
+  7  │ }                                                                                                           │ 208..209
+
+Diagnostics: # 1 total
+  - >
+    [syntax/unexpected-terminal] Error: Unexpected CloseParen. One of AddressKeyword, AtKeyword, BoolKeyword, BytesKeyword, ErrorKeyword, FixedKeyword, FromKeyword, FunctionKeyword, GlobalKeyword, Identifier, IntKeyword, LayoutKeyword, MappingKeyword, RevertKeyword, StringKeyword, TransientKeyword, UfixedKeyword, UintKeyword was expected
+       ╭─[crates/solidity-v2/testing/snapshots/cst_output/Expression/type_with_no_arguments/input.sol:5:14]
+       │
+     5 │         type();
+       │              ┬  
+       │              ╰── Error occurred here.
+    ───╯
+Tree:
+  - (root꞉ SourceUnit):
+      - (members꞉ SourceUnitMembers): []

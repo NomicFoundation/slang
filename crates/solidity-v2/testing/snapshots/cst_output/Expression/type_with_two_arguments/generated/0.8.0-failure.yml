@@ -1,0 +1,24 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Source: >
+  1  │ // https://github.com/argotorg/solidity/blob/v0.8.0/test/libsolidity/syntaxTests/metaTypes/tooManyArgsForType.sol │ 0..113
+  2  │ // Uses type names instead of `type(1, 2)`, so that parsing fails on the second argument.                         │ 114..203
+  3  │                                                                                                                   │ 204..204
+  4  │ contract Test {                                                                                                   │ 205..220
+  5  │     function creation() public pure returns (bytes memory) {                                                      │ 221..281
+  6  │         type(uint, uint);                                                                                         │ 282..307
+  7  │     }                                                                                                             │ 308..313
+  8  │ }                                                                                                                 │ 314..315
+
+Diagnostics: # 1 total
+  - >
+    [syntax/unexpected-terminal] Error: Unexpected Comma. One of CloseParen was expected
+       ╭─[crates/solidity-v2/testing/snapshots/cst_output/Expression/type_with_two_arguments/input.sol:6:18]
+       │
+     6 │         type(uint, uint);
+       │                  ┬  
+       │                  ╰── Error occurred here.
+    ───╯
+Tree:
+  - (root꞉ SourceUnit):
+      - (members꞉ SourceUnitMembers): []
