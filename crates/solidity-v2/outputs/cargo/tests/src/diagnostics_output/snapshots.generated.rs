@@ -902,6 +902,14 @@ mod resolution {
         }
 
         #[test]
+        fn inherited_modifier_function_clash() -> Result<()> {
+            run(
+                "resolution/identifier_redeclaration",
+                "inherited_modifier_function_clash",
+            )
+        }
+
+        #[test]
         fn inherited_modifier_variable_clash() -> Result<()> {
             run(
                 "resolution/identifier_redeclaration",
