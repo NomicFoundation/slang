@@ -5908,6 +5908,22 @@ mod type_system {
         }
 
         #[test]
+        fn super_with_arguments() -> Result<()> {
+            run(
+                "type_system/expression_not_callable",
+                "super_with_arguments",
+            )
+        }
+
+        #[test]
+        fn super_without_arguments() -> Result<()> {
+            run(
+                "type_system/expression_not_callable",
+                "super_without_arguments",
+            )
+        }
+
+        #[test]
         fn this_expression() -> Result<()> {
             run("type_system/expression_not_callable", "this_expression")
         }
