@@ -1615,6 +1615,14 @@ mod resolution {
         }
 
         #[test]
+        fn value_on_new_non_payable_contract() -> Result<()> {
+            run(
+                "resolution/member_not_found",
+                "value_on_new_non_payable_contract",
+            )
+        }
+
+        #[test]
         fn value_on_non_payable_function() -> Result<()> {
             run(
                 "resolution/member_not_found",
