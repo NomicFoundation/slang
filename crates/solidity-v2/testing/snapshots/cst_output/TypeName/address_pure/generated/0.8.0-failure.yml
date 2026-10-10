@@ -1,0 +1,21 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Source: >
+  1  │ // https://github.com/argotorg/solidity/blob/v0.8.0/test/libsolidity/syntaxTests/parsing/address_invalid_state_mutability.sol │ 0..125
+  2  │                                                                                                                               │ 126..126
+  3  │ contract C {                                                                                                                  │ 127..139
+  4  │     address pure m_b;                                                                                                         │ 140..161
+  5  │ }                                                                                                                             │ 162..163
+
+Diagnostics: # 1 total
+  - >
+    [syntax/unexpected-terminal] Error: Unexpected PureKeyword. One of AtKeyword, ConstantKeyword, ErrorKeyword, FromKeyword, GlobalKeyword, Identifier, ImmutableKeyword, InternalKeyword, LayoutKeyword, OpenBracket, OverrideKeyword, PayableKeyword, PrivateKeyword, PublicKeyword, RevertKeyword, TransientKeyword was expected
+       ╭─[crates/solidity-v2/testing/snapshots/cst_output/TypeName/address_pure/input.sol:4:13]
+       │
+     4 │     address pure m_b;
+       │             ──┬─  
+       │               ╰─── Error occurred here.
+    ───╯
+Tree:
+  - (root꞉ SourceUnit):
+      - (members꞉ SourceUnitMembers): []
