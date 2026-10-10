@@ -2331,6 +2331,11 @@ mod user_defined_value_type_definition {
     fn missing_identifier() -> Result<()> {
         run("UserDefinedValueTypeDefinition", "missing_identifier")
     }
+
+    #[test]
+    fn non_value_type_contract() -> Result<()> {
+        run("UserDefinedValueTypeDefinition", "non_value_type_contract")
+    }
 }
 
 mod using_deconstruction_symbol {
