@@ -1,0 +1,11 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 1
+
+[TypeError 8477] Error: Member "value" is not allowed in delegated calls due to "msg.value" persisting.
+    ╭─[input.sol:12:9]
+    │
+ 12 │         L.l.value;
+    │         ────┬────  
+    │             ╰────── Error occurred here.
+────╯

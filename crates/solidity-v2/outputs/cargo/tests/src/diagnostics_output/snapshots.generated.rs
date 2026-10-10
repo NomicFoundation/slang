@@ -1603,6 +1603,11 @@ mod resolution {
         fn state_variable_via_super() -> Result<()> {
             run("resolution/member_not_found", "state_variable_via_super")
         }
+
+        #[test]
+        fn value_on_library_function() -> Result<()> {
+            run("resolution/member_not_found", "value_on_library_function")
+        }
     }
 
     mod no_matching_callable_declaration {
