@@ -1,0 +1,13 @@
+version: "3"
+
+tasks:
+  "default":
+    desc: "Install Pipenv dependencies."
+    vars:
+      # The 'pipenv' version pinned in 'Pipfile', like '==YYYY.MM.DD':
+      PIPENV_VERSION:
+        sh: >-
+          python3 -c 'import tomllib; print(tomllib.load(open("Pipfile", "rb"))["packages"]["pipenv"])'
+    cmds:
+      - 'pip3 install "pipenv{{.PIPENV_VERSION}}"'
+      - "python3 -m pipenv install {{if env `CI`}}--deploy{{end}}"

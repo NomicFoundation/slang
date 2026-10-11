@@ -1,0 +1,7 @@
+version: "3"
+
+tasks:
+  "default":
+    desc: "Prepare the local git client/repository."
+    cmds:
+      - "git submodule update --init --progress"

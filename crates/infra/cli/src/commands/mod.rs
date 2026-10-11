@@ -32,9 +32,7 @@ pub struct Cli {
 
 #[derive(Debug, Subcommand)]
 pub enum AppCommand {
-    /// Setup toolchains and dependencies.
-    ///
-    /// Running this command without any args will setup everything.
+    /// Report the 'task' command that sets up toolchains and dependencies instead.
     Setup(SetupController),
     /// Report the 'task' command that runs checks instead.
     Check(CheckController),
@@ -65,11 +63,11 @@ impl Cli {
 impl AppCommand {
     pub fn execute(&self) -> Result<()> {
         match self {
-            AppCommand::Setup(controller) => controller.execute()?,
+            AppCommand::Setup(_) => SetupController::execute(),
             AppCommand::Check(_) => CheckController::execute(),
             AppCommand::Test(_) => TestController::execute(),
             AppCommand::Lint(_) => LintController::execute()?,
-            AppCommand::Ci(controller) => controller.execute()?,
+            AppCommand::Ci(controller) => controller.execute(),
             AppCommand::Run(controller) => controller.execute(),
             AppCommand::Watch(controller) => controller.execute()?,
             AppCommand::Perf(controller) => controller.execute()?,

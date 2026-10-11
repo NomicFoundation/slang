@@ -56,7 +56,7 @@ jobs:
       - name: "Setup"
         uses: "./.github/actions/common-setup"
         with:
-          setup-tools: "cargo pipenv"
+          task-setup-args: "setup:cargo setup:pipenv"
           sfw-optional: "true"
 
       - name: "Smoke Test > infra perf cargo --smoke slang-v2"

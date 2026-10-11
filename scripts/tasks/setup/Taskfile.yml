@@ -1,0 +1,19 @@
+version: "3"
+
+includes:
+  git: "./git/Taskfile.yml"
+  cargo: "./cargo/Taskfile.yml"
+  npm: "./npm/Taskfile.yml"
+  pipenv: "./pipenv/Taskfile.yml"
+  shell-completions: "./shell-completions/Taskfile.yml"
+
+tasks:
+  "default":
+    desc: "Setup all toolchains and dependencies."
+    deps:
+      - "git"
+      - "cargo"
+      - "npm"
+      - "pipenv"
+    cmds:
+      - task: "shell-completions"

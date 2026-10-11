@@ -50,11 +50,8 @@ _github_collapse_group "Initialize 'hermit' Workspace" \
 # This checks if the rust '$RUST_STABLE_VERSION' toolchain is already installed.
 # If not, it will install the minimal profile of that toolchain.
 # Any additional toolchains, or optional components, should be installed
-# during 'infra setup cargo' step instead of here, as this is the hot path
+# during 'task setup:cargo' step instead of here, as this is the hot path
 # for every other command.
-#
-# See the comments here for more information:
-# $REPO_ROOT/crates/infra/cli/src/commands/setup/cargo/mod.rs
 #
 
 if (cargo --version | grep -zq "${RUST_STABLE_VERSION:?}") > /dev/null 2>&1; then

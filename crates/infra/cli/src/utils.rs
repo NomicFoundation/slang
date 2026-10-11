@@ -1,27 +1,8 @@
-use anyhow::{Ok, Result};
+use anyhow::Result;
 use clap::{Parser, ValueEnum};
 
 pub trait OrderedCommand: Clone + Ord + PartialEq + ValueEnum {
     fn execute(&self) -> Result<()>;
-
-    fn execute_in_order(commands: &[Self]) -> Result<()> {
-        let mut commands = commands.to_owned();
-
-        if commands.is_empty() {
-            // Execute all commands if none are provided:
-            commands.extend(Self::value_variants().iter().cloned());
-        } else {
-            // Sort and deduplicate user provided commands by order of definition:
-            commands.sort();
-            commands.dedup();
-        }
-
-        for command in commands {
-            command.execute()?;
-        }
-
-        Ok(())
-    }
 }
 
 pub trait ClapExtensions {

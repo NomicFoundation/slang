@@ -2055,7 +2055,6 @@ dependencies = [
  "serde",
  "serde_json",
  "strum",
- "toml",
 ]
 
 [[package]]

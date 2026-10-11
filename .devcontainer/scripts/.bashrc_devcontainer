@@ -5,8 +5,13 @@ repo_root="/workspaces/slang"
 # Hermit
 eval "$("${repo_root}/bin/hermit" shell-hooks --print --bash)"
 
-if [[ ! -f "${repo_root}/target/shell-completions/infra.bash" ]]; then
-  echo "Make sure to reload the shell after \`infra setup\` completes for \`infra\` shell completion." >&2
-else
-  source ${repo_root}/target/shell-completions/infra.bash
-fi
+for name in "task" "infra"; do
+  # __SLANG_SHELL_COMPLETIONS_PATH__ (keep in sync)
+  completions_file="${repo_root}/target/shell-completions/${name}.bash"
+
+  if [[ ! -f "${completions_file}" ]]; then
+    echo "Make sure to reload the shell after \`task setup\` completes for \`${name}\` shell completion." >&2
+  else
+    source "${completions_file}"
+  fi
+done

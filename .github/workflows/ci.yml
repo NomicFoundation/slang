@@ -91,7 +91,7 @@ jobs:
     permissions:
       contents: "read"
 
-    # Not common-setup: needs no build artifacts and runs no 'infra setup'.
+    # Not common-setup: needs no build artifacts and runs no 'task setup'.
     steps:
       - name: "Checkout Repository"
         uses: "actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1" # v7.0.1
@@ -149,7 +149,7 @@ jobs:
     permissions:
       contents: "read"
 
-    # Not common-setup: 'infra setup' runs inside the devcontainer, not on the bare runner.
+    # Not common-setup: 'task setup' runs inside the devcontainer, not on the bare runner.
     steps:
       - name: "Checkout Repository"
         uses: "actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1" # v7.0.1
@@ -162,10 +162,10 @@ jobs:
       - name: "Free up disk space"
         uses: "./.github/actions/free-disk-space"
 
-      - name: "infra setup pipenv"
+      - name: "task setup:pipenv"
         uses: "./.github/actions/devcontainer/run"
         with:
-          runCmd: "./scripts/bin/infra setup pipenv"
+          runCmd: "./bin/task setup:pipenv"
 
       - name: "task lint:mkdocs"
         uses: "./.github/actions/devcontainer/run"

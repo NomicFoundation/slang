@@ -1,20 +1,20 @@
 name: "common-setup"
 description: >
   Shared CI setup: frees disk space, restores file mtimes and (optionally) the
-  dependency/cargo-target caches, sets up SFW, and optionally runs 'infra setup'
-  for the requested tools. The caller must check out the repository before using
+  dependency/cargo-target caches, sets up SFW, and optionally runs 'task setup'
+  for the requested tasks. The caller must check out the repository before using
   this action (local actions are only resolvable post-checkout).
 
 inputs:
-  infra-setup:
+  task-setup:
     description: >
-      Whether to run 'infra setup' (true/false). Defaults to "true" (run setup).
+      Whether to run 'task setup' (true/false). Defaults to "true" (run setup).
     required: false
     default: "true"
-  setup-tools:
+  task-setup-args:
     description: >
-      Tools to pass to 'infra setup' (e.g. "cargo", "cargo pipenv", "cargo npm").
-      Empty (the default) runs a bare 'infra setup' (all tools).
+      Setup tasks to pass to 'task' (e.g. "setup:cargo", "setup:cargo setup:pipenv").
+      Empty (the default) runs a bare 'task setup' (all tasks).
     required: false
     default: ""
   sfw-optional:
@@ -41,10 +41,10 @@ runs:
   using: "composite"
   steps:
     - name: "Validate inputs"
-      if: "${{ inputs.infra-setup == 'false' && inputs.setup-tools != '' }}"
+      if: "${{ inputs.task-setup == 'false' && inputs.task-setup-args != '' }}"
       shell: "bash"
       run: |
-        echo "Error: 'setup-tools' is set but 'infra-setup' is false — tools would be ignored."
+        echo "Error: 'task-setup-args' is set but 'task-setup' is false — tasks would be ignored."
         exit 1
 
     - name: "Free up disk space"
@@ -67,9 +67,9 @@ runs:
       with:
         optional: "${{ inputs.sfw-optional }}"
 
-    - name: "infra setup ${{ inputs.setup-tools }}"
-      if: "${{ inputs.infra-setup == 'true' }}"
+    - name: "task ${{ inputs.task-setup-args || 'setup' }}"
+      if: "${{ inputs.task-setup == 'true' }}"
       shell: "bash"
       env:
-        SETUP_TOOLS: "${{ inputs.setup-tools }}"
-      run: "${SFW_PREFIX:-} ./scripts/bin/infra setup ${SETUP_TOOLS}"
+        TASK_SETUP_ARGS: "${{ inputs.task-setup-args }}"
+      run: "${SFW_PREFIX:-} ./bin/task ${TASK_SETUP_ARGS:-setup}"

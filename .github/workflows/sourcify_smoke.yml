@@ -29,7 +29,7 @@ jobs:
       - name: "Common Setup"
         uses: "./.github/actions/common-setup"
         with:
-          infra-setup: "false"
+          task-setup: "false"
           sfw-optional: "true"
 
       - name: "Smoke Test > Build sourcify binary"
