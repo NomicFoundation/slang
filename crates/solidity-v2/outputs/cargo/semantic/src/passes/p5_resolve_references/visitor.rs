@@ -5,6 +5,7 @@ use slang_solidity_v2_common::diagnostics::kinds::resolution::{
     IdentifierNotFound, MemberNotFound,
 };
 use slang_solidity_v2_common::diagnostics::kinds::structure::DuplicateNamedArgument;
+use slang_solidity_v2_common::diagnostics::kinds::type_system::EmptyArrayLiteral;
 use slang_solidity_v2_ir::ir;
 use slang_solidity_v2_ir::ir::NodeIdentity;
 use slang_solidity_v2_ir::ir::visitor::Visitor;
@@ -599,7 +600,7 @@ impl Visitor for Pass<'_> {
 
     fn leave_array_expression(&mut self, node: &ir::ArrayExpression) {
         let typing = if node.items.is_empty() {
-            // TODO(validation) SDR[1736]: an empty array literal cannot be typed
+            self.push_diagnostic(node, EmptyArrayLiteral);
             Typing::Unresolved
         } else if let Some(type_id) = self.type_of_array_expression(node) {
             Typing::Resolved(type_id)

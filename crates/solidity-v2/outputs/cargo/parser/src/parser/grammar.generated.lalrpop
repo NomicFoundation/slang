@@ -1464,7 +1464,7 @@ IndexAccessPath<IdentPathRule>: parser_helpers::IndexAccessPath =
         
     };
     ArrayValues: ArrayValues = {
-        <expression: Separated<Comma, <Expression>>>  => new_array_values(<>),
+        <expression: SeparatedAllowEmpty<Comma, <Expression>>>  => new_array_values(<>),
         
     };
     

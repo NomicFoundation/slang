@@ -1,0 +1,43 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Source: >
+  1  │ contract C {                                                                     │ 0..12
+  2  │     function f() {                                                               │ 13..31
+  3  │         g([]);                                                                   │ 32..46
+  4  │     }                                                                            │ 47..52
+  5  │ }                                                                                │ 53..54
+
+Tree:
+  - (root꞉ SourceUnit): # "contract C {\n    function f() {\n        g([]);\n   ..." (0..54)
+      - (members꞉ SourceUnitMembers): # "contract C {\n    function f() {\n        g([]);\n   ..." (0..54)
+          - (item꞉ SourceUnitMember) ► (contract_definition꞉ ContractDefinition): # "contract C {\n    function f() {\n        g([]);\n   ..." (0..54)
+              - (contract_keyword꞉ ContractKeyword): "contract" # (0..8)
+              - (name꞉ Identifier): "C" # (9..10)
+              - (specifiers꞉ ContractSpecifiers): []
+              - (open_brace꞉ OpenBrace): "{" # (11..12)
+              - (members꞉ ContractMembers): # "function f() {\n        g([]);\n    }" (17..52)
+                  - (item꞉ ContractMember) ► (function_definition꞉ FunctionDefinition): # "function f() {\n        g([]);\n    }" (17..52)
+                      - (function_keyword꞉ FunctionKeyword): "function" # (17..25)
+                      - (name꞉ FunctionName) ► (identifier꞉ Identifier): "f" # (26..27)
+                      - (parameters꞉ ParametersDeclaration): # "()" (27..29)
+                          - (open_paren꞉ OpenParen): "(" # (27..28)
+                          - (parameters꞉ Parameters): []
+                          - (close_paren꞉ CloseParen): ")" # (28..29)
+                      - (attributes꞉ FunctionAttributes): []
+                      - (body꞉ FunctionBody) ► (block꞉ Block): # "{\n        g([]);\n    }" (30..52)
+                          - (open_brace꞉ OpenBrace): "{" # (30..31)
+                          - (statements꞉ Statements): # "g([]);" (40..46)
+                              - (item꞉ Statement) ► (expression_statement꞉ ExpressionStatement): # "g([]);" (40..46)
+                                  - (expression꞉ Expression) ► (function_call_expression꞉ FunctionCallExpression): # "g([])" (40..45)
+                                      - (operand꞉ Expression) ► (identifier꞉ Identifier): "g" # (40..41)
+                                      - (arguments꞉ ArgumentsDeclaration) ► (positional_arguments_declaration꞉ PositionalArgumentsDeclaration): # "([])" (41..45)
+                                          - (open_paren꞉ OpenParen): "(" # (41..42)
+                                          - (arguments꞉ PositionalArguments): # "[]" (42..44)
+                                              - (item꞉ Expression) ► (array_expression꞉ ArrayExpression): # "[]" (42..44)
+                                                  - (open_bracket꞉ OpenBracket): "[" # (42..43)
+                                                  - (items꞉ ArrayValues): []
+                                                  - (close_bracket꞉ CloseBracket): "]" # (43..44)
+                                          - (close_paren꞉ CloseParen): ")" # (44..45)
+                                  - (semicolon꞉ Semicolon): ";" # (45..46)
+                          - (close_brace꞉ CloseBrace): "}" # (51..52)
+              - (close_brace꞉ CloseBrace): "}" # (53..54)
