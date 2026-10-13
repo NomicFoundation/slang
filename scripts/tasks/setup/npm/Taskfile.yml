@@ -1,0 +1,7 @@
+version: "3"
+
+tasks:
+  "default":
+    desc: "Install NPM dependencies."
+    cmds:
+      - "pnpm install {{if env `CI`}}--frozen-lockfile{{end}}"

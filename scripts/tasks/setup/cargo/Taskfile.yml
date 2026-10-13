@@ -1,0 +1,41 @@
+version: "3"
+
+vars:
+  # __WASM_BUILD_TARGET__ (keep in sync)
+  WASM_TARGET: "wasm32-wasip2"
+
+tasks:
+  "default":
+    desc: "Install Cargo toolchains and dependencies."
+    cmds:
+      # The bootstrap bash script defined in '$REPO_ROOT/scripts/_common.sh'
+      # installs the 'minimal' profile of the '$RUST_STABLE_VERSION' toolchain.
+      # This includes the following components:
+      #
+      # - 'cargo'
+      # - 'rust-std'
+      # - 'rustc'
+      #
+      # Which are enough to run infra scripts.
+      # But we need these additional optional components for development/linting:
+      - >-
+        rustup toolchain install --no-self-update --profile "minimal" "${RUST_STABLE_VERSION:?}"
+        --component "{{if env "CI"}}clippy{{else}}clippy,rust-analyzer,rust-docs,rust-src{{end}}"
+        --target "{{.WASM_TARGET}}"
+
+      # Additionally, we also need the following nightly components:
+      #
+      # - 'rustfmt' as we use experimental options.
+      # - 'rust-docs' for the '--json' output to document the public API.
+      #
+      # So let's install the '$RUST_NIGHTLY_VERSION' toolchain along with these components.
+      - >-
+        rustup toolchain install --no-self-update --profile "minimal" "${RUST_NIGHTLY_VERSION:?}"
+        --component "rustfmt,rust-docs"
+
+      # Make sure to set the default toolchain for any subsequent commands:
+      - 'rustup default "${RUST_STABLE_VERSION:?}"'
+
+      # In CI, run with '--locked' to make sure 'Cargo.lock' is up to date.
+      # Don't use '--frozen', because the cache is rarely up to date.
+      - "cargo fetch {{if env `CI`}}--locked{{end}}"

@@ -1,0 +1,20 @@
+version: "3"
+
+tasks:
+  "default":
+    desc: "Generate 'task' and 'infra' shell completions, sourced by the devcontainer shells."
+    if: '{{not (env "CI")}}'
+    vars:
+      # __SLANG_SHELL_COMPLETIONS_PATH__ (keep in sync)
+      SHELL_COMPLETIONS_PATH: "target/shell-completions"
+    cmds:
+      - "mkdir -p {{.SHELL_COMPLETIONS_PATH}}"
+
+      # Install 'task' completions:
+      - "{{.TASK_EXE}} --completion bash > {{.SHELL_COMPLETIONS_PATH}}/task.bash"
+      - "{{.TASK_EXE}} --completion zsh > {{.SHELL_COMPLETIONS_PATH}}/task.zsh"
+
+      # Install 'infra' completions:
+      # TODO(infra): once 'infra completions' is removed, make 'setup:shell-completions' run in parallel with the rest
+      - "scripts/bin/infra completions bash > {{.SHELL_COMPLETIONS_PATH}}/infra.bash"
+      - "scripts/bin/infra completions zsh > {{.SHELL_COMPLETIONS_PATH}}/infra.zsh"

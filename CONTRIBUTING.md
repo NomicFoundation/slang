@@ -41,17 +41,15 @@ In the future, if we decide to enable code spaces, we can have a 1-click button 
 
 To install language-specific binaries and packages, we use [Hermit](https://cashapp.github.io/hermit/), which installs all tools only when it is first needed/invoked, so you can quickly setup and build different projects quickly. It also takes care of updating your `$PATH` as you `cd` in and out of different projects, to make sure you are using the right tools every time. Follow [this guide](https://cashapp.github.io/hermit/usage/get-started/) to install it locally to your machine, or simply build any included project, and it will bootstrap itself if it is missing.
 
-## Infra CLI
-
-To ensure consistency, and a good experience for first-time developers, every build/test/run/debug command is written, versioned, and documented in the repository itself, rather than left to a README for each developer to follow by hand. This means that any dev instructions are well documented, versioned, and verified/executed with every build. It also means that we can minimize any manual setup or teardown steps during development.
-
-The `infra_cli` crate covers setup and publishing. You can access its commands (from the hermit environment) by just running the `infra` script, which just refers to `$REPO_ROOT/scripts/bin/infra`. If this is your first time contributing, we recommend starting with `infra --help` to familiarize yourself with its capabilities. Checking, testing, and linting have moved to Task, described below.
-
 ## Task Runner
 
-Checking, testing, and linting are orchestrated by [Task](https://taskfile.dev), a task runner installed through Hermit like any other tool, so `task` is available on the `$PATH` of an activated environment (or as `$REPO_ROOT/bin/task`). Start with `task --list` to see what is available.
+Setup, checking, testing, and linting are orchestrated by [Task](https://taskfile.dev), a task runner installed through Hermit like any other tool, so `task` is available on the `$PATH` of an activated environment (or as `$REPO_ROOT/bin/task`). Start with `task --list` to see what is available.
 
-The root `$REPO_ROOT/Taskfile.yml` only wires up the files under `$REPO_ROOT/scripts/tasks/`, which is where the tasks themselves live. See `task --list` for a list of all available tasks.
+### Infra CLI
+
+The `infra_cli` crate covers publishing and benchmarks. You can access its commands (from the hermit environment) by just running the `infra` script, which just refers to `$REPO_ROOT/scripts/bin/infra`. Start with `infra --help` to see what is available.
+
+Note: Repository is actively migrating from `infra` to `task`. `infra_cli` will be deleted afterwards.
 
 ## Versioning and Publishing
 
@@ -85,9 +83,9 @@ The following still need to be updated manually:
 CI installs dependencies behind [Socket Firewall](https://docs.socket.dev/) (`sfw`)
 in _firewall_ mode, which intercepts package-manager traffic (cargo, npm, pip) and
 blocks packages Socket flags as malicious. The `setup-sfw` composite action installs
-it and exports `SFW_PREFIX`, which prefixes the dependency-fetching steps (`infra
+it and exports `SFW_PREFIX`, which prefixes the dependency-fetching steps (`task
 setup`, `task check`, and the cooldown and renovate checks). It runs **only in CI** —
-local `infra` commands are unaffected.
+local `task` and `infra` commands are unaffected.
 
 **Required by default.** If Socket Firewall can't be installed (e.g. a socket.dev
 outage), the `Setup SFW` step fails the job rather than let dependency installs run
@@ -104,7 +102,7 @@ The two failure modes look different:
   `::error::sfw not found after install …` (or, on `optional: "true"` jobs, logs a
   `::warning::` and continues unprotected). This is a Socket/network availability
   problem, not a flagged package — re-run once Socket is reachable.
-- **A package was blocked.** A wrapped step (usually `infra setup`) fails and the `sfw`
+- **A package was blocked.** A wrapped step (usually `task setup`) fails and the `sfw`
   output names the offending package, version, and why Socket flagged it. This is the
   firewall doing its job. Note that firewall mode blocks _transitively_ — a flagged
   package deep in the dependency tree fails the whole install, even if you didn't add

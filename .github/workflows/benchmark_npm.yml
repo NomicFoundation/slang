@@ -57,7 +57,7 @@ jobs:
       - name: "Setup"
         uses: "./.github/actions/common-setup"
         with:
-          setup-tools: "cargo npm"
+          task-setup-args: "setup:cargo setup:npm"
           sfw-optional: "true"
 
       - name: "task check:npm"

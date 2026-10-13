@@ -73,40 +73,15 @@ Available binaries in `./bin/`: `cargo`, `node`, `npm`, `npx`, `pnpm`, `gh`, `py
 
 **Don't run tests or linters/formatters directly**, but always use `./bin/task test` and `./bin/task lint` to ensure consistent configuration and versions.
 
-## Build & Development Commands
+## Task Runner
 
-The project uses a custom `infra` CLI for setup, publishing, and benchmarks. Use `--help` on any command or subcommand to discover options:
+Setup, checking, testing, and linting are orchestrated by [Task](https://taskfile.dev), a task runner installed through Hermit like any other tool, so `task` is available on the `$PATH` of an activated environment (or as `$REPO_ROOT/bin/task`). Start with `task --list` to see what is available.
 
-```sh
-./scripts/bin/infra --help       # See all available commands
-./scripts/bin/infra setup        # Install all dependencies
-./scripts/bin/infra setup --help # See setup subcommands (cargo, npm, etc.)
-./scripts/bin/infra ci           # Full CI run: setup + check + test + lint
-```
+### Infra CLI
 
-Always run `infra setup` when initializing a new workspace, to ensure all tools/dependencies are available.
+The `infra_cli` crate covers publishing and benchmarks. You can access its commands (from the hermit environment) by just running the `infra` script, which just refers to `$REPO_ROOT/scripts/bin/infra`. Start with `infra --help` to see what is available.
 
-Checking, testing, and linting are orchestrated by [`task`](https://taskfile.dev) instead, defined in `$REPO_ROOT/Taskfile.yml`:
-
-```sh
-./bin/task --list        # See all available tasks
-./bin/task check         # Codegen + cargo check + npm build/typecheck + public API check
-./bin/task check:codegen # Run a single check
-./bin/task test          # Run all tests (cargo nextest + jest), in parallel
-./bin/task test:cargo:v2 # Run a single test group
-./bin/task lint          # Run all linters, in parallel
-./bin/task lint:rustfmt  # Run a single linter
-```
-
-Arguments after `--` are passed through to the underlying tool (`nextest`/`jest`), e.g.
-`./bin/task test:cargo -- my_test_filter` or `./bin/task test:npm -- cursor`.
-
-You can also use `nextest` directly for faster iteration on Rust tests:
-
-```sh
-./bin/cargo nextest run -p <crate_name>   # Test a single crate
-./bin/cargo nextest run [FILTERS]         # Run tests that match specific filters (test names or file patterns)
-```
+Note: Repository is actively migrating from `infra` to `task`. `infra_cli` will be deleted afterwards.
 
 ## Parallelism (v2)
 

@@ -38,7 +38,7 @@ jobs:
       - name: "Setup"
         uses: "./.github/actions/common-setup"
         with:
-          setup-tools: "cargo"
+          task-setup-args: "setup:cargo"
           sfw-optional: "true"
 
       - name: "Smoke Test > infra perf cargo --smoke slang-v2-wall-clock"
