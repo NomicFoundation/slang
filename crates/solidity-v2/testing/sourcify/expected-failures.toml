@@ -420,3 +420,29 @@ contracts = [
   "1_0x5be35b691f8275556b05ddf578e491a63c214889",
   "1_0xe4fe7c08f22de2db8edb31dee53ed30e88dbaf6c",
 ]
+
+[[failures]]
+check = "abi"
+code = "extra"
+reason = "Slang lists the events a contract emits but does not define (a library's) at every version; solc before 0.8.20 left them out, which its 0.8.20 changelog lists as a bug fix."
+deliberate = true
+below = "0.8.20"
+
+[[failures]]
+check = "abi"
+code = "order"
+reason = "Same-named events in declaration order, as solc from 0.8.20 lists them; before, solc listed the most derived contract's first. Part of the same 0.8.20 rework of event collection."
+deliberate = true
+below = "0.8.20"
+
+[[failures]]
+check = "abi"
+code = "missing"
+reason = "Follow-on of #2194: the error is declared in a file the import cycle declares twice, and Slang keeps one of the two."
+issue = "https://github.com/NomicFoundation/slang/issues/2194"
+contracts = [
+  "1_0xf7d38d771051d2d06508b5c6a9cca1aab6e05b7d",
+  "421614_0x0d1b0e85645fbb15c18edac05160fc052c7159e4",
+  "84532_0x726f8631b392148fd8d487cd277d80d8ee368677",
+  "8453_0xe41ddcd6e75a420241066312b6ebe17a26079b82",
+]

@@ -1,6 +1,7 @@
 //! `run-corpus`: compiles every contract of a corpus snapshot with Slang v2 and
 //! classifies what it reports; `report`: the same census from saved results.
 
+mod artifacts;
 mod expected;
 mod outcome;
 mod report;
@@ -15,12 +16,14 @@ use std::sync::atomic::{AtomicUsize, Ordering};
 use std::time::Instant;
 
 use anyhow::{Context, Result};
+use artifacts::Layout;
 use expected::ExpectedFailures;
 use infra_utils::terminal::Terminal;
-use outcome::{Outcome, classify};
+use outcome::{Check, Outcome, classify};
 use rayon::prelude::*;
 use report::Summary;
 use slang_solidity_v2::diagnostics::{Diagnostic, DiagnosticExtensions, DiagnosticSeverity};
+use slang_solidity_v2_common::collections::SortedMap;
 
 use crate::command::{ReportCommand, ReportOptions, RunCorpusCommand};
 use crate::corpus::{self, Corpus, CorpusContract};
@@ -30,6 +33,15 @@ use crate::corpus::{self, Corpus, CorpusContract};
 pub fn testdata_corpus_dir() -> PathBuf {
     Path::new(env!("CARGO_MANIFEST_DIR")).join("testdata/corpus")
 }
+
+/// The checks against the record's solc artifacts, each skipped on its own when the
+/// artifacts or the target contract are missing. A skipped layout check skips its
+/// types check with it.
+const ARTIFACT_CHECKS: [Check; 3] = [
+    Check::Abi,
+    Check::StorageLayout,
+    Check::TransientStorageLayout,
+];
 
 fn default_expected_failures() -> PathBuf {
     Path::new(env!("CARGO_MANIFEST_DIR")).join("expected-failures.toml")
@@ -155,6 +167,7 @@ fn check(record: &CorpusContract, path: &Path, print_diagnostics: bool) -> Outco
         panic: None,
         failures: Vec::new(),
         warnings: 0,
+        skipped_checks: SortedMap::new(),
     };
 
     let (version, target) = match unit::language_version(record)
@@ -174,17 +187,47 @@ fn check(record: &CorpusContract, path: &Path, print_diagnostics: bool) -> Outco
         if print_diagnostics {
             print_errors(record, &outcome.id, unit.diagnostics().iter());
         }
-        classify(
+        let (mut failures, warnings) = classify(
             unit.diagnostics()
                 .iter()
                 .map(|diagnostic| diagnostic.kind()),
-        )
+        );
+        let mut skipped_checks = SortedMap::new();
+        let mut skip_all = |reason: &str| {
+            for check in ARTIFACT_CHECKS {
+                skipped_checks.insert(check.to_string(), reason.to_owned());
+            }
+        };
+        match &record.artifacts {
+            Some(artifacts) => match artifacts::target_definition(&unit, record) {
+                Ok(target) => {
+                    match artifacts::check_abi(&target, artifacts) {
+                        Ok(check_failures) => failures.extend(check_failures),
+                        Err(reason) => {
+                            skipped_checks.insert(Check::Abi.to_string(), reason);
+                        }
+                    }
+                    for layout in [Layout::Storage, Layout::Transient] {
+                        match artifacts::check_storage_layout(&target, artifacts, layout) {
+                            Ok(check_failures) => failures.extend(check_failures),
+                            Err(reason) => {
+                                skipped_checks.insert(layout.checks().0.to_string(), reason);
+                            }
+                        }
+                    }
+                }
+                Err(reason) => skip_all(&reason),
+            },
+            None => skip_all("no artifacts"),
+        }
+        (failures, warnings, skipped_checks)
     }));
     outcome.ms = started.elapsed().as_millis();
     match result {
-        Ok((failures, warnings)) => {
+        Ok((failures, warnings, skipped_checks)) => {
             outcome.failures = failures;
             outcome.warnings = warnings;
+            outcome.skipped_checks = skipped_checks;
         }
         Err(_) => outcome.panic = Some(take_panic_message()),
     }
@@ -298,8 +341,122 @@ mod tests {
         .unwrap();
         let outcome = check(&record, Path::new("0_x.json"), false);
         let keys: Vec<String> = outcome.failures.iter().map(outcome::Failure::key).collect();
+        assert_eq!(
+            outcome
+                .skipped_checks
+                .get("storage_layout")
+                .map(String::as_str),
+            Some("no artifacts")
+        );
         assert!(keys.iter().any(|key| key.starts_with("bind:")), "{keys:?}");
         assert_eq!(outcome.evm_target.as_deref(), Some("Prague"));
+    }
+
+    #[test]
+    fn storage_mismatches_count_once_per_contract_and_code() {
+        let record: CorpusContract = serde_json::from_str(
+            r#"{"name":"x","chain_id":0,"version":"0.8.30","target":"a.sol",
+                "sources":{"a.sol":"contract A { uint256 a; int256 b; }"},
+                "artifacts":{"storageLayout":{
+                    "storage":[{"label":"a","offset":0,"slot":"0","type":"t_x"},
+                               {"label":"b","offset":0,"slot":"1","type":"t_y"}],
+                    "types":{"t_x":{"encoding":"inplace","label":"uint128","numberOfBytes":"32"},
+                             "t_y":{"encoding":"inplace","label":"int128","numberOfBytes":"32"}}}}}"#,
+        )
+        .unwrap();
+        let outcome = check(&record, Path::new("0_x.json"), false);
+        let failures: Vec<(String, usize)> = outcome
+            .failures
+            .iter()
+            .map(|failure| (failure.key(), failure.count))
+            .collect();
+        assert_eq!(failures, [("storage_types:[*].type.label".to_owned(), 2)]);
+    }
+
+    #[test]
+    fn storage_types_are_compared_through_nested_types() {
+        let path = testdata_corpus_dir().join("contracts/0_storage_types.json");
+        let mut record = corpus::read_contract(&path).unwrap();
+        let types = record
+            .artifacts
+            .as_mut()
+            .unwrap()
+            .pointer_mut("/storageLayout/types")
+            .unwrap();
+        // Each entry is only reachable through an array base, a mapping value or a
+        // struct member, the last one through a recursive struct.
+        types["t_struct(Inner)16_storage"]["members"][2]["offset"] = 20.into();
+        types["t_struct(Node)37_storage"]["members"][1]["slot"] = "2".into();
+        types["t_array(t_uint256)dyn_storage"]["encoding"] = "inplace".into();
+        types["t_uint16"]["label"] = "uint8".into();
+        types["t_array(t_struct(Node)37_storage)dyn_storage"]["numberOfBytes"] = "64".into();
+
+        let outcome = check(&record, &path, false);
+        let keys: Vec<String> = outcome.failures.iter().map(outcome::Failure::key).collect();
+        assert_eq!(
+            keys,
+            [
+                "storage_types:[*].type.encoding",
+                "storage_types:[*].type.label",
+                "storage_types:[*].type.members.offset",
+                "storage_types:[*].type.members.slot",
+                "storage_types:[*].type.numberOfBytes",
+            ]
+        );
+    }
+
+    #[test]
+    fn abi_mismatches_are_bucketed_by_kind() {
+        let path = testdata_corpus_dir().join("contracts/0_abi.json");
+        let mut record = corpus::read_contract(&path).unwrap();
+        let abi = record
+            .artifacts
+            .as_mut()
+            .unwrap()
+            .pointer_mut("/abi")
+            .unwrap()
+            .as_array_mut()
+            .unwrap();
+        let index = |abi: &[serde_json::Value], name: &str| {
+            abi.iter().position(|entry| entry["name"] == name).unwrap()
+        };
+        let place = index(abi, "place");
+        abi[place]["stateMutability"] = "view".into();
+        let rejected = index(abi, "Rejected");
+        abi[rejected]["inputs"][0]["components"][1]["internalType"] = "uint256".into();
+        let zap = index(abi, "zap");
+        abi.remove(zap);
+        abi.push(
+            serde_json::json!({"type": "function", "name": "ghost", "inputs": [],
+            "outputs": [], "stateMutability": "nonpayable"}),
+        );
+        let (orders, total) = (index(abi, "orders"), index(abi, "total"));
+        abi.swap(orders, total);
+
+        let outcome = check(&record, &path, false);
+        let keys: Vec<String> = outcome.failures.iter().map(outcome::Failure::key).collect();
+        assert_eq!(
+            keys,
+            [
+                "abi:[*].inputs.components.internalType",
+                "abi:[*].stateMutability",
+                "abi:extra",
+                "abi:missing",
+                "abi:order",
+            ]
+        );
+    }
+
+    #[test]
+    fn an_abi_entry_pairs_with_the_same_keyed_entry_it_equals() {
+        // solc before 0.8.20 leaves the library's `Moved` out; the contract's own pairs.
+        let record: CorpusContract = serde_json::from_str(
+            r#"{"name": "x", "chain_id": 0, "version": "0.8.19", "target": "a.sol", "target_contract": "C", "sources": {"a.sol": "library L { event Moved(address to, uint256 value); function f() internal { emit Moved(address(0), 1); } } contract C { event Moved(address from, uint256 amount); function g() external { L.f(); emit Moved(address(0), 2); } }"}, "artifacts": {"abi": [{"anonymous": false, "inputs": [{"indexed": false, "internalType": "address", "name": "from", "type": "address"}, {"indexed": false, "internalType": "uint256", "name": "amount", "type": "uint256"}], "name": "Moved", "type": "event"}, {"inputs": [], "name": "g", "outputs": [], "stateMutability": "nonpayable", "type": "function"}]}}"#,
+        )
+        .unwrap();
+        let outcome = check(&record, Path::new("0_x.json"), false);
+        let keys: Vec<String> = outcome.failures.iter().map(outcome::Failure::key).collect();
+        assert_eq!(keys, ["abi:extra"]);
     }
 
     #[test]
