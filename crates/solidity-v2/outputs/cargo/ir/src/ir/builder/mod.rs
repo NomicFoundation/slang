@@ -75,12 +75,14 @@ impl<S: Source> CstToIrBuilder<'_, S> {
     }
 
     fn report(&mut self, node: &dyn TextRange, kind: impl Into<DiagnosticKind>) {
-        self.diagnostics.push(
-            self.file_id.to_owned(),
-            node.calculate_text_range()
-                .expect("CST node is expected to have a range."),
-            kind,
-        );
+        let range = node
+            .calculate_text_range()
+            .expect("CST node is expected to have a range.");
+        self.report_range(range, kind);
+    }
+
+    fn report_range(&mut self, range: std::ops::Range<usize>, kind: impl Into<DiagnosticKind>) {
+        self.diagnostics.push(self.file_id.to_owned(), range, kind);
     }
 
     //
@@ -132,11 +134,7 @@ impl<S: Source> CstToIrBuilder<'_, S> {
         // The grammar allows more than one inheritance list; solc only accepts
         // the first and rejects any subsequent ones.
         for inheritance in inheritance_specifiers {
-            self.diagnostics.push(
-                self.file_id.to_owned(),
-                inheritance.is_keyword.calculate_text_range().unwrap(),
-                MoreThanOneInheritanceList,
-            );
+            self.report(&inheritance.is_keyword, MoreThanOneInheritanceList);
         }
         let mut storage_layout_specifiers =
             source.specifiers.elements.iter().filter_map(|specifier| {
@@ -150,12 +148,8 @@ impl<S: Source> CstToIrBuilder<'_, S> {
         let first_storage_layout_specifier = storage_layout_specifiers.next();
         // Abstract contracts cannot specify a storage layout.
         if is_abstract && let Some(storage_layout) = first_storage_layout_specifier {
-            self.diagnostics.push(
-                self.file_id.to_owned(),
-                storage_layout
-                    .layout_keyword
-                    .calculate_text_range()
-                    .unwrap(),
+            self.report(
+                &storage_layout.layout_keyword,
                 StorageLayoutForAbstractContract,
             );
         }
@@ -164,14 +158,7 @@ impl<S: Source> CstToIrBuilder<'_, S> {
         // The grammar allows more than one storage layout specifier; solc only
         // accepts the first and rejects any subsequent ones.
         for storage_layout in storage_layout_specifiers {
-            self.diagnostics.push(
-                self.file_id.to_owned(),
-                storage_layout
-                    .layout_keyword
-                    .calculate_text_range()
-                    .unwrap(),
-                MoreThanOneStorageLayout,
-            );
+            self.report(&storage_layout.layout_keyword, MoreThanOneStorageLayout);
         }
 
         Arc::new(output::ContractDefinitionStruct {

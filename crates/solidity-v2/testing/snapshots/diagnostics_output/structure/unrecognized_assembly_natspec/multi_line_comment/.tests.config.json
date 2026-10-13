@@ -1,0 +1,8 @@
+{
+  "expected_solc_divergence": [
+    {
+      "specifier": { "type": "Range", "from": "0.8.13", "till": "0.8.31" },
+      "reason": "solc marks the blocks as memory safe from these comments without a warning, until it deprecates them in 0.8.31, but slang only recognizes a single `///` line, and reports the other comments. From 0.8.31 both warn, but solc still marks the blocks as memory safe."
+    }
+  ]
+}

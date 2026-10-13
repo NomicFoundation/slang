@@ -1,0 +1,27 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 3
+
+[Warning 6269] Warning: Unexpected NatSpec tag "test" with value "test" in inline assembly.
+   ╭─[input.sol:8:9]
+   │
+ 8 │         assembly {}
+   │         ─────┬─────  
+   │              ╰─────── Warning occurred here.
+───╯
+
+[Warning 8787] Warning: Unexpected value for @solidity tag in inline assembly: test
+    ╭─[input.sol:10:9]
+    │
+ 10 │         assembly {}
+    │         ─────┬─────  
+    │              ╰─────── Warning occurred here.
+────╯
+
+[Warning 7828] Warning: Inline assembly has invalid NatSpec documentation.
+    ╭─[input.sol:12:9]
+    │
+ 12 │         assembly {}
+    │         ─────┬─────  
+    │              ╰─────── Warning occurred here.
+────╯

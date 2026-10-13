@@ -1,0 +1,8 @@
+{
+  "expected_solc_divergence": [
+    {
+      "specifier": { "type": "From", "from": "0.8.13" },
+      "reason": "solc ignores NatSpec comments without any text, but slang reports any NatSpec comment on an assembly block other than '/// @solidity memory-safe-assembly'."
+    }
+  ]
+}

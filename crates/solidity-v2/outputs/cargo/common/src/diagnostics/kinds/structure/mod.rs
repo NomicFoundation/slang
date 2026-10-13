@@ -54,6 +54,7 @@ mod unchecked_block_not_in_regular_block;
 mod unimplemented_function_with_modifiers;
 mod unimplemented_modifier_must_be_virtual;
 mod uninitialized_constant;
+mod unrecognized_assembly_natspec;
 mod using_for_functions_with_wildcard;
 mod using_for_wildcard_at_file_level;
 mod variable_declaration_not_in_block;
@@ -121,6 +122,7 @@ pub use unchecked_block_not_in_regular_block::UncheckedBlockNotInRegularBlock;
 pub use unimplemented_function_with_modifiers::UnimplementedFunctionWithModifiers;
 pub use unimplemented_modifier_must_be_virtual::UnimplementedModifierMustBeVirtual;
 pub use uninitialized_constant::UninitializedConstant;
+pub use unrecognized_assembly_natspec::UnrecognizedAssemblyNatSpec;
 pub use using_for_functions_with_wildcard::UsingForFunctionsWithWildcard;
 pub use using_for_wildcard_at_file_level::UsingForWildcardAtFileLevel;
 pub use variable_declaration_not_in_block::VariableDeclarationNotInBlock;
@@ -213,6 +215,9 @@ define_diagnostic_kind! {
 
         /// An assembly statement lists the same flag more than once.
         DuplicateAssemblyFlag(DuplicateAssemblyFlag),
+        /// The `NatSpec` comment of an assembly statement isn't the one marking it as
+        /// memory safe.
+        UnrecognizedAssemblyNatSpec(UnrecognizedAssemblyNatSpec),
 
         /// A named parameter of a mapping type reuses a name already used by
         /// another parameter in the same or a nested mapping type.

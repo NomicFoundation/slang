@@ -1,0 +1,19 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 2
+
+[Warning 6269] Warning: Unexpected NatSpec tag "notice" with value "Writes to scratch space" in inline assembly.
+   ╭─[input.sol:8:9]
+   │
+ 8 │         assembly {}
+   │         ─────┬─────  
+   │              ╰─────── Warning occurred here.
+───╯
+
+[Warning 6269] Warning: Unexpected NatSpec tag "notice" with value "Writes to scratch space" in inline assembly.
+    ╭─[input.sol:11:9]
+    │
+ 11 │         assembly {}
+    │         ─────┬─────  
+    │              ╰─────── Warning occurred here.
+────╯
