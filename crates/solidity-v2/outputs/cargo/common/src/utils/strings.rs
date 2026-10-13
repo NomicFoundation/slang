@@ -59,13 +59,20 @@ pub fn decode_escape_sequences(content: &str) -> Vec<u8> {
                 let h3 = chars.next().unwrap().to_digit(16).unwrap();
                 let h4 = chars.next().unwrap().to_digit(16).unwrap();
                 let code_point = (h1 << 12) | (h2 << 8) | (h3 << 4) | h4;
-                // `\uNNNN` code points in the surrogate range (0xD800..=0xDFFF)
-                // are not valid Unicode scalars; skip them silently.
-                if let Some(ch) = char::from_u32(code_point) {
-                    out.extend_from_slice(ch.encode_utf8(&mut buf).as_bytes());
+                match char::from_u32(code_point) {
+                    Some(ch) => out.extend_from_slice(ch.encode_utf8(&mut buf).as_bytes()),
+                    // Encode surrogates manually using the three-byte UTF-8 formula.
+                    // UTF-8 forbids surrogate code points, so these bytes can be
+                    // stored in the output Vec<u8> but cannot form a Rust String.
+                    None => out.extend(
+                        [
+                            0xE0 | (code_point >> 12),
+                            0x80 | ((code_point >> 6) & 0x3F),
+                            0x80 | (code_point & 0x3F),
+                        ]
+                        .map(|byte| u8::try_from(byte).unwrap()),
+                    ),
                 }
-                // TODO(validation) SDR[5]: emit an error/warning if the unicode scalar
-                // is not valid
             }
             other => {
                 // Grammar should prevent unknown escape chars, but pass
@@ -263,9 +270,18 @@ mod tests {
     }
 
     #[test]
-    fn decode_unicode_escape_surrogate_skipped() {
-        // Lone surrogate 0xD800 is not a valid Unicode scalar → skipped.
-        assert_eq!(decode_escape_sequences(r"\ud800"), Vec::<u8>::new());
+    fn decode_unicode_escape_surrogate() {
+        // Lone surrogate 0xD800 → 0xED 0xA0 0x80.
+        assert_eq!(decode_escape_sequences(r"\ud800"), &[0xED, 0xA0, 0x80]);
+    }
+
+    #[test]
+    fn decode_unicode_escape_surrogate_pair() {
+        // Each surrogate is encoded independently, producing six bytes.
+        assert_eq!(
+            decode_escape_sequences(r"\ud83d\ude00"),
+            &[0xED, 0xA0, 0xBD, 0xED, 0xB8, 0x80]
+        );
     }
 
     #[test]
