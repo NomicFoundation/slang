@@ -1,0 +1,11 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 1
+
+[type-system/encode-call-callee-not-external] Error: The `abi.encodeCall` callee must be an external function.
+    ╭─[input.sol:14:31]
+    │
+ 14 │         return abi.encodeCall(x.fExternal, (1, "123"));
+    │                               ─────┬─────  
+    │                                    ╰─────── Error occurred here.
+────╯

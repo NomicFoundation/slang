@@ -1,0 +1,67 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 8
+
+[resolution/incompatible-built-in-version] Error: This built-in was introduced in version '0.8.11'.
+    ╭─[input.sol:42:17]
+    │
+ 42 │         a = abi.encodeCall(I.f, (data));
+    │                 ─────┬────  
+    │                      ╰────── Error occurred here.
+────╯
+
+[resolution/incompatible-built-in-version] Error: This built-in was introduced in version '0.8.11'.
+    ╭─[input.sol:43:17]
+    │
+ 43 │         b = abi.encodeCall(Other.externalFn, (1));
+    │                 ─────┬────  
+    │                      ╰────── Error occurred here.
+────╯
+
+[resolution/incompatible-built-in-version] Error: This built-in was introduced in version '0.8.11'.
+    ╭─[input.sol:44:17]
+    │
+ 44 │         c = abi.encodeCall(Other.publicFn, (1));
+    │                 ─────┬────  
+    │                      ╰────── Error occurred here.
+────╯
+
+[resolution/incompatible-built-in-version] Error: This built-in was introduced in version '0.8.11'.
+    ╭─[input.sol:45:17]
+    │
+ 45 │         d = abi.encodeCall(this.g, (data));
+    │                 ─────┬────  
+    │                      ╰────── Error occurred here.
+────╯
+
+[resolution/incompatible-built-in-version] Error: This built-in was introduced in version '0.8.11'.
+    ╭─[input.sol:46:17]
+    │
+ 46 │         e = abi.encodeCall(i.f, (data));
+    │                 ─────┬────  
+    │                      ╰────── Error occurred here.
+────╯
+
+[resolution/incompatible-built-in-version] Error: This built-in was introduced in version '0.8.11'.
+    ╭─[input.sol:47:17]
+    │
+ 47 │         f = abi.encodeCall(p, (data));
+    │                 ─────┬────  
+    │                      ╰────── Error occurred here.
+────╯
+
+[resolution/incompatible-built-in-version] Error: This built-in was introduced in version '0.8.11'.
+    ╭─[input.sol:48:17]
+    │
+ 48 │         h = abi.encodeCall(C.externalFn, (data));
+    │                 ─────┬────  
+    │                      ╰────── Error occurred here.
+────╯
+
+[resolution/incompatible-built-in-version] Error: This built-in was introduced in version '0.8.11'.
+    ╭─[input.sol:60:17]
+    │
+ 60 │         a = abi.encodeCall(Base.externalFn, (data));
+    │                 ─────┬────  
+    │                      ╰────── Error occurred here.
+────╯

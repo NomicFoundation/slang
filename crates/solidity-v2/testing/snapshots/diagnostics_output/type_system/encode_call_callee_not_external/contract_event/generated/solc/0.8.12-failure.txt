@@ -1,0 +1,11 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 1
+
+[TypeError 3509] Error: Expected regular external function type, or external view on public function. Cannot use special function. Did you forget to prefix "this."?
+   ╭─[input.sol:9:31]
+   │
+ 9 │         return abi.encodeCall(E, (1));
+   │                               ┬  
+   │                               ╰── Error occurred here.
+───╯

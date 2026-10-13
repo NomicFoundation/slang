@@ -1,0 +1,11 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 1
+
+[TypeError 3509] Error: Function must be "public" or "external". Did you forget to prefix "this."?
+    ╭─[input.sol:11:31]
+    │
+ 11 │         return abi.encodeCall(C.publicFn, (1));
+    │                               ─────┬────  
+    │                                    ╰────── Error occurred here.
+────╯
