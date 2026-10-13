@@ -5039,6 +5039,26 @@ mod type_system {
         }
     }
 
+    mod empty_array_literal {
+        use super::*;
+
+        #[test]
+        fn local_variable_initializer() -> Result<()> {
+            run(
+                "type_system/empty_array_literal",
+                "local_variable_initializer",
+            )
+        }
+
+        #[test]
+        fn local_variable_initializer_nested() -> Result<()> {
+            run(
+                "type_system/empty_array_literal",
+                "local_variable_initializer_nested",
+            )
+        }
+    }
+
     mod explicit_conversion_not_allowed {
         use super::*;
 

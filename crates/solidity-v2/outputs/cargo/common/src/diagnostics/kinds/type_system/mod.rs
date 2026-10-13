@@ -5,6 +5,7 @@ mod array_length_too_large;
 mod array_length_zero;
 mod cannot_call_via_contract_type_name;
 mod constant_arithmetic_error;
+mod empty_array_literal;
 mod explicit_conversion_not_allowed;
 mod expression_not_a_value;
 mod expression_not_an_lvalue;
@@ -30,6 +31,7 @@ pub use array_length_too_large::ArrayLengthTooLarge;
 pub use array_length_zero::ArrayLengthZero;
 pub use cannot_call_via_contract_type_name::CannotCallViaContractTypeName;
 pub use constant_arithmetic_error::ConstantArithmeticError;
+pub use empty_array_literal::EmptyArrayLiteral;
 pub use explicit_conversion_not_allowed::ExplicitConversionNotAllowed;
 pub use expression_not_a_value::{ExpressionNotAValue, NotAValueKind};
 pub use expression_not_an_lvalue::ExpressionNotAnLValue;
@@ -108,6 +110,8 @@ define_diagnostic_kind! {
         LiteralTooLarge(LiteralTooLarge),
         /// The two branches of a conditional have no common type.
         IncompatibleConditionalBranches(IncompatibleConditionalBranches),
+        /// An array literal has no elements to deduce its type from.
+        EmptyArrayLiteral(EmptyArrayLiteral),
         /// An expression in a position that is written to does not denote a
         /// writable storage location.
         ExpressionNotAnLValue(ExpressionNotAnLValue),

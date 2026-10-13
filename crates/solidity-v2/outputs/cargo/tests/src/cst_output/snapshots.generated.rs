@@ -4,6 +4,20 @@ use anyhow::Result;
 
 use crate::cst_output::runner::run;
 
+mod array_expression {
+    use super::*;
+
+    #[test]
+    fn empty() -> Result<()> {
+        run("ArrayExpression", "empty")
+    }
+
+    #[test]
+    fn empty_with_separator() -> Result<()> {
+        run("ArrayExpression", "empty_with_separator")
+    }
+}
+
 mod assembly_statement {
     use super::*;
 

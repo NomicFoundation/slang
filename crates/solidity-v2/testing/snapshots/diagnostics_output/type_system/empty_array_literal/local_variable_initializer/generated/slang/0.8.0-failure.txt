@@ -1,0 +1,11 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 1
+
+[type-system/empty-array-literal] Error: Unable to deduce the type of an empty array literal.
+   ╭─[input.sol:6:30]
+   │
+ 6 │         uint256[] memory a = [];
+   │                              ─┬  
+   │                               ╰── Error occurred here.
+───╯

@@ -3765,7 +3765,8 @@ TupleValues: TupleValues = {
                                 Separated(
                                     name = ArrayValues,
                                     reference = Expression,
-                                    separator = Comma
+                                    separator = Comma,
+                                    allow_empty = true
                                 )
                             ]
                         ),
