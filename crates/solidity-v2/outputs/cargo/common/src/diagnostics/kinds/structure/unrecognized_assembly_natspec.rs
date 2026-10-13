@@ -19,6 +19,6 @@ impl DiagnosticExtensions for UnrecognizedAssemblyNatSpec {
     }
 
     fn message(&self) -> String {
-        "The only NatSpec comment allowed on an assembly block is '/// @solidity memory-safe-assembly', on a single line, which marks it as memory safe.".to_string()
+        "The only NatSpec recognized on an assembly block is '/// @solidity memory-safe-assembly', on a single line, which marks it as memory safe.".to_string()
     }
 }

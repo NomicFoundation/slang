@@ -2,7 +2,7 @@
 
 Diagnostics: 2
 
-[structure/unrecognized-assembly-natspec] Warning: The only NatSpec comment allowed on an assembly block is '/// @solidity memory-safe-assembly', on a single line, which marks it as memory safe.
+[structure/unrecognized-assembly-natspec] Warning: The only NatSpec recognized on an assembly block is '/// @solidity memory-safe-assembly', on a single line, which marks it as memory safe.
     ╭─[input.sol:9:5]
     │
   9 │ ╭─▶     /// @before bogus-value
@@ -12,7 +12,7 @@ Diagnostics: 2
     │ ╰──────────────────────────────── Warning occurred here.
 ────╯
 
-[structure/unrecognized-assembly-natspec] Warning: The only NatSpec comment allowed on an assembly block is '/// @solidity memory-safe-assembly', on a single line, which marks it as memory safe.
+[structure/unrecognized-assembly-natspec] Warning: The only NatSpec recognized on an assembly block is '/// @solidity memory-safe-assembly', on a single line, which marks it as memory safe.
     ╭─[input.sol:16:5]
     │
  16 │ ╭─▶     /// @solidity memory-safe-assembly a a a
