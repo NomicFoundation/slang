@@ -2,7 +2,7 @@
 
 Diagnostics: 1
 
-[type-system/encode-call-callee-not-external] Error: Expected regular external function type, or external view on public function.
+[type-system/encode-call-callee-not-external] Error: The `abi.encodeCall` callee must be an external function.
     ╭─[input.sol:11:31]
     │
  11 │         return abi.encodeCall(C.internalFn, (1));

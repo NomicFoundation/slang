@@ -20,6 +20,6 @@ impl DiagnosticExtensions for EncodeCallCalleeNotExternal {
     }
 
     fn message(&self) -> String {
-        "Expected regular external function type, or external view on public function.".to_owned()
+        "The `abi.encodeCall` callee must be an external function.".to_owned()
     }
 }
