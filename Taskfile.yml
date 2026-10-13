@@ -11,4 +11,5 @@ set:
 includes:
   check: "./scripts/tasks/check/Taskfile.yml"
   lint: "./scripts/tasks/lint/Taskfile.yml"
+  sourcify: "./scripts/tasks/sourcify/Taskfile.yml"
   test: "./scripts/tasks/test/Taskfile.yml"

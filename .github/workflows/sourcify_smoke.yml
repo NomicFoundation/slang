@@ -35,29 +35,20 @@ jobs:
       - name: "Smoke Test > Build sourcify binary"
         run: "${SFW_PREFIX:-} ./scripts/bin/with-hermit cargo build --locked --bin solidity_testing_sourcify"
 
-      - name: "Build v2 sourcify binary"
-        run: "${SFW_PREFIX:-} ./scripts/bin/with-hermit cargo build --locked --release --bin solidity_v2_testing_sourcify"
-
       - name: "Run in-repo corpus test cases"
-        run: "./scripts/bin/with-hermit ./target/release/solidity_v2_testing_sourcify run-corpus crates/solidity-v2/testing/sourcify/testdata/corpus"
+        run: "${SFW_PREFIX:-} ./bin/task sourcify:testdata"
 
-      - name: "Download pinned corpus snapshot"
+      - name: "Run the PR-tier corpus subset"
         env:
           GH_TOKEN: "${{ github.token }}"
+        # The census reaches the job summary whichever way the gate goes.
         run: |
-          lock="crates/solidity-v2/testing/sourcify/corpus.lock"
-          field() { sed -n "s/^$1 = \"\(.*\)\"$/\1/p" "$lock"; }
-          gh release download "$(field tag)" --repo "$(field repo)" --pattern "$(field asset)" --output corpus.tar.xz
-          echo "$(field sha256)  corpus.tar.xz" | sha256sum --check
-          mkdir -p target/corpus
-          tar -xJf corpus.tar.xz -C target/corpus
-          rm corpus.tar.xz
-
-      - name: "Run pinned corpus snapshot"
-        run: |
-          ./scripts/bin/with-hermit ./target/release/solidity_v2_testing_sourcify run-corpus target/corpus \
-            --out target/sourcify-results.jsonl --report target/sourcify-report.md
-          cat target/sourcify-report.md >> "$GITHUB_STEP_SUMMARY"
+          status=0
+          ./bin/task sourcify:pr || status=$?
+          if [ -f target/sourcify/report.md ]; then
+            cat target/sourcify/report.md >> "$GITHUB_STEP_SUMMARY"
+          fi
+          exit "$status"
 
       - name: "Upload results"
         if: "!cancelled()"
@@ -65,6 +56,6 @@ jobs:
         with:
           name: "sourcify-corpus-results"
           path: |
-            target/sourcify-results.jsonl
-            target/sourcify-report.md
+            target/sourcify/results
+            target/sourcify/report.md
           retention-days: 14
