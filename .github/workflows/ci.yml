@@ -50,6 +50,7 @@ jobs:
 
       #
       # Run all CI steps in order: _SLANG_INFRA_CI_STEPS_ORDERED_ (keep in sync)
+      # Note: 'task setup' is ran during the ".github/actions/common-setup" step above.
       #
 
       - name: "task check"
