@@ -92,7 +92,9 @@ fn find_version_pragmas(source: &str) -> Vec<ir::VersionPragma> {
         }
 
         match lexeme.kind {
-            LexemeKind::PragmaKeyword_Reserved => {
+            // A `pragma` keyword within an unterminated Pragma context
+            // is also considered.
+            LexemeKind::PragmaKeyword_Reserved | LexemeKind::PragmaPragmaKeyword_Reserved => {
                 directive_start = Some(lexeme.range.start);
             }
             LexemeKind::PragmaSemicolon => {
