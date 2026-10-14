@@ -519,7 +519,8 @@ impl Visitor for Pass<'_> {
     }
 
     fn enter_revert_statement(&mut self, node: &ir::RevertStatement) -> bool {
-        self.resolve_identifier_path(&node.error);
+        // TODO(validation) SDR[1686]: report a segment that is not a member of its contract.
+        self.resolve_type_member_path(&node.error);
         true
     }
 
@@ -529,7 +530,8 @@ impl Visitor for Pass<'_> {
     }
 
     fn enter_emit_statement(&mut self, node: &ir::EmitStatement) -> bool {
-        self.resolve_identifier_path(&node.event);
+        // TODO(validation) SDR[1686]: report a segment that is not a member of its contract.
+        self.resolve_type_member_path(&node.event);
         true
     }
 

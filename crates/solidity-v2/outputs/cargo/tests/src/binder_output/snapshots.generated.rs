@@ -602,6 +602,11 @@ mod errors {
     }
 
     #[test]
+    fn revert_inherited_via_contract_name() -> Result<()> {
+        run("errors", "revert_inherited_via_contract_name")
+    }
+
+    #[test]
     fn revert_stmt() -> Result<()> {
         run("errors", "revert_stmt")
     }
@@ -628,6 +633,11 @@ mod events {
     #[test]
     fn definitions() -> Result<()> {
         run("events", "definitions")
+    }
+
+    #[test]
+    fn emit_inherited_via_contract_name() -> Result<()> {
+        run("events", "emit_inherited_via_contract_name")
     }
 
     #[test]
@@ -1098,6 +1108,11 @@ mod modifiers {
     }
 
     #[test]
+    fn path_via_derived_contract_name() -> Result<()> {
+        run("modifiers", "path_via_derived_contract_name")
+    }
+
+    #[test]
     fn simple() -> Result<()> {
         run("modifiers", "simple")
     }
@@ -1203,6 +1218,11 @@ mod structs {
     #[test]
     fn simple() -> Result<()> {
         run("structs", "simple")
+    }
+
+    #[test]
+    fn type_path_via_derived_contract_name() -> Result<()> {
+        run("structs", "type_path_via_derived_contract_name")
     }
 }
 
