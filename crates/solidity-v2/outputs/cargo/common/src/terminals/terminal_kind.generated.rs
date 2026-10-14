@@ -142,6 +142,7 @@ pub enum TerminalKind {
     PragmaLessThanEqual,
     PragmaMinus,
     PragmaPeriod,
+    PragmaPragmaKeyword,
     PragmaSemicolon,
     PragmaStringLiteral,
     PragmaTilde,

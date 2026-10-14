@@ -2535,6 +2535,12 @@ PragmaPeriod: PragmaPeriod = {
 
 };
 #[inline]
+PragmaPragmaKeyword: PragmaPragmaKeyword = {
+
+        <l:@L> L_PragmaPragmaKeyword_Reserved <r:@L> => new_pragma_pragma_keyword(l..r, ctx.source),
+
+};
+#[inline]
 PragmaSemicolon: PragmaSemicolon = {
 
         <l:@L> L_PragmaSemicolon <r:@L> => new_pragma_semicolon(l..r, ctx.source),
@@ -3163,6 +3169,7 @@ extern {
         L_PragmaMultiLineComment => LexemeKind::PragmaMultiLineComment,
         L_PragmaMultiLineNatSpecComment => LexemeKind::PragmaMultiLineNatSpecComment,
         L_PragmaPeriod => LexemeKind::PragmaPeriod,
+        L_PragmaPragmaKeyword_Reserved => LexemeKind::PragmaPragmaKeyword_Reserved,
         L_PragmaSemicolon => LexemeKind::PragmaSemicolon,
         L_PragmaSingleLineComment => LexemeKind::PragmaSingleLineComment,
         L_PragmaSingleLineNatSpecComment => LexemeKind::PragmaSingleLineNatSpecComment,
