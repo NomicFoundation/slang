@@ -13,9 +13,9 @@ use slang_solidity_v2_common::nodes::NodeId;
 use slang_solidity_v2_common::utils::strings::strip_string_literal_quotes;
 use slang_solidity_v2_common::versions::LanguageVersion;
 use slang_solidity_v2_ir::ir;
-pub(crate) use storage_layout::StorageAnalyzer;
+pub(crate) use storage_layout::{NoStorageSize, StorageAnalyzer, StorageLayoutBuilder};
 pub use storage_layout::{
-    StorageLayoutBuilder, StorageMember, StoragePosition, StorageSize, StorageTypeKind,
+    StateVariablePosition, StorageMember, StoragePosition, StorageSize, StorageTypeKind,
     StorageTypeLayout, StorageTypeTable,
 };
 
@@ -272,6 +272,22 @@ impl SemanticContext {
     /// or interface definition.
     pub fn linearised_errors(&self, contract_id: NodeId) -> &[ir::ErrorDefinition] {
         self.contract_data.linearised_errors(contract_id)
+    }
+
+    /// Returns the pre-computed positions of the persistent state variables in
+    /// the given contract's storage, in layout order. `None` when they don't
+    /// fit in storage or a variable cannot be stored. `contract_id` must be a
+    /// registered contract definition.
+    pub fn storage_layout(&self, contract_id: NodeId) -> Option<&[StateVariablePosition]> {
+        self.contract_data.storage_layout(contract_id)
+    }
+
+    /// The same as [`Self::storage_layout`], for the transient state variables.
+    pub fn transient_storage_layout(
+        &self,
+        contract_id: NodeId,
+    ) -> Option<&[StateVariablePosition]> {
+        self.contract_data.transient_storage_layout(contract_id)
     }
 
     /// Returns the pre-computed list of events visible in the given contract's
@@ -554,10 +570,6 @@ impl SemanticContext {
             _ => self.type_internal_name(type_id),
         };
         Some(name)
-    }
-
-    pub fn storage_size_of_type_id(&self, type_id: TypeId) -> Option<StorageSize> {
-        self.storage_analyzer().storage_size_of_type_id(type_id)
     }
 
     /// The type table of a storage layout: `roots` (the types of its state
