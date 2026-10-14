@@ -125,13 +125,13 @@ impl StorageMember {
 /// Assigns each state variable or struct member its storage position in
 /// declaration order, packing [`StorageSize::Bytes`] values into a shared slot
 /// and slot-aligning [`StorageSize::Slots`] aggregates.
-pub struct StorageLayoutBuilder {
+pub(crate) struct StorageLayoutBuilder {
     slot: U256,
     byte_offset: usize,
 }
 
 impl StorageLayoutBuilder {
-    pub fn new(base_slot: U256) -> Self {
+    pub(crate) fn new(base_slot: U256) -> Self {
         Self {
             slot: base_slot,
             byte_offset: 0,
@@ -141,7 +141,7 @@ impl StorageLayoutBuilder {
     /// Allocates the next item, returning its [`StoragePosition`] and advancing
     /// past it. Returns `None` when the item would extend past the end of
     /// storage.
-    pub fn allocate(&mut self, size: StorageSize) -> Option<StoragePosition> {
+    pub(crate) fn allocate(&mut self, size: StorageSize) -> Option<StoragePosition> {
         match size {
             StorageSize::Slots(count) => {
                 // Aggregates start on a fresh slot, so finish the current one.

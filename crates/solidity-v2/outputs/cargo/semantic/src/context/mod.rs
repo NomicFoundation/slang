@@ -13,10 +13,10 @@ use slang_solidity_v2_common::nodes::NodeId;
 use slang_solidity_v2_common::utils::strings::strip_string_literal_quotes;
 use slang_solidity_v2_common::versions::LanguageVersion;
 use slang_solidity_v2_ir::ir;
-pub(crate) use storage_layout::{NoStorageSize, StorageAnalyzer};
+pub(crate) use storage_layout::{NoStorageSize, StorageAnalyzer, StorageLayoutBuilder};
 pub use storage_layout::{
-    StateVariablePosition, StorageLayoutBuilder, StorageMember, StoragePosition, StorageSize,
-    StorageTypeKind, StorageTypeLayout, StorageTypeTable,
+    StateVariablePosition, StorageMember, StoragePosition, StorageSize, StorageTypeKind,
+    StorageTypeLayout, StorageTypeTable,
 };
 
 use crate::binder::{Binder, BinderCapacities, Definition, Reference};
@@ -570,10 +570,6 @@ impl SemanticContext {
             _ => self.type_internal_name(type_id),
         };
         Some(name)
-    }
-
-    pub fn storage_size_of_type_id(&self, type_id: TypeId) -> Option<StorageSize> {
-        self.storage_analyzer().storage_size_of_type_id(type_id)
     }
 
     /// The type table of a storage layout: `roots` (the types of its state
