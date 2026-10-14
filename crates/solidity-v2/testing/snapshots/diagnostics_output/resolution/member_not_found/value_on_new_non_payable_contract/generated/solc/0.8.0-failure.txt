@@ -1,0 +1,11 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 1
+
+[TypeError 8827] Error: Constructor for contract C must be payable for member "value" to be available.
+    ╭─[input.sol:12:15]
+    │
+ 12 │         C c = (new C).value(2)();
+    │               ──────┬──────  
+    │                     ╰──────── Error occurred here.
+────╯
