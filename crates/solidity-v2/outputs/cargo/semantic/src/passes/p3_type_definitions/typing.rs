@@ -1,4 +1,4 @@
-use slang_solidity_v2_common::collections::Set;
+use slang_solidity_v2_common::collections::Map;
 use slang_solidity_v2_common::nodes::NodeId;
 use slang_solidity_v2_ir::ir;
 
@@ -187,31 +187,37 @@ impl Pass<'_> {
 
     /// Registers the `Storage` form of every struct member type reachable in
     /// storage from `type_id`, the type of a state variable, so a storage
-    /// layout names one type id per type. Struct members are typed with an
+    /// layout names one type id per type, and returns whether any type on the
+    /// way extends past the end of storage. Struct members are typed with an
     /// `Inherited` location; everything else a state variable reaches is
-    /// already typed in storage. `registered_structs` holds the structs already
-    /// handled, which also stops at recursive ones.
-    pub(super) fn register_struct_member_types_in_storage(
+    /// already typed in storage. `storage_structs` caches the result for each
+    /// struct already handled, which also stops at recursive ones.
+    pub(super) fn register_storage_types(
         &mut self,
         type_id: TypeId,
-        registered_structs: &mut Set<NodeId>,
-    ) {
+        storage_structs: &mut Map<NodeId, bool>,
+    ) -> bool {
         match self.types.get_type_by_id(type_id) {
             Type::Array(ArrayType { element_type, .. })
             | Type::FixedSizeArray(FixedSizeArrayType { element_type, .. }) => {
-                self.register_struct_member_types_in_storage(*element_type, registered_structs);
+                let element_type = *element_type;
+                let stores_too_large = self.register_storage_types(element_type, storage_structs);
+                stores_too_large || self.is_too_large_for_storage(type_id)
             }
             Type::Mapping(MappingType { value_type_id, .. }) => {
-                self.register_struct_member_types_in_storage(*value_type_id, registered_structs);
+                let value_type_id = *value_type_id;
+                self.register_storage_types(value_type_id, storage_structs)
             }
             Type::Struct(StructType { definition_id, .. }) => {
-                if !registered_structs.insert(*definition_id) {
-                    return;
+                let definition_id = *definition_id;
+                if let Some(stores_too_large) = storage_structs.get(&definition_id) {
+                    return *stores_too_large;
                 }
+                storage_structs.insert(definition_id, false);
                 let Some(Definition::Struct(struct_definition)) =
-                    self.binder.find_definition_by_id(*definition_id)
+                    self.binder.find_definition_by_id(definition_id)
                 else {
-                    return;
+                    return false;
                 };
                 let member_type_ids: Vec<_> = struct_definition
                     .ir_node
@@ -219,61 +225,27 @@ impl Pass<'_> {
                     .iter()
                     .filter_map(|member| self.binder.node_typing(member.id()).as_type_id())
                     .collect();
+                let mut stores_too_large = false;
                 for member_type_id in member_type_ids {
                     let storage_type_id = self
                         .types
                         .register_inherited_to_storage_type_mapping(member_type_id);
-                    self.register_struct_member_types_in_storage(
-                        storage_type_id,
-                        registered_structs,
-                    );
+                    stores_too_large |=
+                        self.register_storage_types(storage_type_id, storage_structs);
                 }
-            }
-            _ => {}
-        }
-    }
-
-    /// Whether `type_id`, the type of a state variable, or a type it stores
-    /// through an array, a mapping or a struct member, extends past the end of
-    /// storage. Types that have no size for another reason are reported
-    /// elsewhere.
-    pub(super) fn stores_type_too_large_for_storage(
-        &self,
-        type_id: TypeId,
-        visited_structs: &mut Set<NodeId>,
-    ) -> bool {
-        let analyzer = StorageAnalyzer::new(self.binder, self.types);
-        if analyzer.storage_size(type_id) == Err(NoStorageSize::TooLarge) {
-            return true;
-        }
-        match self.types.get_type_by_id(type_id) {
-            Type::Array(ArrayType { element_type, .. })
-            | Type::FixedSizeArray(FixedSizeArrayType { element_type, .. }) => {
-                self.stores_type_too_large_for_storage(*element_type, visited_structs)
-            }
-            Type::Mapping(MappingType { value_type_id, .. }) => {
-                self.stores_type_too_large_for_storage(*value_type_id, visited_structs)
-            }
-            Type::Struct(StructType { definition_id, .. }) => {
-                if !visited_structs.insert(*definition_id) {
-                    return false;
-                }
-                let Some(Definition::Struct(struct_definition)) =
-                    self.binder.find_definition_by_id(*definition_id)
-                else {
-                    return false;
-                };
-                struct_definition.ir_node.members.iter().any(|member| {
-                    self.binder
-                        .node_typing(member.id())
-                        .as_type_id()
-                        .is_some_and(|member_type_id| {
-                            self.stores_type_too_large_for_storage(member_type_id, visited_structs)
-                        })
-                })
+                stores_too_large |= self.is_too_large_for_storage(type_id);
+                storage_structs.insert(definition_id, stores_too_large);
+                stores_too_large
             }
             _ => false,
         }
+    }
+
+    /// Whether `type_id` as a whole extends past the end of storage. Types
+    /// that have no size for another reason are reported elsewhere.
+    fn is_too_large_for_storage(&self, type_id: TypeId) -> bool {
+        StorageAnalyzer::new(self.binder, self.types).storage_size(type_id)
+            == Err(NoStorageSize::TooLarge)
     }
 
     /// Computes the type of the getter generated for a public state variable,

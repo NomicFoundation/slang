@@ -1,4 +1,4 @@
-use slang_solidity_v2_common::collections::Set;
+use slang_solidity_v2_common::collections::Map;
 use slang_solidity_v2_common::diagnostics::DiagnosticCollection;
 use slang_solidity_v2_common::diagnostics::kinds::type_system::TypeTooLargeForStorage;
 use slang_solidity_v2_common::nodes::NodeId;
@@ -47,7 +47,7 @@ pub fn run(
     // `by_value_dependencies` no longer needs to be kept.
     recursive_structs::mark_recursive_structs(binder, types);
 
-    let mut storage_registered_structs = Set::default();
+    let mut storage_structs = Map::default();
     for file in files {
         Pass::visit_file_state_variables(
             file,
@@ -56,7 +56,7 @@ pub fn run(
             types,
             file_node_mapper,
             diagnostics,
-            &mut storage_registered_structs,
+            &mut storage_structs,
         );
     }
 }
@@ -112,8 +112,8 @@ impl<'a> Pass<'a> {
     // storage forms of the types they store, and computes and registers the
     // types of the getter functions for public ones. Both need all struct
     // fields typed already, thus why this cannot happen concurrently with the
-    // typing of the definitions in the main pass. `storage_registered_structs`
-    // carries the structs already handled across files.
+    // typing of the definitions in the main pass. `storage_structs` carries
+    // the structs already handled across files.
     fn visit_file_state_variables(
         file: &'a impl SemanticFile,
         binder: &'a mut Binder,
@@ -121,7 +121,7 @@ impl<'a> Pass<'a> {
         types: &'a mut TypeRegistry,
         file_node_mapper: &'a FileNodeMapper,
         diagnostics: &'a mut DiagnosticCollection,
-        storage_registered_structs: &mut Set<NodeId>,
+        storage_structs: &mut Map<NodeId, bool>,
     ) {
         let mut pass = Self {
             scope_stack: Vec::new(),
@@ -133,13 +133,13 @@ impl<'a> Pass<'a> {
             current_receiver_type: None,
             nested_mappings_to_skip: 0,
         };
-        pass.type_state_variables_from(file.ir_root(), storage_registered_structs);
+        pass.type_state_variables_from(file.ir_root(), storage_structs);
     }
 
     fn type_state_variables_from(
         &mut self,
         source_unit: &ir::SourceUnit,
-        storage_registered_structs: &mut Set<NodeId>,
+        storage_structs: &mut Map<NodeId, bool>,
     ) {
         for source_unit_member in source_unit.members.iter() {
             let (receiver_type, members) = match source_unit_member {
@@ -169,14 +169,9 @@ impl<'a> Pass<'a> {
                 if matches!(
                     state_var_definition.attributes.mutability,
                     ir::StateVariableMutability::Mutable | ir::StateVariableMutability::Transient
-                ) {
-                    self.register_struct_member_types_in_storage(
-                        type_id,
-                        storage_registered_structs,
-                    );
-                    if self.stores_type_too_large_for_storage(type_id, &mut Set::default()) {
-                        self.push_diagnostic(state_var_definition, TypeTooLargeForStorage);
-                    }
+                ) && self.register_storage_types(type_id, storage_structs)
+                {
+                    self.push_diagnostic(state_var_definition, TypeTooLargeForStorage);
                 }
                 if !matches!(
                     state_var_definition.attributes.visibility,
