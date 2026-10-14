@@ -1108,6 +1108,11 @@ mod modifiers {
     }
 
     #[test]
+    fn path_via_derived_contract_name() -> Result<()> {
+        run("modifiers", "path_via_derived_contract_name")
+    }
+
+    #[test]
     fn simple() -> Result<()> {
         run("modifiers", "simple")
     }
@@ -1213,6 +1218,11 @@ mod structs {
     #[test]
     fn simple() -> Result<()> {
         run("structs", "simple")
+    }
+
+    #[test]
+    fn type_path_via_derived_contract_name() -> Result<()> {
+        run("structs", "type_path_via_derived_contract_name")
     }
 }
 
