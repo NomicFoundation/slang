@@ -2,10 +2,6 @@
 pragma solidity *;
 
 contract A {
-    struct S {
-        uint256 x;
-    }
-
     function f() internal pure returns (uint256) {
         return 1;
     }
@@ -20,11 +16,5 @@ contract C is B {
 
     function declared() internal pure returns (uint256) {
         return A.f();
-    }
-
-    // A type name still reaches inherited declarations.
-    function typeName() internal pure {
-        B.S memory s;
-        s;
     }
 }
