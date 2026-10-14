@@ -1,16 +1,14 @@
 mod node_extensions;
 mod serialize;
 mod storage_layout;
-mod types;
 
-use std::cmp::Ordering;
 use std::fmt;
 use std::sync::Arc;
 
 use sha3::{Digest, Keccak256};
 use slang_solidity_v2_common::files::FileId;
 use slang_solidity_v2_common::nodes::NodeId;
-use slang_solidity_v2_semantic::context::SemanticContext;
+use slang_solidity_v2_semantic::context::{AbiTypeSpelling, SemanticContext};
 use slang_solidity_v2_semantic::types::{FunctionTypeMutability, TypeId};
 
 pub(crate) use self::storage_layout::StorageKind;
@@ -18,9 +16,7 @@ pub use self::storage_layout::{
     StorageItem, StorageLayout, StorageMember, StoragePosition, StorageSize, StorageType,
     StorageTypeKind,
 };
-pub use self::types::{AbiType, NotAnAbiType, TupleComponent};
-use crate::abi::types::{is_abi_type, type_as_abi_type};
-use crate::ast::{Definition, Type};
+use crate::ast::Definition;
 
 /// Serializes as the JSON ABI, the array of its entries.
 pub struct ContractAbi {
@@ -28,10 +24,11 @@ pub struct ContractAbi {
     name: String,
     file_id: FileId,
     entries: Vec<AbiEntry>,
+    semantic: Arc<SemanticContext>,
 }
 
 impl ContractAbi {
-    /// Builds the ABI with its entries sorted, see [`AbiEntry`]'s `Ord`.
+    /// Builds the ABI with its entries in the order [`Self::entries`] describes.
     pub(crate) fn new(
         node_id: NodeId,
         name: String,
@@ -39,13 +36,14 @@ impl ContractAbi {
         mut entries: Vec<AbiEntry>,
         semantic: &Arc<SemanticContext>,
     ) -> Self {
-        entries.sort();
+        entries.sort_by(|this, other| this.sort_key().cmp(&other.sort_key()));
         order_overloads_by_selector(&mut entries, semantic);
         Self {
             node_id,
             name,
             file_id,
             entries,
+            semantic: Arc::clone(semantic),
         }
     }
 
@@ -61,6 +59,8 @@ impl ContractAbi {
         &self.file_id
     }
 
+    /// The entries as the JSON lists them: by `type`, then by name, with a function's overloads in
+    /// ascending selector order.
     pub fn entries(&self) -> &[AbiEntry] {
         &self.entries
     }
@@ -159,7 +159,8 @@ pub struct AbiFunction {
     inputs: Vec<AbiParameter>,
     outputs: Vec<AbiParameter>,
     state_mutability: AbiMutability,
-    type_spelling: TypeSpelling,
+    /// How the JSON spells the parameters' `type`.
+    type_spelling: AbiTypeSpelling,
 }
 
 impl AbiFunction {
@@ -184,21 +185,12 @@ impl AbiFunction {
     }
 }
 
-/// How a function's JSON parameter `type`s spell enums, contracts and interfaces.
-#[derive(Clone, Copy, Debug)]
-pub(crate) enum TypeSpelling {
-    /// `uint8` and `address`.
-    Canonical,
-    /// By name (`L.E`, `C`, `I[]`), as a library function's selector spells them.
-    ByName,
-}
-
-impl TypeSpelling {
-    pub(crate) fn of_function_in(enclosing_definition: Option<&Definition>) -> Self {
-        match enclosing_definition {
-            Some(Definition::Library(_)) => Self::ByName,
-            _ => Self::Canonical,
-        }
+/// How the JSON spells the parameter `type`s of a function declared in `enclosing_definition`:
+/// by name in a library, as its selectors do.
+pub(crate) fn json_type_spelling(enclosing_definition: Option<&Definition>) -> AbiTypeSpelling {
+    match enclosing_definition {
+        Some(Definition::Library(_)) => AbiTypeSpelling::LibraryJson,
+        _ => AbiTypeSpelling::Json,
     }
 }
 
@@ -239,62 +231,18 @@ impl AbiEntry {
             AbiEntry::Receive(inner) => inner.node_id(),
         }
     }
-}
 
-impl PartialEq for AbiEntry {
-    fn eq(&self, other: &Self) -> bool {
-        self.node_id() == other.node_id()
-    }
-}
-
-impl Eq for AbiEntry {}
-
-// The ordering defined by this implementation is alphabetical "type" + "name",
-// same as `solc`'s. For equal names we use the `node_id` as the tie breaker to
-// keep consistency with the `PartialEq` implementation; `ContractAbi::new` then
-// puts overloaded functions in ascending selector order.
-impl Ord for AbiEntry {
-    fn cmp(&self, other: &Self) -> Ordering {
-        match (self, other) {
-            (Self::Constructor(_), Self::Constructor(_))
-            | (Self::Fallback(_), Self::Fallback(_))
-            | (Self::Receive(_), Self::Receive(_)) => self.node_id().cmp(&other.node_id()),
-            (Self::Error(self_inner), Self::Error(other_inner)) => {
-                match self_inner.name.cmp(&other_inner.name) {
-                    Ordering::Equal => self.node_id().cmp(&other.node_id()),
-                    name_ordering => name_ordering,
-                }
-            }
-            (Self::Event(self_inner), Self::Event(other_inner)) => {
-                match self_inner.name.cmp(&other_inner.name) {
-                    Ordering::Equal => self.node_id().cmp(&other.node_id()),
-                    name_ordering => name_ordering,
-                }
-            }
-            (Self::Function(self_inner), Self::Function(other_inner)) => {
-                match self_inner.name.cmp(&other_inner.name) {
-                    Ordering::Equal => self.node_id().cmp(&other.node_id()),
-                    name_ordering => name_ordering,
-                }
-            }
-
-            (Self::Constructor(_), _) => Ordering::Less,
-            (_, Self::Constructor(_)) => Ordering::Greater,
-            (Self::Error(_), _) => Ordering::Less,
-            (_, Self::Error(_)) => Ordering::Greater,
-            (Self::Event(_), _) => Ordering::Less,
-            (_, Self::Event(_)) => Ordering::Greater,
-            (Self::Fallback(_), _) => Ordering::Less,
-            (_, Self::Fallback(_)) => Ordering::Greater,
-            (Self::Function(_), _) => Ordering::Less,
-            (_, Self::Function(_)) => Ordering::Greater,
+    /// Sorts by `type` and then name, as solc lists entries; the node id breaks ties, until
+    /// [`ContractAbi::new`] puts overloads in selector order.
+    fn sort_key(&self) -> (u8, Option<&str>, NodeId) {
+        match self {
+            AbiEntry::Constructor(inner) => (0, None, inner.node_id),
+            AbiEntry::Error(inner) => (1, Some(&inner.name), inner.node_id),
+            AbiEntry::Event(inner) => (2, Some(&inner.name), inner.node_id),
+            AbiEntry::Fallback(inner) => (3, None, inner.node_id),
+            AbiEntry::Function(inner) => (4, Some(&inner.name), inner.node_id),
+            AbiEntry::Receive(inner) => (5, None, inner.node_id),
         }
-    }
-}
-
-impl PartialOrd for AbiEntry {
-    fn partial_cmp(&self, other: &Self) -> Option<Ordering> {
-        Some(self.cmp(other))
     }
 }
 
@@ -328,86 +276,43 @@ fn overload_selector(entry: &AbiEntry, semantic: &Arc<SemanticContext>) -> u32 {
     selector.expect("a function in the ABI is externally visible")
 }
 
-/// A parameter of an ABI entry: a view over its semantic type, the way [`Type`] is. The ABI
-/// shape ([`Self::abi_type`]) and the spellings are rendered from the interned `TypeId` on
-/// request rather than stored.
-#[derive(Clone)]
+/// A parameter of an ABI entry. Its type's spellings are written from the interned `TypeId` when
+/// the ABI is serialized, rather than stored.
+#[derive(Clone, Debug)]
 pub struct AbiParameter {
-    node_id: Option<NodeId>, // will be `None` if the function is a generated getter
     name: Option<String>,
     type_id: TypeId,
     indexed: bool,
-    semantic: Arc<SemanticContext>,
 }
 
 impl AbiParameter {
     /// `None` when the type has no ABI representation, e.g. a mapping or a storage-only struct.
     pub(crate) fn new(
-        node_id: Option<NodeId>,
         name: Option<String>,
         type_id: TypeId,
         indexed: bool,
-        semantic: &Arc<SemanticContext>,
+        semantic: &SemanticContext,
     ) -> Option<Self> {
-        if !is_abi_type(semantic, type_id) {
+        if !semantic.has_abi_type(type_id) {
             return None;
         }
         Some(Self {
-            node_id,
             name,
             type_id,
             indexed,
-            semantic: Arc::clone(semantic),
         })
-    }
-
-    pub fn node_id(&self) -> Option<NodeId> {
-        self.node_id
     }
 
     pub fn name(&self) -> Option<&str> {
         self.name.as_deref()
     }
 
-    /// The Solidity type behind the parameter.
-    pub fn get_type(&self) -> Type {
-        Type::create(self.type_id, &self.semantic)
-    }
-
-    pub fn abi_type(&self) -> AbiType {
-        type_as_abi_type(&self.semantic, self.type_id).expect(
-            "the type was checked to have an ABI representation when the parameter was built",
-        )
-    }
-
-    /// The parameter's type rendered as its canonical-signature spelling — e.g.
-    /// `uint256`, `uint256[]`, or `(uint256,uint256)` for a struct. This is the
-    /// form used for selector/signature hashing, **not** the JSON-ABI `"type"`
-    /// field (structs there are `tuple`/`tuple[]`, see [`ContractAbi`]'s `Serialize`), nor
-    /// its `"internalType"` field, which is [`Self::internal_type`].
-    pub fn type_name(&self) -> String {
-        self.abi_type().to_string()
-    }
-
-    /// The type as solc's JSON-ABI `internalType` spells it: `struct C.S[]`, `enum C.E`,
-    /// `contract I`, `address payable`, a user-defined value type by name.
-    pub fn internal_type(&self) -> String {
-        self.semantic.type_abi_internal_name(self.type_id)
+    pub fn type_id(&self) -> TypeId {
+        self.type_id
     }
 
     pub fn indexed(&self) -> bool {
         self.indexed
-    }
-}
-
-impl fmt::Debug for AbiParameter {
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        f.debug_struct("AbiParameter")
-            .field("node_id", &self.node_id)
-            .field("name", &self.name)
-            .field("type_id", &self.type_id)
-            .field("indexed", &self.indexed)
-            .finish_non_exhaustive()
     }
 }
 

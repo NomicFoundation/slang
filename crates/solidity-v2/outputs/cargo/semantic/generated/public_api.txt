@@ -283,6 +283,38 @@ pub fn slang_solidity_v2_semantic::built_ins::InternalBuiltIn::hash<__H: core::h
 impl core::marker::Copy for slang_solidity_v2_semantic::built_ins::InternalBuiltIn
 impl core::marker::StructuralPartialEq for slang_solidity_v2_semantic::built_ins::InternalBuiltIn
 pub mod slang_solidity_v2_semantic::context
+pub enum slang_solidity_v2_semantic::context::AbiNameError
+pub slang_solidity_v2_semantic::context::AbiNameError::NoAbiName(slang_solidity_v2_semantic::types::TypeId)
+pub slang_solidity_v2_semantic::context::AbiNameError::Unresolved(slang_solidity_v2_common::nodes::NodeId)
+pub slang_solidity_v2_semantic::context::AbiNameError::Write(core::fmt::Error)
+impl core::clone::Clone for slang_solidity_v2_semantic::context::AbiNameError
+pub fn slang_solidity_v2_semantic::context::AbiNameError::clone(&self) -> slang_solidity_v2_semantic::context::AbiNameError
+impl core::cmp::Eq for slang_solidity_v2_semantic::context::AbiNameError
+impl core::cmp::PartialEq for slang_solidity_v2_semantic::context::AbiNameError
+pub fn slang_solidity_v2_semantic::context::AbiNameError::eq(&self, &slang_solidity_v2_semantic::context::AbiNameError) -> bool
+impl core::convert::From<core::fmt::Error> for slang_solidity_v2_semantic::context::AbiNameError
+pub fn slang_solidity_v2_semantic::context::AbiNameError::from(core::fmt::Error) -> Self
+impl core::error::Error for slang_solidity_v2_semantic::context::AbiNameError
+impl core::fmt::Debug for slang_solidity_v2_semantic::context::AbiNameError
+pub fn slang_solidity_v2_semantic::context::AbiNameError::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::fmt::Display for slang_solidity_v2_semantic::context::AbiNameError
+pub fn slang_solidity_v2_semantic::context::AbiNameError::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::Copy for slang_solidity_v2_semantic::context::AbiNameError
+impl core::marker::StructuralPartialEq for slang_solidity_v2_semantic::context::AbiNameError
+pub enum slang_solidity_v2_semantic::context::AbiTypeSpelling
+pub slang_solidity_v2_semantic::context::AbiTypeSpelling::Json
+pub slang_solidity_v2_semantic::context::AbiTypeSpelling::LibraryJson
+pub slang_solidity_v2_semantic::context::AbiTypeSpelling::LibrarySelector
+pub slang_solidity_v2_semantic::context::AbiTypeSpelling::Selector
+impl core::clone::Clone for slang_solidity_v2_semantic::context::AbiTypeSpelling
+pub fn slang_solidity_v2_semantic::context::AbiTypeSpelling::clone(&self) -> slang_solidity_v2_semantic::context::AbiTypeSpelling
+impl core::cmp::Eq for slang_solidity_v2_semantic::context::AbiTypeSpelling
+impl core::cmp::PartialEq for slang_solidity_v2_semantic::context::AbiTypeSpelling
+pub fn slang_solidity_v2_semantic::context::AbiTypeSpelling::eq(&self, &slang_solidity_v2_semantic::context::AbiTypeSpelling) -> bool
+impl core::fmt::Debug for slang_solidity_v2_semantic::context::AbiTypeSpelling
+pub fn slang_solidity_v2_semantic::context::AbiTypeSpelling::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::Copy for slang_solidity_v2_semantic::context::AbiTypeSpelling
+impl core::marker::StructuralPartialEq for slang_solidity_v2_semantic::context::AbiTypeSpelling
 pub enum slang_solidity_v2_semantic::context::ContractReference
 pub slang_solidity_v2_semantic::context::ContractReference::CodeAccess(slang_solidity_v2_ir::ir::nodes::MemberAccessExpression)
 pub slang_solidity_v2_semantic::context::ContractReference::New(slang_solidity_v2_ir::ir::nodes::NewExpression)
@@ -341,7 +373,6 @@ pub fn slang_solidity_v2_semantic::context::SemanticContext::types(&self) -> &sl
 impl slang_solidity_v2_semantic::context::SemanticContext
 pub fn slang_solidity_v2_semantic::context::SemanticContext::contract_dependencies(&self) -> slang_solidity_v2_common::collections::aliases::SortedMap<slang_solidity_v2_common::nodes::NodeId, slang_solidity_v2_common::collections::aliases::SortedMap<slang_solidity_v2_common::nodes::NodeId, slang_solidity_v2_semantic::context::ContractReference>>
 pub fn slang_solidity_v2_semantic::context::SemanticContext::creation_bytecode_dependencies(&self) -> &slang_solidity_v2_common::collections::aliases::SortedMap<slang_solidity_v2_common::nodes::NodeId, slang_solidity_v2_common::collections::aliases::SortedMap<slang_solidity_v2_common::nodes::NodeId, slang_solidity_v2_semantic::context::ContractReference>>
-pub fn slang_solidity_v2_semantic::context::SemanticContext::definition_canonical_name(&self, slang_solidity_v2_common::nodes::NodeId) -> alloc::string::String
 pub fn slang_solidity_v2_semantic::context::SemanticContext::deployed_bytecode_dependencies(&self) -> &slang_solidity_v2_common::collections::aliases::SortedMap<slang_solidity_v2_common::nodes::NodeId, slang_solidity_v2_common::collections::aliases::SortedMap<slang_solidity_v2_common::nodes::NodeId, slang_solidity_v2_semantic::context::ContractReference>>
 pub fn slang_solidity_v2_semantic::context::SemanticContext::file_id_from_node_id(&self, slang_solidity_v2_common::nodes::NodeId) -> &slang_solidity_v2_common::files::FileId
 pub fn slang_solidity_v2_semantic::context::SemanticContext::linearised_errors(&self, slang_solidity_v2_common::nodes::NodeId) -> &[slang_solidity_v2_ir::ir::nodes::ErrorDefinition]
@@ -350,11 +381,17 @@ pub fn slang_solidity_v2_semantic::context::SemanticContext::linearised_function
 pub fn slang_solidity_v2_semantic::context::SemanticContext::linearised_state_variables(&self, slang_solidity_v2_common::nodes::NodeId) -> &[slang_solidity_v2_ir::ir::nodes::StateVariableDefinition]
 pub fn slang_solidity_v2_semantic::context::SemanticContext::resolve_reference_identifier_to_definition_id(&self, slang_solidity_v2_common::nodes::NodeId) -> core::option::Option<slang_solidity_v2_common::nodes::NodeId>
 pub fn slang_solidity_v2_semantic::context::SemanticContext::resolve_reference_identifier_to_immediate_definition_id(&self, slang_solidity_v2_common::nodes::NodeId) -> core::option::Option<slang_solidity_v2_common::nodes::NodeId>
-pub fn slang_solidity_v2_semantic::context::SemanticContext::type_abi_internal_name(&self, slang_solidity_v2_semantic::types::TypeId) -> alloc::string::String
-pub fn slang_solidity_v2_semantic::context::SemanticContext::type_internal_name(&self, slang_solidity_v2_semantic::types::TypeId) -> alloc::string::String
-pub fn slang_solidity_v2_semantic::context::SemanticContext::type_library_name(&self, slang_solidity_v2_semantic::types::TypeId) -> core::option::Option<alloc::string::String>
 pub fn slang_solidity_v2_semantic::context::SemanticContext::used_errors(&self, slang_solidity_v2_common::nodes::NodeId) -> &[slang_solidity_v2_ir::ir::nodes::ErrorDefinition]
 pub fn slang_solidity_v2_semantic::context::SemanticContext::used_events(&self, slang_solidity_v2_common::nodes::NodeId) -> &[slang_solidity_v2_ir::ir::nodes::EventDefinition]
+impl slang_solidity_v2_semantic::context::SemanticContext
+pub fn slang_solidity_v2_semantic::context::SemanticContext::definition_canonical_name(&self, slang_solidity_v2_common::nodes::NodeId) -> alloc::string::String
+pub fn slang_solidity_v2_semantic::context::SemanticContext::has_abi_type(&self, slang_solidity_v2_semantic::types::TypeId) -> bool
+pub fn slang_solidity_v2_semantic::context::SemanticContext::type_abi_internal_name(&self, slang_solidity_v2_semantic::types::TypeId) -> alloc::string::String
+pub fn slang_solidity_v2_semantic::context::SemanticContext::type_internal_name(&self, slang_solidity_v2_semantic::types::TypeId) -> alloc::string::String
+pub fn slang_solidity_v2_semantic::context::SemanticContext::write_definition_canonical_name(&self, slang_solidity_v2_common::nodes::NodeId, &mut impl core::fmt::Write) -> core::fmt::Result
+pub fn slang_solidity_v2_semantic::context::SemanticContext::write_type_abi_internal_name(&self, slang_solidity_v2_semantic::types::TypeId, &mut impl core::fmt::Write) -> core::fmt::Result
+pub fn slang_solidity_v2_semantic::context::SemanticContext::write_type_abi_name(&self, slang_solidity_v2_semantic::types::TypeId, slang_solidity_v2_semantic::context::AbiTypeSpelling, &mut impl core::fmt::Write) -> core::result::Result<(), slang_solidity_v2_semantic::context::AbiNameError>
+pub fn slang_solidity_v2_semantic::context::SemanticContext::write_type_internal_name(&self, slang_solidity_v2_semantic::types::TypeId, &mut impl core::fmt::Write) -> core::fmt::Result
 impl slang_solidity_v2_semantic::context::SemanticContext
 pub fn slang_solidity_v2_semantic::context::SemanticContext::resolve_modifier(&self, slang_solidity_v2_common::nodes::NodeId, &slang_solidity_v2_ir::ir::nodes::ModifierInvocation) -> core::option::Option<&slang_solidity_v2_ir::ir::nodes::FunctionDefinition>
 pub fn slang_solidity_v2_semantic::context::SemanticContext::resolve_super<'a>(&'a self, slang_solidity_v2_common::nodes::NodeId, &'a slang_solidity_v2_ir::ir::nodes::FunctionDefinition, slang_solidity_v2_common::nodes::NodeId) -> core::option::Option<&'a slang_solidity_v2_ir::ir::nodes::FunctionDefinition>
