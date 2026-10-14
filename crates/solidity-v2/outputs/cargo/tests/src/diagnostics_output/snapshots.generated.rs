@@ -55,6 +55,14 @@ mod resolution {
         }
 
         #[test]
+        fn external_overloads_on_array_element_type() -> Result<()> {
+            run(
+                "resolution/ambiguous_reference",
+                "external_overloads_on_array_element_type",
+            )
+        }
+
+        #[test]
         fn member_call_not_unique() -> Result<()> {
             run("resolution/ambiguous_reference", "member_call_not_unique")
         }
@@ -1416,6 +1424,22 @@ mod resolution {
             run(
                 "resolution/member_not_found",
                 "address_on_internal_function",
+            )
+        }
+
+        #[test]
+        fn attached_array_with_narrower_elements() -> Result<()> {
+            run(
+                "resolution/member_not_found",
+                "attached_array_with_narrower_elements",
+            )
+        }
+
+        #[test]
+        fn attached_struct_array_across_locations() -> Result<()> {
+            run(
+                "resolution/member_not_found",
+                "attached_struct_array_across_locations",
             )
         }
 
