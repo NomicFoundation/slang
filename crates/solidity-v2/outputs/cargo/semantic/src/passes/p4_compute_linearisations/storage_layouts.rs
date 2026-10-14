@@ -38,6 +38,8 @@ pub(super) fn compute_storage_layouts(
         unreachable!("definition is not a contract");
     };
 
+    // TODO(validation) SDR[2]: it is an error if any contract in the hierarchy
+    // other than the leaf has a custom offset layout
     let persistent = match (&contract.storage_layout, definition.base_slot) {
         // A base slot that failed to evaluate is already reported.
         (Some(_), None) => None,
@@ -93,7 +95,14 @@ fn lay_out(
     mutability: ir::StateVariableMutability,
     state_variables: &[ir::StateVariableDefinition],
 ) -> Result<Vec<StateVariablePosition>, NoStorageSize> {
-    let mut positions = Vec::new();
+    let count = state_variables
+        .iter()
+        .filter(|state_variable| state_variable.attributes.mutability == mutability)
+        .count();
+    if count == 0 {
+        return Ok(Vec::new());
+    }
+    let mut positions = Vec::with_capacity(count);
     let mut builder = StorageLayoutBuilder::new(base_slot);
     for state_variable in state_variables {
         if state_variable.attributes.mutability != mutability {

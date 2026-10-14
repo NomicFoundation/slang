@@ -13,7 +13,6 @@ use slang_solidity_v2_common::nodes::NodeId;
 use slang_solidity_v2_semantic::context::SemanticContext;
 use slang_solidity_v2_semantic::types::{FunctionTypeMutability, TypeId};
 
-pub(crate) use self::storage_layout::StorageKind;
 pub use self::storage_layout::{
     StorageItem, StorageLayout, StorageMember, StoragePosition, StorageSize, StorageType,
     StorageTypeKind,
