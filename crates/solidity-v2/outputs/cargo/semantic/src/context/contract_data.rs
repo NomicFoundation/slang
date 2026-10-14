@@ -4,6 +4,8 @@ use slang_solidity_v2_common::collections::{Map, SortedMap};
 use slang_solidity_v2_common::nodes::NodeId;
 use slang_solidity_v2_ir::ir;
 
+use super::StateVariablePosition;
+
 /// Pre-computed member linearisations for a single contract or interface.
 #[allow(clippy::struct_field_names)]
 #[derive(Default)]
@@ -12,6 +14,11 @@ pub(crate) struct ContractLinearisations {
     pub(crate) state_variables: Vec<ir::StateVariableDefinition>,
     pub(crate) errors: Vec<ir::ErrorDefinition>,
     pub(crate) events: Vec<ir::EventDefinition>,
+    /// The persistent storage layout of a contract, `None` for an interface
+    /// or when it cannot be computed.
+    pub(crate) storage_layout: Option<Vec<StateVariablePosition>>,
+    /// The same for the transient storage layout.
+    pub(crate) transient_storage_layout: Option<Vec<StateVariablePosition>>,
 }
 
 /// An expression embedding another contract's bytecode.
@@ -167,6 +174,17 @@ impl ContractData {
         contract_id: NodeId,
     ) -> &[ir::StateVariableDefinition] {
         &self.get(contract_id).state_variables
+    }
+
+    pub(super) fn storage_layout(&self, contract_id: NodeId) -> Option<&[StateVariablePosition]> {
+        self.get(contract_id).storage_layout.as_deref()
+    }
+
+    pub(super) fn transient_storage_layout(
+        &self,
+        contract_id: NodeId,
+    ) -> Option<&[StateVariablePosition]> {
+        self.get(contract_id).transient_storage_layout.as_deref()
     }
 
     pub(super) fn linearised_errors(&self, contract_id: NodeId) -> &[ir::ErrorDefinition] {

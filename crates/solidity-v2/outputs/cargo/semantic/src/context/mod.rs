@@ -15,8 +15,8 @@ use slang_solidity_v2_common::versions::LanguageVersion;
 use slang_solidity_v2_ir::ir;
 pub(crate) use storage_layout::{NoStorageSize, StorageAnalyzer};
 pub use storage_layout::{
-    StorageLayoutBuilder, StorageMember, StoragePosition, StorageSize, StorageTypeKind,
-    StorageTypeLayout, StorageTypeTable,
+    StateVariablePosition, StorageLayoutBuilder, StorageMember, StoragePosition, StorageSize,
+    StorageTypeKind, StorageTypeLayout, StorageTypeTable,
 };
 
 use crate::binder::{Binder, BinderCapacities, Definition, Reference};
@@ -272,6 +272,22 @@ impl SemanticContext {
     /// or interface definition.
     pub fn linearised_errors(&self, contract_id: NodeId) -> &[ir::ErrorDefinition] {
         self.contract_data.linearised_errors(contract_id)
+    }
+
+    /// Returns the pre-computed positions of the persistent state variables in
+    /// the given contract's storage, in layout order. `None` when they don't
+    /// fit in storage or a variable cannot be stored. `contract_id` must be a
+    /// registered contract definition.
+    pub fn storage_layout(&self, contract_id: NodeId) -> Option<&[StateVariablePosition]> {
+        self.contract_data.storage_layout(contract_id)
+    }
+
+    /// The same as [`Self::storage_layout`], for the transient state variables.
+    pub fn transient_storage_layout(
+        &self,
+        contract_id: NodeId,
+    ) -> Option<&[StateVariablePosition]> {
+        self.contract_data.transient_storage_layout(contract_id)
     }
 
     /// Returns the pre-computed list of events visible in the given contract's

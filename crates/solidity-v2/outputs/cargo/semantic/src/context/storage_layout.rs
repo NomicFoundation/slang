@@ -38,6 +38,31 @@ pub struct StoragePosition {
     pub offset: usize,
 }
 
+/// A state variable's position in a contract's storage layout, with its type.
+#[derive(Clone, Debug)]
+pub struct StateVariablePosition {
+    pub(crate) state_variable: ir::StateVariableDefinition,
+    pub(crate) type_id: TypeId,
+    pub(crate) position: StoragePosition,
+}
+
+impl StateVariablePosition {
+    /// The state variable.
+    pub fn state_variable(&self) -> &ir::StateVariableDefinition {
+        &self.state_variable
+    }
+
+    /// The state variable's type.
+    pub fn type_id(&self) -> TypeId {
+        self.type_id
+    }
+
+    /// Where the state variable starts in storage.
+    pub fn position(&self) -> StoragePosition {
+        self.position
+    }
+}
+
 /// The output type of `storage_type_table`, used to compute the type table for
 /// a contract storage layout.
 pub type StorageTypeTable<T> = SortedMap<TypeId, T>;
