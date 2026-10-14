@@ -38,7 +38,9 @@ use crate::types::TypeRegistry;
 ///   state variables, errors and events visible in its hierarchy, stored in a
 ///   `ContractData` (see [`linearisations`]); and
 /// - lay out each contract's state variables in storage, also stored in the
-///   `ContractData` (see [`storage_layouts`]).
+///   `ContractData`, reporting `ContractTooLargeForStorage` or
+///   `StorageLayoutBasePastEnd` when they extend past the end of storage (see
+///   [`storage_layouts`]).
 ///
 /// The two are independent traversals with different needs: the checks fold
 /// the bases' members into per-name state, driven by a [`HierarchyChecker`],
@@ -108,6 +110,8 @@ pub fn run(
                 ) = compute_storage_layouts(
                     binder,
                     types,
+                    file_node_mapper,
+                    diagnostics,
                     &contract.ir_node,
                     &linearisations.state_variables,
                 );

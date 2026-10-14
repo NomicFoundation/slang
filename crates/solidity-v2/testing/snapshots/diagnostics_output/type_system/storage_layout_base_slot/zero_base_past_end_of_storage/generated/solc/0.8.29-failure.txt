@@ -1,0 +1,13 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 1
+
+[TypeError 7676] Error: Contract requires too much storage.
+   ╭─[input.sol:6:1]
+   │
+ 6 │ ╭─▶ contract C layout at 0 {
+   ┆ ┆   
+ 9 │ ├─▶ }
+   │ │       
+   │ ╰─────── Error occurred here.
+───╯
