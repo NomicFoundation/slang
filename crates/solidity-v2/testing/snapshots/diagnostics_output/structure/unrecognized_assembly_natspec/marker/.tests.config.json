@@ -1,8 +1,0 @@
-{
-  "expected_solc_divergence": [
-    {
-      "specifier": { "type": "From", "from": "0.8.31" },
-      "reason": "solc deprecates the comment, in favor of the 'memory-safe' flag, but slang doesn't report deprecations."
-    }
-  ]
-}

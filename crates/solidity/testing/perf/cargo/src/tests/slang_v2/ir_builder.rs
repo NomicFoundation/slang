@@ -1,3 +1,4 @@
+use slang_solidity_v2_common::diagnostics::DiagnosticSeverity;
 use slang_solidity_v2_common::versions::LanguageVersion;
 use slang_solidity_v2_cst::structured_cst::nodes::SourceUnit as InputSourceUnit;
 use slang_solidity_v2_ir::ir::visitor::{Visitor, accept_source_unit};
@@ -65,9 +66,11 @@ pub fn test(input: Input) -> Output {
             &mut id_generator,
         );
 
-        assert!(
-            diagnostics.is_empty(),
-            "IR builder produced diagnostics: {diagnostics:#?}"
+        // Warnings are fine, like the deprecated `@solidity memory-safe-assembly` comment
+        assert_ne!(
+            diagnostics.highest_severity(),
+            Some(DiagnosticSeverity::Error),
+            "IR builder produced errors: {diagnostics:#?}"
         );
 
         node_kinds.absorb(id_generator.histogram());
