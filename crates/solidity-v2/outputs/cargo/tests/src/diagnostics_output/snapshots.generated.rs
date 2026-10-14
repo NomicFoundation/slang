@@ -6345,6 +6345,14 @@ mod type_system {
         }
 
         #[test]
+        fn struct_partial_last_slot() -> Result<()> {
+            run(
+                "type_system/type_too_large_for_storage",
+                "struct_partial_last_slot",
+            )
+        }
+
+        #[test]
         fn struct_variable() -> Result<()> {
             run("type_system/type_too_large_for_storage", "struct_variable")
         }

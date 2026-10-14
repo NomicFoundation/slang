@@ -134,6 +134,9 @@ impl ContractDefinitionStruct {
         });
         let mut items = Vec::new();
         let mut builder = StorageLayoutBuilder::new(base_slot);
+        // TODO: we can probably pre-calculate the storage layout in p8 (see
+        // `storage_size::fits_in_storage` module) when checking if it fits in
+        // storage, and use the cached entries here.
         for state_variable in variables {
             let node_id = state_variable.ir_node.id();
             let variable_type_id = self.semantic.binder().node_typing(node_id).as_type_id()?;

@@ -78,9 +78,11 @@ fn fits_in_storage(
             continue;
         }
         let Some(type_id) = binder.node_typing(state_variable.id()).as_type_id() else {
+            // Typing failed, error already reported elsewhere
             return true;
         };
         let Ok(size) = analyzer.storage_size(type_id) else {
+            // Type too big, error already reported elsewhere
             return true;
         };
         if builder.allocate(size).is_none() {
