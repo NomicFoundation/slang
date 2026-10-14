@@ -49,6 +49,31 @@ pub struct StoragePosition {
     pub offset: usize,
 }
 
+/// A state variable's position in a contract's storage layout, with its type.
+#[derive(Clone, Debug)]
+pub struct StateVariablePosition {
+    pub(crate) state_variable: ir::StateVariableDefinition,
+    pub(crate) type_id: TypeId,
+    pub(crate) position: StoragePosition,
+}
+
+impl StateVariablePosition {
+    /// The state variable.
+    pub fn state_variable(&self) -> &ir::StateVariableDefinition {
+        &self.state_variable
+    }
+
+    /// The state variable's type.
+    pub fn type_id(&self) -> TypeId {
+        self.type_id
+    }
+
+    /// Where the state variable starts in storage.
+    pub fn position(&self) -> StoragePosition {
+        self.position
+    }
+}
+
 /// The output type of `storage_type_table`, used to compute the type table for
 /// a contract storage layout.
 pub type StorageTypeTable<T> = SortedMap<TypeId, T>;
@@ -139,13 +164,13 @@ impl StorageVariable {
 /// Assigns each state variable or struct member its storage position in
 /// declaration order, packing [`StorageSize::Bytes`] values into a shared slot
 /// and slot-aligning [`StorageSize::Slots`] aggregates.
-pub struct StorageLayoutBuilder {
+pub(crate) struct StorageLayoutBuilder {
     slot: U256,
     byte_offset: usize,
 }
 
 impl StorageLayoutBuilder {
-    pub fn new(base_slot: U256) -> Self {
+    pub(crate) fn new(base_slot: U256) -> Self {
         Self {
             slot: base_slot,
             byte_offset: 0,
@@ -155,7 +180,7 @@ impl StorageLayoutBuilder {
     /// Allocates the next item, returning its [`StoragePosition`] and advancing
     /// past it. Returns `None` when the item would extend past the end of
     /// storage.
-    pub fn allocate(&mut self, size: StorageSize) -> Option<StoragePosition> {
+    pub(crate) fn allocate(&mut self, size: StorageSize) -> Option<StoragePosition> {
         match size {
             StorageSize::Slots(count) => {
                 // Aggregates start on a fresh slot, so finish the current one.
@@ -193,7 +218,7 @@ impl StorageLayoutBuilder {
     /// The number of whole slots consumed, rounding a partially-filled final
     /// slot up to a slot boundary. `None` if that rounding runs past the end
     /// of storage.
-    fn slots_used(&self) -> Option<U256> {
+    pub(crate) fn slots_used(&self) -> Option<U256> {
         if self.byte_offset > 0 {
             self.slot.checked_add(U256::from(1))
         } else {
