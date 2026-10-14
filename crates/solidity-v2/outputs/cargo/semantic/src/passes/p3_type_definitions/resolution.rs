@@ -7,7 +7,8 @@ use slang_solidity_v2_common::diagnostics::kinds::resolution::{
 };
 use slang_solidity_v2_common::diagnostics::kinds::type_system::{
     ArrayLengthFractional, ArrayLengthNegative, ArrayLengthNotConstant, ArrayLengthTooLarge,
-    ArrayLengthZero,
+    ArrayLengthZero, StorageLayoutBaseNonInteger, StorageLayoutBaseNotConstant,
+    StorageLayoutBaseOutOfRange,
 };
 use slang_solidity_v2_ir::ir;
 use slang_solidity_v2_ir::ir::{NodeIdentity, TextRange};
@@ -93,6 +94,58 @@ impl Pass<'_> {
             return U256::ZERO;
         };
         size
+    }
+
+    /// Resolves and validates a contract's `layout at <expr>` storage base
+    /// slot via the constant evaluator, emitting diagnostics on failure.
+    pub(super) fn resolve_storage_base_slot(
+        &mut self,
+        node: &ir::ContractDefinition,
+        base_slot_expression: &ir::Expression,
+    ) {
+        let value = match evaluate_compile_time_constant(
+            base_slot_expression,
+            self.current_contract_or_file_scope_id(),
+            self.types,
+            &ConstantResolver {
+                binder: self.binder,
+                // Base slots may reference constants declared anywhere.
+                use_site: None,
+            },
+        ) {
+            Ok(value) => value,
+            Err(EvaluationError::Diagnostic { kind, expression }) => {
+                // Report at the failing operation, falling back to the base
+                // slot expression when the evaluator didn't attach one.
+                self.push_diagnostic(expression.as_ref().unwrap_or(base_slot_expression), kind);
+                return;
+            }
+            Err(EvaluationError::CouldNotEvaluate) => {
+                self.push_diagnostic(base_slot_expression, StorageLayoutBaseNotConstant);
+                return;
+            }
+        };
+
+        // Classify the value: non-integer, then out of range (negative or too large).
+        let Some(integer) = value.into_integer() else {
+            self.push_diagnostic(base_slot_expression, StorageLayoutBaseNonInteger);
+            return;
+        };
+        let Ok(base_slot) = U256::try_from(&integer) else {
+            self.push_diagnostic(
+                base_slot_expression,
+                StorageLayoutBaseOutOfRange {
+                    value: integer.to_string(),
+                },
+            );
+            return;
+        };
+
+        let Definition::Contract(contract_definition) = self.binder.get_definition_mut(node.id())
+        else {
+            unreachable!("the definition is not a contract");
+        };
+        contract_definition.base_slot = Some(base_slot);
     }
 
     /// Emits `kind` located at `node`.

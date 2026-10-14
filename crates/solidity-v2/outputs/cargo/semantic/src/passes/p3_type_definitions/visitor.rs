@@ -28,6 +28,10 @@ impl Visitor for Pass<'_> {
     }
 
     fn enter_contract_definition(&mut self, node: &ir::ContractDefinition) -> bool {
+        // The base slot resolves in the file scope, outside the contract.
+        if let Some(storage_layout) = &node.storage_layout {
+            self.resolve_storage_base_slot(node, storage_layout);
+        }
         self.enter_scope_for_node_id(node.id());
 
         let type_id = self.types.register_type(Type::Contract(ContractType {
