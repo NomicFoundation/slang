@@ -18,7 +18,7 @@ use crate::passes::common::constant_evaluator::{
     ConstantResolver, EvaluationError, evaluate_compile_time_constant,
 };
 use crate::passes::common::{
-    node_location, resolve_identifier_path_in_scope, resolve_member_path_in_scope,
+    node_location, resolve_identifier_path_in_scope, resolve_type_member_path_in_scope,
 };
 use crate::types::{
     ArrayType, DataLocation, FixedSizeArrayType, FunctionType, MappingType, TupleType, Type, TypeId,
@@ -38,14 +38,12 @@ impl Pass<'_> {
         resolve_identifier_path_in_scope(self.binder, identifier_path, starting_scope_id)
     }
 
-    // Same as `resolve_identifier_path`, for the event of an `emit` or the
-    // error of a `revert`.
-    pub(super) fn resolve_member_path(
+    pub(super) fn resolve_type_member_path(
         &mut self,
         identifier_path: &ir::IdentifierPath,
     ) -> Resolution {
         let starting_scope_id = self.current_contract_or_file_scope_id();
-        resolve_member_path_in_scope(self.binder, identifier_path, starting_scope_id)
+        resolve_type_member_path_in_scope(self.binder, identifier_path, starting_scope_id)
     }
 
     pub(super) fn resolve_parameter_types(
