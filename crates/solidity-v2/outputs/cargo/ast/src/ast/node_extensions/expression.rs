@@ -1,6 +1,26 @@
 use super::super::{ElementaryType, Expression, Type};
 
 impl Expression {
+    /// Strips any parentheses around this expression, which are represented as
+    /// single-element tuples: `((x))` unwraps to `x`, and `((a, b))` to `(a, b)`.
+    /// Other expressions are returned as is.
+    #[must_use]
+    pub fn unwrap_singleton_tuple(&self) -> Expression {
+        let mut expression = self.clone();
+        while let Expression::TupleExpression(tuple) = &expression {
+            let items = tuple.items();
+            if items.len() != 1 {
+                break;
+            }
+            expression = items
+                .iter()
+                .next()
+                .and_then(|item| item.expression())
+                .expect("the parser never produces a single omitted component");
+        }
+        expression
+    }
+
     /// Returns the type assigned to this expression by the typing pass, or
     /// `None` when no type was recorded for the underlying node.
     pub fn get_type(&self) -> Option<Type> {
