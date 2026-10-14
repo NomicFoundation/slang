@@ -6,6 +6,7 @@ mod bytecode_dependencies;
 mod common_operand;
 mod definition_references;
 mod enclosing_definition;
+mod expression;
 mod identifier_path_resolution;
 mod is_payable;
 mod json;
