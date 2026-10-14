@@ -95,6 +95,11 @@ fn find_version_pragmas(source: &str) -> Vec<ir::VersionPragma> {
             LexemeKind::PragmaKeyword_Reserved => {
                 directive_start = Some(lexeme.range.start);
             }
+            // A `pragma` lexeme within the Pragma context resets the current directive,
+            // this helps to correctly extract versions from invalid Solidity files
+            LexemeKind::PragmaIdentifier if &source[lexeme.range.clone()] == "pragma" => {
+                directive_start = Some(lexeme.range.start);
+            }
             LexemeKind::PragmaSemicolon => {
                 if let Some(start) = directive_start.take() {
                     let directive = &source[start..lexeme.range.end];
