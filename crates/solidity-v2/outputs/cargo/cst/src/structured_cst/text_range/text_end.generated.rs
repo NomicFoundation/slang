@@ -2893,6 +2893,12 @@ impl TextEnd for PragmaPeriod {
     }
 }
 
+impl TextEnd for PragmaPragmaKeyword {
+    fn calculate_text_end(&self) -> Option<usize> {
+        Some(self.range.end)
+    }
+}
+
 impl TextEnd for PragmaSemicolon {
     fn calculate_text_end(&self) -> Option<usize> {
         Some(self.range.end)

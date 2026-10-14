@@ -2955,6 +2955,15 @@ pub fn slang_solidity_v2_cst::structured_cst::nodes::PragmaPeriod::fmt(&self, &m
 impl core::marker::StructuralPartialEq for slang_solidity_v2_cst::structured_cst::nodes::PragmaPeriod
 impl slang_solidity_v2_cst::structured_cst::TextRange for slang_solidity_v2_cst::structured_cst::nodes::PragmaPeriod
 pub fn slang_solidity_v2_cst::structured_cst::nodes::PragmaPeriod::calculate_text_range(&self) -> core::option::Option<core::ops::range::Range<usize>>
+pub struct slang_solidity_v2_cst::structured_cst::nodes::PragmaPragmaKeyword
+pub slang_solidity_v2_cst::structured_cst::nodes::PragmaPragmaKeyword::range: core::ops::range::Range<usize>
+impl core::cmp::PartialEq for slang_solidity_v2_cst::structured_cst::nodes::PragmaPragmaKeyword
+pub fn slang_solidity_v2_cst::structured_cst::nodes::PragmaPragmaKeyword::eq(&self, &slang_solidity_v2_cst::structured_cst::nodes::PragmaPragmaKeyword) -> bool
+impl core::fmt::Debug for slang_solidity_v2_cst::structured_cst::nodes::PragmaPragmaKeyword
+pub fn slang_solidity_v2_cst::structured_cst::nodes::PragmaPragmaKeyword::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::StructuralPartialEq for slang_solidity_v2_cst::structured_cst::nodes::PragmaPragmaKeyword
+impl slang_solidity_v2_cst::structured_cst::TextRange for slang_solidity_v2_cst::structured_cst::nodes::PragmaPragmaKeyword
+pub fn slang_solidity_v2_cst::structured_cst::nodes::PragmaPragmaKeyword::calculate_text_range(&self) -> core::option::Option<core::ops::range::Range<usize>>
 pub struct slang_solidity_v2_cst::structured_cst::nodes::PragmaSemicolon
 pub slang_solidity_v2_cst::structured_cst::nodes::PragmaSemicolon::range: core::ops::range::Range<usize>
 impl core::cmp::PartialEq for slang_solidity_v2_cst::structured_cst::nodes::PragmaSemicolon
@@ -4761,6 +4770,7 @@ pub fn slang_solidity_v2_cst::structured_cst::nodes::new_pragma_less_than(core::
 pub fn slang_solidity_v2_cst::structured_cst::nodes::new_pragma_less_than_equal(core::ops::range::Range<usize>, &str) -> slang_solidity_v2_cst::structured_cst::nodes::PragmaLessThanEqual
 pub fn slang_solidity_v2_cst::structured_cst::nodes::new_pragma_minus(core::ops::range::Range<usize>, &str) -> slang_solidity_v2_cst::structured_cst::nodes::PragmaMinus
 pub fn slang_solidity_v2_cst::structured_cst::nodes::new_pragma_period(core::ops::range::Range<usize>, &str) -> slang_solidity_v2_cst::structured_cst::nodes::PragmaPeriod
+pub fn slang_solidity_v2_cst::structured_cst::nodes::new_pragma_pragma_keyword(core::ops::range::Range<usize>, &str) -> slang_solidity_v2_cst::structured_cst::nodes::PragmaPragmaKeyword
 pub fn slang_solidity_v2_cst::structured_cst::nodes::new_pragma_semicolon(core::ops::range::Range<usize>, &str) -> slang_solidity_v2_cst::structured_cst::nodes::PragmaSemicolon
 pub fn slang_solidity_v2_cst::structured_cst::nodes::new_pragma_string_literal(core::ops::range::Range<usize>, &str) -> slang_solidity_v2_cst::structured_cst::nodes::PragmaStringLiteral
 pub fn slang_solidity_v2_cst::structured_cst::nodes::new_pragma_tilde(core::ops::range::Range<usize>, &str) -> slang_solidity_v2_cst::structured_cst::nodes::PragmaTilde
@@ -5669,6 +5679,8 @@ impl slang_solidity_v2_cst::structured_cst::TextRange for slang_solidity_v2_cst:
 pub fn slang_solidity_v2_cst::structured_cst::nodes::PragmaMinus::calculate_text_range(&self) -> core::option::Option<core::ops::range::Range<usize>>
 impl slang_solidity_v2_cst::structured_cst::TextRange for slang_solidity_v2_cst::structured_cst::nodes::PragmaPeriod
 pub fn slang_solidity_v2_cst::structured_cst::nodes::PragmaPeriod::calculate_text_range(&self) -> core::option::Option<core::ops::range::Range<usize>>
+impl slang_solidity_v2_cst::structured_cst::TextRange for slang_solidity_v2_cst::structured_cst::nodes::PragmaPragmaKeyword
+pub fn slang_solidity_v2_cst::structured_cst::nodes::PragmaPragmaKeyword::calculate_text_range(&self) -> core::option::Option<core::ops::range::Range<usize>>
 impl slang_solidity_v2_cst::structured_cst::TextRange for slang_solidity_v2_cst::structured_cst::nodes::PragmaSemicolon
 pub fn slang_solidity_v2_cst::structured_cst::nodes::PragmaSemicolon::calculate_text_range(&self) -> core::option::Option<core::ops::range::Range<usize>>
 impl slang_solidity_v2_cst::structured_cst::TextRange for slang_solidity_v2_cst::structured_cst::nodes::PragmaStringLiteral
@@ -6533,6 +6545,8 @@ impl slang_solidity_v2_cst::structured_cst::TextRange for slang_solidity_v2_cst:
 pub fn slang_solidity_v2_cst::structured_cst::nodes::PragmaMinus::calculate_text_range(&self) -> core::option::Option<core::ops::range::Range<usize>>
 impl slang_solidity_v2_cst::structured_cst::TextRange for slang_solidity_v2_cst::structured_cst::nodes::PragmaPeriod
 pub fn slang_solidity_v2_cst::structured_cst::nodes::PragmaPeriod::calculate_text_range(&self) -> core::option::Option<core::ops::range::Range<usize>>
+impl slang_solidity_v2_cst::structured_cst::TextRange for slang_solidity_v2_cst::structured_cst::nodes::PragmaPragmaKeyword
+pub fn slang_solidity_v2_cst::structured_cst::nodes::PragmaPragmaKeyword::calculate_text_range(&self) -> core::option::Option<core::ops::range::Range<usize>>
 impl slang_solidity_v2_cst::structured_cst::TextRange for slang_solidity_v2_cst::structured_cst::nodes::PragmaSemicolon
 pub fn slang_solidity_v2_cst::structured_cst::nodes::PragmaSemicolon::calculate_text_range(&self) -> core::option::Option<core::ops::range::Range<usize>>
 impl slang_solidity_v2_cst::structured_cst::TextRange for slang_solidity_v2_cst::structured_cst::nodes::PragmaStringLiteral

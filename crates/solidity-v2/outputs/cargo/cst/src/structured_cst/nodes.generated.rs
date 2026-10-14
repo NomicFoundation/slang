@@ -5926,6 +5926,15 @@ pub fn new_pragma_period(range: Range<usize>, _source: &str) -> PragmaPeriod {
 }
 
 #[derive(Debug, PartialEq)]
+pub struct PragmaPragmaKeyword {
+    pub range: Range<usize>,
+}
+
+pub fn new_pragma_pragma_keyword(range: Range<usize>, _source: &str) -> PragmaPragmaKeyword {
+    PragmaPragmaKeyword { range }
+}
+
+#[derive(Debug, PartialEq)]
 pub struct PragmaSemicolon {
     pub range: Range<usize>,
 }

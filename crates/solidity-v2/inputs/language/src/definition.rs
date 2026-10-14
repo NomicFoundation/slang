@@ -142,7 +142,14 @@ language_v2_macros::compile!(Language(
                             Keyword(name = AbicoderV2Keyword, scanner = Atom("v2")),
                             Keyword(name = ABIEncoderV2Keyword, scanner = Atom("ABIEncoderV2")),
                             Keyword(name = SMTCheckerKeyword, scanner = Atom("SMTChecker")),
-                            Keyword(name = SolidityKeyword, scanner = Atom("solidity"))
+                            Keyword(name = SolidityKeyword, scanner = Atom("solidity")),
+                            // Never part of a valid directive, it's used to have a more resilient
+                            // version inference mechanism.
+                            Keyword(
+                                name = PragmaPragmaKeyword,
+                                enabled = Never,
+                                scanner = Atom("pragma")
+                            )
                         ]
                     ),
                     Topic(
