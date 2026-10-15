@@ -142,6 +142,7 @@ pub slang_solidity_v2_parser::LexemeKind::PragmaMinus
 pub slang_solidity_v2_parser::LexemeKind::PragmaMultiLineComment
 pub slang_solidity_v2_parser::LexemeKind::PragmaMultiLineNatSpecComment
 pub slang_solidity_v2_parser::LexemeKind::PragmaPeriod
+pub slang_solidity_v2_parser::LexemeKind::PragmaPragmaKeyword_Reserved
 pub slang_solidity_v2_parser::LexemeKind::PragmaSemicolon
 pub slang_solidity_v2_parser::LexemeKind::PragmaSingleLineComment
 pub slang_solidity_v2_parser::LexemeKind::PragmaSingleLineNatSpecComment
