@@ -4146,45 +4146,11 @@ TupleValues: TupleValues = {
                                 ),
                                 Fragment(
                                     name = EscapeSequence,
+                                    // Matches any escaped character, counting the CRLF line break (`\r\n`)
+                                    // as a single character
                                     scanner = Sequence([
                                         Atom("\\"),
-                                        Choice([
-                                            Fragment(AsciiEscape),
-                                            Fragment(HexByteEscape),
-                                            Fragment(UnicodeEscape)
-                                        ])
-                                    ])
-                                ),
-                                Fragment(
-                                    name = AsciiEscape,
-                                    scanner = Choice([
-                                        Atom("n"),
-                                        Atom("r"),
-                                        Atom("t"),
-                                        Atom("'"),
-                                        Atom("\""),
-                                        Atom("\\"),
-                                        Atom("\r\n"),
-                                        Atom("\r"),
-                                        Atom("\n")
-                                    ])
-                                ),
-                                Fragment(
-                                    name = HexByteEscape,
-                                    scanner = Sequence([
-                                        Atom("x"),
-                                        Fragment(HexCharacter),
-                                        Fragment(HexCharacter)
-                                    ])
-                                ),
-                                Fragment(
-                                    name = UnicodeEscape,
-                                    scanner = Sequence([
-                                        Atom("u"),
-                                        Fragment(HexCharacter),
-                                        Fragment(HexCharacter),
-                                        Fragment(HexCharacter),
-                                        Fragment(HexCharacter)
+                                        Choice([Atom("\r\n"), AnyChar])
                                     ])
                                 ),
                                 Fragment(
