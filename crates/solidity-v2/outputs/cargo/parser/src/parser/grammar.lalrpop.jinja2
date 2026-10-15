@@ -87,6 +87,8 @@ Repeated<T>: Vec<T> = {
 {% for lexeme in lexemes %}
 {%- if id == "StringLiteral" or id == "YulStringLiteral" %}
         <l:@L> L_{{ lexeme }} <r:@L> => { validation::validate_string_literal(ctx, l..r); new_{{id | snake_case}}(l..r, ctx.source) },
+{%- elif id == "UnicodeStringLiteral" %}
+        <l:@L> L_{{ lexeme }} <r:@L> => { validation::validate_unicode_string_literal(ctx, l..r); new_{{id | snake_case}}(l..r, ctx.source) },
 {%- else %}
         <l:@L> L_{{ lexeme }} <r:@L> => new_{{id | snake_case}}(l..r, ctx.source),
 {%- endif %}

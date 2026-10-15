@@ -11,6 +11,15 @@ Source: >
   8  │     }                                                                                                          │ 161..166
   9  │ }                                                                                                              │ 167..168
 
+Diagnostics: # 1 total
+  - >
+    [syntax/invalid-escape-sequence] Error: Invalid escape sequence. Only '\n', '\r', '\t', '\'', '\"', '\\', '\xNN', '\uNNNN' and a line break can follow a backslash.
+       ╭─[crates/solidity-v2/testing/snapshots/cst_output/StringLiteral/escape_unicode_invalid/input.sol:4:2]
+       │
+     4 │ "\u123"
+       │  ──┬──  
+       │    ╰──── Error occurred here.
+    ───╯
 Tree:
   - (root꞉ SourceUnit): # "contract C {\n    function f() {\n// >>> Copied from..." (0..168)
       - (members꞉ SourceUnitMembers): # "contract C {\n    function f() {\n// >>> Copied from..." (0..168)
