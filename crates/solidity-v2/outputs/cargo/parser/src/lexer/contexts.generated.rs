@@ -344,10 +344,7 @@ enum RejectSuffixYulHexLiteral1 {
 #[logos(subpattern YulIdentifierScanner = r#"(?&YulIdentifierStart)(?&YulIdentifierPart)*"#)]
 #[logos(subpattern YulHexCharacter = r#"[0-9]|[a-f]|[A-F]"#)]
 #[logos(subpattern YulHexStringContents = r#"(?&YulHexCharacter)(?&YulHexCharacter)(_?(?&YulHexCharacter)(?&YulHexCharacter))*"#)]
-#[logos(subpattern YulAsciiEscape = r#"n|r|t|'|"|\\|\r\n|\r|\n"#)]
-#[logos(subpattern YulHexByteEscape = r#"x(?&YulHexCharacter)(?&YulHexCharacter)"#)]
-#[logos(subpattern YulUnicodeEscape = r#"u(?&YulHexCharacter)(?&YulHexCharacter)(?&YulHexCharacter)(?&YulHexCharacter)"#)]
-#[logos(subpattern YulEscapeSequence = r#"\\((?&YulAsciiEscape)|(?&YulHexByteEscape)|(?&YulUnicodeEscape))"#)]
+#[logos(subpattern YulEscapeSequence = r#"\\(\r\n|(?s:.))"#)]
 pub enum YulContext {
     #[regex(r#"(?&YulIdentifierScanner)"#, |_| { LexemeKind::YulIdentifier }, priority = 2000001)]
     #[regex(r#"0|([1-9][0-9]*)"#, |lexer| { reject_suffix::<RejectSuffixYulDecimalLiteral1, _>(lexer, LexemeKind::YulDecimalLiteral) }, priority = 2000002)]

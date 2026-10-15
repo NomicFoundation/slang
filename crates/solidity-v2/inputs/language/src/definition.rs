@@ -4571,45 +4571,11 @@ IdentifierPathTailElement: (Period, IdentifierPathElement) = {
                             ),
                             Fragment(
                                 name = YulEscapeSequence,
+                                // Matches any escaped character, counting the CRLF line break (`\r\n`)
+                                // as a single character
                                 scanner = Sequence([
                                     Atom("\\"),
-                                    Choice([
-                                        Fragment(YulAsciiEscape),
-                                        Fragment(YulHexByteEscape),
-                                        Fragment(YulUnicodeEscape)
-                                    ])
-                                ])
-                            ),
-                            Fragment(
-                                name = YulAsciiEscape,
-                                scanner = Choice([
-                                    Atom("n"),
-                                    Atom("r"),
-                                    Atom("t"),
-                                    Atom("'"),
-                                    Atom("\""),
-                                    Atom("\\"),
-                                    Atom("\r\n"),
-                                    Atom("\r"),
-                                    Atom("\n")
-                                ])
-                            ),
-                            Fragment(
-                                name = YulHexByteEscape,
-                                scanner = Sequence([
-                                    Atom("x"),
-                                    Fragment(YulHexCharacter),
-                                    Fragment(YulHexCharacter)
-                                ])
-                            ),
-                            Fragment(
-                                name = YulUnicodeEscape,
-                                scanner = Sequence([
-                                    Atom("u"),
-                                    Fragment(YulHexCharacter),
-                                    Fragment(YulHexCharacter),
-                                    Fragment(YulHexCharacter),
-                                    Fragment(YulHexCharacter)
+                                    Choice([Atom("\r\n"), AnyChar])
                                 ])
                             ),
                             Fragment(
