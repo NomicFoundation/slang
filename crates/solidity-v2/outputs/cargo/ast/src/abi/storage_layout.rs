@@ -6,14 +6,6 @@ pub use slang_solidity_v2_semantic::context::{
 };
 use slang_solidity_v2_semantic::types::TypeId;
 
-/// Which storage a layout describes: the persistent storage, or the transient
-/// storage that is cleared at the end of each transaction.
-#[derive(Clone, Copy, Debug, Eq, PartialEq)]
-pub(crate) enum StorageKind {
-    Persistent,
-    Transient,
-}
-
 /// The state variables of one kind of storage, and the types they are laid
 /// out with.
 #[derive(Clone, Debug, Default, Eq, PartialEq)]

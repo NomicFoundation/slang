@@ -1,11 +1,9 @@
-use ruint::aliases::U256;
 use slang_solidity_v2_common::collections::Set;
 use slang_solidity_v2_ir::ir;
-use slang_solidity_v2_semantic::binder;
-use slang_solidity_v2_semantic::context::StorageLayoutBuilder;
+use slang_solidity_v2_semantic::context::StateVariablePosition;
 
-use crate::abi::{ContractAbi, StorageItem, StorageKind, StorageLayout, StorageType};
-use crate::ast::{ContractDefinitionStruct, StateVariableDefinition, StateVariableMutability};
+use crate::abi::{ContractAbi, StorageItem, StorageLayout, StorageType};
+use crate::ast::ContractDefinitionStruct;
 
 impl ContractDefinitionStruct {
     pub fn compute_abi(&self) -> Option<ContractAbi> {
@@ -75,7 +73,9 @@ impl ContractDefinitionStruct {
     /// The items of [`Self::compute_storage_layout`], without describing their
     /// types, for callers that only need each variable's slot and offset.
     pub fn compute_storage_items(&self) -> Option<Vec<StorageItem>> {
-        self.lay_out_state_variables(StorageKind::Persistent, &self.linearised_state_variables())
+        self.semantic
+            .storage_layout(self.ir_node.id())
+            .map(Self::storage_items)
     }
 
     /// The layout and types of the persistent state variables over the
@@ -89,7 +89,9 @@ impl ContractDefinitionStruct {
     /// describing their types, for callers that only need each variable's slot
     /// and offset.
     pub fn compute_transient_storage_items(&self) -> Option<Vec<StorageItem>> {
-        self.lay_out_state_variables(StorageKind::Transient, &self.linearised_state_variables())
+        self.semantic
+            .transient_storage_layout(self.ir_node.id())
+            .map(Self::storage_items)
     }
 
     /// The layout and types of the transient state variables over the
@@ -99,55 +101,18 @@ impl ContractDefinitionStruct {
         self.describe_storage_layout(items)
     }
 
-    /// Retrieves the custom base slot for this contract, if specified. This is
-    /// used for computing the base of the storage layout for non-transient
-    /// state variables.
-    fn base_slot(&self) -> Option<U256> {
-        let binder::Definition::Contract(definition) = self
-            .semantic
-            .binder()
-            .find_definition_by_id(self.ir_node.id())?
-        else {
-            unreachable!("definition is not a contract");
-        };
-        definition.base_slot
-    }
-
-    /// Lays out the `kind` state variables of `state_variables`.
-    fn lay_out_state_variables(
-        &self,
-        kind: StorageKind,
-        state_variables: &[StateVariableDefinition],
-    ) -> Option<Vec<StorageItem>> {
-        // TODO(validation) SDR[2]: it is an error if any contract in the hierarchy
-        // other than the leaf has a custom offset layout
-        let base_slot = match kind {
-            StorageKind::Persistent => self.base_slot().unwrap_or(U256::ZERO),
-            StorageKind::Transient => U256::ZERO,
-        };
-        let variables = state_variables.iter().filter(|state_variable| {
-            match state_variable.attributes().mutability() {
-                StateVariableMutability::Mutable => kind == StorageKind::Persistent,
-                StateVariableMutability::Transient => kind == StorageKind::Transient,
-                StateVariableMutability::Constant | StateVariableMutability::Immutable => false,
-            }
-        });
-        let mut items = Vec::new();
-        let mut builder = StorageLayoutBuilder::new(base_slot);
-        for state_variable in variables {
-            let node_id = state_variable.ir_node.id();
-            let variable_type_id = self.semantic.binder().node_typing(node_id).as_type_id()?;
-            let variable_size = self.semantic.storage_size_of_type_id(variable_type_id)?;
-            let position = builder.allocate(variable_size)?;
-            items.push(StorageItem {
-                node_id,
-                name: state_variable.ir_node.name.unparse().to_string(),
-                slot: position.slot,
-                offset: position.offset,
-                type_id: variable_type_id,
-            });
-        }
-        Some(items)
+    /// The items of a storage layout pre-computed by the semantic analysis.
+    fn storage_items(positions: &[StateVariablePosition]) -> Vec<StorageItem> {
+        positions
+            .iter()
+            .map(|position| StorageItem {
+                node_id: position.state_variable().id(),
+                name: position.state_variable().name.unparse().to_string(),
+                slot: position.position().slot,
+                offset: position.position().offset,
+                type_id: position.type_id(),
+            })
+            .collect()
     }
 
     /// Completes `items` into a layout with the table of their types.

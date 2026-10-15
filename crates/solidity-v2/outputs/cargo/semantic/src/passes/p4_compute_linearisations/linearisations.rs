@@ -64,6 +64,9 @@ pub(super) fn compute_linearisations(
         state_variables,
         errors,
         events,
+        // Laid out separately, see `storage_layouts`.
+        storage_layout: None,
+        transient_storage_layout: None,
     }
 }
 
