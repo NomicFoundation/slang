@@ -4062,14 +4062,14 @@ TupleValues: TupleValues = {
                                 Token(
                                     name = StringLiteral,
                                     definitions = [TokenDefinition(
+                                        // This scanner is quite lenient, we lex and parse non-ASCII characters
+                                        // and validate later, this lets parse older Solidity versions
                                         scanner = Choice([
                                             Sequence([
                                                 Atom("'"),
                                                 ZeroOrMore(Choice([
                                                     Fragment(EscapeSequence),
-                                                    Range(inclusive_start = ' ', inclusive_end = '&'),
-                                                    Range(inclusive_start = '(', inclusive_end = '['),
-                                                    Range(inclusive_start = ']', inclusive_end = '~')
+                                                    Not(['\'', '\\', '\r', '\n'])
                                                 ])),
                                                 Atom("'")
                                             ]),
@@ -4077,9 +4077,7 @@ TupleValues: TupleValues = {
                                                 Atom("\""),
                                                 ZeroOrMore(Choice([
                                                     Fragment(EscapeSequence),
-                                                    Range(inclusive_start = ' ', inclusive_end = '!'),
-                                                    Range(inclusive_start = '#', inclusive_end = '['),
-                                                    Range(inclusive_start = ']', inclusive_end = '~')
+                                                    Not(['"', '\\', '\r', '\n'])
                                                 ])),
                                                 Atom("\"")
                                             ])

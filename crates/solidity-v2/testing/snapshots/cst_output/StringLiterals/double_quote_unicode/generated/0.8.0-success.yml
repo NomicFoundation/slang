@@ -1,0 +1,39 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Source: >
+  1  │ contract C {                                                                                                  │ 0..12
+  2  │     function f() {                                                                                            │ 13..31
+  3  │ // >>> Copied from crates/solidity/testing/snapshots/cst_output/StringLiterals/double_quote_unicode/input.sol │ 32..141
+  4  │ "Fireworks 🎆"                                                                                                 │ 142..158
+  5  │                                                                                                               │ 159..159
+  6  │ // <<<                                                                                                        │ 160..166
+  7  │ ;                                                                                                             │ 167..168
+  8  │     }                                                                                                         │ 169..174
+  9  │ }                                                                                                             │ 175..176
+
+Tree:
+  - (root꞉ SourceUnit): # "contract C {\n    function f() {\n// >>> Copied from..." (0..176)
+      - (members꞉ SourceUnitMembers): # "contract C {\n    function f() {\n// >>> Copied from..." (0..176)
+          - (item꞉ SourceUnitMember) ► (contract_definition꞉ ContractDefinition): # "contract C {\n    function f() {\n// >>> Copied from..." (0..176)
+              - (contract_keyword꞉ ContractKeyword): "contract" # (0..8)
+              - (name꞉ Identifier): "C" # (9..10)
+              - (specifiers꞉ ContractSpecifiers): []
+              - (open_brace꞉ OpenBrace): "{" # (11..12)
+              - (members꞉ ContractMembers): # "function f() {\n// >>> Copied from crates/solidity/..." (17..174)
+                  - (item꞉ ContractMember) ► (function_definition꞉ FunctionDefinition): # "function f() {\n// >>> Copied from crates/solidity/..." (17..174)
+                      - (function_keyword꞉ FunctionKeyword): "function" # (17..25)
+                      - (name꞉ FunctionName) ► (identifier꞉ Identifier): "f" # (26..27)
+                      - (parameters꞉ ParametersDeclaration): # "()" (27..29)
+                          - (open_paren꞉ OpenParen): "(" # (27..28)
+                          - (parameters꞉ Parameters): []
+                          - (close_paren꞉ CloseParen): ")" # (28..29)
+                      - (attributes꞉ FunctionAttributes): []
+                      - (body꞉ FunctionBody) ► (block꞉ Block): # "{\n// >>> Copied from crates/solidity/testing/snaps..." (30..174)
+                          - (open_brace꞉ OpenBrace): "{" # (30..31)
+                          - (statements꞉ Statements): # '"Fireworks 🎆"\n\n// <<<\n;' (142..168)
+                              - (item꞉ Statement) ► (expression_statement꞉ ExpressionStatement): # '"Fireworks 🎆"\n\n// <<<\n;' (142..168)
+                                  - (expression꞉ Expression) ► (string_expression꞉ StringExpression) ► (string_literals꞉ StringLiterals): # '"Fireworks 🎆"' (142..158)
+                                      - (item꞉ StringLiteral): '"Fireworks 🎆"' # (142..158)
+                                  - (semicolon꞉ Semicolon): ";" # (167..168)
+                          - (close_brace꞉ CloseBrace): "}" # (173..174)
+              - (close_brace꞉ CloseBrace): "}" # (175..176)
