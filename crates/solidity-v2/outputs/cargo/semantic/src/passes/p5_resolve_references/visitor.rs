@@ -52,11 +52,9 @@ impl Visitor for Pass<'_> {
         if let Some(ref storage_layout) = node.storage_layout {
             // TODO(validation) SDR[56]: check that the expression is not binding constant variables up until 0.8.31
             // https://www.soliditylang.org/blog/2025/12/03/solidity-0.8.31-release-announcement
-
-            // TODO: call `resolve_storage_base_slot` first for now, because the
-            // constant evaluator handles type casts.
-            self.resolve_storage_base_slot(node, storage_layout);
             ir::visitor::accept_expression(storage_layout, self);
+            // TODO(validation) SDR[743]: check that the base slot expression's
+            // type, known from this point, is implicitly convertible to `uint256`.
         }
 
         // We already visited the contract definition's children above to be
