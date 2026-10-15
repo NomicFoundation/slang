@@ -357,7 +357,7 @@ pub enum YulContext {
     #[regex(r#"0|([1-9][0-9]*)"#, |lexer| { reject_suffix::<RejectSuffixYulDecimalLiteral1, _>(lexer, LexemeKind::YulDecimalLiteral) }, priority = 2000002)]
     #[regex(r#"0x(?&YulHexCharacter)+"#, |lexer| { reject_suffix::<RejectSuffixYulHexLiteral1, _>(lexer, LexemeKind::YulHexLiteral) }, priority = 2000003)]
     #[regex(r#"(hex'(?&YulHexStringContents)?')|(hex"(?&YulHexStringContents)?")"#, |_| { LexemeKind::YulHexStringLiteral }, priority = 2000004)]
-    #[regex(r#"('((?&YulEscapeSequence)|[ -&]|[\(-\[]|[\]-~])*')|("((?&YulEscapeSequence)|[ -!]|[#-\[]|[\]-~])*")"#, |_| { LexemeKind::YulStringLiteral }, priority = 2000005)]
+    #[regex(r#"('((?&YulEscapeSequence)|[^'\\\r\n])*')|("((?&YulEscapeSequence)|[^"\\\r\n])*")"#, |_| { LexemeKind::YulStringLiteral }, priority = 2000005)]
     #[regex(r#"break"#, |_| { LexemeKind::YulBreakKeyword_Reserved }, priority = 3000006)]
     #[regex(r#"case"#, |_| { LexemeKind::YulCaseKeyword_Reserved }, priority = 3000007)]
     #[regex(r#"continue"#, |_| { LexemeKind::YulContinueKeyword_Reserved }, priority = 3000008)]

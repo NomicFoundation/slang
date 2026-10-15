@@ -4592,14 +4592,14 @@ IdentifierPathTailElement: (Period, IdentifierPathElement) = {
                             Token(
                                 name = YulStringLiteral,
                                 definitions = [TokenDefinition(
+                                    // This scanner is quite lenient, we lex and parse non-ASCII characters
+                                    // and validate later, this lets parse older Solidity versions
                                     scanner = Choice([
                                         Sequence([
                                             Atom("'"),
                                             ZeroOrMore(Choice([
                                                 Fragment(YulEscapeSequence),
-                                                Range(inclusive_start = ' ', inclusive_end = '&'),
-                                                Range(inclusive_start = '(', inclusive_end = '['),
-                                                Range(inclusive_start = ']', inclusive_end = '~')
+                                                Not(['\'', '\\', '\r', '\n'])
                                             ])),
                                             Atom("'")
                                         ]),
@@ -4607,9 +4607,7 @@ IdentifierPathTailElement: (Period, IdentifierPathElement) = {
                                             Atom("\""),
                                             ZeroOrMore(Choice([
                                                 Fragment(YulEscapeSequence),
-                                                Range(inclusive_start = ' ', inclusive_end = '!'),
-                                                Range(inclusive_start = '#', inclusive_end = '['),
-                                                Range(inclusive_start = ']', inclusive_end = '~')
+                                                Not(['"', '\\', '\r', '\n'])
                                             ])),
                                             Atom("\"")
                                         ])

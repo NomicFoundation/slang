@@ -377,6 +377,23 @@ fn old_non_ascii_strings_keep_their_boundaries() {
 }
 
 #[test]
+fn old_yul_strings_keep_their_boundaries() {
+    // The same holds in Yul. Were the quotes to pair up wrongly, the `}` in the
+    // second string would close the assembly block, and the text after it would
+    // read as a directive.
+    let source = r#"
+        pragma solidity ^0.6.0;
+        contract A {
+            function f() public {
+                assembly { let a := "é" let b := "} pragma solidity 0.4.0; {" }
+            }
+        }
+    "#;
+
+    assert_eq!(matches(source, &["0.4.0", "0.6.12"]), [false, true]);
+}
+
+#[test]
 fn syntax_errors_around_the_pragma_do_not_hide_it() {
     let source = "
         contract { function ((( }
