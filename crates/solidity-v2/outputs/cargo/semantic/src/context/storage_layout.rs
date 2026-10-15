@@ -22,6 +22,17 @@ pub enum StorageSize {
     Bytes(usize),
 }
 
+impl StorageSize {
+    /// The number of bytes the type occupies. Like slot numbers, it is a
+    /// 256-bit value, so it wraps for a type of 2^251 slots or more.
+    pub fn number_of_bytes(self) -> U256 {
+        match self {
+            Self::Slots(slots) => slots.wrapping_mul(U256::from(SLOT_SIZE)),
+            Self::Bytes(bytes) => U256::from(bytes),
+        }
+    }
+}
+
 /// A variable's location in storage, as a slot and a byte offset within it.
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
 pub struct StoragePosition {

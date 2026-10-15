@@ -20,6 +20,10 @@ pub(crate) enum StorageKind {
 /// The state variables of one kind of storage, and the types they are laid
 /// out with. Serializes as the JSON storage layout, an object with the
 /// `storage` items and the `types` table keyed by [`StorageType::identifier`].
+///
+/// Each item's `astId`, and the suffix of each user-defined type identifier,
+/// is a [`NodeId`](slang_solidity_v2_common::nodes::NodeId) of this
+/// compilation unit. It identifies the node only within this compilation.
 #[derive(Clone, Debug, Default, Eq, PartialEq)]
 pub struct StorageLayout {
     contract: String,

@@ -2,14 +2,11 @@
 //! ordered by [`StorageType::identifier`], `null` when there are no items. Keys
 //! are in alphabetical order, and slots and sizes are decimal strings.
 
-use ruint::aliases::U256;
 use serde::Serialize;
 use serde::ser::{SerializeMap, SerializeSeq, Serializer};
 use slang_solidity_v2_semantic::types::TypeId;
 
-use super::{StorageLayout, StorageSize, StorageType, StorageTypeKind, StorageVariable};
-
-const SLOT_SIZE: u64 = 32;
+use super::{StorageLayout, StorageType, StorageTypeKind, StorageVariable};
 
 impl Serialize for StorageLayout {
     fn serialize<S: Serializer>(&self, serializer: S) -> Result<S::Ok, S::Error> {
@@ -101,10 +98,7 @@ impl Serialize for TypeEntry<'_> {
             label, size, kind, ..
         } = self.storage_type;
         let layout = self.layout;
-        let number_of_bytes = match size {
-            StorageSize::Bytes(bytes) => bytes.to_string(),
-            StorageSize::Slots(slots) => slots.wrapping_mul(U256::from(SLOT_SIZE)).to_string(),
-        };
+        let number_of_bytes = size.number_of_bytes().to_string();
         let mut map = serializer.serialize_map(None)?;
         match kind {
             StorageTypeKind::Value => {

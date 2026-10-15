@@ -138,11 +138,15 @@ fn write_user_defined(
 }
 
 /// `_storage` for a type in storage, or `_memory_ptr` and `_calldata_ptr`
-/// for one that points to memory or calldata.
+/// for one that points to memory or calldata. A layout never refers to an
+/// `Inherited` location: it names a struct member by its `Storage` form.
 fn write_location(location: DataLocation, is_pointer: bool, out: &mut String) {
+    debug_assert_ne!(
+        location,
+        DataLocation::Inherited,
+        "a storage layout names struct members by their storage form",
+    );
     match location {
-        // Only a struct member has an inherited location, and it is stored
-        // with its struct.
         DataLocation::Storage | DataLocation::Inherited => {
             out.push_str(if is_pointer {
                 "_storage_ptr"

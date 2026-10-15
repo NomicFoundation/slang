@@ -296,6 +296,8 @@ pub fn slang_solidity_v2_semantic::context::ContractReference::fmt(&self, &mut c
 pub enum slang_solidity_v2_semantic::context::StorageSize
 pub slang_solidity_v2_semantic::context::StorageSize::Bytes(usize)
 pub slang_solidity_v2_semantic::context::StorageSize::Slots(ruint::aliases::U256)
+impl slang_solidity_v2_semantic::context::StorageSize
+pub fn slang_solidity_v2_semantic::context::StorageSize::number_of_bytes(self) -> ruint::aliases::U256
 impl core::clone::Clone for slang_solidity_v2_semantic::context::StorageSize
 pub fn slang_solidity_v2_semantic::context::StorageSize::clone(&self) -> slang_solidity_v2_semantic::context::StorageSize
 impl core::cmp::Eq for slang_solidity_v2_semantic::context::StorageSize

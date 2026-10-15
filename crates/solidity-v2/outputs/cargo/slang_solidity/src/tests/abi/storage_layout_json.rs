@@ -170,6 +170,42 @@ fn reference_types_serialize() {
 }
 
 define_fixture!(
+    StructMembers,
+    file: "main.sol", r#"
+pragma solidity *;
+struct Entry {
+    mapping(string => uint256) byName;
+    mapping(bytes => uint256) byKey;
+    uint256[][] matrix;
+    string[] names;
+}
+
+contract Members {
+    Entry entry;
+}
+"#,
+);
+
+// Struct members name their types as state variables do: reference-typed
+// mapping keys are memory pointers, and nested arrays are in storage.
+#[test]
+fn struct_member_reference_types_serialize() {
+    let unit = StructMembers::build_compilation_unit();
+    let members = unit
+        .find_contract_by_name("Members")
+        .next()
+        .expect("contract Members exists");
+    assert_eq!(
+        json(
+            &members
+                .compute_storage_layout()
+                .expect("the layout is computable")
+        ),
+        r#"{"storage":[{"astId":N,"contract":"main.sol:Members","label":"entry","offset":0,"slot":"0","type":"t_struct(Entry)N_storage"}],"types":{"t_array(t_array(t_uint256)dyn_storage)dyn_storage":{"base":"t_array(t_uint256)dyn_storage","encoding":"dynamic_array","label":"uint256[][]","numberOfBytes":"32"},"t_array(t_string_storage)dyn_storage":{"base":"t_string_storage","encoding":"dynamic_array","label":"string[]","numberOfBytes":"32"},"t_array(t_uint256)dyn_storage":{"base":"t_uint256","encoding":"dynamic_array","label":"uint256[]","numberOfBytes":"32"},"t_bytes_memory_ptr":{"encoding":"bytes","label":"bytes","numberOfBytes":"32"},"t_mapping(t_bytes_memory_ptr,t_uint256)":{"encoding":"mapping","key":"t_bytes_memory_ptr","label":"mapping(bytes => uint256)","numberOfBytes":"32","value":"t_uint256"},"t_mapping(t_string_memory_ptr,t_uint256)":{"encoding":"mapping","key":"t_string_memory_ptr","label":"mapping(string => uint256)","numberOfBytes":"32","value":"t_uint256"},"t_string_memory_ptr":{"encoding":"bytes","label":"string","numberOfBytes":"32"},"t_string_storage":{"encoding":"bytes","label":"string","numberOfBytes":"32"},"t_struct(Entry)N_storage":{"encoding":"inplace","label":"struct Entry","members":[{"astId":N,"contract":"main.sol:Members","label":"byName","offset":0,"slot":"0","type":"t_mapping(t_string_memory_ptr,t_uint256)"},{"astId":N,"contract":"main.sol:Members","label":"byKey","offset":0,"slot":"1","type":"t_mapping(t_bytes_memory_ptr,t_uint256)"},{"astId":N,"contract":"main.sol:Members","label":"matrix","offset":0,"slot":"2","type":"t_array(t_array(t_uint256)dyn_storage)dyn_storage"},{"astId":N,"contract":"main.sol:Members","label":"names","offset":0,"slot":"3","type":"t_array(t_string_storage)dyn_storage"}],"numberOfBytes":"128"},"t_uint256":{"encoding":"inplace","label":"uint256","numberOfBytes":"32"}}}"#
+    );
+}
+
+define_fixture!(
     FunctionTypes,
     file: "main.sol", r#"
 pragma solidity *;
