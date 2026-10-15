@@ -264,6 +264,20 @@ impl Binder {
             .and_then(|definition_id| self.definitions.get(definition_id))
     }
 
+    /// The type wrapped by the user-defined value type `definition_id`, if it
+    /// resolved.
+    pub(crate) fn user_defined_value_target_type_id(
+        &self,
+        definition_id: NodeId,
+    ) -> Option<TypeId> {
+        let Definition::UserDefinedValueType(user_defined_value) =
+            self.find_definition_by_id(definition_id)?
+        else {
+            return None;
+        };
+        user_defined_value.target_type_id
+    }
+
     /// The value of `definition_id` if it is an initialized constant.
     pub(crate) fn constant_value(&self, definition_id: NodeId) -> Option<&ir::Expression> {
         self.find_definition_by_id(definition_id)?
