@@ -1770,6 +1770,11 @@ mod runner {
     use super::*;
 
     #[test]
+    fn diagnostic_ending_inside_a_character() -> Result<()> {
+        run("runner", "diagnostic_ending_inside_a_character")
+    }
+
+    #[test]
     fn diagnostic_without_source_span() -> Result<()> {
         run("runner", "diagnostic_without_source_span")
     }
