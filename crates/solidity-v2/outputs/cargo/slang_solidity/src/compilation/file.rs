@@ -26,6 +26,10 @@ impl InternalFile {
     pub(crate) fn add_resolved_import(&mut self, node_id: NodeId, target_file_id: FileId) {
         self.resolved_imports.insert(node_id, target_file_id);
     }
+
+    pub(crate) fn resolved_imports(&self) -> impl Iterator<Item = &FileId> {
+        self.resolved_imports.values()
+    }
 }
 
 impl SemanticFile for InternalFile {
