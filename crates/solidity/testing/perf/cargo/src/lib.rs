@@ -27,6 +27,8 @@ mod unit_tests {
     const RESOLVED_REFERENCES_COUNT: usize = 1443;
     // Sum of all of expressions that the AST provides a type for.
     const TYPED_EXPRESSIONS_COUNT: usize = 1911;
+    // Number of source files in the project.
+    const SOURCE_COUNT: usize = 25;
 
     mod slang {
         macro_rules! define_payload_test {
@@ -77,6 +79,12 @@ mod unit_tests {
         }
 
         // __SLANG_V2_INFRA_BENCHMARKS_LIST__ (keep in sync)
+        define_payload_test_and_assert_count_eq!(
+            infer_language_versions,
+            count_sources,
+            super::SOURCE_COUNT
+        );
+
         define_payload_test_and_assert_count_eq!(parser, count_contracts, super::CONTRACT_COUNT);
 
         define_payload_test_and_assert_count_eq!(

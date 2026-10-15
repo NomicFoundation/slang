@@ -65,6 +65,19 @@ fn full_compilation(bencher: Bencher<'_, '_>, project_name: &str) {
         .bench(|| black_box(tests::slang_v2::full_compilation::run(black_box(project))));
 }
 
+/// Infers the language versions of every source of the project from its
+/// `pragma solidity` directives, without parsing the rest of it.
+#[divan::bench(args = PROJECTS, max_time = MAX_TIME_SECS)]
+fn infer_language_versions(bencher: Bencher<'_, '_>, project_name: &str) {
+    let project = tests::slang_v2::infer_language_versions::setup(project_name);
+
+    with_throughput_counters(bencher, project).bench(|| {
+        black_box(tests::slang_v2::infer_language_versions::run(black_box(
+            project,
+        )))
+    });
+}
+
 /// Parses every source of the project into a CST, without any of the later
 /// stages.
 #[divan::bench(args = PROJECTS, max_time = MAX_TIME_SECS)]

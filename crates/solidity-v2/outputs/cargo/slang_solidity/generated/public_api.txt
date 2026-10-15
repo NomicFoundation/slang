@@ -53,3 +53,12 @@ pub use slang_solidity_v2::utils::EvmTargetSpecifier
 pub use slang_solidity_v2::utils::LanguageVersion
 pub use slang_solidity_v2::utils::LanguageVersionConversionError
 pub use slang_solidity_v2::utils::LanguageVersionSpecifier
+pub struct slang_solidity_v2::utils::VersionConstraint
+impl slang_solidity_v2::utils::VersionConstraint
+pub fn slang_solidity_v2::utils::VersionConstraint::matches(&self, impl core::convert::Into<semver::Version>) -> bool
+pub fn slang_solidity_v2::utils::VersionConstraint::supported_versions(&self) -> impl core::iter::traits::iterator::Iterator<Item = slang_solidity_v2_common::versions::version::LanguageVersion> + '_
+impl core::clone::Clone for slang_solidity_v2::utils::VersionConstraint
+pub fn slang_solidity_v2::utils::VersionConstraint::clone(&self) -> slang_solidity_v2::utils::VersionConstraint
+impl core::fmt::Debug for slang_solidity_v2::utils::VersionConstraint
+pub fn slang_solidity_v2::utils::VersionConstraint::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+pub fn slang_solidity_v2::utils::infer_language_versions(&str) -> slang_solidity_v2::utils::VersionConstraint
