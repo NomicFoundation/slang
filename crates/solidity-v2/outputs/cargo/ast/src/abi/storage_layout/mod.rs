@@ -1,5 +1,5 @@
-mod identifier;
 mod serialize;
+mod type_identifier;
 
 use slang_solidity_v2_semantic::context::StorageTypeTable;
 pub use slang_solidity_v2_semantic::context::{
@@ -7,7 +7,7 @@ pub use slang_solidity_v2_semantic::context::{
 };
 use slang_solidity_v2_semantic::types::TypeId;
 
-pub(crate) use self::identifier::storage_type_identifier;
+pub(crate) use self::type_identifier::storage_type_identifier;
 
 /// Which storage a layout describes: the persistent storage, or the transient
 /// storage that is cleared at the end of each transaction.
@@ -19,7 +19,7 @@ pub(crate) enum StorageKind {
 
 /// The state variables of one kind of storage, and the types they are laid
 /// out with. Serializes as the JSON storage layout, an object with the
-/// `storage` items and the `types` table keyed by [`StorageType::identifier`].
+/// `storage` items and the `types` table keyed by [`StorageType::type_identifier`].
 ///
 /// Each item's `astId`, and the suffix of each user-defined type identifier,
 /// is a [`NodeId`](slang_solidity_v2_common::nodes::NodeId) of this
@@ -72,7 +72,7 @@ impl StorageLayout {
 #[derive(Clone, Debug, Eq, PartialEq)]
 pub struct StorageType {
     pub(super) type_id: TypeId,
-    pub(super) identifier: String,
+    pub(super) type_identifier: String,
     pub(super) label: String,
     pub(super) size: StorageSize,
     pub(super) kind: StorageTypeKind,
@@ -86,8 +86,8 @@ impl StorageType {
     /// The type's key in the JSON type table, e.g. `t_uint256` or
     /// `t_struct(S)12_storage`. A user-defined type ends with the node id of
     /// its definition.
-    pub fn identifier(&self) -> &str {
-        &self.identifier
+    pub fn type_identifier(&self) -> &str {
+        &self.type_identifier
     }
 
     /// The type's name as a storage layout spells it, e.g. `struct C.S` or

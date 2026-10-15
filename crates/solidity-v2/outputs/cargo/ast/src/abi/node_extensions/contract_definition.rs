@@ -157,7 +157,7 @@ impl ContractDefinitionStruct {
             items.iter().map(StorageVariable::type_id),
             |type_id, layout| StorageType {
                 type_id,
-                identifier: storage_type_identifier(&self.semantic, type_id),
+                type_identifier: storage_type_identifier(&self.semantic, type_id),
                 label: self.semantic.type_abi_internal_name(type_id),
                 size: layout.size,
                 kind: layout.kind,

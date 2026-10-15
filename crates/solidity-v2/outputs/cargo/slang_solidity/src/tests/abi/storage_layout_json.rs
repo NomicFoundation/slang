@@ -5,7 +5,7 @@
 use crate::abi::StorageLayout;
 use crate::define_fixture;
 
-/// The prefixes of the identifiers that end with a definition's node id.
+/// The prefixes of the type identifiers that end with a definition's node id.
 const USER_DEFINED_PREFIXES: [&str; 4] = [
     "t_contract(",
     "t_enum(",

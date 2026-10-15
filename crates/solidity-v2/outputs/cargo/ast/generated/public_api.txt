@@ -177,11 +177,11 @@ impl serde_core::ser::Serialize for slang_solidity_v2_ast::abi::StorageLayout
 pub fn slang_solidity_v2_ast::abi::StorageLayout::serialize<S: serde_core::ser::Serializer>(&self, S) -> core::result::Result<<S as serde_core::ser::Serializer>::Ok, <S as serde_core::ser::Serializer>::Error>
 pub struct slang_solidity_v2_ast::abi::StorageType
 impl slang_solidity_v2_ast::abi::StorageType
-pub fn slang_solidity_v2_ast::abi::StorageType::identifier(&self) -> &str
 pub fn slang_solidity_v2_ast::abi::StorageType::kind(&self) -> &slang_solidity_v2_semantic::context::storage_layout::StorageTypeKind
 pub fn slang_solidity_v2_ast::abi::StorageType::label(&self) -> &str
 pub fn slang_solidity_v2_ast::abi::StorageType::size(&self) -> slang_solidity_v2_semantic::context::storage_layout::StorageSize
 pub fn slang_solidity_v2_ast::abi::StorageType::type_id(&self) -> slang_solidity_v2_semantic::types::TypeId
+pub fn slang_solidity_v2_ast::abi::StorageType::type_identifier(&self) -> &str
 impl core::clone::Clone for slang_solidity_v2_ast::abi::StorageType
 pub fn slang_solidity_v2_ast::abi::StorageType::clone(&self) -> slang_solidity_v2_ast::abi::StorageType
 impl core::cmp::Eq for slang_solidity_v2_ast::abi::StorageType

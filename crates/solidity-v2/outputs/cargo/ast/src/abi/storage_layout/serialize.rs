@@ -1,5 +1,5 @@
 //! The JSON storage layout: the `storage` items, and the `types` table keyed and
-//! ordered by [`StorageType::identifier`], `null` when there are no items. Keys
+//! ordered by [`StorageType::type_identifier`], `null` when there are no items. Keys
 //! are in alphabetical order, and slots and sizes are decimal strings.
 
 use serde::Serialize;
@@ -27,18 +27,18 @@ impl Serialize for StorageLayout {
     }
 }
 
-/// The types, sorted by their identifier.
+/// The types, sorted by their type identifier.
 struct TypeTable<'a>(&'a StorageLayout);
 
 impl Serialize for TypeTable<'_> {
     fn serialize<S: Serializer>(&self, serializer: S) -> Result<S::Ok, S::Error> {
         let layout = self.0;
         let mut types: Vec<_> = layout.types.values().collect();
-        types.sort_unstable_by(|a, b| a.identifier.cmp(&b.identifier));
+        types.sort_unstable_by(|a, b| a.type_identifier.cmp(&b.type_identifier));
         let mut map = serializer.serialize_map(Some(types.len()))?;
         for storage_type in types {
             map.serialize_entry(
-                &storage_type.identifier,
+                &storage_type.type_identifier,
                 &TypeEntry {
                     storage_type,
                     layout,
@@ -82,7 +82,7 @@ impl Serialize for Variable<'_> {
         map.serialize_entry("label", variable.name())?;
         map.serialize_entry("offset", &variable.offset())?;
         map.serialize_entry("slot", &variable.slot().to_string())?;
-        map.serialize_entry("type", identifier_of(layout, variable.type_id()))?;
+        map.serialize_entry("type", type_identifier_of(layout, variable.type_id()))?;
         map.end()
     }
 }
@@ -112,23 +112,23 @@ impl Serialize for TypeEntry<'_> {
                 map.serialize_entry("numberOfBytes", &number_of_bytes)?;
             }
             StorageTypeKind::DynamicArray { element } => {
-                map.serialize_entry("base", identifier_of(layout, *element))?;
+                map.serialize_entry("base", type_identifier_of(layout, *element))?;
                 map.serialize_entry("encoding", "dynamic_array")?;
                 map.serialize_entry("label", label)?;
                 map.serialize_entry("numberOfBytes", &number_of_bytes)?;
             }
             StorageTypeKind::FixedSizeArray { element, .. } => {
-                map.serialize_entry("base", identifier_of(layout, *element))?;
+                map.serialize_entry("base", type_identifier_of(layout, *element))?;
                 map.serialize_entry("encoding", "inplace")?;
                 map.serialize_entry("label", label)?;
                 map.serialize_entry("numberOfBytes", &number_of_bytes)?;
             }
             StorageTypeKind::Mapping { key, value } => {
                 map.serialize_entry("encoding", "mapping")?;
-                map.serialize_entry("key", identifier_of(layout, *key))?;
+                map.serialize_entry("key", type_identifier_of(layout, *key))?;
                 map.serialize_entry("label", label)?;
                 map.serialize_entry("numberOfBytes", &number_of_bytes)?;
-                map.serialize_entry("value", identifier_of(layout, *value))?;
+                map.serialize_entry("value", type_identifier_of(layout, *value))?;
             }
             StorageTypeKind::Struct { members } => {
                 map.serialize_entry("encoding", "inplace")?;
@@ -147,10 +147,10 @@ impl Serialize for TypeEntry<'_> {
     }
 }
 
-/// The identifier of a type the layout refers to, which its table always has.
-fn identifier_of(layout: &StorageLayout, type_id: TypeId) -> &str {
+/// The type identifier of `type_id`, which the layout's type table always has.
+fn type_identifier_of(layout: &StorageLayout, type_id: TypeId) -> &str {
     layout
         .storage_type(type_id)
         .expect("every type a storage layout refers to is in its table")
-        .identifier()
+        .type_identifier()
 }

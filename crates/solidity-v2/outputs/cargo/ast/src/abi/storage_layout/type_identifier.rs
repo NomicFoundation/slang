@@ -1,4 +1,4 @@
-//! The identifiers a storage layout keys its type table with, e.g. `t_uint256`,
+//! The type identifiers a storage layout keys its type table with, e.g. `t_uint256`,
 //! `t_mapping(t_address,t_uint256)` or `t_struct(S)12_storage`.
 
 use std::fmt::Write;
@@ -12,18 +12,18 @@ use slang_solidity_v2_semantic::types::{
     UserDefinedValueType,
 };
 
-/// The identifier of `type_id` in a storage layout. A user-defined type is
-/// named after its definition and ends with the definition's node id.
+/// The type identifier of `type_id` in a storage layout. A user-defined type
+/// is named after its definition and ends with the definition's node id.
 pub(crate) fn storage_type_identifier(semantic: &SemanticContext, type_id: TypeId) -> String {
-    let mut identifier = String::with_capacity(32);
-    write_identifier(semantic, type_id, false, &mut identifier);
-    identifier
+    let mut type_identifier = String::with_capacity(32);
+    write_type_identifier(semantic, type_id, false, &mut type_identifier);
+    type_identifier
 }
 
-/// Writes the identifier of `type_id`. A reference type is a pointer when it is
-/// not in storage, or when it is a parameter or return type of a function type
-/// (`is_pointer`).
-fn write_identifier(
+/// Writes the type identifier of `type_id`. A reference type is a pointer when
+/// it is not in storage, or when it is a parameter or return type of a function
+/// type (`is_pointer`).
+fn write_type_identifier(
     semantic: &SemanticContext,
     type_id: TypeId,
     is_pointer: bool,
@@ -42,7 +42,7 @@ fn write_identifier(
             location,
         }) => {
             out.push_str("t_array(");
-            write_identifier(semantic, *element_type, false, out);
+            write_type_identifier(semantic, *element_type, false, out);
             out.push_str(")dyn");
             write_location(*location, is_pointer, out);
         }
@@ -73,7 +73,7 @@ fn write_identifier(
             size,
         }) => {
             out.push_str("t_array(");
-            write_identifier(semantic, *element_type, false, out);
+            write_type_identifier(semantic, *element_type, false, out);
             write!(out, "){size}").unwrap();
             write_location(*location, is_pointer, out);
         }
@@ -87,9 +87,9 @@ fn write_identifier(
             value_type_id,
         }) => {
             out.push_str("t_mapping(");
-            write_identifier(semantic, *key_type_id, false, out);
+            write_type_identifier(semantic, *key_type_id, false, out);
             out.push(',');
-            write_identifier(semantic, *value_type_id, false, out);
+            write_type_identifier(semantic, *value_type_id, false, out);
             out.push(')');
         }
         Type::String(StringType { location }) => {
@@ -173,20 +173,20 @@ fn write_function(semantic: &SemanticContext, function_type: &FunctionType, out:
         FunctionTypeMutability::Payable => "payable",
     };
     write!(out, "t_function_{visibility}_{mutability}(").unwrap();
-    write_identifiers(semantic, &function_type.parameter_types, out);
+    write_type_identifiers(semantic, &function_type.parameter_types, out);
     out.push_str(")returns(");
     match semantic.types().get_type_by_id(function_type.return_type) {
-        Type::Tuple(TupleType { types }) => write_identifiers(semantic, types, out),
-        _ => write_identifier(semantic, function_type.return_type, true, out),
+        Type::Tuple(TupleType { types }) => write_type_identifiers(semantic, types, out),
+        _ => write_type_identifier(semantic, function_type.return_type, true, out),
     }
     out.push(')');
 }
 
-fn write_identifiers(semantic: &SemanticContext, type_ids: &[TypeId], out: &mut String) {
+fn write_type_identifiers(semantic: &SemanticContext, type_ids: &[TypeId], out: &mut String) {
     for (index, type_id) in type_ids.iter().enumerate() {
         if index > 0 {
             out.push(',');
         }
-        write_identifier(semantic, *type_id, true, out);
+        write_type_identifier(semantic, *type_id, true, out);
     }
 }
