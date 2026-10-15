@@ -14,8 +14,8 @@ use slang_solidity_v2_common::utils::strings::strip_string_literal_quotes;
 use slang_solidity_v2_common::versions::LanguageVersion;
 use slang_solidity_v2_ir::ir;
 pub use storage_layout::{
-    StorageLayoutBuilder, StorageMember, StoragePosition, StorageSize, StorageTypeKind,
-    StorageTypeLayout, StorageTypeTable,
+    StorageLayoutBuilder, StoragePosition, StorageSize, StorageTypeKind, StorageTypeLayout,
+    StorageTypeTable, StorageVariable,
 };
 
 use crate::binder::{Binder, BinderCapacities, Definition, Reference};
