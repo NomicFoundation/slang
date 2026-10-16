@@ -4949,6 +4949,14 @@ mod type_system {
         }
 
         #[test]
+        fn catch_parameter_shadows_constant() -> Result<()> {
+            run(
+                "type_system/array_length",
+                "catch_parameter_shadows_constant",
+            )
+        }
+
+        #[test]
         fn compound_expression() -> Result<()> {
             run("type_system/array_length", "compound_expression")
         }
@@ -4961,6 +4969,11 @@ mod type_system {
         #[test]
         fn division_by_zero() -> Result<()> {
             run("type_system/array_length", "division_by_zero")
+        }
+
+        #[test]
+        fn for_init_shadows_constant() -> Result<()> {
+            run("type_system/array_length", "for_init_shadows_constant")
         }
 
         #[test]
@@ -5014,8 +5027,29 @@ mod type_system {
         }
 
         #[test]
+        fn local_shadows_constant_in_function_type() -> Result<()> {
+            run(
+                "type_system/array_length",
+                "local_shadows_constant_in_function_type",
+            )
+        }
+
+        #[test]
         fn local_variable_length() -> Result<()> {
             run("type_system/array_length", "local_variable_length")
+        }
+
+        #[test]
+        fn modifier_parameter_shadows_constant() -> Result<()> {
+            run(
+                "type_system/array_length",
+                "modifier_parameter_shadows_constant",
+            )
+        }
+
+        #[test]
+        fn named_return_shadows_constant() -> Result<()> {
+            run("type_system/array_length", "named_return_shadows_constant")
         }
 
         #[test]
@@ -5072,6 +5106,22 @@ mod type_system {
         #[test]
         fn too_large() -> Result<()> {
             run("type_system/array_length", "too_large")
+        }
+
+        #[test]
+        fn try_return_variable_shadows_constant() -> Result<()> {
+            run(
+                "type_system/array_length",
+                "try_return_variable_shadows_constant",
+            )
+        }
+
+        #[test]
+        fn unchecked_local_shadows_constant() -> Result<()> {
+            run(
+                "type_system/array_length",
+                "unchecked_local_shadows_constant",
+            )
         }
 
         #[test]
