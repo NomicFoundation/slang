@@ -10,7 +10,9 @@ use crate::binder::{
     UsingDirective, UsingOperator,
 };
 use crate::built_ins::BuiltInsResolver;
-use crate::passes::common::find_definition_namespace_scope_id;
+use crate::passes::common::{
+    find_definition_namespace_scope_id, resolve_identifier_path_as_type_in_scope,
+};
 use crate::types::{ContractType, InterfaceType, StructType, Type, TypeId, UserMetaType};
 
 /// Lexical style resolution of symbols
@@ -290,75 +292,34 @@ impl Pass<'_> {
                 .all(|parameter_type_id| *parameter_type_id == operand_type_id)
     }
 
-    /// Picks the first candidate a modifier-list entry can name: a modifier, or
-    /// a base contract or interface, since base constructor calls share the
-    /// modifier-list syntax. A base can be named through an import alias, so
-    /// aliases are followed to check each candidate's kind, but the result
-    /// still points at the alias, like every other reference.
-    fn resolve_first_modifier_or_base(&self, resolution: &Resolution) -> Resolution {
-        resolution
-            .get_definition_ids()
-            .into_iter()
-            .find(|definition_id| {
-                self.binder
-                    .follow_symbol_aliases(Resolution::Definition(*definition_id))
-                    .get_definition_ids()
-                    .iter()
-                    .any(|aliased_id| {
-                        matches!(
-                            self.binder.find_definition_by_id(*aliased_id),
-                            Some(
-                                Definition::Modifier(_)
-                                    | Definition::Contract(_)
-                                    | Definition::Interface(_)
-                            )
-                        )
-                    })
-            })
-            .into()
-    }
-
     pub(super) fn resolve_modifier_invocation(
         &mut self,
         modifier_invocation: &ir::ModifierInvocation,
     ) {
+        // Resolved before entering the function's scope, so this starts at
+        // the enclosing contract, or at the file for a free function.
         let identifier_path = &modifier_invocation.name;
-        let mut scope_id = self.current_contract_scope_id();
-        for (index, identifier) in identifier_path.iter().enumerate() {
-            let resolution = if let Some(scope_id) = scope_id {
-                let symbol = identifier.unparse();
-                if index == 0 {
-                    // we use lexical/contract resolution only for the first segment in the path
-                    self.resolve_symbol_in_scope(scope_id, symbol)
-                } else {
-                    self.binder.resolve_in_scope_as_namespace(scope_id, symbol)
-                }
-            } else {
-                Resolution::Unresolved
-            };
+        let path_resolution = resolve_identifier_path_as_type_in_scope(
+            self.binder,
+            identifier_path,
+            self.current_scope_id(),
+        );
 
-            // TODO(validation) SDR[35]: the found definition(s) must be modifiers
-            // and be in the current contract hierarchy. We could potentially
-            // verify that the initial symbol lookup is reachable from the
-            // contract only (ie. it's a contract modifier, a modifier in a
-            // base, or it's the identifier of a base of the current contract)
-            let resolution = if index == identifier_path.len() - 1 {
-                self.resolve_first_modifier_or_base(&resolution)
-            } else {
-                resolution
-            };
+        // TODO(validation) SDR[35]: the found definition(s) must be modifiers
+        // and be in the current contract hierarchy. We could potentially
+        // verify that the initial symbol lookup is reachable from the
+        // contract only (ie. it's a contract modifier, a modifier in a
+        // base, or it's the identifier of a base of the current contract)
 
-            let reference = Reference::new(Arc::clone(identifier), resolution.clone());
-            self.binder.insert_reference(reference);
-
-            // NOTE: we need to follow symbol aliases to resolve the next scope to use
-            scope_id = self
-                .binder
-                .follow_symbol_aliases(resolution)
-                .as_definition_id()
-                .and_then(|definition_id| {
-                    find_definition_namespace_scope_id(self.binder, definition_id)
-                });
+        // A virtual modifier resolves to all of its overrides, most derived
+        // first. Keep that one: which override runs is decided per compiled
+        // contract, see `SemanticContext::resolve_modifier`.
+        if let Resolution::Ambiguous(definition_ids) = &path_resolution.resolution {
+            let name = identifier_path
+                .last()
+                .expect("an identifier path has at least one identifier");
+            self.binder
+                .fixup_reference(name.id(), Resolution::Definition(definition_ids[0]));
         }
     }
 
