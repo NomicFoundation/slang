@@ -1,0 +1,27 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 3
+
+[syntax/incompatible-syntax-version] Error: This syntax was introduced in version '0.8.4'.
+   ╭─[input.sol:6:5]
+   │
+ 6 │     error Err();
+   │     ──────┬─────  
+   │           ╰─────── Error occurred here.
+───╯
+
+[syntax/incompatible-syntax-version] Error: This syntax was introduced in version '0.8.4'.
+    ╭─[input.sol:11:9]
+    │
+ 11 │         revert I.Err();
+    │         ───────┬───────  
+    │                ╰───────── Error occurred here.
+────╯
+
+[resolution/member-not-found] Error: Member 'Err' not found or not visible after argument-dependent lookup.
+    ╭─[input.sol:11:18]
+    │
+ 11 │         revert I.Err();
+    │                  ─┬─  
+    │                   ╰─── Error occurred here.
+────╯
