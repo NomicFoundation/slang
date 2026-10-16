@@ -648,6 +648,14 @@ mod resolution {
         use super::*;
 
         #[test]
+        fn inherited_event_in_function() -> Result<()> {
+            run(
+                "resolution/identifier_not_found",
+                "inherited_event_in_function",
+            )
+        }
+
+        #[test]
         fn super_in_free_function() -> Result<()> {
             run("resolution/identifier_not_found", "super_in_free_function")
         }
@@ -4877,6 +4885,11 @@ mod type_system {
         }
 
         #[test]
+        fn constant_in_function_body() -> Result<()> {
+            run("type_system/array_length", "constant_in_function_body")
+        }
+
+        #[test]
         fn division_by_zero() -> Result<()> {
             run("type_system/array_length", "division_by_zero")
         }
@@ -4927,6 +4940,16 @@ mod type_system {
         }
 
         #[test]
+        fn local_shadows_constant() -> Result<()> {
+            run("type_system/array_length", "local_shadows_constant")
+        }
+
+        #[test]
+        fn local_variable_length() -> Result<()> {
+            run("type_system/array_length", "local_variable_length")
+        }
+
+        #[test]
         fn negative() -> Result<()> {
             run("type_system/array_length", "negative")
         }
@@ -4944,6 +4967,24 @@ mod type_system {
         #[test]
         fn not_constant() -> Result<()> {
             run("type_system/array_length", "not_constant")
+        }
+
+        #[test]
+        fn parameter_length() -> Result<()> {
+            run("type_system/array_length", "parameter_length")
+        }
+
+        #[test]
+        fn parameter_shadows_constant() -> Result<()> {
+            run("type_system/array_length", "parameter_shadows_constant")
+        }
+
+        #[test]
+        fn parameter_shadows_constant_in_signature() -> Result<()> {
+            run(
+                "type_system/array_length",
+                "parameter_shadows_constant_in_signature",
+            )
         }
 
         #[test]

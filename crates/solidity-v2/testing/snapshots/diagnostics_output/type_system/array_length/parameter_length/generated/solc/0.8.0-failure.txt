@@ -1,0 +1,11 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 1
+
+[TypeError 5462] Error: Invalid array length, expected integer literal or constant expression.
+   ╭─[input.sol:5:35]
+   │
+ 5 │     function f(uint256 n, uint256[n] memory arr) public pure {}
+   │                                   ┬  
+   │                                   ╰── Error occurred here.
+───╯
