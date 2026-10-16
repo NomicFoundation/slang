@@ -8,7 +8,7 @@ Diagnostics:
    │             ──────┬─────  
    │                   ╰─────── Error occurred here.
 ───╯
-[type-system/storage-layout-base-not-constant] Error: The base slot of the storage layout must be a compile-time constant expression.
+[resolution/identifier-not-found] Error: Identifier not found.
    ╭─[input.sol:3:23]
    │
  3 │ contract X2 layout at C2 { // should not bind to a constant defined in the contract

@@ -426,10 +426,12 @@ impl Pass<'_> {
                 self.push_diagnostic(expression.as_ref().unwrap_or(base_slot_expression), kind);
                 return;
             }
-            Err(EvaluationError::CouldNotEvaluate | EvaluationError::Unresolved) => {
+            Err(EvaluationError::CouldNotEvaluate) => {
                 self.push_diagnostic(base_slot_expression, StorageLayoutBaseNotConstant);
                 return;
             }
+            // Already reported as an unresolved identifier.
+            Err(EvaluationError::Unresolved) => return,
         };
 
         // Classify the value: non-integer, then out of range (negative or too large).

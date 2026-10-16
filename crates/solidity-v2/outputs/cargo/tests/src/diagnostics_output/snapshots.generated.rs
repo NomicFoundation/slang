@@ -671,6 +671,35 @@ mod resolution {
         }
 
         #[test]
+        fn undeclared_array_length() -> Result<()> {
+            run("resolution/identifier_not_found", "undeclared_array_length")
+        }
+
+        #[test]
+        fn undeclared_array_length_in_function() -> Result<()> {
+            run(
+                "resolution/identifier_not_found",
+                "undeclared_array_length_in_function",
+            )
+        }
+
+        #[test]
+        fn undeclared_name_in_constant_array_length() -> Result<()> {
+            run(
+                "resolution/identifier_not_found",
+                "undeclared_name_in_constant_array_length",
+            )
+        }
+
+        #[test]
+        fn undeclared_storage_layout_base() -> Result<()> {
+            run(
+                "resolution/identifier_not_found",
+                "undeclared_storage_layout_base",
+            )
+        }
+
+        #[test]
         fn unresolved_base() -> Result<()> {
             run("resolution/identifier_not_found", "unresolved_base")
         }
