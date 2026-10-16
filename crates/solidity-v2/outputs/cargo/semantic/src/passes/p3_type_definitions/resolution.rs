@@ -40,6 +40,18 @@ impl Pass<'_> {
         )
     }
 
+    /// Resolves an `IdentifierPath` in a type context starting at the current
+    /// lexical scope, and reports its first identifier that names nothing.
+    pub(super) fn resolve_and_check_identifier_path_as_type(
+        &mut self,
+        identifier_path: &ir::IdentifierPath,
+    ) {
+        let path_resolution = self.resolve_identifier_path_as_type(identifier_path);
+        if let Some((identifier, kind)) = path_resolution.unresolved_identifier(identifier_path) {
+            self.push_diagnostic(identifier, kind);
+        }
+    }
+
     /// Resolves an `IdentifierPath` in an expression context starting at the
     /// current lexical scope, and reports its first identifier that names nothing.
     pub(super) fn resolve_and_check_identifier_path_as_expression(
