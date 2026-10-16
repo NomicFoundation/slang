@@ -426,7 +426,7 @@ impl Pass<'_> {
                 self.push_diagnostic(expression.as_ref().unwrap_or(base_slot_expression), kind);
                 return;
             }
-            Err(EvaluationError::CouldNotEvaluate) => {
+            Err(EvaluationError::CouldNotEvaluate | EvaluationError::Unresolved) => {
                 self.push_diagnostic(base_slot_expression, StorageLayoutBaseNotConstant);
                 return;
             }
