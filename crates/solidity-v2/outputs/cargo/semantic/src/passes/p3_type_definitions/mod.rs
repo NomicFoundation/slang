@@ -6,6 +6,7 @@ use slang_solidity_v2_ir::ir;
 
 use crate::binder::{Binder, Definition, ScopeId};
 use crate::context::{FileNodeMapper, SemanticFile};
+use crate::passes::common::ScopeStack;
 use crate::types::{ContractType, Type, TypeId, TypeRegistry, UserMetaType};
 
 mod recursive_structs;
@@ -60,16 +61,8 @@ pub fn run(
     }
 }
 
-struct ScopeFrame {
-    // Scope associated with the node that created the stack frame. This is
-    // solely used for integrity validation when popping the current frame.
-    structural_scope_id: ScopeId,
-    // Scope to use when resolving a symbol.
-    lexical_scope_id: ScopeId,
-}
-
 struct Pass<'a> {
-    scope_stack: Vec<ScopeFrame>,
+    scope_stack: ScopeStack,
     binder: &'a mut Binder,
     language_version: LanguageVersion,
     types: &'a mut TypeRegistry,
@@ -101,7 +94,7 @@ impl<'a> Pass<'a> {
         diagnostics: &'a mut DiagnosticCollection,
     ) {
         let mut pass = Self {
-            scope_stack: Vec::new(),
+            scope_stack: ScopeStack::default(),
             binder,
             language_version,
             types,
@@ -131,7 +124,7 @@ impl<'a> Pass<'a> {
         storage_registered_structs: &mut Set<NodeId>,
     ) {
         let mut pass = Self {
-            scope_stack: Vec::new(),
+            scope_stack: ScopeStack::default(),
             binder,
             language_version,
             types,
@@ -206,42 +199,24 @@ impl<'a> Pass<'a> {
 
     fn enter_scope_for_node_id(&mut self, node_id: NodeId) {
         let scope_id = self.binder.scope_id_for_node_id(node_id).unwrap();
-        self.scope_stack.push(ScopeFrame {
-            structural_scope_id: scope_id,
-            lexical_scope_id: scope_id,
-        });
+        self.scope_stack.push(scope_id);
     }
 
     /// Makes the scope of `node_id` the one names resolve in, while keeping
     /// the current frame. Used after a variable declaration statement, so
     /// the following statements can see the declared variables.
     fn replace_scope_for_node_id(&mut self, node_id: NodeId) {
-        let lexical_scope_id = self.binder.scope_id_for_node_id(node_id).unwrap();
-        self.scope_stack
-            .last_mut()
-            .expect("scope stack cannot be empty")
-            .lexical_scope_id = lexical_scope_id;
+        let scope_id = self.binder.scope_id_for_node_id(node_id).unwrap();
+        self.scope_stack.replace(scope_id);
     }
 
     fn leave_scope_for_node_id(&mut self, node_id: NodeId) {
-        let Some(ScopeFrame {
-            structural_scope_id,
-            ..
-        }) = self.scope_stack.pop()
-        else {
-            unreachable!("attempt to pop an empty scope stack");
-        };
-        assert_eq!(
-            structural_scope_id,
-            self.binder.scope_id_for_node_id(node_id).unwrap()
-        );
+        let scope_id = self.binder.scope_id_for_node_id(node_id).unwrap();
+        self.scope_stack.pop(scope_id);
     }
 
     /// The scope names resolve in at the current point of the traversal.
     fn current_scope_id(&self) -> ScopeId {
-        self.scope_stack
-            .last()
-            .expect("scope stack cannot be empty")
-            .lexical_scope_id
+        self.scope_stack.current()
     }
 }

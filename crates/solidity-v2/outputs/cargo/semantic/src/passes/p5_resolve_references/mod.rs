@@ -7,7 +7,7 @@ use slang_solidity_v2_ir::ir::{NodeIdentity, TextRange};
 use crate::binder::{Binder, Scope, ScopeId};
 use crate::built_ins::BuiltInsResolver;
 use crate::context::{FileNodeMapper, SemanticFile};
-use crate::passes::common::node_location;
+use crate::passes::common::{ScopeStack, node_location};
 use crate::types::TypeRegistry;
 
 mod conversions;
@@ -33,16 +33,8 @@ pub fn run(
     }
 }
 
-struct ScopeFrame {
-    // Scope associated with the node that created the stack frame. This is
-    // solely used for integrity validation when popping the current frame.
-    structural_scope_id: ScopeId,
-    // Scope to use when resolving a symbol.
-    lexical_scope_id: ScopeId,
-}
-
 struct Pass<'a> {
-    scope_stack: Vec<ScopeFrame>,
+    scope_stack: ScopeStack,
     binder: &'a mut Binder,
     types: &'a mut TypeRegistry,
     file_node_mapper: &'a FileNodeMapper,
@@ -58,7 +50,7 @@ impl<'a> Pass<'a> {
         diagnostics: &'a mut DiagnosticCollection,
     ) {
         let mut pass = Self {
-            scope_stack: Vec::new(),
+            scope_stack: ScopeStack::default(),
             binder,
             types,
             file_node_mapper,
@@ -74,61 +66,28 @@ impl<'a> Pass<'a> {
 
     fn enter_scope_for_node_id(&mut self, node_id: NodeId) {
         let scope_id = self.binder.scope_id_for_node_id(node_id).unwrap();
-        self.scope_stack.push(ScopeFrame {
-            structural_scope_id: scope_id,
-            lexical_scope_id: scope_id,
-        });
+        self.scope_stack.push(scope_id);
     }
 
     /// Pushes a frame whose *structural* scope is the one associated with
     /// `node_id`, while names keep resolving in the enclosing lexical scope.
     fn enter_structural_scope_for_node_id(&mut self, node_id: NodeId) {
-        let structural_scope_id = self.binder.scope_id_for_node_id(node_id).unwrap();
-        self.scope_stack.push(ScopeFrame {
-            structural_scope_id,
-            lexical_scope_id: self.current_scope_id(),
-        });
+        let scope_id = self.binder.scope_id_for_node_id(node_id).unwrap();
+        self.scope_stack.push_structural(scope_id);
     }
 
     fn replace_scope_for_node_id(&mut self, node_id: NodeId) {
-        let Some(ScopeFrame {
-            structural_scope_id,
-            ..
-        }) = self.scope_stack.pop()
-        else {
-            unreachable!("scope stack cannot be empty");
-        };
         let scope_id = self.binder.scope_id_for_node_id(node_id).unwrap();
-        self.scope_stack.push(ScopeFrame {
-            structural_scope_id,
-            lexical_scope_id: scope_id,
-        });
+        self.scope_stack.replace(scope_id);
     }
 
     fn leave_scope_for_node_id(&mut self, node_id: NodeId) {
-        let Some(ScopeFrame {
-            structural_scope_id,
-            ..
-        }) = self.scope_stack.pop()
-        else {
-            unreachable!("attempt to pop an empty scope stack");
-        };
-        assert_eq!(
-            structural_scope_id,
-            self.binder.scope_id_for_node_id(node_id).unwrap()
-        );
+        let scope_id = self.binder.scope_id_for_node_id(node_id).unwrap();
+        self.scope_stack.pop(scope_id);
     }
 
     fn current_scope_id(&self) -> ScopeId {
-        self.scope_stack
-            .last()
-            .map(
-                |ScopeFrame {
-                     lexical_scope_id, ..
-                 }| lexical_scope_id,
-            )
-            .copied()
-            .unwrap()
+        self.scope_stack.current()
     }
 
     /// Emits `kind` located at `node`.
@@ -142,26 +101,15 @@ impl<'a> Pass<'a> {
     }
 
     fn is_in_modifier_scope(&self) -> bool {
-        self.scope_stack.iter().any(|frame| {
-            matches!(
-                self.binder.get_scope_by_id(frame.structural_scope_id),
-                Scope::Modifier(_)
-            )
-        })
+        self.scope_stack
+            .structural_scopes()
+            .any(|scope_id| matches!(self.binder.get_scope_by_id(scope_id), Scope::Modifier(_)))
     }
 
     fn current_contract_scope_id(&self) -> Option<ScopeId> {
-        for ScopeFrame {
-            structural_scope_id,
-            ..
-        } in self.scope_stack.iter().rev()
-        {
-            let scope = self.binder.get_scope_by_id(*structural_scope_id);
-            if matches!(scope, Scope::Contract(_)) {
-                return Some(*structural_scope_id);
-            }
-        }
-        None
+        self.scope_stack
+            .structural_scopes()
+            .find(|scope_id| matches!(self.binder.get_scope_by_id(*scope_id), Scope::Contract(_)))
     }
 
     /// The definition the current contract scope belongs to: a contract,
