@@ -167,6 +167,9 @@ impl Visitor for Pass<'_> {
                     let resolution = self.resolve_symbol_in_scope(scope_id, symbol);
                     filter_overridden_definitions(self.binder, self.types, resolution)
                 };
+                if matches!(resolution, Resolution::Unresolved) {
+                    self.push_diagnostic(identifier, IdentifierNotFound);
+                }
 
                 // Set the typing for the `Identifier` node.
                 // The resolution may point to an imported symbol, so we need to
