@@ -775,6 +775,14 @@ mod expressions {
     }
 
     #[test]
+    fn funcalls_overload_using_for_library_calldata() -> Result<()> {
+        run(
+            "expressions",
+            "funcalls_overload_using_for_library_calldata",
+        )
+    }
+
+    #[test]
     fn incomplete_member_access() -> Result<()> {
         run("expressions", "incomplete_member_access")
     }
