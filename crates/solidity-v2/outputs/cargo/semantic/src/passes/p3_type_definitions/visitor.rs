@@ -548,7 +548,7 @@ impl Visitor for Pass<'_> {
     }
 
     fn enter_revert_statement(&mut self, node: &ir::RevertStatement) -> bool {
-        self.resolve_identifier_path(&node.error);
+        self.resolve_and_check_identifier_path(&node.error);
         true
     }
 
@@ -558,7 +558,7 @@ impl Visitor for Pass<'_> {
     }
 
     fn enter_emit_statement(&mut self, node: &ir::EmitStatement) -> bool {
-        self.resolve_identifier_path(&node.event);
+        self.resolve_and_check_identifier_path(&node.event);
         true
     }
 

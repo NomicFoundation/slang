@@ -688,6 +688,14 @@ mod resolution {
         }
 
         #[test]
+        fn redeclared_type_in_emit_path() -> Result<()> {
+            run(
+                "resolution/identifier_not_found",
+                "redeclared_type_in_emit_path",
+            )
+        }
+
+        #[test]
         fn removed_log_built_in() -> Result<()> {
             run("resolution/identifier_not_found", "removed_log_built_in")
         }
