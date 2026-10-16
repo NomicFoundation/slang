@@ -65,6 +65,8 @@ impl Pass<'_> {
                 self.push_diagnostic(expression.as_ref().unwrap_or(size_expression), kind);
                 return U256::ZERO;
             }
+            // Already reported as an unresolved identifier.
+            Err(EvaluationError::Unresolved) => return U256::ZERO,
             Err(EvaluationError::CouldNotEvaluate) => {
                 self.push_diagnostic(size_expression, ArrayLengthNotConstant);
                 return U256::ZERO;
