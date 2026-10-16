@@ -2,7 +2,9 @@ use std::sync::Arc;
 
 use ruint::aliases::U256;
 use slang_solidity_v2_common::collections::Set;
-use slang_solidity_v2_common::diagnostics::kinds::resolution::IdentifierNotFound;
+use slang_solidity_v2_common::diagnostics::kinds::resolution::{
+    IdentifierNotFound, MemberNotFound,
+};
 use slang_solidity_v2_common::diagnostics::kinds::type_system::{
     StorageLayoutBaseNonInteger, StorageLayoutBaseNotConstant, StorageLayoutBaseOutOfRange,
 };
@@ -381,19 +383,25 @@ impl Pass<'_> {
             })
     }
 
-    /// Reports the first identifier of `identifier_path` if it resolves to
-    /// nothing. The rest of the path are member lookups.
-    pub(super) fn check_identifier_path_head_resolves(
-        &mut self,
-        identifier_path: &ir::IdentifierPath,
-    ) {
-        let head = &identifier_path[0];
-        if self
-            .binder
-            .find_reference_by_identifier_node_id(head.id())
-            .is_some_and(|reference| matches!(reference.resolution, Resolution::Unresolved))
-        {
-            self.push_diagnostic(head, IdentifierNotFound);
+    /// Reports the first identifier of `identifier_path` that resolves to
+    /// nothing: an undeclared name at its head, or a member that the
+    /// preceding segment does not provide. The segments after it cannot
+    /// resolve either, so they are not reported.
+    pub(super) fn check_identifier_path_resolves(&mut self, identifier_path: &ir::IdentifierPath) {
+        let Some((index, identifier)) =
+            identifier_path.iter().enumerate().find(|(_, identifier)| {
+                self.binder
+                    .find_reference_by_identifier_node_id(identifier.id())
+                    .is_some_and(|reference| matches!(reference.resolution, Resolution::Unresolved))
+            })
+        else {
+            return;
+        };
+        if index == 0 {
+            self.push_diagnostic(identifier, IdentifierNotFound);
+        } else {
+            let name = identifier.unparse().to_owned();
+            self.push_diagnostic(identifier, MemberNotFound { name });
         }
     }
 
