@@ -303,6 +303,9 @@ impl Pass<'_> {
         let identifier_path = &modifier_invocation.name;
         let path_resolution =
             resolve_identifier_path_in_scope(self.binder, identifier_path, self.current_scope_id());
+        if let Some((identifier, kind)) = path_resolution.unresolved_identifier(identifier_path) {
+            self.push_diagnostic(identifier, kind);
+        }
 
         // TODO(validation) SDR[35]: the found definition(s) must be modifiers
         // and be in the current contract hierarchy. We could potentially
