@@ -86,7 +86,7 @@ impl Pass<'_> {
                 self.push_diagnostic(expression.as_ref().unwrap_or(size_expression), kind);
                 return U256::ZERO;
             }
-            Err(EvaluationError::CouldNotEvaluate) => {
+            Err(EvaluationError::CouldNotEvaluate | EvaluationError::Unresolved) => {
                 self.push_diagnostic(size_expression, ArrayLengthNotConstant);
                 return U256::ZERO;
             }
@@ -135,7 +135,7 @@ impl Pass<'_> {
                 self.push_diagnostic(expression.as_ref().unwrap_or(base_slot_expression), kind);
                 return None;
             }
-            Err(EvaluationError::CouldNotEvaluate) => {
+            Err(EvaluationError::CouldNotEvaluate | EvaluationError::Unresolved) => {
                 self.push_diagnostic(base_slot_expression, StorageLayoutBaseNotConstant);
                 return None;
             }
