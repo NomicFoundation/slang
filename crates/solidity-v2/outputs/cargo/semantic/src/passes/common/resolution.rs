@@ -1,6 +1,10 @@
 use std::ops::Range;
 use std::sync::Arc;
 
+use slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind;
+use slang_solidity_v2_common::diagnostics::kinds::resolution::{
+    IdentifierNotFound, MemberNotFound,
+};
 use slang_solidity_v2_common::diagnostics::kinds::semantic::OverridableKind;
 use slang_solidity_v2_common::nodes::NodeId;
 use slang_solidity_v2_ir::ir;
@@ -8,17 +12,53 @@ use slang_solidity_v2_ir::ir;
 use crate::binder::{Binder, Definition, DefinitionIds, Reference, Resolution, ScopeId, Typing};
 use crate::types::{FunctionType, Type, TypeRegistry};
 
+/// The outcome of resolving an `IdentifierPath`.
+pub(crate) struct PathResolution {
+    /// The resolution of the last identifier, with symbol aliases followed.
+    pub(crate) resolution: Resolution,
+    /// The index of the first identifier that resolves to nothing, if any.
+    /// Once an identifier names several declarations (a redeclaration, which
+    /// is reported on its own, or an overload set), or an alias that does
+    /// not lead to a single declaration, the identifiers after it cannot
+    /// resolve and are not considered.
+    pub(crate) unresolved_index: Option<usize>,
+}
+
+impl PathResolution {
+    /// The identifier that failed to resolve, with the diagnostic to report
+    /// for it: the head of the path is undeclared, and any later identifier
+    /// is a member that the preceding one does not provide.
+    pub(crate) fn unresolved_identifier<'a>(
+        &self,
+        identifier_path: &'a ir::IdentifierPath,
+    ) -> Option<(&'a ir::Identifier, DiagnosticKind)> {
+        let index = self.unresolved_index?;
+        let identifier = &identifier_path[index];
+        let kind = if index == 0 {
+            IdentifierNotFound.into()
+        } else {
+            MemberNotFound {
+                name: identifier.unparse().to_owned(),
+            }
+            .into()
+        };
+        Some((identifier, kind))
+    }
+}
+
 /// Resolves an `IdentifierPath` starting from the given scope, creating
 /// `Reference`s for all its elements. It will follow through
 /// contracts/interfaces/libraries as well as imports and treat them as
-/// namespaces. Returns the resolution of the last reference.
+/// namespaces.
 pub(crate) fn resolve_identifier_path_in_scope(
     binder: &mut Binder,
     identifier_path: &ir::IdentifierPath,
     starting_scope_id: ScopeId,
-) -> Resolution {
+) -> PathResolution {
     let mut scope_id = Some(starting_scope_id);
     let mut resolution = Resolution::Unresolved;
+    let mut unresolved_index = None;
+    let mut is_reportable = true;
 
     for (index, identifier) in identifier_path.iter().enumerate() {
         let symbol = identifier.unparse();
@@ -32,11 +72,15 @@ pub(crate) fn resolve_identifier_path_in_scope(
         } else {
             Resolution::Unresolved
         };
+        if is_reportable && matches!(resolution, Resolution::Unresolved) {
+            unresolved_index = Some(index);
+        }
 
         let reference = Reference::new(Arc::clone(identifier), resolution.clone());
         binder.insert_reference(reference);
 
         resolution = binder.follow_symbol_aliases(resolution);
+        is_reportable &= matches!(resolution, Resolution::Definition(_));
 
         // Change the resolution scope to be that of the last resolved
         // definition, so we can resolve the next identifier in the path.
@@ -44,7 +88,10 @@ pub(crate) fn resolve_identifier_path_in_scope(
             .as_definition_id()
             .and_then(|definition_id| find_definition_namespace_scope_id(binder, definition_id));
     }
-    resolution
+    PathResolution {
+        resolution,
+        unresolved_index,
+    }
 }
 
 /// When a symbol resolves to an ambiguous set of Solidity functions
