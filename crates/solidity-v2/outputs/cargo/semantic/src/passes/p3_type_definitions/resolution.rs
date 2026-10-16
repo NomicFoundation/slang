@@ -27,28 +27,29 @@ use crate::types::{
 };
 
 impl Pass<'_> {
-    // Resolves an IdentifierPath starting at the "contract" scope level, or at
-    // the file level if there's no contract scope open.
-    // Returns the resolution of the last reference.
+    /// Resolves an `IdentifierPath` in a type context starting at the current
+    /// lexical scope.  Returns the resolution of the last reference.
     pub(super) fn resolve_identifier_path_as_type(
         &mut self,
         identifier_path: &ir::IdentifierPath,
     ) -> Resolution {
-        // start resolution from the current contract (or file if there's no
-        // contract scope open)
-        let starting_scope_id = self.current_contract_or_file_scope_id();
-        resolve_identifier_path_as_type_in_scope(self.binder, identifier_path, starting_scope_id)
+        resolve_identifier_path_as_type_in_scope(
+            self.binder,
+            identifier_path,
+            self.current_scope_id(),
+        )
     }
 
+    /// Resolves an `IdentifierPath` in an expression context starting at the
+    /// current lexical scope.  Returns the resolution of the last reference.
     pub(super) fn resolve_identifier_path_as_expression(
         &mut self,
         identifier_path: &ir::IdentifierPath,
     ) -> Resolution {
-        let starting_scope_id = self.current_contract_or_file_scope_id();
         resolve_identifier_path_as_expression_in_scope(
             self.binder,
             identifier_path,
-            starting_scope_id,
+            self.current_scope_id(),
         )
     }
 
@@ -71,7 +72,7 @@ impl Pass<'_> {
         let (file_id, range) = node_location(size_expression, self.file_node_mapper);
         let value = match evaluate_compile_time_constant(
             size_expression,
-            self.current_contract_or_file_scope_id(),
+            self.current_scope_id(),
             self.types,
             &ConstantResolver {
                 binder: self.binder,
@@ -119,7 +120,7 @@ impl Pass<'_> {
     ) -> Option<U256> {
         let value = match evaluate_compile_time_constant(
             base_slot_expression,
-            self.current_contract_or_file_scope_id(),
+            self.current_scope_id(),
             self.types,
             &ConstantResolver {
                 binder: self.binder,
