@@ -1,0 +1,11 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 1
+
+[TypeError 6005] Error: Member "f" not found or not visible after argument-dependent lookup in function () view external returns (contract A). Did you intend to call the function?
+    ╭─[input.sol:18:9]
+    │
+ 18 │         b.a.f();
+    │         ──┬──  
+    │           ╰──── Error occurred here.
+────╯

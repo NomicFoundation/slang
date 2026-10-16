@@ -1,0 +1,67 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics:
+[resolution/member-not-found] Error: Member 'value' not found or not visible after argument-dependent lookup.
+    ╭─[input.sol:10:24]
+    │
+ 10 │         return (new A).value(2)();              // should be rejected
+    │                        ──┬──  
+    │                          ╰──── Error occurred here.
+────╯
+
+------------------------------------------------------------------------
+
+Definitions (4):
+- Def: #1 ["A" @ input.sol:4:10] (contract)
+- Def: #2 ["C" @ input.sol:8:10] (contract)
+- Def: #3 ["missing" @ input.sol:9:14] (function, type: function () returns A)
+- Def: #4 ["present" @ input.sol:13:14] (function, type: function () returns A)
+
+------------------------------------------------------------------------
+
+References (6):
+- Ref: ["A" @ input.sol:9:40] -> #1
+- Ref: ["A" @ input.sol:10:21] -> #1
+- Ref: ["value" @ input.sol:10:24] -> unresolved
+- Ref: ["A" @ input.sol:13:40] -> #1
+- Ref: ["A" @ input.sol:14:20] -> #1
+- Ref: ["value" @ input.sol:14:22] -> built-in
+
+------------------------------------------------------------------------
+
+Unbound identifiers (0):
+
+------------------------------------------------------------------------
+
+Bindings: 
+    ╭─[input.sol:1:1]
+    │
+  4 │ contract A {
+    │          ┬  
+    │          ╰── name: 1
+    │ 
+  8 │ contract C {
+    │          ┬  
+    │          ╰── name: 2
+  9 │     function missing() public returns (A) {
+    │              ───┬───                   ┬  
+    │                 ╰───────────────────────── name: 3
+    │                                        │  
+    │                                        ╰── ref: 1
+ 10 │         return (new A).value(2)();              // should be rejected
+    │                     ┬  ──┬──  
+    │                     ╰───────── ref: 1
+    │                          │    
+    │                          ╰──── unresolved
+    │ 
+ 13 │     function present() public returns (A) {
+    │              ───┬───                   ┬  
+    │                 ╰───────────────────────── name: 4
+    │                                        │  
+    │                                        ╰── ref: 1
+ 14 │         return new A{value: 2}();              // should be accepted
+    │                    ┬ ──┬──  
+    │                    ╰──────── ref: 1
+    │                        │    
+    │                        ╰──── built-in
+────╯

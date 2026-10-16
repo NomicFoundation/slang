@@ -1,0 +1,23 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Source: >
+  1  │ // https://github.com/argotorg/solidity/blob/v0.8.0/test/libsolidity/syntaxTests/parsing/variable_definition_in_mapping.sol │ 0..123
+  2  │                                                                                                                             │ 124..124
+  3  │ contract test {                                                                                                             │ 125..140
+  4  │     function fun() {                                                                                                        │ 141..161
+  5  │         mapping(var=>bytes32) d;                                                                                            │ 162..194
+  6  │     }                                                                                                                       │ 195..200
+  7  │ }                                                                                                                           │ 201..202
+
+Diagnostics: # 1 total
+  - >
+    [syntax/unexpected-terminal] Error: Unexpected VarKeyword. One of AddressKeyword, AtKeyword, BoolKeyword, BytesKeyword, ErrorKeyword, FixedKeyword, FromKeyword, GlobalKeyword, Identifier, IntKeyword, LayoutKeyword, RevertKeyword, StringKeyword, TransientKeyword, UfixedKeyword, UintKeyword was expected
+       ╭─[crates/solidity-v2/testing/snapshots/cst_output/MappingType/var_key_type/input.sol:5:17]
+       │
+     5 │         mapping(var=>bytes32) d;
+       │                 ─┬─  
+       │                  ╰─── Error occurred here.
+    ───╯
+Tree:
+  - (root꞉ SourceUnit):
+      - (members꞉ SourceUnitMembers): []
