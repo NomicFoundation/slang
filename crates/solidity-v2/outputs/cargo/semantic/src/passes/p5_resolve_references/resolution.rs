@@ -8,7 +8,7 @@ use slang_solidity_v2_common::diagnostics::kinds::type_system::{
 use slang_solidity_v2_common::nodes::NodeId;
 use slang_solidity_v2_ir::ir;
 
-use super::{Pass, ScopeFrame};
+use super::Pass;
 use crate::binder::{
     Definition, DefinitionIds, Reference, Resolution, ResolveOptions, ScopeId, Typing,
     UsingDirective, UsingOperator,
@@ -49,15 +49,8 @@ impl Pass<'_> {
 
         // consider using directives in the scope stack
         self.scope_stack
-            .iter()
-            .rev()
-            .flat_map(
-                |ScopeFrame {
-                     lexical_scope_id, ..
-                 }| {
-                    self.binder.get_using_directives_in_scope(*lexical_scope_id)
-                },
-            )
+            .lexical_scopes()
+            .flat_map(|scope_id| self.binder.get_using_directives_in_scope(scope_id))
             // ... and add the global directives
             .chain(self.binder.get_global_using_directives())
             .filter(move |directive| directive.applies_to(type_id))
