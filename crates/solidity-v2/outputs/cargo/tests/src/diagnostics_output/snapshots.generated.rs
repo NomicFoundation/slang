@@ -790,14 +790,6 @@ mod resolution {
         }
 
         #[test]
-        fn undeclared_conversion_target() -> Result<()> {
-            run(
-                "resolution/identifier_not_found",
-                "undeclared_conversion_target",
-            )
-        }
-
-        #[test]
         fn undeclared_error() -> Result<()> {
             run("resolution/identifier_not_found", "undeclared_error")
         }
@@ -1762,6 +1754,22 @@ mod resolution {
         }
 
         #[test]
+        fn local_shadows_error_qualifier() -> Result<()> {
+            run(
+                "resolution/member_not_found",
+                "local_shadows_error_qualifier",
+            )
+        }
+
+        #[test]
+        fn local_shadows_event_qualifier() -> Result<()> {
+            run(
+                "resolution/member_not_found",
+                "local_shadows_event_qualifier",
+            )
+        }
+
+        #[test]
         fn member_not_found_via_super() -> Result<()> {
             run("resolution/member_not_found", "member_not_found_via_super")
         }
@@ -1792,6 +1800,40 @@ mod resolution {
         #[test]
         fn min_on_contract_meta_type() -> Result<()> {
             run("resolution/member_not_found", "min_on_contract_meta_type")
+        }
+
+        #[test]
+        fn missing_error_in_nested_path() -> Result<()> {
+            run(
+                "resolution/member_not_found",
+                "missing_error_in_nested_path",
+            )
+        }
+
+        #[test]
+        fn missing_error_on_interface_type() -> Result<()> {
+            run(
+                "resolution/member_not_found",
+                "missing_error_on_interface_type",
+            )
+        }
+
+        #[test]
+        fn missing_event_in_module() -> Result<()> {
+            run("resolution/member_not_found", "missing_event_in_module")
+        }
+
+        #[test]
+        fn missing_event_on_contract_type() -> Result<()> {
+            run(
+                "resolution/member_not_found",
+                "missing_event_on_contract_type",
+            )
+        }
+
+        #[test]
+        fn missing_event_on_library() -> Result<()> {
+            run("resolution/member_not_found", "missing_event_on_library")
         }
 
         #[test]
