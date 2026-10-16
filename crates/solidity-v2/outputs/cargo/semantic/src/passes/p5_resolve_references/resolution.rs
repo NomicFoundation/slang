@@ -2,6 +2,7 @@ use std::sync::Arc;
 
 use ruint::aliases::U256;
 use slang_solidity_v2_common::collections::Set;
+use slang_solidity_v2_common::diagnostics::kinds::resolution::IdentifierNotFound;
 use slang_solidity_v2_common::diagnostics::kinds::type_system::{
     StorageLayoutBaseNonInteger, StorageLayoutBaseNotConstant, StorageLayoutBaseOutOfRange,
 };
@@ -378,6 +379,22 @@ impl Pass<'_> {
                 self.binder
                     .follow_symbol_aliases(reference.resolution.clone())
             })
+    }
+
+    /// Reports the first identifier of `identifier_path` if it resolves to
+    /// nothing. The rest of the path are member lookups.
+    pub(super) fn check_identifier_path_head_resolves(
+        &mut self,
+        identifier_path: &ir::IdentifierPath,
+    ) {
+        let head = &identifier_path[0];
+        if self
+            .binder
+            .find_reference_by_identifier_node_id(head.id())
+            .is_some_and(|reference| matches!(reference.resolution, Resolution::Unresolved))
+        {
+            self.push_diagnostic(head, IdentifierNotFound);
+        }
     }
 
     pub(super) fn resolve_named_arguments(
