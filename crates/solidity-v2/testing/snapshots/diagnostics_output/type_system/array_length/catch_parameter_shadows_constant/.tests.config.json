@@ -1,0 +1,9 @@
+{
+  "override_language_versions": {
+    "specifier": {
+      "type": "From",
+      "from": "0.8.1"
+    },
+    "reason": "`catch Panic` was introduced in 0.8.1, which is the only catch clause with an integer parameter usable as a length."
+  }
+}

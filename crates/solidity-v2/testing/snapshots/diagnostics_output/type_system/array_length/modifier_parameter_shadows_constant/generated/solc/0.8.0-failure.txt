@@ -1,0 +1,19 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 2
+
+[Warning 2519] Warning: This declaration shadows an existing declaration.
+   ╭─[input.sol:8:16]
+   │
+ 8 │     modifier m(uint256 N) {
+   │                ────┬────  
+   │                    ╰────── Warning occurred here.
+───╯
+
+[TypeError 5462] Error: Invalid array length, expected integer literal or constant expression.
+   ╭─[input.sol:9:17]
+   │
+ 9 │         uint256[N] memory arr;
+   │                 ┬  
+   │                 ╰── Error occurred here.
+───╯
