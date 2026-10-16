@@ -226,7 +226,7 @@ impl Visitor for Pass<'_> {
 
     fn enter_type_name(&mut self, node: &ir::TypeName) -> bool {
         if let ir::TypeName::IdentifierPath(identifier_path) = node {
-            self.resolve_identifier_path_as_type(identifier_path);
+            self.resolve_and_check_identifier_path_as_type(identifier_path);
             false
         } else {
             true
@@ -306,7 +306,7 @@ impl Visitor for Pass<'_> {
 
     fn enter_override_paths(&mut self, items: &ir::OverridePaths) -> bool {
         for identifier_path in items.iter() {
-            self.resolve_identifier_path_as_type(identifier_path);
+            self.resolve_and_check_identifier_path_as_type(identifier_path);
         }
         false
     }
