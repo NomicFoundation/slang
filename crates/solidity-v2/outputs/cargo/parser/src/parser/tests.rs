@@ -216,6 +216,39 @@ function f() {}
 }
 
 #[test]
+fn consecutive_lines_include_empty_ones() {
+    let source = "
+/// @notice a
+///
+/// @dev b
+function f() {}
+";
+    assert_eq!(
+        documented_nodes(source),
+        [("function f() {}", Some("/// @notice a\n///\n/// @dev b\n"))]
+    );
+}
+
+#[test]
+fn regular_comments_split_consecutive_lines() {
+    for comment in ["// a", "//// a", "/* a */", "/** a */"] {
+        let source = format!("/// @notice a\n{comment}\n/// @notice b\nfunction f() {{}}");
+        assert_eq!(
+            documented_nodes(&source),
+            [("function f() {}", Some("/// @notice b\n"))],
+            "{source:?}"
+        );
+    }
+
+    // Even on the same line as the next one
+    let source = "/// @notice a\n/* a */ /// @notice b\nfunction f() {}";
+    assert_eq!(
+        documented_nodes(source),
+        [("function f() {}", Some("/// @notice b\n"))]
+    );
+}
+
+#[test]
 fn only_the_last_comment_counts() {
     // A blank line splits `///` lines into two comments, and like in solc, only the last one
     // documents the code
