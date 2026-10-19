@@ -126,6 +126,13 @@ enum RejectSuffixHexLiteral1 {
 /// Rejects a `DecimalLiteral` match that ends with this suffix.
 #[derive(Logos)]
 enum RejectSuffixDecimalLiteral1 {
+    #[regex(r#"((_|\$|[a-z]|[A-Z])((_|\$|[a-z]|[A-Z])|[0-9])*)|\._"#)]
+    Matched,
+}
+
+/// Rejects a `DecimalLiteral` match that ends with this suffix.
+#[derive(Logos)]
+enum RejectSuffixDecimalLiteral2 {
     #[regex(r#"((_|\$|[a-z]|[A-Z])((_|\$|[a-z]|[A-Z])|[0-9])*)"#)]
     Matched,
 }
@@ -316,7 +323,8 @@ pub enum SolidityContext {
     #[regex(r#"///(?&TextAfterSlashes)?((?&LineBreak)((?&SpaceOrTab)*///(?&TextAfterSlashes)?(?&LineBreak))*((?&SpaceOrTab)*///(?&TextAfterSlashes))?)?"#, |_| { LexemeKind::SingleLineNatSpecComment }, priority = 1000165, allow_greedy = true)]
     #[regex(r#"/\*\*[^/\*][^\*]*\*+([^/\*][^\*]*\*+)*/"#, |_| { LexemeKind::MultiLineNatSpecComment }, priority = 1000166, allow_greedy = true)]
     #[regex(r#"0x(?&HexCharacter)+(_(?&HexCharacter)+)*"#, |lexer| { reject_suffix::<RejectSuffixHexLiteral1, _>(lexer, LexemeKind::HexLiteral) }, priority = 2000167)]
-    #[regex(r#"((?&DecimalDigits)(\.(?&DecimalDigits))?(?&DecimalExponent)?)|(\.(?&DecimalDigits)(?&DecimalExponent)?)"#, |lexer| { reject_suffix::<RejectSuffixDecimalLiteral1, _>(lexer, LexemeKind::DecimalLiteral) }, priority = 2000168)]
+    #[regex(r#"(?&DecimalDigits)"#, |lexer| { reject_suffix::<RejectSuffixDecimalLiteral1, _>(lexer, LexemeKind::DecimalLiteral) }, priority = 2000168)]
+    #[regex(r#"((?&DecimalDigits)((\.(?&DecimalDigits)(?&DecimalExponent)?)|(?&DecimalExponent)))|(\.(?&DecimalDigits)(?&DecimalExponent)?)"#, |lexer| { reject_suffix::<RejectSuffixDecimalLiteral2, _>(lexer, LexemeKind::DecimalLiteral) }, priority = 2000168)]
     #[regex(r#"('((?&EscapeSequence)|[ -&]|[\(-\[]|[\]-~])*')|("((?&EscapeSequence)|[ -!]|[#-\[]|[\]-~])*")"#, |_| { LexemeKind::StringLiteral }, priority = 2000169)]
     #[regex(r#"(hex'(?&HexStringContents)?')|(hex"(?&HexStringContents)?")"#, |_| { LexemeKind::HexStringLiteral }, priority = 2000170)]
     #[regex(r#"(unicode'((?&UnicodeEscapeSequence)|[^'\\\r\n])*')|(unicode"((?&UnicodeEscapeSequence)|[^"\\\r\n])*")"#, |_| { LexemeKind::UnicodeStringLiteral }, priority = 2000171)]
