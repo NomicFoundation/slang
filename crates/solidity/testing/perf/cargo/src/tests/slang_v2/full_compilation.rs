@@ -79,10 +79,10 @@ impl ImportResolver for ProjectImportResolver {
     }
 }
 
-/// Counts the ABI entries produced for the unit's concrete contracts, which is
-/// the same value that the `compute_contracts_abi` stage benchmark reports.
-pub fn count_concrete_contracts(output: &Output) -> usize {
-    output.compute_contracts_abi().len()
+/// Counts the ABIs computed for the unit's contracts, interfaces, and libraries,
+/// which is the same value that the `compute_abi` stage benchmark reports.
+pub fn count_abis(output: &Output) -> usize {
+    output.compute_abi().len()
 }
 
 /// Counts the references the binder resolved across every file of the unit.

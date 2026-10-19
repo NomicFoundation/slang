@@ -3507,7 +3507,7 @@ pub fn slang_solidity_v2_ast::ast::SourceUnitMembersStruct::calculate_file_id(&s
 pub fn slang_solidity_v2_ast::ast::SourceUnitMembersStruct::calculate_text_range(&self) -> core::option::Option<core::ops::range::Range<usize>>
 pub struct slang_solidity_v2_ast::ast::SourceUnitStruct
 impl slang_solidity_v2_ast::ast::SourceUnitStruct
-pub fn slang_solidity_v2_ast::ast::SourceUnitStruct::compute_contracts_abi(&self) -> alloc::vec::Vec<slang_solidity_v2_ast::abi::ContractAbi>
+pub fn slang_solidity_v2_ast::ast::SourceUnitStruct::compute_abi(&self) -> alloc::vec::Vec<slang_solidity_v2_ast::abi::ContractAbi>
 impl slang_solidity_v2_ast::ast::SourceUnitStruct
 pub fn slang_solidity_v2_ast::ast::SourceUnitStruct::contracts(&self) -> alloc::vec::Vec<slang_solidity_v2_ast::ast::ContractDefinition>
 pub fn slang_solidity_v2_ast::ast::SourceUnitStruct::file_id(&self) -> &slang_solidity_v2_common::files::FileId
