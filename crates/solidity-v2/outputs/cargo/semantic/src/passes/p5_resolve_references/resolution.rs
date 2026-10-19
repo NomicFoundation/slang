@@ -1,7 +1,9 @@
 use std::sync::Arc;
 
 use slang_solidity_v2_common::collections::Set;
+use slang_solidity_v2_common::diagnostics::kinds::resolution::MemberNotFound;
 use slang_solidity_v2_common::nodes::NodeId;
+use slang_solidity_v2_common::versions::LanguageVersion;
 use slang_solidity_v2_ir::ir;
 
 use super::Pass;
@@ -11,7 +13,8 @@ use crate::binder::{
 };
 use crate::built_ins::BuiltInsResolver;
 use crate::passes::common::{
-    find_definition_namespace_scope_id, resolve_identifier_path_as_type_in_scope,
+    find_definition_namespace_scope_id, resolve_identifier_path_as_expression_in_scope,
+    resolve_identifier_path_as_type_in_scope,
 };
 use crate::types::{ContractType, InterfaceType, StructType, Type, TypeId, UserMetaType};
 
@@ -139,13 +142,21 @@ impl Pass<'_> {
                 self.binder.resolve_in_scope_as_namespace(scope_id, symbol)
             }
             Type::UserMetaType(UserMetaType { definition_id }) => {
-                find_definition_namespace_scope_id(self.binder, *definition_id).map_or(
-                    Resolution::Unresolved,
-                    |scope_id| {
-                        self.binder
-                            .resolve_in_scope_as_expression_member(scope_id, symbol)
-                    },
-                )
+                let definition_id = *definition_id;
+                let resolution = find_definition_namespace_scope_id(self.binder, definition_id)
+                    .map_or(Resolution::Unresolved, |scope_id| {
+                        self.binder.resolve_in_scope_as_expression_member(scope_id, symbol)
+                    });
+                if self.is_foreign_contract_or_interface(definition_id) {
+                    let visible: DefinitionIds = resolution
+                        .get_definition_ids()
+                        .into_iter()
+                        .filter(|id| self.is_reachable_from_outside_hierarchy(*id))
+                        .collect();
+                    Resolution::from(visible)
+                } else {
+                    resolution
+                }
             }
             _ => Resolution::Unresolved,
         }
@@ -160,6 +171,28 @@ impl Pass<'_> {
                 .lookup_member_of_type_id(type_id, symbol)
                 .into()
         })
+    }
+
+    fn is_foreign_contract_or_interface(&self, definition_id: NodeId) -> bool {
+        matches!(
+            self.binder.find_definition_by_id(definition_id),
+            Some(Definition::Contract(_) | Definition::Interface(_))
+        ) && self.is_foreign_contract(definition_id)
+    }
+
+    /// Whether a member of a contract or interface can be reached through its
+    /// name from outside the contract's hierarchy: types, errors and
+    /// externally visible functions can, events only from 0.8.21, and
+    /// variables and internal functions never.
+    fn is_reachable_from_outside_hierarchy(&self, definition_id: NodeId) -> bool {
+        match self.binder.find_definition_by_id(definition_id) {
+            Some(definition @ Definition::Function(_)) => definition.is_externally_visible(),
+            Some(Definition::Event(_)) => self.types.language_version() >= LanguageVersion::V0_8_21,
+            Some(
+                Definition::StateVariable(_) | Definition::Constant(_) | Definition::Modifier(_),
+            ) => false,
+            _ => true,
+        }
     }
 
     fn add_attached_functions_for_type(
@@ -324,6 +357,51 @@ impl Pass<'_> {
             self.binder
                 .fixup_reference(name.id(), Resolution::Definition(definition_ids[0]));
         }
+    }
+
+    /// Resolves the event of an `emit` or the error of a `revert`, reporting
+    /// its first identifier that names nothing, or else a last identifier
+    /// that isn't reachable through the contract qualifying it.
+    pub(super) fn resolve_emit_or_revert_target(&mut self, identifier_path: &ir::IdentifierPath) {
+        let path_resolution = resolve_identifier_path_as_expression_in_scope(
+            self.binder,
+            identifier_path,
+            self.current_scope_id(),
+        );
+        if let Some((identifier, kind)) = path_resolution.unresolved_identifier(identifier_path) {
+            self.push_diagnostic(identifier, kind);
+        } else if let Some(member) = self.unreachable_qualified_member(identifier_path) {
+            self.binder
+                .fixup_reference(member.id(), Resolution::Unresolved);
+            let name = member.unparse().to_owned();
+            self.push_diagnostic(member, MemberNotFound { name });
+        }
+    }
+
+    /// The last identifier of `identifier_path` when it names a member of a
+    /// contract or interface that isn't reachable through that contract's
+    /// name from here, eg. the `E` of `emit D.E()` outside `D`'s hierarchy.
+    fn unreachable_qualified_member<'a>(
+        &self,
+        identifier_path: &'a ir::IdentifierPath,
+    ) -> Option<&'a ir::Identifier> {
+        let [.., qualifier, member] = identifier_path.as_ref() else {
+            return None;
+        };
+        let qualifier_id = self
+            .followed_resolution_of_reference(qualifier.id())?
+            .as_definition_id()?;
+        if !self.is_foreign_contract_or_interface(qualifier_id) {
+            return None;
+        }
+        let member_ids = self
+            .followed_resolution_of_reference(member.id())?
+            .get_definition_ids();
+        let is_unreachable = !member_ids.is_empty()
+            && member_ids
+                .iter()
+                .all(|member_id| !self.is_reachable_from_outside_hierarchy(*member_id));
+        is_unreachable.then_some(member)
     }
 
     /// The resolution of the declaration named by the reference at

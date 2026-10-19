@@ -19,8 +19,7 @@ use crate::passes::common::constant_evaluator::{
     ConstantResolver, EvaluationError, evaluate_compile_time_constant,
 };
 use crate::passes::common::{
-    PathResolution, node_location, resolve_identifier_path_as_expression_in_scope,
-    resolve_identifier_path_as_type_in_scope,
+    PathResolution, node_location, resolve_identifier_path_as_type_in_scope,
 };
 use crate::types::{
     ArrayType, DataLocation, FixedSizeArrayType, FunctionType, MappingType, TupleType, Type, TypeId,
@@ -47,22 +46,6 @@ impl Pass<'_> {
         identifier_path: &ir::IdentifierPath,
     ) {
         let path_resolution = self.resolve_identifier_path_as_type(identifier_path);
-        if let Some((identifier, kind)) = path_resolution.unresolved_identifier(identifier_path) {
-            self.push_diagnostic(identifier, kind);
-        }
-    }
-
-    /// Resolves an `IdentifierPath` in an expression context starting at the
-    /// current lexical scope, and reports its first identifier that names nothing.
-    pub(super) fn resolve_and_check_identifier_path_as_expression(
-        &mut self,
-        identifier_path: &ir::IdentifierPath,
-    ) {
-        let path_resolution = resolve_identifier_path_as_expression_in_scope(
-            self.binder,
-            identifier_path,
-            self.current_scope_id(),
-        );
         if let Some((identifier, kind)) = path_resolution.unresolved_identifier(identifier_path) {
             self.push_diagnostic(identifier, kind);
         }
