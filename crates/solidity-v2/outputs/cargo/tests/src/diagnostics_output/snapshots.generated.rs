@@ -680,6 +680,14 @@ mod resolution {
         }
 
         #[test]
+        fn external_library_function_called_internally() -> Result<()> {
+            run(
+                "resolution/identifier_not_found",
+                "external_library_function_called_internally",
+            )
+        }
+
+        #[test]
         fn inherited_event_in_function() -> Result<()> {
             run(
                 "resolution/identifier_not_found",
