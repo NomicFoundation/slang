@@ -3,17 +3,21 @@ use crate::abi::{AbiEntry, AbiParameter};
 use crate::ast::{Definition, Type};
 
 #[test]
-fn test_get_contracts_abi() {
-    let unit = fixtures::Counter::build_compilation_unit();
+fn test_get_abi() {
+    let abis = fixtures::Counter::build_compilation_unit().compute_abi();
 
-    let contracts = unit.compute_contracts_abi();
-    assert_eq!(1, contracts.len());
-    assert_eq!("Counter", contracts[0].name());
-    assert_eq!("main.sol", contracts[0].file_id().as_str());
-    assert_eq!(7, contracts[0].entries().len());
+    let [activatable, counter, ownable] = abis.as_slice() else {
+        panic!("Expected 3 ABIs");
+    };
 
-    let entries = contracts[0].entries().iter().collect::<Vec<_>>();
+    assert_eq!(activatable.name(), "Activatable");
+    assert_eq!(counter.name(), "Counter");
+    assert_eq!(ownable.name(), "Ownable");
 
+    assert_eq!("main.sol", counter.file_id().as_str());
+
+    let entries = counter.entries().iter().collect::<Vec<_>>();
+    assert_eq!(7, entries.len());
     assert!(matches!(entries[0], AbiEntry::Constructor(_)));
     assert!(matches!(&entries[1], AbiEntry::Function(f) if f.name() == "click"));
     assert!(matches!(&entries[2], AbiEntry::Function(f) if f.name() == "count"));
@@ -25,18 +29,28 @@ fn test_get_contracts_abi() {
 
 #[test]
 fn test_full_abi_with_events_and_errors() {
-    let unit = super::FullAbi::build_compilation_unit();
+    let abis = super::FullAbi::build_compilation_unit().compute_abi();
 
-    let contracts_abi = unit.compute_contracts_abi();
-    assert_eq!(contracts_abi.len(), 2);
-    assert_eq!(contracts_abi[0].name(), "Base");
-    assert_eq!(contracts_abi[1].name(), "Test");
+    let [itest, base, test, lib] = abis.as_slice() else {
+        panic!("Expected 4 ABIs")
+    };
 
-    let entries = contracts_abi[0].entries().iter().collect::<Vec<_>>();
+    assert_eq!(itest.name(), "ITest");
+
+    let entries = itest.entries().iter().collect::<Vec<_>>();
+    assert_eq!(entries.len(), 2);
+    assert!(matches!(&entries[0], AbiEntry::Error(e) if e.name() == "SomethingWrong"));
+    assert!(matches!(&entries[1], AbiEntry::Event(e) if e.name() == "BaseEvent"));
+
+    assert_eq!(base.name(), "Base");
+
+    let entries = base.entries().iter().collect::<Vec<_>>();
     assert_eq!(entries.len(), 1);
     assert!(matches!(&entries[0], AbiEntry::Function(f) if f.name() == "xs"));
 
-    let entries = contracts_abi[1].entries().iter().collect::<Vec<_>>();
+    assert_eq!(test.name(), "Test");
+
+    let entries = test.entries().iter().collect::<Vec<_>>();
     assert_eq!(entries.len(), 10);
     assert!(matches!(entries[0], AbiEntry::Constructor(_)));
     assert!(matches!(&entries[1], AbiEntry::Error(e) if e.name() == "InsufficientBalance"));
@@ -48,17 +62,24 @@ fn test_full_abi_with_events_and_errors() {
     assert!(matches!(&entries[7], AbiEntry::Function(f) if f.name() == "foo"));
     assert!(matches!(&entries[8], AbiEntry::Function(f) if f.name() == "xs"));
     assert!(matches!(entries[9], AbiEntry::Receive(_)));
+
+    assert_eq!(lib.name(), "Lib");
+
+    let entries = lib.entries().iter().collect::<Vec<_>>();
+    assert_eq!(entries.len(), 1);
+    assert!(matches!(&entries[0], AbiEntry::Function(f) if f.name() == "version"));
 }
 
 #[test]
 fn test_abi_entries_with_tuples() {
-    let unit = super::AbiWithTuples::build_compilation_unit();
+    let abis = super::AbiWithTuples::build_compilation_unit().compute_abi();
 
-    let contracts_abi = unit.compute_contracts_abi();
-    assert_eq!(contracts_abi.len(), 1);
-    assert_eq!(contracts_abi[0].name(), "Test");
+    let [test] = abis.as_slice() else {
+        panic!("Expected 1 ABI");
+    };
 
-    let entries = contracts_abi[0].entries().iter().collect::<Vec<_>>();
+    assert_eq!(test.name(), "Test");
+    let entries = test.entries().iter().collect::<Vec<_>>();
     assert_eq!(entries.len(), 5);
 
     // The parameters' types are pinned by `json::tuples_and_getters_serialize`, on the same
@@ -124,9 +145,12 @@ fn test_abi_entries_with_tuples() {
 /// struct's members as components, through any arrays.
 #[test]
 fn parameters_expose_type_names_and_components() {
-    let unit = super::AbiWithTuples::build_compilation_unit();
-    let contracts_abi = unit.compute_contracts_abi();
-    let Some(AbiEntry::Function(f)) = contracts_abi[0].entries().iter().next() else {
+    let abis = super::AbiWithTuples::build_compilation_unit().compute_abi();
+    let [test] = abis.as_slice() else {
+        panic!("Expected 1 ABI");
+    };
+
+    let Some(AbiEntry::Function(f)) = test.entries().iter().next() else {
         panic!("expected ABI for function");
     };
     assert_eq!(f.name(), "f");
@@ -233,9 +257,14 @@ fn abstract_contract_has_no_constructor_entry() {
 /// as functions with selectors, next to the real receive and fallback functions.
 #[test]
 fn functions_named_receive_and_fallback_are_regular_functions() {
-    let unit = super::FunctionsNamedReceiveAndFallback::build_compilation_unit();
-    let contracts_abi = unit.compute_contracts_abi();
-    let entries = contracts_abi[0].entries().iter().collect::<Vec<_>>();
+    let abis = super::FunctionsNamedReceiveAndFallback::build_compilation_unit().compute_abi();
+    let [c] = abis.as_slice() else {
+        panic!("Expected 1 ABI");
+    };
+
+    assert_eq!(c.name(), "C");
+
+    let entries = c.entries().iter().collect::<Vec<_>>();
     assert_eq!(entries.len(), 4);
     assert!(matches!(entries[0], AbiEntry::Fallback(_)));
     assert!(matches!(&entries[1], AbiEntry::Function(f) if f.name() == "fallback"));

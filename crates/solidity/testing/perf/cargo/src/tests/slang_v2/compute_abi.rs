@@ -1,6 +1,7 @@
 use std::sync::Arc;
 
-use slang_solidity_v2_ast::{abi, ast};
+use slang_solidity_v2_ast::abi::ContractAbi;
+use slang_solidity_v2_ast::ast;
 use slang_solidity_v2_semantic::context::{SemanticContext, SemanticFile};
 
 use super::semantic::File;
@@ -14,7 +15,7 @@ pub struct Input {
 pub struct Output {
     pub(crate) files: Vec<File>,
     pub(crate) semantic: Arc<SemanticContext>,
-    pub(crate) abi: Vec<abi::ContractAbi>,
+    pub(crate) abi: Vec<ContractAbi>,
     pub(crate) json: Vec<String>,
 }
 
@@ -35,14 +36,12 @@ pub fn run(input: Input) -> Output {
     test(input)
 }
 
-/// Computes every contract's ABI and renders it as JSON.
+/// Computes the ABI of every contract, interface, and library, and renders it as JSON.
 pub fn test(input: Input) -> Output {
-    let abi: Vec<abi::ContractAbi> = input
+    let abi: Vec<ContractAbi> = input
         .files
         .iter()
-        .flat_map(|file| {
-            ast::create_source_unit(file.ir_root(), &input.semantic).compute_contracts_abi()
-        })
+        .flat_map(|file| ast::create_source_unit(file.ir_root(), &input.semantic).compute_abi())
         .collect();
     let json = abi
         .iter()
@@ -56,10 +55,8 @@ pub fn test(input: Input) -> Output {
     }
 }
 
-// `compute_contracts_abi` already filters out abstract contracts (and
-// interfaces/libraries are not in `SourceUnit::contracts()` at all), so the
-// length of its output is exactly the number of concrete contracts whose ABI
-// could be computed.
-pub fn count_concrete_contracts(output: &Output) -> usize {
+// Definitions whose ABI cannot be computed are skipped, so comparing this to the
+// number of contracts, interfaces, and libraries detects any silently dropped.
+pub fn count_abis(output: &Output) -> usize {
     output.abi.len()
 }

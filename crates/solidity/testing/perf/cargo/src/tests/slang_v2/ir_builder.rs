@@ -98,24 +98,6 @@ pub fn count_contracts(output: &Output) -> usize {
     contract_count
 }
 
-// Counts non-abstract `contract` definitions only — the same set that
-// `SourceUnit::compute_contracts_abi` operates on. Used as the IR-level
-// ground truth to detect whether ABI computation silently drops any
-// concrete contract.
-pub fn count_concrete_contracts(output: &Output) -> usize {
-    let mut count = 0;
-    for source_unit in &output.ir_source_units {
-        for member in source_unit.members.iter() {
-            if let SourceUnitMember::ContractDefinition(contract) = member
-                && !contract.is_abstract
-            {
-                count += 1;
-            }
-        }
-    }
-    count
-}
-
 pub fn count_identifiers(output: &Output) -> usize {
     struct Checker {
         total: usize,
