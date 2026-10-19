@@ -480,6 +480,11 @@ mod contracts {
     }
 
     #[test]
+    fn super_skips_unimplemented() -> Result<()> {
+        run("contracts", "super_skips_unimplemented")
+    }
+
+    #[test]
     fn this_scope() -> Result<()> {
         run("contracts", "this_scope")
     }
