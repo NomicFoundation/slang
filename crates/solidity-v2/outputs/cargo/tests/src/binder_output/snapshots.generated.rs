@@ -1437,6 +1437,11 @@ mod using {
     }
 
     #[test]
+    fn operator_and_member_attached_function() -> Result<()> {
+        run("using", "operator_and_member_attached_function")
+    }
+
+    #[test]
     fn overloaded_functions_attached() -> Result<()> {
         run("using", "overloaded_functions_attached")
     }
