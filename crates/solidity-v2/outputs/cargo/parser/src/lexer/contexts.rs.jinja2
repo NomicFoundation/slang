@@ -59,43 +59,28 @@ impl<'source> ContextWrapper<'source> {
 
 {% for context in model.parser.lexer.contexts %}
     {%- for lexeme in context.lexemes %}
-    {%- if lexeme.type == "Token" and lexeme.not_followed_by %}
-    {# TODO: Most not_followed_by patterns are the same, in the future it may
-       be worth it to deduplicate them and generate unique instances. #}
-
-    /// Lookahead pattern guarding `{{ lexeme.kind }}`.
-    ///
-    /// This is its own `Logos` enum so that the pattern is compiled into a DFA at
-    /// build time. Building an equivalent `regex::Regex` on first use instead costs
-    /// a few hundred thousand instructions per thread, which dominates the cost of
-    /// the guard itself.
-    #[derive(Logos)]
-    enum NotFollowedBy{{ lexeme.kind }} {
-        #[regex(r#"{{ lexeme.not_followed_by }}"#)]
-        Matched,
-    }
-
-    // Kept out of line on purpose: this only runs after a `{{ lexeme.kind }}` match, and
-    // inlining the lookahead DFA into the context lexer pushes the whole lexer past
-    // the threshold for being inlined into the LALRPOP driver.
-    #[inline(never)]
-    #[allow(non_snake_case)]
-    fn not_followed_by__{{ lexeme.kind }}(
-        lex: &mut Lexer<'_, {{ context.name }}Context>,
-    ) -> FilterResult<LexemeKind, ()> {
-        // `logos` only ever attempts a match at the lexer's current position, so an
-        // `Ok` from the very first `next()` is a match anchored at the start of the
-        // remainder, and its span length is the length of that match.
-        let mut lookahead = NotFollowedBy{{ lexeme.kind }}::lexer(lex.remainder());
-
-        if matches!(lookahead.next(), Some(Ok(NotFollowedBy{{ lexeme.kind }}::Matched))) {
-            lex.bump(lookahead.span().end);
-            FilterResult::Error(())
-        } else {
-            FilterResult::Emit(LexemeKind::{{ lexeme.kind }})
-        }
-    }
-    {%- endif %}
+        {%- if lexeme.type == "Token" %}
+            {%- for definition in lexeme.definitions %}
+                {%- if definition.reject_suffix %}
+                    {#
+                        TODO: Most not_followed_by patterns are the same, in the future it may
+                        be worth it to deduplicate them and generate unique instances.
+                    #}
+                    {#
+                        This is its own `Logos` enum so that the pattern is compiled into a DFA at
+                        build time. Building an equivalent `regex::Regex` on first use instead costs
+                        a few hundred thousand instructions per thread, which dominates the cost of
+                        the guard itself.
+                    #}
+                    /// Rejects a `{{ lexeme.kind }}` match that ends with this suffix.
+                    #[derive(Logos)]
+                    enum RejectSuffix{{ lexeme.kind }}{{ loop.index }} {
+                        #[regex(r#"{{ definition.reject_suffix }}"#)]
+                        Matched,
+                    }
+                {%- endif %}
+            {%- endfor %}
+        {%- endif %}
     {%- endfor %}
 
     #[derive(Clone, Debug, Logos)]
@@ -105,15 +90,18 @@ impl<'source> ContextWrapper<'source> {
     {%- endfor -%}
     pub enum {{ context.name }}Context {
         {% for lexeme in context.lexemes -%}
+            {%- set lexeme_index = loop.index -%}
             {%- if lexeme.type == "Trivia" -%}
                 {# use 'allow_greedy' on trivia: https://github.com/maciejhirsz/logos/issues/520 #}
-                #[regex(r#"{{ lexeme.regex }}"#, |_| { LexemeKind::{{ lexeme.kind }} }, priority = {{ 1000000 + loop.index }}, allow_greedy = true)]
+                #[regex(r#"{{ lexeme.regex }}"#, |_| { LexemeKind::{{ lexeme.kind }} }, priority = {{ 1000000 + lexeme_index }}, allow_greedy = true)]
             {%- elif lexeme.type == "Token" -%}
-                {%- if lexeme.not_followed_by -%}
-                #[regex(r#"{{ lexeme.regex }}"#, not_followed_by__{{ lexeme.kind }}, priority = {{ 2000000 + loop.index }})]
-                {%- else -%}
-                #[regex(r#"{{ lexeme.regex }}"#, |_| { LexemeKind::{{ lexeme.kind }} }, priority = {{ 2000000 + loop.index }})]
-                {%- endif -%}
+                {%- for definition in lexeme.definitions -%}
+                    {%- if definition.reject_suffix -%}
+                        #[regex(r#"{{ definition.regex }}"#, |lexer| { reject_suffix::<RejectSuffix{{ lexeme.kind }}{{ loop.index }}, _>(lexer, LexemeKind::{{ lexeme.kind }}) }, priority = {{ 2000000 + lexeme_index }})]
+                    {%- else -%}
+                        #[regex(r#"{{ definition.regex }}"#, |_| { LexemeKind::{{ lexeme.kind }} }, priority = {{ 2000000 + lexeme_index }})]
+                    {%- endif -%}
+                {%- endfor -%}
             {%- elif lexeme.type == "Keyword" -%}
                 #[regex(r#"{{ lexeme.regex }}"#,
                     {{- " " -}}
@@ -131,7 +119,7 @@ impl<'source> ContextWrapper<'source> {
                             }
                         }
                     {%- endif -%}
-                , priority = {{ 3000000 + loop.index }})]
+                , priority = {{ 3000000 + lexeme_index }})]
             {%- else -%}
                 {{ throw(message = "Unrecognized lexeme type: " ~ lexeme.type) }}
             {%- endif -%}
@@ -139,3 +127,31 @@ impl<'source> ContextWrapper<'source> {
         Lexeme(LexemeKind),
     }
 {% endfor %}
+
+/// Rejects the current match if it ends with a `Suffix` match, or emits it as `kind` otherwise.
+///
+/// Kept out of line on purpose: this only runs after a token match, and inlining the
+/// lookahead DFA into the context lexer pushes the whole lexer past the threshold for
+/// being inlined into the LALRPOP driver.
+#[inline(never)]
+fn reject_suffix<'source, Suffix, Context>(
+    lexer: &mut Lexer<'source, Context>,
+    kind: LexemeKind,
+) -> FilterResult<LexemeKind, ()>
+where
+    Suffix: Logos<'source, Source = str>,
+    Suffix::Extras: Default,
+    Context: Logos<'source, Source = str>,
+{
+    // `logos` only ever attempts a match at the lexer's current position, so an
+    // `Ok` from the very first `next()` is a match anchored at the start of the
+    // remainder, and its span length is the length of that match.
+    let mut lookahead = Suffix::lexer(lexer.remainder());
+
+    if matches!(lookahead.next(), Some(Ok(_))) {
+        lexer.bump(lookahead.span().end);
+        FilterResult::Error(())
+    } else {
+        FilterResult::Emit(kind)
+    }
+}
