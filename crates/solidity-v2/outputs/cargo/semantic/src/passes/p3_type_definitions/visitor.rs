@@ -541,11 +541,14 @@ impl Visitor for Pass<'_> {
                                     .entry(operator.into())
                                     .or_default()
                                     .extend_from_slice(&definition_ids);
+                            } else {
+                                // Only a function listed without an operator
+                                // is attached as a member.
+                                symbols.insert(
+                                    symbol_name.unparse().to_string(),
+                                    ScopeDefinitionIds::from_slice(&definition_ids),
+                                );
                             }
-                            symbols.insert(
-                                symbol_name.unparse().to_string(),
-                                ScopeDefinitionIds::from_slice(&definition_ids),
-                            );
                         }
 
                         let scope = Scope::new_using(node.id(), symbols);

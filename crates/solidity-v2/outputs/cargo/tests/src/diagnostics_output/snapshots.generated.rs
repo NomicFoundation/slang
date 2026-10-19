@@ -2223,6 +2223,14 @@ mod resolution {
         }
 
         #[test]
+        fn operator_only_attached_function() -> Result<()> {
+            run(
+                "resolution/member_not_found",
+                "operator_only_attached_function",
+            )
+        }
+
+        #[test]
         fn parameter_on_error_instantiation() -> Result<()> {
             run(
                 "resolution/member_not_found",
