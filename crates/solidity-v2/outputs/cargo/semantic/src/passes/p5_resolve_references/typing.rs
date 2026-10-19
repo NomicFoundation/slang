@@ -871,8 +871,11 @@ impl Pass<'_> {
         {
             if function_type.implicit_receiver_type.is_none()
                 && function_type.parameter_types.first().is_some_and(|first| {
-                    self.types
-                        .implicitly_convertible_to_for_external_call(receiver_type_id, *first)
+                    self.types.implicitly_convertible_to_for_call(
+                        receiver_type_id,
+                        *first,
+                        function_type.is_externally_visible(),
+                    )
                 })
             {
                 return self

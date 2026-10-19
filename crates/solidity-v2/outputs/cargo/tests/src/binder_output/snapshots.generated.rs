@@ -1402,6 +1402,14 @@ mod using {
     }
 
     #[test]
+    fn external_function_calldata_parameter_on_memory_receiver() -> Result<()> {
+        run(
+            "using",
+            "external_function_calldata_parameter_on_memory_receiver",
+        )
+    }
+
+    #[test]
     fn for_fixed_arrays() -> Result<()> {
         run("using", "for_fixed_arrays")
     }
