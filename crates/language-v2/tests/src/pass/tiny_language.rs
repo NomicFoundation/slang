@@ -1,6 +1,7 @@
 use indexmap::IndexSet;
 use language_v2_definition::model::{
-    Field, Item, Language, LexicalContext, Section, StructItem, TokenItem, TokenScanner, Topic,
+    Field, Item, Language, LexicalContext, Section, StructItem, TokenDefinition, TokenItem,
+    TokenScanner, Topic,
 };
 use semver::Version;
 
@@ -24,8 +25,14 @@ language_v2_macros::compile!(Language(
                             baz_again = Required(Baz)
                         )
                     ),
-                    Token(name = Bar, scanner = Atom("bar")),
-                    Token(name = Baz, scanner = Atom("baz"))
+                    Token(
+                        name = Bar,
+                        definitions = [TokenDefinition(scanner = Atom("bar"))]
+                    ),
+                    Token(
+                        name = Baz,
+                        definitions = [TokenDefinition(scanner = Atom("baz"))]
+                    )
                 ]
             )]
         )]
@@ -90,8 +97,10 @@ fn definition() {
                                 item: TokenItem {
                                     name: "Bar".into(),
                                     enabled: None,
-                                    not_followed_by: None,
-                                    scanner: TokenScanner::Atom { atom: "bar".into() }
+                                    definitions: vec![TokenDefinition {
+                                        scanner: TokenScanner::Atom { atom: "bar".into() },
+                                        reject_suffix: None,
+                                    }],
                                 }
                                 .into()
                             },
@@ -99,8 +108,10 @@ fn definition() {
                                 item: TokenItem {
                                     name: "Baz".into(),
                                     enabled: None,
-                                    not_followed_by: None,
-                                    scanner: TokenScanner::Atom { atom: "baz".into() }
+                                    definitions: vec![TokenDefinition {
+                                        scanner: TokenScanner::Atom { atom: "baz".into() },
+                                        reject_suffix: None,
+                                    }],
                                 }
                                 .into()
                             }

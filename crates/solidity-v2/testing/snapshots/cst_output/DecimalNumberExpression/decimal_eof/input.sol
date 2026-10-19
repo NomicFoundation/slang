@@ -1,5 +1,5 @@
 contract C {
     function f() {
 // This is intentional, to test how the lexer behave when combining
-// a not_followed_by with EOF
+// a reject_suffix with EOF
 123

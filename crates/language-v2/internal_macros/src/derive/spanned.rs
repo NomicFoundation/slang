@@ -128,11 +128,12 @@ fn get_spanned_type(input: Type) -> Type {
         | "PrecedenceOperator"
         | "PrimaryExpression"
         | "RepeatedItem"
-        | "TokenScanner"
         | "Section"
         | "SeparatedItem"
         | "StructItem"
+        | "TokenDefinition"
         | "TokenItem"
+        | "TokenScanner"
         | "Topic"
         | "TriviaItem" => {
             let spanned_type = format_ident!("{}", add_spanned_prefix(type_name));

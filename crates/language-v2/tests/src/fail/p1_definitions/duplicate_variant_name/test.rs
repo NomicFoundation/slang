@@ -20,8 +20,8 @@ language_v2_macros::compile!(Language(
                             EnumVariant(reference = Baz1)
                         ]
                     ),
-                    Token(name = Baz1, scanner = Atom("baz1")),
-                    Token(name = Baz2, scanner = Atom("baz2"))
+                    Token(name = Baz1, definitions = [TokenDefinition(scanner = Atom("baz1"))]),
+                    Token(name = Baz2, definitions = [TokenDefinition(scanner = Atom("baz2"))])
                 ]
             )]
         )]

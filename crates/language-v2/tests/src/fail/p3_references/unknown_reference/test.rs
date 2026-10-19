@@ -16,7 +16,7 @@ language_v2_macros::compile!(Language(
                         name = Bar,
                         fields = (field_1 = Required(Baz), field_2 = Required(Unknown))
                     ),
-                    Token(name = Baz, scanner = Atom("baz"))
+                    Token(name = Baz, definitions = [TokenDefinition(scanner = Atom("baz"))])
                 ]
             )]
         )]

@@ -7,7 +7,7 @@ use language_v2_definition::model::{
     TokenItem, TokenScanner, TriviaCategory, TriviaItem, VersionSpecifier,
 };
 
-use crate::lexer::{Lexeme, LexerModel, LexicalContext};
+use crate::lexer::{Lexeme, LexerModel, LexicalContext, TokenDefinition};
 
 pub struct LexerModelBuilder;
 
@@ -199,16 +199,22 @@ impl LexicalContextBuilder {
     }
 
     fn convert_token(&mut self, item: &TokenItem) -> Lexeme {
-        let not_followed_by = item
-            .not_followed_by
-            .as_ref()
-            .map(|scanner| self.convert_token_scanner(scanner, true));
+        let kind = item.name.to_string();
+        let mut definitions = vec![];
 
-        Lexeme::Token {
-            kind: item.name.to_string(),
-            regex: self.convert_token_scanner(&item.scanner, false),
-            not_followed_by,
+        for definition in &item.definitions {
+            let reject_suffix = definition
+                .reject_suffix
+                .as_ref()
+                .map(|scanner| self.convert_token_scanner(scanner, true));
+
+            definitions.push(TokenDefinition {
+                regex: self.convert_token_scanner(&definition.scanner, false),
+                reject_suffix,
+            });
         }
+
+        Lexeme::Token { kind, definitions }
     }
 
     fn convert_keyword_scanner(parent: &KeywordScanner) -> String {
