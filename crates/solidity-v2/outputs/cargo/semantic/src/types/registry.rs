@@ -502,6 +502,22 @@ impl TypeRegistry {
         }
     }
 
+    /// Whether an argument of `from_type_id` converts to a parameter of
+    /// `to_type_id`, by the rules of an external call (through the ABI) or of
+    /// an internal one.
+    pub(crate) fn implicitly_convertible_to_for_call(
+        &self,
+        from_type_id: TypeId,
+        to_type_id: TypeId,
+        external_call: bool,
+    ) -> bool {
+        if external_call {
+            self.implicitly_convertible_to_for_external_call(from_type_id, to_type_id)
+        } else {
+            self.implicitly_convertible_to(from_type_id, to_type_id)
+        }
+    }
+
     // Similar to `implicitly_convertible_to` above, but with relaxed rules for
     // data location
     pub(crate) fn implicitly_convertible_to_for_external_call(
