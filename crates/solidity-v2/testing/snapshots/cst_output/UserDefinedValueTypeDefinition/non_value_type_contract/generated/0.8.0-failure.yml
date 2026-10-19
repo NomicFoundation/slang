@@ -1,0 +1,20 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Source: >
+  1  │ // https://github.com/argotorg/solidity/blob/v0.8.8/test/libsolidity/syntaxTests/userDefinedValueType/non_value_type_contract_err.sol │ 0..133
+  2  │                                                                                                                                       │ 134..134
+  3  │ contract C {}                                                                                                                         │ 135..148
+  4  │ type MyContract is C;                                                                                                                 │ 149..170
+
+Diagnostics: # 1 total
+  - >
+    [syntax/unexpected-terminal] Error: Unexpected Identifier. One of AddressKeyword, BoolKeyword, BytesKeyword, FixedKeyword, IntKeyword, StringKeyword, UfixedKeyword, UintKeyword was expected
+       ╭─[crates/solidity-v2/testing/snapshots/cst_output/UserDefinedValueTypeDefinition/non_value_type_contract/input.sol:4:20]
+       │
+     4 │ type MyContract is C;
+       │                    ┬  
+       │                    ╰── Error occurred here.
+    ───╯
+Tree:
+  - (root꞉ SourceUnit):
+      - (members꞉ SourceUnitMembers): []

@@ -789,6 +789,11 @@ mod expression {
     }
 
     #[test]
+    fn inline_array_empty_cells() -> Result<()> {
+        run("Expression", "inline_array_empty_cells")
+    }
+
+    #[test]
     fn keyword_alias() -> Result<()> {
         run("Expression", "keyword_alias")
     }
@@ -1066,6 +1071,16 @@ mod expression {
     #[test]
     fn two_conditions_true_case() -> Result<()> {
         run("Expression", "two_conditions_true_case")
+    }
+
+    #[test]
+    fn type_with_no_arguments() -> Result<()> {
+        run("Expression", "type_with_no_arguments")
+    }
+
+    #[test]
+    fn type_with_two_arguments() -> Result<()> {
+        run("Expression", "type_with_two_arguments")
     }
 
     #[test]
@@ -1436,6 +1451,11 @@ mod mapping_type {
     #[test]
     fn unnamed() -> Result<()> {
         run("MappingType", "unnamed")
+    }
+
+    #[test]
+    fn var_key_type() -> Result<()> {
+        run("MappingType", "var_key_type")
     }
 }
 
@@ -2206,6 +2226,16 @@ mod type_name {
     }
 
     #[test]
+    fn address_pure() -> Result<()> {
+        run("TypeName", "address_pure")
+    }
+
+    #[test]
+    fn address_view() -> Result<()> {
+        run("TypeName", "address_view")
+    }
+
+    #[test]
     fn byte() -> Result<()> {
         run("TypeName", "byte")
     }
@@ -2310,6 +2340,11 @@ mod user_defined_value_type_definition {
     #[test]
     fn missing_identifier() -> Result<()> {
         run("UserDefinedValueTypeDefinition", "missing_identifier")
+    }
+
+    #[test]
+    fn non_value_type_contract() -> Result<()> {
+        run("UserDefinedValueTypeDefinition", "non_value_type_contract")
     }
 }
 
