@@ -567,8 +567,38 @@ mod decimal_number_expression {
     }
 
     #[test]
+    fn octal_number() -> Result<()> {
+        run("DecimalNumberExpression", "octal_number")
+    }
+
+    #[test]
+    fn octal_unit_no_whitespace() -> Result<()> {
+        run("DecimalNumberExpression", "octal_unit_no_whitespace")
+    }
+
+    #[test]
+    fn octal_with_fraction() -> Result<()> {
+        run("DecimalNumberExpression", "octal_with_fraction")
+    }
+
+    #[test]
     fn years_unit() -> Result<()> {
         run("DecimalNumberExpression", "years_unit")
+    }
+
+    #[test]
+    fn zero_with_exponent() -> Result<()> {
+        run("DecimalNumberExpression", "zero_with_exponent")
+    }
+
+    #[test]
+    fn zero_with_fraction() -> Result<()> {
+        run("DecimalNumberExpression", "zero_with_fraction")
+    }
+
+    #[test]
+    fn zero_with_separator() -> Result<()> {
+        run("DecimalNumberExpression", "zero_with_separator")
     }
 }
 
@@ -2618,6 +2648,11 @@ mod yul_expression {
     }
 
     #[test]
+    fn decimal_octal() -> Result<()> {
+        run("YulExpression", "decimal_octal")
+    }
+
+    #[test]
     fn decimal_trailing_dollar() -> Result<()> {
         run("YulExpression", "decimal_trailing_dollar")
     }
@@ -2625,6 +2660,11 @@ mod yul_expression {
     #[test]
     fn decimal_trailing_ident_start() -> Result<()> {
         run("YulExpression", "decimal_trailing_ident_start")
+    }
+
+    #[test]
+    fn decimal_zero() -> Result<()> {
+        run("YulExpression", "decimal_zero")
     }
 
     #[test]

@@ -1,0 +1,40 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Source: >
+  1  │ contract C {                                                                     │ 0..12
+  2  │     function f() {                                                               │ 13..31
+  3  │         assembly {                                                               │ 32..50
+  4  │             0                                                                    │ 51..64
+  5  │         }                                                                        │ 65..74
+  6  │     }                                                                            │ 75..80
+  7  │ }                                                                                │ 81..82
+
+Tree:
+  - (root꞉ SourceUnit): # "contract C {\n    function f() {\n        assembly {..." (0..82)
+      - (members꞉ SourceUnitMembers): # "contract C {\n    function f() {\n        assembly {..." (0..82)
+          - (item꞉ SourceUnitMember) ► (contract_definition꞉ ContractDefinition): # "contract C {\n    function f() {\n        assembly {..." (0..82)
+              - (contract_keyword꞉ ContractKeyword): "contract" # (0..8)
+              - (name꞉ Identifier): "C" # (9..10)
+              - (specifiers꞉ ContractSpecifiers): []
+              - (open_brace꞉ OpenBrace): "{" # (11..12)
+              - (members꞉ ContractMembers): # "function f() {\n        assembly {\n            0\n  ..." (17..80)
+                  - (item꞉ ContractMember) ► (function_definition꞉ FunctionDefinition): # "function f() {\n        assembly {\n            0\n  ..." (17..80)
+                      - (function_keyword꞉ FunctionKeyword): "function" # (17..25)
+                      - (name꞉ FunctionName) ► (identifier꞉ Identifier): "f" # (26..27)
+                      - (parameters꞉ ParametersDeclaration): # "()" (27..29)
+                          - (open_paren꞉ OpenParen): "(" # (27..28)
+                          - (parameters꞉ Parameters): []
+                          - (close_paren꞉ CloseParen): ")" # (28..29)
+                      - (attributes꞉ FunctionAttributes): []
+                      - (body꞉ FunctionBody) ► (block꞉ Block): # "{\n        assembly {\n            0\n        }\n    }" (30..80)
+                          - (open_brace꞉ OpenBrace): "{" # (30..31)
+                          - (statements꞉ Statements): # "assembly {\n            0\n        }" (40..74)
+                              - (item꞉ Statement) ► (assembly_statement꞉ AssemblyStatement): # "assembly {\n            0\n        }" (40..74)
+                                  - (assembly_keyword꞉ AssemblyKeyword): "assembly" # (40..48)
+                                  - (body꞉ YulBlock): # "{\n            0\n        }" (49..74)
+                                      - (open_brace꞉ YulOpenBrace): "{" # (49..50)
+                                      - (statements꞉ YulStatements): # "0" (63..64)
+                                          - (item꞉ YulStatement) ► (yul_expression꞉ YulExpression) ► (yul_literal꞉ YulLiteral) ► (yul_decimal_literal꞉ YulDecimalLiteral): "0" # (63..64)
+                                      - (close_brace꞉ YulCloseBrace): "}" # (73..74)
+                          - (close_brace꞉ CloseBrace): "}" # (79..80)
+              - (close_brace꞉ CloseBrace): "}" # (81..82)
