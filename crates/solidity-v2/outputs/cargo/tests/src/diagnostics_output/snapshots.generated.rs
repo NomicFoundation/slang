@@ -1872,6 +1872,22 @@ mod resolution {
         }
 
         #[test]
+        fn bound_calldata_parameter_on_memory_receiver() -> Result<()> {
+            run(
+                "resolution/member_not_found",
+                "bound_calldata_parameter_on_memory_receiver",
+            )
+        }
+
+        #[test]
+        fn bound_storage_parameter_on_memory_receiver() -> Result<()> {
+            run(
+                "resolution/member_not_found",
+                "bound_storage_parameter_on_memory_receiver",
+            )
+        }
+
+        #[test]
         fn concat_on_bytes_value() -> Result<()> {
             run("resolution/member_not_found", "concat_on_bytes_value")
         }

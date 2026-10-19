@@ -145,7 +145,8 @@ impl Pass<'_> {
                 let definition_id = *definition_id;
                 let resolution = find_definition_namespace_scope_id(self.binder, definition_id)
                     .map_or(Resolution::Unresolved, |scope_id| {
-                        self.binder.resolve_in_scope_as_expression_member(scope_id, symbol)
+                        self.binder
+                            .resolve_in_scope_as_expression_member(scope_id, symbol)
                     });
                 if self.is_foreign_contract_or_interface(definition_id) {
                     let visible: DefinitionIds = resolution
@@ -247,15 +248,17 @@ impl Pass<'_> {
         let Type::Function(function_type) = self.types.get_type_by_id(definition_type_id) else {
             unreachable!("type of function definition is not a function");
         };
-        // receiver needs to be convertible to the first parameter type; we use
-        // the external call rules because the conversion rules with different
-        // locations are more relaxed
+        // receiver needs to be convertible to the first parameter type, which
+        // an externally visible library function receives through the ABI
         function_type
             .parameter_types
             .first()
             .is_some_and(|type_id| {
-                self.types
-                    .implicitly_convertible_to_for_external_call(receiver_type_id, *type_id)
+                self.types.implicitly_convertible_to_for_call(
+                    receiver_type_id,
+                    *type_id,
+                    function_type.is_externally_visible(),
+                )
             })
     }
 
