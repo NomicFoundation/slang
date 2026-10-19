@@ -1,0 +1,38 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Source: >
+  1  │ contract C {                                                                     │ 0..12
+  2  │     function f() {                                                               │ 13..31
+  3  │         1.2._f;                                                                  │ 32..47
+  4  │     }                                                                            │ 48..53
+  5  │ }                                                                                │ 54..55
+
+Tree:
+  - (root꞉ SourceUnit): # "contract C {\n    function f() {\n        1.2._f;\n  ..." (0..55)
+      - (members꞉ SourceUnitMembers): # "contract C {\n    function f() {\n        1.2._f;\n  ..." (0..55)
+          - (item꞉ SourceUnitMember) ► (contract_definition꞉ ContractDefinition): # "contract C {\n    function f() {\n        1.2._f;\n  ..." (0..55)
+              - (contract_keyword꞉ ContractKeyword): "contract" # (0..8)
+              - (name꞉ Identifier): "C" # (9..10)
+              - (specifiers꞉ ContractSpecifiers): []
+              - (open_brace꞉ OpenBrace): "{" # (11..12)
+              - (members꞉ ContractMembers): # "function f() {\n        1.2._f;\n    }" (17..53)
+                  - (item꞉ ContractMember) ► (function_definition꞉ FunctionDefinition): # "function f() {\n        1.2._f;\n    }" (17..53)
+                      - (function_keyword꞉ FunctionKeyword): "function" # (17..25)
+                      - (name꞉ FunctionName) ► (identifier꞉ Identifier): "f" # (26..27)
+                      - (parameters꞉ ParametersDeclaration): # "()" (27..29)
+                          - (open_paren꞉ OpenParen): "(" # (27..28)
+                          - (parameters꞉ Parameters): []
+                          - (close_paren꞉ CloseParen): ")" # (28..29)
+                      - (attributes꞉ FunctionAttributes): []
+                      - (body꞉ FunctionBody) ► (block꞉ Block): # "{\n        1.2._f;\n    }" (30..53)
+                          - (open_brace꞉ OpenBrace): "{" # (30..31)
+                          - (statements꞉ Statements): # "1.2._f;" (40..47)
+                              - (item꞉ Statement) ► (expression_statement꞉ ExpressionStatement): # "1.2._f;" (40..47)
+                                  - (expression꞉ Expression) ► (member_access_expression꞉ MemberAccessExpression): # "1.2._f" (40..46)
+                                      - (operand꞉ Expression) ► (decimal_number_expression꞉ DecimalNumberExpression): # "1.2" (40..43)
+                                          - (literal꞉ DecimalLiteral): "1.2" # (40..43)
+                                      - (period꞉ Period): "." # (43..44)
+                                      - (member꞉ IdentifierPathElement) ► (identifier꞉ Identifier): "_f" # (44..46)
+                                  - (semicolon꞉ Semicolon): ";" # (46..47)
+                          - (close_brace꞉ CloseBrace): "}" # (52..53)
+              - (close_brace꞉ CloseBrace): "}" # (54..55)

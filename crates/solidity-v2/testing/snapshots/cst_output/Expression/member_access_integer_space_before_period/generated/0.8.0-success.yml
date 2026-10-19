@@ -1,0 +1,38 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Source: >
+  1  │ contract C {                                                                     │ 0..12
+  2  │     function f() {                                                               │ 13..31
+  3  │         1 ._2;                                                                   │ 32..46
+  4  │     }                                                                            │ 47..52
+  5  │ }                                                                                │ 53..54
+
+Tree:
+  - (root꞉ SourceUnit): # "contract C {\n    function f() {\n        1 ._2;\n   ..." (0..54)
+      - (members꞉ SourceUnitMembers): # "contract C {\n    function f() {\n        1 ._2;\n   ..." (0..54)
+          - (item꞉ SourceUnitMember) ► (contract_definition꞉ ContractDefinition): # "contract C {\n    function f() {\n        1 ._2;\n   ..." (0..54)
+              - (contract_keyword꞉ ContractKeyword): "contract" # (0..8)
+              - (name꞉ Identifier): "C" # (9..10)
+              - (specifiers꞉ ContractSpecifiers): []
+              - (open_brace꞉ OpenBrace): "{" # (11..12)
+              - (members꞉ ContractMembers): # "function f() {\n        1 ._2;\n    }" (17..52)
+                  - (item꞉ ContractMember) ► (function_definition꞉ FunctionDefinition): # "function f() {\n        1 ._2;\n    }" (17..52)
+                      - (function_keyword꞉ FunctionKeyword): "function" # (17..25)
+                      - (name꞉ FunctionName) ► (identifier꞉ Identifier): "f" # (26..27)
+                      - (parameters꞉ ParametersDeclaration): # "()" (27..29)
+                          - (open_paren꞉ OpenParen): "(" # (27..28)
+                          - (parameters꞉ Parameters): []
+                          - (close_paren꞉ CloseParen): ")" # (28..29)
+                      - (attributes꞉ FunctionAttributes): []
+                      - (body꞉ FunctionBody) ► (block꞉ Block): # "{\n        1 ._2;\n    }" (30..52)
+                          - (open_brace꞉ OpenBrace): "{" # (30..31)
+                          - (statements꞉ Statements): # "1 ._2;" (40..46)
+                              - (item꞉ Statement) ► (expression_statement꞉ ExpressionStatement): # "1 ._2;" (40..46)
+                                  - (expression꞉ Expression) ► (member_access_expression꞉ MemberAccessExpression): # "1 ._2" (40..45)
+                                      - (operand꞉ Expression) ► (decimal_number_expression꞉ DecimalNumberExpression): # "1" (40..41)
+                                          - (literal꞉ DecimalLiteral): "1" # (40..41)
+                                      - (period꞉ Period): "." # (42..43)
+                                      - (member꞉ IdentifierPathElement) ► (identifier꞉ Identifier): "_2" # (43..45)
+                                  - (semicolon꞉ Semicolon): ";" # (45..46)
+                          - (close_brace꞉ CloseBrace): "}" # (51..52)
+              - (close_brace꞉ CloseBrace): "}" # (53..54)

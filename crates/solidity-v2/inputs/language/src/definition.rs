@@ -3983,24 +3983,36 @@ TupleValues: TupleValues = {
                                 ),
                                 Token(
                                     name = DecimalLiteral,
-                                    definitions = [TokenDefinition(
-                                        scanner = Choice([
-                                            Sequence([
-                                                Fragment(DecimalDigits),
-                                                Optional(Sequence([
+                                    definitions = [
+                                        // An integer, without a fraction or an exponent:
+                                        TokenDefinition(
+                                            scanner = Fragment(DecimalDigits),
+                                            reject_suffix =
+                                                Choice([Fragment(IdentifierScanner), Atom("._")])
+                                        ),
+                                        // A number with a fraction, or an exponent, or both:
+                                        TokenDefinition(
+                                            scanner = Choice([
+                                                Sequence([
+                                                    Fragment(DecimalDigits),
+                                                    Choice([
+                                                        Sequence([
+                                                            Atom("."),
+                                                            Fragment(DecimalDigits),
+                                                            Optional(Fragment(DecimalExponent))
+                                                        ]),
+                                                        Fragment(DecimalExponent)
+                                                    ])
+                                                ]),
+                                                Sequence([
                                                     Atom("."),
-                                                    Fragment(DecimalDigits)
-                                                ])),
-                                                Optional(Fragment(DecimalExponent))
+                                                    Fragment(DecimalDigits),
+                                                    Optional(Fragment(DecimalExponent))
+                                                ])
                                             ]),
-                                            Sequence([
-                                                Atom("."),
-                                                Fragment(DecimalDigits),
-                                                Optional(Fragment(DecimalExponent))
-                                            ])
-                                        ]),
-                                        reject_suffix = Fragment(IdentifierScanner)
-                                    )]
+                                            reject_suffix = Fragment(IdentifierScanner)
+                                        )
+                                    ]
                                 ),
                                 Fragment(
                                     name = DecimalDigits,
