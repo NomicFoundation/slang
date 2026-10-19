@@ -173,10 +173,11 @@ impl ResolveOptions {
                     || definition.is_externally_visible()
             }
             Self::This(_) | Self::External => definition.is_externally_visible(),
-            // `super` reaches the functions of the bases, and nothing else:
-            // not state variables, constants, or type definitions.
+            // `super` reaches the implemented functions of the bases, and
+            // nothing else: not unimplemented functions, state variables,
+            // constants, or type definitions.
             Self::Super(_) => {
-                matches!(definition, Definition::Function(_)) && definition.is_internally_visible()
+                definition.is_implemented_function() && definition.is_internally_visible()
             }
         }
     }

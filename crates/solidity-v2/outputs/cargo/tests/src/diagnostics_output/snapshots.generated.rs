@@ -2158,6 +2158,22 @@ mod resolution {
         fn state_variable_via_super() -> Result<()> {
             run("resolution/member_not_found", "state_variable_via_super")
         }
+
+        #[test]
+        fn unimplemented_function_via_super() -> Result<()> {
+            run(
+                "resolution/member_not_found",
+                "unimplemented_function_via_super",
+            )
+        }
+
+        #[test]
+        fn unimplemented_function_via_super_in_derived() -> Result<()> {
+            run(
+                "resolution/member_not_found",
+                "unimplemented_function_via_super_in_derived",
+            )
+        }
     }
 
     mod no_matching_callable_declaration {
