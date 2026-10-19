@@ -587,28 +587,6 @@ impl Visitor for Pass<'_> {
         }
     }
 
-    fn enter_revert_statement(&mut self, node: &ir::RevertStatement) -> bool {
-        // Errors cannot be overloaded.
-        self.resolve_and_check_identifier_path_as_expression(&node.error, false);
-        true
-    }
-
-    fn leave_revert_statement(&mut self, node: &ir::RevertStatement) {
-        let type_id = self.type_of_identifier_path(&node.error, None);
-        self.binder.set_node_type(node.id(), type_id);
-    }
-
-    fn enter_emit_statement(&mut self, node: &ir::EmitStatement) -> bool {
-        // Overloaded events are narrowed down later by the arguments.
-        self.resolve_and_check_identifier_path_as_expression(&node.event, true);
-        true
-    }
-
-    fn leave_emit_statement(&mut self, node: &ir::EmitStatement) {
-        let type_id = self.type_of_identifier_path(&node.event, None);
-        self.binder.set_node_type(node.id(), type_id);
-    }
-
     fn leave_new_expression(&mut self, node: &ir::NewExpression) {
         let type_id = self.resolve_type_name(&node.type_name, Some(DataLocation::Memory));
         let typing = type_id.map_or(Typing::Unresolved, Typing::NewExpression);
