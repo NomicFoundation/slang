@@ -2285,6 +2285,22 @@ mod resolution {
         }
 
         #[test]
+        fn unimplemented_function_via_super() -> Result<()> {
+            run(
+                "resolution/member_not_found",
+                "unimplemented_function_via_super",
+            )
+        }
+
+        #[test]
+        fn unimplemented_function_via_super_in_derived() -> Result<()> {
+            run(
+                "resolution/member_not_found",
+                "unimplemented_function_via_super_in_derived",
+            )
+        }
+
+        #[test]
         fn value_on_built_in_function() -> Result<()> {
             run("resolution/member_not_found", "value_on_built_in_function")
         }
