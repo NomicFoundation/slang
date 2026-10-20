@@ -1,0 +1,61 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Definitions (5):
+- Def: #1 ["A" @ input.sol:3:10] (contract)
+- Def: #2 ["E" @ input.sol:4:11] (event)
+- Def: #3 ["B" @ input.sol:7:10] (contract)
+- Def: #4 ["C" @ input.sol:9:10] (contract)
+- Def: #5 ["test" @ input.sol:10:14] (function, type: function () returns ())
+
+------------------------------------------------------------------------
+
+References (6):
+- Ref: ["A" @ input.sol:7:15] -> #1
+- Ref: ["B" @ input.sol:9:15] -> #3
+- Ref: ["B" @ input.sol:12:14] -> #3
+- Ref: ["E" @ input.sol:12:16] -> unresolved
+- Ref: ["A" @ input.sol:13:14] -> #1
+- Ref: ["E" @ input.sol:13:16] -> #2
+
+------------------------------------------------------------------------
+
+Unbound identifiers (0):
+
+------------------------------------------------------------------------
+
+Bindings: 
+    ╭─[input.sol:1:1]
+    │
+  3 │ contract A {
+    │          ┬  
+    │          ╰── name: 1
+  4 │     event E();
+    │           ┬  
+    │           ╰── name: 2
+    │ 
+  7 │ contract B is A {}
+    │          ┬    ┬  
+    │          ╰─────── name: 3
+    │               │  
+    │               ╰── ref: 1
+    │ 
+  9 │ contract C is B {
+    │          ┬    ┬  
+    │          ╰─────── name: 4
+    │               │  
+    │               ╰── ref: 3
+ 10 │     function test() internal {
+    │              ──┬─  
+    │                ╰─── name: 5
+    │ 
+ 12 │         emit B.E();
+    │              ┬ ┬  
+    │              ╰──── ref: 3
+    │                │  
+    │                ╰── unresolved
+ 13 │         emit A.E();
+    │              ┬ ┬  
+    │              ╰──── ref: 1
+    │                │  
+    │                ╰── ref: 2
+────╯

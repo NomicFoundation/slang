@@ -146,7 +146,7 @@ pub(crate) enum ResolveOptions {
     /// Use all the linearised bases for an external lookup.
     External,
     /// Use all bases and only excludes private members in bases types (used for
-    /// general qualified member access).
+    /// identifier paths, eg. type names).
     Qualified,
     /// Starts at `node_id` and proceeds in order for an external lookup.
     This(NodeId),
@@ -943,6 +943,27 @@ impl Binder {
             | Scope::Modifier(_)
             | Scope::YulBlock(_)
             | Scope::YulFunction(_) => Resolution::Unresolved,
+        }
+    }
+
+    /// Resolves `symbol` strictly in the scope denoted by `scope_id`, without
+    /// delegating to parent scopes or inherited contracts/interfaces. This is
+    /// used when resolving members in an identifier path in a value context
+    /// (eg. `emit C.E()`, or `C.f.selector`) as opposed to a typing context
+    /// (eg. `C.S var`) where the member is searched in all inherited bases.
+    pub(crate) fn resolve_in_scope_as_expression_member(
+        &self,
+        scope_id: ScopeId,
+        symbol: &str,
+    ) -> Resolution {
+        match self.get_scope_by_id(scope_id) {
+            Scope::Contract(contract_scope) => contract_scope
+                .definitions
+                .get(symbol)
+                .map_or(Resolution::Unresolved, |definitions| {
+                    Resolution::from(definitions.as_slice())
+                }),
+            _ => self.resolve_in_scope_as_namespace(scope_id, symbol),
         }
     }
 

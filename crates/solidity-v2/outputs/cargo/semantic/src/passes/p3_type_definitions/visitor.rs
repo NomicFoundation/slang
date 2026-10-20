@@ -205,7 +205,7 @@ impl Visitor for Pass<'_> {
 
     fn enter_type_name(&mut self, node: &ir::TypeName) -> bool {
         if let ir::TypeName::IdentifierPath(identifier_path) = node {
-            self.resolve_identifier_path(identifier_path);
+            self.resolve_identifier_path_as_type(identifier_path);
             false
         } else {
             true
@@ -285,7 +285,7 @@ impl Visitor for Pass<'_> {
 
     fn enter_override_paths(&mut self, items: &ir::OverridePaths) -> bool {
         for identifier_path in items.iter() {
-            self.resolve_identifier_path(identifier_path);
+            self.resolve_identifier_path_as_type(identifier_path);
         }
         false
     }
@@ -412,11 +412,11 @@ impl Visitor for Pass<'_> {
     fn enter_using_directive(&mut self, node: &ir::UsingDirective) -> bool {
         match &node.clause {
             ir::UsingClause::IdentifierPath(identifier_path) => {
-                self.resolve_identifier_path(identifier_path);
+                self.resolve_identifier_path_as_type(identifier_path);
             }
             ir::UsingClause::UsingDeconstruction(using_deconstruction) => {
                 for symbol in using_deconstruction.symbols.iter() {
-                    self.resolve_identifier_path(&symbol.name);
+                    self.resolve_identifier_path_as_type(&symbol.name);
                 }
             }
         }
@@ -519,7 +519,8 @@ impl Visitor for Pass<'_> {
     }
 
     fn enter_revert_statement(&mut self, node: &ir::RevertStatement) -> bool {
-        self.resolve_identifier_path(&node.error);
+        // TODO(validation) SDR[1686]: report a segment that is not a member of its contract.
+        self.resolve_identifier_path_as_expression(&node.error);
         true
     }
 
@@ -529,7 +530,8 @@ impl Visitor for Pass<'_> {
     }
 
     fn enter_emit_statement(&mut self, node: &ir::EmitStatement) -> bool {
-        self.resolve_identifier_path(&node.event);
+        // TODO(validation) SDR[1686]: report a segment that is not a member of its contract.
+        self.resolve_identifier_path_as_expression(&node.event);
         true
     }
 
