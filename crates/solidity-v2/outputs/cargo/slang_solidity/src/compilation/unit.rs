@@ -123,12 +123,12 @@ impl CompilationUnit {
             .map(|contract| ast::create_contract_definition(contract, &self.semantic))
     }
 
-    pub fn compute_contracts_abi(&self) -> Vec<abi::ContractAbi> {
+    /// Returns the ABIs of every contract, interface, and library in this
+    /// compilation unit. A definition whose ABI cannot be computed is left out.
+    pub fn compute_abi(&self) -> Vec<abi::ContractAbi> {
         self.files
             .values()
-            .flat_map(|file| {
-                ast::create_source_unit(file.ir_root(), &self.semantic).compute_contracts_abi()
-            })
+            .flat_map(|file| ast::create_source_unit(file.ir_root(), &self.semantic).compute_abi())
             .collect()
     }
 }
