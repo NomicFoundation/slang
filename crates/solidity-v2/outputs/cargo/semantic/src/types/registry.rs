@@ -509,11 +509,13 @@ impl TypeRegistry {
         from_type_id: TypeId,
         to_type_id: TypeId,
     ) -> bool {
-        // TODO(validation) SDR[60]: we're assuming here that for external calls every
-        // location is implicitly convertible to any other (although
-        // reallistically the targets can be memory and calldata only). Verify
-        // this assumption.
-        self.equal_ignoring_location(from_type_id, to_type_id)
+        // A storage parameter is passed by reference, so only the strict rule
+        // can match it.
+        let to_storage = matches!(
+            self.get_type_by_id(to_type_id).data_location(),
+            Some(DataLocation::Storage)
+        );
+        (!to_storage && self.equal_ignoring_location(from_type_id, to_type_id))
             || self.implicitly_convertible_to(from_type_id, to_type_id)
     }
 

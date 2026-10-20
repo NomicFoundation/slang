@@ -1444,6 +1444,14 @@ mod resolution {
         }
 
         #[test]
+        fn attached_memory_array_to_storage_parameter() -> Result<()> {
+            run(
+                "resolution/member_not_found",
+                "attached_memory_array_to_storage_parameter",
+            )
+        }
+
+        #[test]
         fn attached_struct_array_across_locations() -> Result<()> {
             run(
                 "resolution/member_not_found",
@@ -1534,6 +1542,14 @@ mod resolution {
         #[test]
         fn member_on_uncalled_getter() -> Result<()> {
             run("resolution/member_not_found", "member_on_uncalled_getter")
+        }
+
+        #[test]
+        fn memory_argument_to_storage_parameter_of_public_function() -> Result<()> {
+            run(
+                "resolution/member_not_found",
+                "memory_argument_to_storage_parameter_of_public_function",
+            )
         }
 
         #[test]
