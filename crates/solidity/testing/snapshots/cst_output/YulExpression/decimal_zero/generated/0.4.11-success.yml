@@ -1,0 +1,11 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Source: >
+  1  │ 0                                                                                │ 0..1
+
+Errors: []
+
+Tree:
+  - (root꞉ YulExpression) ► (variant꞉ YulLiteral): # "0\n" (0..2)
+      - (variant꞉ YulDecimalLiteral): "0" # (0..1)
+      - (trailing_trivia꞉ EndOfLine): "\n" # (1..2)

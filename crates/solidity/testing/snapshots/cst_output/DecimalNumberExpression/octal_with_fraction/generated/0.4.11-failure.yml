@@ -1,0 +1,17 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Source: >
+  1  │ 01.5                                                                             │ 0..4
+
+Errors: # 1 total
+  - >
+    Error: Expected DecimalLiteral.
+       ╭─[crates/solidity/testing/snapshots/cst_output/DecimalNumberExpression/octal_with_fraction/input.sol:1:1]
+       │
+     1 │ 01.5
+       │ ──┬──  
+       │   ╰──── Error occurred here.
+    ───╯
+
+Tree:
+  - (root꞉ DecimalNumberExpression) ► (unrecognized꞉ UNRECOGNIZED): "01.5\n" # (0..5)

@@ -1,0 +1,17 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Source: >
+  1  │ 0_1                                                                              │ 0..3
+
+Errors: # 1 total
+  - >
+    Error: Expected DecimalLiteral.
+       ╭─[crates/solidity/testing/snapshots/cst_output/DecimalNumberExpression/zero_with_separator/input.sol:1:1]
+       │
+     1 │ 0_1
+       │ ──┬─  
+       │   ╰─── Error occurred here.
+    ───╯
+
+Tree:
+  - (root꞉ DecimalNumberExpression) ► (unrecognized꞉ UNRECOGNIZED): "0_1\n" # (0..4)
