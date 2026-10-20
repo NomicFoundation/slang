@@ -1,0 +1,11 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 1
+
+[resolution/member-not-found] Error: Member 'foo' not found or not visible after argument-dependent lookup.
+    ╭─[input.sol:16:15]
+    │
+ 16 │         false.foo(x);
+    │               ─┬─  
+    │                ╰─── Error occurred here.
+────╯

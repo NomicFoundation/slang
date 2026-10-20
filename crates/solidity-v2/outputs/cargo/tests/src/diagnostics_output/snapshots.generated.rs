@@ -55,6 +55,14 @@ mod resolution {
         }
 
         #[test]
+        fn external_overloads_on_array_element_type() -> Result<()> {
+            run(
+                "resolution/ambiguous_reference",
+                "external_overloads_on_array_element_type",
+            )
+        }
+
+        #[test]
         fn member_call_not_unique() -> Result<()> {
             run("resolution/ambiguous_reference", "member_call_not_unique")
         }
@@ -1428,6 +1436,30 @@ mod resolution {
         }
 
         #[test]
+        fn attached_array_with_narrower_elements() -> Result<()> {
+            run(
+                "resolution/member_not_found",
+                "attached_array_with_narrower_elements",
+            )
+        }
+
+        #[test]
+        fn attached_memory_array_to_storage_parameter() -> Result<()> {
+            run(
+                "resolution/member_not_found",
+                "attached_memory_array_to_storage_parameter",
+            )
+        }
+
+        #[test]
+        fn attached_struct_array_across_locations() -> Result<()> {
+            run(
+                "resolution/member_not_found",
+                "attached_struct_array_across_locations",
+            )
+        }
+
+        #[test]
         fn concat_on_bytes_value() -> Result<()> {
             run("resolution/member_not_found", "concat_on_bytes_value")
         }
@@ -1510,6 +1542,14 @@ mod resolution {
         #[test]
         fn member_on_uncalled_getter() -> Result<()> {
             run("resolution/member_not_found", "member_on_uncalled_getter")
+        }
+
+        #[test]
+        fn memory_argument_to_storage_parameter_of_public_function() -> Result<()> {
+            run(
+                "resolution/member_not_found",
+                "memory_argument_to_storage_parameter_of_public_function",
+            )
         }
 
         #[test]
