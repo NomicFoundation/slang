@@ -2913,7 +2913,7 @@ export declare enum TerminalKind {
    * DECIMAL_LITERAL = «DECIMAL_DIGITS» "." «DECIMAL_DIGITS» «DECIMAL_EXPONENT»? (?!«IDENTIFIER_START»);
    *
    * (* Introduced in 0.5.0 *)
-   * DECIMAL_LITERAL = «DECIMAL_DIGITS» ("." «DECIMAL_DIGITS»)? «DECIMAL_EXPONENT»? (?!«IDENTIFIER_START»);
+   * DECIMAL_LITERAL = «DECIMAL_DIGITS» (?!"._") ("." «DECIMAL_DIGITS»)? «DECIMAL_EXPONENT»? (?!«IDENTIFIER_START»);
    * ```
    */
   DecimalLiteral = "DecimalLiteral",

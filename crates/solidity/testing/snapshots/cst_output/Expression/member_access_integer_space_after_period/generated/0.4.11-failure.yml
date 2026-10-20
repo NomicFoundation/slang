@@ -1,0 +1,20 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Source: >
+  1  │ 1. _2                                                                            │ 0..5
+
+Errors: # 1 total
+  - >
+    Error: Expected Ampersand or AmpersandAmpersand or AmpersandEqual or Asterisk or AsteriskAsterisk or AsteriskEqual or BangEqual or Bar or BarBar or BarEqual or Caret or CaretEqual or Equal or EqualEqual or GreaterThan or GreaterThanEqual or GreaterThanGreaterThan or GreaterThanGreaterThanEqual or GreaterThanGreaterThanGreaterThan or GreaterThanGreaterThanGreaterThanEqual or LessThan or LessThanEqual or LessThanLessThan or LessThanLessThanEqual or Minus or MinusEqual or Percent or PercentEqual or Plus or PlusEqual or Slash or SlashEqual.
+       ╭─[crates/solidity/testing/snapshots/cst_output/Expression/member_access_integer_space_after_period/input.sol:1:4]
+       │
+     1 │ 1. _2
+       │    ─┬─  
+       │     ╰─── Error occurred here.
+    ───╯
+
+Tree:
+  - (root꞉ Expression): # "1. _2\n" (0..6)
+      - (variant꞉ DecimalNumberExpression) ► (literal꞉ DecimalLiteral): "1." # (0..2)
+      - (leading_trivia꞉ Whitespace): " " # (2..3)
+      - (unrecognized꞉ UNRECOGNIZED): "_2\n" # (3..6)

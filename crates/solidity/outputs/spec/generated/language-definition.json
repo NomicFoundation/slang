@@ -5245,7 +5245,12 @@
                           "scanner": {
                             "Sequence": {
                               "scanners": [
-                                { "Fragment": { "reference": "DecimalDigits" } },
+                                {
+                                  "TrailingContext": {
+                                    "scanner": { "Fragment": { "reference": "DecimalDigits" } },
+                                    "not_followed_by": { "Atom": { "atom": "._" } }
+                                  }
+                                },
                                 {
                                   "Optional": {
                                     "scanner": {
