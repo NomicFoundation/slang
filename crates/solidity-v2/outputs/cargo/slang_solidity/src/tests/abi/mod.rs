@@ -9,6 +9,7 @@ mod json;
 mod library;
 mod selectors;
 mod storage_layout;
+mod storage_layout_json;
 mod type_conversion;
 mod used_errors_and_events;
 
