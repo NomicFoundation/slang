@@ -155,7 +155,7 @@ impl Pass<'_> {
                     Resolution::Unresolved,
                     |scope_id| {
                         self.binder
-                            .resolve_in_scope_as_type_member(scope_id, symbol)
+                            .resolve_in_scope_as_expression_member(scope_id, symbol)
                     },
                 )
             }

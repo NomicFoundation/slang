@@ -12,7 +12,7 @@ use crate::types::{FunctionType, Type, TypeRegistry};
 /// `Reference`s for all its elements. It will follow through
 /// contracts/interfaces/libraries as well as imports and treat them as
 /// namespaces. Returns the resolution of the last reference.
-pub(crate) fn resolve_identifier_path_in_scope(
+pub(crate) fn resolve_identifier_path_as_type_in_scope(
     binder: &mut Binder,
     identifier_path: &ir::IdentifierPath,
     starting_scope_id: ScopeId,
@@ -27,7 +27,7 @@ pub(crate) fn resolve_identifier_path_in_scope(
 
 /// Resolves the event of an `emit` or the error of a `revert`, whose segments
 /// are members of a type name used as a value, like `C.E` in an expression.
-pub(crate) fn resolve_type_member_path_in_scope(
+pub(crate) fn resolve_identifier_path_as_expression_in_scope(
     binder: &mut Binder,
     identifier_path: &ir::IdentifierPath,
     starting_scope_id: ScopeId,
@@ -36,7 +36,7 @@ pub(crate) fn resolve_type_member_path_in_scope(
         binder,
         identifier_path,
         starting_scope_id,
-        Binder::resolve_in_scope_as_type_member,
+        Binder::resolve_in_scope_as_expression_member,
     )
 }
 

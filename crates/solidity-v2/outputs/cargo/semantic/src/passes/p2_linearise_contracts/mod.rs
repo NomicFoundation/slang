@@ -9,7 +9,7 @@ use slang_solidity_v2_common::files::FileId;
 use slang_solidity_v2_common::nodes::NodeId;
 use slang_solidity_v2_ir::ir;
 
-use super::common::resolve_identifier_path_in_scope;
+use super::common::resolve_identifier_path_as_type_in_scope;
 use crate::binder::{Binder, ContractDefinition, Definition, InterfaceDefinition, ScopeId};
 use crate::context::SemanticFile;
 
@@ -110,7 +110,7 @@ impl<'a> Pass<'a> {
     ) -> Vec<NodeId> {
         let mut resolved_bases = Vec::new();
         for inheritance_type in types.iter() {
-            let resolution = resolve_identifier_path_in_scope(
+            let resolution = resolve_identifier_path_as_type_in_scope(
                 self.binder,
                 &inheritance_type.type_name,
                 scope_id,

@@ -17,6 +17,6 @@ mod resolution;
 pub(crate) use node_extensions::node_location;
 pub(crate) use resolution::{
     Overridable, filter_overridden_definitions, filter_overridden_definitions_by_selector,
-    find_definition_namespace_scope_id, resolve_identifier_path_in_scope,
-    resolve_type_member_path_in_scope,
+    find_definition_namespace_scope_id, resolve_identifier_path_as_expression_in_scope,
+    resolve_identifier_path_as_type_in_scope,
 };

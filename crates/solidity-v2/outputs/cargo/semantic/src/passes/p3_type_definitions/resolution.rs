@@ -18,7 +18,8 @@ use crate::passes::common::constant_evaluator::{
     ConstantResolver, EvaluationError, evaluate_compile_time_constant,
 };
 use crate::passes::common::{
-    node_location, resolve_identifier_path_in_scope, resolve_type_member_path_in_scope,
+    node_location, resolve_identifier_path_as_expression_in_scope,
+    resolve_identifier_path_as_type_in_scope,
 };
 use crate::types::{
     ArrayType, DataLocation, FixedSizeArrayType, FunctionType, MappingType, TupleType, Type, TypeId,
@@ -28,22 +29,26 @@ impl Pass<'_> {
     // Resolves an IdentifierPath starting at the "contract" scope level, or at
     // the file level if there's no contract scope open.
     // Returns the resolution of the last reference.
-    pub(super) fn resolve_identifier_path(
+    pub(super) fn resolve_identifier_path_as_type(
         &mut self,
         identifier_path: &ir::IdentifierPath,
     ) -> Resolution {
         // start resolution from the current contract (or file if there's no
         // contract scope open)
         let starting_scope_id = self.current_contract_or_file_scope_id();
-        resolve_identifier_path_in_scope(self.binder, identifier_path, starting_scope_id)
+        resolve_identifier_path_as_type_in_scope(self.binder, identifier_path, starting_scope_id)
     }
 
-    pub(super) fn resolve_type_member_path(
+    pub(super) fn resolve_identifier_path_as_expression(
         &mut self,
         identifier_path: &ir::IdentifierPath,
     ) -> Resolution {
         let starting_scope_id = self.current_contract_or_file_scope_id();
-        resolve_type_member_path_in_scope(self.binder, identifier_path, starting_scope_id)
+        resolve_identifier_path_as_expression_in_scope(
+            self.binder,
+            identifier_path,
+            starting_scope_id,
+        )
     }
 
     pub(super) fn resolve_parameter_types(

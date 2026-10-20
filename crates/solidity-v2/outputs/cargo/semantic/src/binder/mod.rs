@@ -946,9 +946,12 @@ impl Binder {
         }
     }
 
-    // A contract's type name used as a value (eg. `C.f`) only exposes what the
-    // contract itself declares; a type path such as `C.S` also reaches its bases.
-    pub(crate) fn resolve_in_scope_as_type_member(
+    /// Resolves `symbol` strictly in the scope denoted by `scope_id`, without
+    /// delegating to parent scopes or inherited contracts/interfaces. This is
+    /// used when resolving members in an identifier path in a value context
+    /// (eg. `emit C.E()`, or `C.f.selector`) as opposed to a typing context
+    /// (eg. `C.S var`) where the member is searched in all inherited bases.
+    pub(crate) fn resolve_in_scope_as_expression_member(
         &self,
         scope_id: ScopeId,
         symbol: &str,
