@@ -66,6 +66,13 @@ impl StorageLayout {
     pub fn storage_type(&self, type_id: TypeId) -> Option<&StorageType> {
         self.types.get(&type_id)
     }
+
+    /// The type identifier of `type_id`, which the type table always has.
+    fn type_identifier_of(&self, type_id: TypeId) -> &str {
+        self.storage_type(type_id)
+            .expect("every type a storage layout refers to is in its table")
+            .type_identifier()
+    }
 }
 
 /// How a type is laid out in storage.

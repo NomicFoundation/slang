@@ -4,7 +4,6 @@
 
 use serde::Serialize;
 use serde::ser::{SerializeMap, SerializeSeq, Serializer};
-use slang_solidity_v2_semantic::types::TypeId;
 
 use super::{StorageLayout, StorageType, StorageTypeKind, StorageVariable};
 
@@ -13,7 +12,7 @@ impl Serialize for StorageLayout {
         let mut map = serializer.serialize_map(Some(2))?;
         map.serialize_entry(
             "storage",
-            &VariableList {
+            &VariablesWrapper {
                 variables: &self.items,
                 layout: self,
             },
@@ -21,16 +20,16 @@ impl Serialize for StorageLayout {
         if self.types.is_empty() {
             map.serialize_entry("types", &())?;
         } else {
-            map.serialize_entry("types", &TypeTable(self))?;
+            map.serialize_entry("types", &TypesWrapper(self))?;
         }
         map.end()
     }
 }
 
 /// The types, sorted by their type identifier.
-struct TypeTable<'a>(&'a StorageLayout);
+struct TypesWrapper<'a>(&'a StorageLayout);
 
-impl Serialize for TypeTable<'_> {
+impl Serialize for TypesWrapper<'_> {
     fn serialize<S: Serializer>(&self, serializer: S) -> Result<S::Ok, S::Error> {
         let layout = self.0;
         let mut types: Vec<_> = layout.types.values().collect();
@@ -39,7 +38,7 @@ impl Serialize for TypeTable<'_> {
         for storage_type in types {
             map.serialize_entry(
                 &storage_type.type_identifier,
-                &TypeEntry {
+                &TypeWrapper {
                     storage_type,
                     layout,
                 },
@@ -50,16 +49,16 @@ impl Serialize for TypeTable<'_> {
 }
 
 /// State variables or struct members, in the order they are laid out.
-struct VariableList<'a> {
+struct VariablesWrapper<'a> {
     variables: &'a [StorageVariable],
     layout: &'a StorageLayout,
 }
 
-impl Serialize for VariableList<'_> {
+impl Serialize for VariablesWrapper<'_> {
     fn serialize<S: Serializer>(&self, serializer: S) -> Result<S::Ok, S::Error> {
         let mut seq = serializer.serialize_seq(Some(self.variables.len()))?;
         for variable in self.variables {
-            seq.serialize_element(&Variable {
+            seq.serialize_element(&VariableWrapper {
                 variable,
                 layout: self.layout,
             })?;
@@ -68,12 +67,12 @@ impl Serialize for VariableList<'_> {
     }
 }
 
-struct Variable<'a> {
+struct VariableWrapper<'a> {
     variable: &'a StorageVariable,
     layout: &'a StorageLayout,
 }
 
-impl Serialize for Variable<'_> {
+impl Serialize for VariableWrapper<'_> {
     fn serialize<S: Serializer>(&self, serializer: S) -> Result<S::Ok, S::Error> {
         let Self { variable, layout } = self;
         let mut map = serializer.serialize_map(Some(6))?;
@@ -82,17 +81,17 @@ impl Serialize for Variable<'_> {
         map.serialize_entry("label", variable.name())?;
         map.serialize_entry("offset", &variable.offset())?;
         map.serialize_entry("slot", &variable.slot().to_string())?;
-        map.serialize_entry("type", type_identifier_of(layout, variable.type_id()))?;
+        map.serialize_entry("type", layout.type_identifier_of(variable.type_id()))?;
         map.end()
     }
 }
 
-struct TypeEntry<'a> {
+struct TypeWrapper<'a> {
     storage_type: &'a StorageType,
     layout: &'a StorageLayout,
 }
 
-impl Serialize for TypeEntry<'_> {
+impl Serialize for TypeWrapper<'_> {
     fn serialize<S: Serializer>(&self, serializer: S) -> Result<S::Ok, S::Error> {
         let StorageType {
             label, size, kind, ..
@@ -112,30 +111,30 @@ impl Serialize for TypeEntry<'_> {
                 map.serialize_entry("numberOfBytes", &number_of_bytes)?;
             }
             StorageTypeKind::DynamicArray { element } => {
-                map.serialize_entry("base", type_identifier_of(layout, *element))?;
+                map.serialize_entry("base", layout.type_identifier_of(*element))?;
                 map.serialize_entry("encoding", "dynamic_array")?;
                 map.serialize_entry("label", label)?;
                 map.serialize_entry("numberOfBytes", &number_of_bytes)?;
             }
             StorageTypeKind::FixedSizeArray { element, .. } => {
-                map.serialize_entry("base", type_identifier_of(layout, *element))?;
+                map.serialize_entry("base", layout.type_identifier_of(*element))?;
                 map.serialize_entry("encoding", "inplace")?;
                 map.serialize_entry("label", label)?;
                 map.serialize_entry("numberOfBytes", &number_of_bytes)?;
             }
             StorageTypeKind::Mapping { key, value } => {
                 map.serialize_entry("encoding", "mapping")?;
-                map.serialize_entry("key", type_identifier_of(layout, *key))?;
+                map.serialize_entry("key", layout.type_identifier_of(*key))?;
                 map.serialize_entry("label", label)?;
                 map.serialize_entry("numberOfBytes", &number_of_bytes)?;
-                map.serialize_entry("value", type_identifier_of(layout, *value))?;
+                map.serialize_entry("value", layout.type_identifier_of(*value))?;
             }
             StorageTypeKind::Struct { members } => {
                 map.serialize_entry("encoding", "inplace")?;
                 map.serialize_entry("label", label)?;
                 map.serialize_entry(
                     "members",
-                    &VariableList {
+                    &VariablesWrapper {
                         variables: members,
                         layout,
                     },
@@ -145,12 +144,4 @@ impl Serialize for TypeEntry<'_> {
         }
         map.end()
     }
-}
-
-/// The type identifier of `type_id`, which the layout's type table always has.
-fn type_identifier_of(layout: &StorageLayout, type_id: TypeId) -> &str {
-    layout
-        .storage_type(type_id)
-        .expect("every type a storage layout refers to is in its table")
-        .type_identifier()
 }
