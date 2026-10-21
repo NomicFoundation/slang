@@ -1,6 +1,273 @@
 # This file is generated automatically by infrastructure scripts. Please don't edit by hand.
 
 pub mod slang_solidity_v2_parser
+pub enum slang_solidity_v2_parser::LexemeKind
+pub slang_solidity_v2_parser::LexemeKind::ABIEncoderV2Keyword_Reserved
+pub slang_solidity_v2_parser::LexemeKind::AbicoderKeyword_Reserved
+pub slang_solidity_v2_parser::LexemeKind::AbicoderV1Keyword_Reserved
+pub slang_solidity_v2_parser::LexemeKind::AbicoderV2Keyword_Reserved
+pub slang_solidity_v2_parser::LexemeKind::AbstractKeyword_Reserved
+pub slang_solidity_v2_parser::LexemeKind::AddressKeyword_Reserved
+pub slang_solidity_v2_parser::LexemeKind::AfterKeyword_Reserved
+pub slang_solidity_v2_parser::LexemeKind::AliasKeyword_Reserved
+pub slang_solidity_v2_parser::LexemeKind::Ampersand
+pub slang_solidity_v2_parser::LexemeKind::AmpersandAmpersand
+pub slang_solidity_v2_parser::LexemeKind::AmpersandEqual
+pub slang_solidity_v2_parser::LexemeKind::AnonymousKeyword_Reserved
+pub slang_solidity_v2_parser::LexemeKind::ApplyKeyword_Reserved
+pub slang_solidity_v2_parser::LexemeKind::AsKeyword_Reserved
+pub slang_solidity_v2_parser::LexemeKind::AssemblyKeyword_Reserved
+pub slang_solidity_v2_parser::LexemeKind::Asterisk
+pub slang_solidity_v2_parser::LexemeKind::AsteriskAsterisk
+pub slang_solidity_v2_parser::LexemeKind::AsteriskEqual
+pub slang_solidity_v2_parser::LexemeKind::AtKeyword_Unreserved
+pub slang_solidity_v2_parser::LexemeKind::AutoKeyword_Reserved
+pub slang_solidity_v2_parser::LexemeKind::Bang
+pub slang_solidity_v2_parser::LexemeKind::BangEqual
+pub slang_solidity_v2_parser::LexemeKind::Bar
+pub slang_solidity_v2_parser::LexemeKind::BarBar
+pub slang_solidity_v2_parser::LexemeKind::BarEqual
+pub slang_solidity_v2_parser::LexemeKind::BoolKeyword_Reserved
+pub slang_solidity_v2_parser::LexemeKind::BreakKeyword_Reserved
+pub slang_solidity_v2_parser::LexemeKind::ByteKeyword_Reserved
+pub slang_solidity_v2_parser::LexemeKind::BytesKeyword_Reserved
+pub slang_solidity_v2_parser::LexemeKind::CallDataKeyword_Reserved
+pub slang_solidity_v2_parser::LexemeKind::Caret
+pub slang_solidity_v2_parser::LexemeKind::CaretEqual
+pub slang_solidity_v2_parser::LexemeKind::CaseKeyword_Reserved
+pub slang_solidity_v2_parser::LexemeKind::CatchKeyword_Reserved
+pub slang_solidity_v2_parser::LexemeKind::CloseBrace
+pub slang_solidity_v2_parser::LexemeKind::CloseBracket
+pub slang_solidity_v2_parser::LexemeKind::CloseParen
+pub slang_solidity_v2_parser::LexemeKind::Colon
+pub slang_solidity_v2_parser::LexemeKind::Comma
+pub slang_solidity_v2_parser::LexemeKind::ConstantKeyword_Reserved
+pub slang_solidity_v2_parser::LexemeKind::ConstructorKeyword_Reserved
+pub slang_solidity_v2_parser::LexemeKind::ContinueKeyword_Reserved
+pub slang_solidity_v2_parser::LexemeKind::ContractKeyword_Reserved
+pub slang_solidity_v2_parser::LexemeKind::CopyOfKeyword_Reserved
+pub slang_solidity_v2_parser::LexemeKind::DaysKeyword_Reserved
+pub slang_solidity_v2_parser::LexemeKind::DecimalLiteral
+pub slang_solidity_v2_parser::LexemeKind::DefaultKeyword_Reserved
+pub slang_solidity_v2_parser::LexemeKind::DefineKeyword_Reserved
+pub slang_solidity_v2_parser::LexemeKind::DeleteKeyword_Reserved
+pub slang_solidity_v2_parser::LexemeKind::DoKeyword_Reserved
+pub slang_solidity_v2_parser::LexemeKind::ElseKeyword_Reserved
+pub slang_solidity_v2_parser::LexemeKind::EmitKeyword_Reserved
+pub slang_solidity_v2_parser::LexemeKind::EndOfLine
+pub slang_solidity_v2_parser::LexemeKind::EnumKeyword_Reserved
+pub slang_solidity_v2_parser::LexemeKind::Equal
+pub slang_solidity_v2_parser::LexemeKind::EqualEqual
+pub slang_solidity_v2_parser::LexemeKind::EqualGreaterThan
+pub slang_solidity_v2_parser::LexemeKind::ErrorKeyword_Unreserved
+pub slang_solidity_v2_parser::LexemeKind::EtherKeyword_Reserved
+pub slang_solidity_v2_parser::LexemeKind::EventKeyword_Reserved
+pub slang_solidity_v2_parser::LexemeKind::ExperimentalKeyword_Reserved
+pub slang_solidity_v2_parser::LexemeKind::ExternalKeyword_Reserved
+pub slang_solidity_v2_parser::LexemeKind::FallbackKeyword_Reserved
+pub slang_solidity_v2_parser::LexemeKind::FalseKeyword_Reserved
+pub slang_solidity_v2_parser::LexemeKind::FinalKeyword_Reserved
+pub slang_solidity_v2_parser::LexemeKind::FixedKeyword_Reserved
+pub slang_solidity_v2_parser::LexemeKind::ForKeyword_Reserved
+pub slang_solidity_v2_parser::LexemeKind::FromKeyword_Unreserved
+pub slang_solidity_v2_parser::LexemeKind::FunctionKeyword_Reserved
+pub slang_solidity_v2_parser::LexemeKind::GlobalKeyword_Unreserved
+pub slang_solidity_v2_parser::LexemeKind::GreaterThan
+pub slang_solidity_v2_parser::LexemeKind::GreaterThanEqual
+pub slang_solidity_v2_parser::LexemeKind::GreaterThanGreaterThan
+pub slang_solidity_v2_parser::LexemeKind::GreaterThanGreaterThanEqual
+pub slang_solidity_v2_parser::LexemeKind::GreaterThanGreaterThanGreaterThan
+pub slang_solidity_v2_parser::LexemeKind::GreaterThanGreaterThanGreaterThanEqual
+pub slang_solidity_v2_parser::LexemeKind::GweiKeyword_Reserved
+pub slang_solidity_v2_parser::LexemeKind::HexKeyword_Reserved
+pub slang_solidity_v2_parser::LexemeKind::HexLiteral
+pub slang_solidity_v2_parser::LexemeKind::HexStringLiteral
+pub slang_solidity_v2_parser::LexemeKind::HoursKeyword_Reserved
+pub slang_solidity_v2_parser::LexemeKind::Identifier
+pub slang_solidity_v2_parser::LexemeKind::IfKeyword_Reserved
+pub slang_solidity_v2_parser::LexemeKind::ImmutableKeyword_Reserved
+pub slang_solidity_v2_parser::LexemeKind::ImplementsKeyword_Reserved
+pub slang_solidity_v2_parser::LexemeKind::ImportKeyword_Reserved
+pub slang_solidity_v2_parser::LexemeKind::InKeyword_Reserved
+pub slang_solidity_v2_parser::LexemeKind::IndexedKeyword_Reserved
+pub slang_solidity_v2_parser::LexemeKind::InlineKeyword_Reserved
+pub slang_solidity_v2_parser::LexemeKind::IntKeyword_Reserved
+pub slang_solidity_v2_parser::LexemeKind::InterfaceKeyword_Reserved
+pub slang_solidity_v2_parser::LexemeKind::InternalKeyword_Reserved
+pub slang_solidity_v2_parser::LexemeKind::IsKeyword_Reserved
+pub slang_solidity_v2_parser::LexemeKind::LayoutKeyword_Unreserved
+pub slang_solidity_v2_parser::LexemeKind::LessThan
+pub slang_solidity_v2_parser::LexemeKind::LessThanEqual
+pub slang_solidity_v2_parser::LexemeKind::LessThanLessThan
+pub slang_solidity_v2_parser::LexemeKind::LessThanLessThanEqual
+pub slang_solidity_v2_parser::LexemeKind::LetKeyword_Reserved
+pub slang_solidity_v2_parser::LexemeKind::LibraryKeyword_Reserved
+pub slang_solidity_v2_parser::LexemeKind::MacroKeyword_Reserved
+pub slang_solidity_v2_parser::LexemeKind::MappingKeyword_Reserved
+pub slang_solidity_v2_parser::LexemeKind::MatchKeyword_Reserved
+pub slang_solidity_v2_parser::LexemeKind::MemoryKeyword_Reserved
+pub slang_solidity_v2_parser::LexemeKind::Minus
+pub slang_solidity_v2_parser::LexemeKind::MinusEqual
+pub slang_solidity_v2_parser::LexemeKind::MinusMinus
+pub slang_solidity_v2_parser::LexemeKind::MinutesKeyword_Reserved
+pub slang_solidity_v2_parser::LexemeKind::ModifierKeyword_Reserved
+pub slang_solidity_v2_parser::LexemeKind::MultiLineComment
+pub slang_solidity_v2_parser::LexemeKind::MultiLineNatSpecComment
+pub slang_solidity_v2_parser::LexemeKind::MutableKeyword_Reserved
+pub slang_solidity_v2_parser::LexemeKind::NewKeyword_Reserved
+pub slang_solidity_v2_parser::LexemeKind::NullKeyword_Reserved
+pub slang_solidity_v2_parser::LexemeKind::OfKeyword_Reserved
+pub slang_solidity_v2_parser::LexemeKind::OpenBrace
+pub slang_solidity_v2_parser::LexemeKind::OpenBracket
+pub slang_solidity_v2_parser::LexemeKind::OpenParen
+pub slang_solidity_v2_parser::LexemeKind::OverrideKeyword_Reserved
+pub slang_solidity_v2_parser::LexemeKind::PartialKeyword_Reserved
+pub slang_solidity_v2_parser::LexemeKind::PayableKeyword_Reserved
+pub slang_solidity_v2_parser::LexemeKind::Percent
+pub slang_solidity_v2_parser::LexemeKind::PercentEqual
+pub slang_solidity_v2_parser::LexemeKind::Period
+pub slang_solidity_v2_parser::LexemeKind::Plus
+pub slang_solidity_v2_parser::LexemeKind::PlusEqual
+pub slang_solidity_v2_parser::LexemeKind::PlusPlus
+pub slang_solidity_v2_parser::LexemeKind::PragmaBarBar
+pub slang_solidity_v2_parser::LexemeKind::PragmaCaret
+pub slang_solidity_v2_parser::LexemeKind::PragmaEndOfLine
+pub slang_solidity_v2_parser::LexemeKind::PragmaEqual
+pub slang_solidity_v2_parser::LexemeKind::PragmaGreaterThan
+pub slang_solidity_v2_parser::LexemeKind::PragmaGreaterThanEqual
+pub slang_solidity_v2_parser::LexemeKind::PragmaKeyword_Reserved
+pub slang_solidity_v2_parser::LexemeKind::PragmaLessThan
+pub slang_solidity_v2_parser::LexemeKind::PragmaLessThanEqual
+pub slang_solidity_v2_parser::LexemeKind::PragmaMinus
+pub slang_solidity_v2_parser::LexemeKind::PragmaMultiLineComment
+pub slang_solidity_v2_parser::LexemeKind::PragmaMultiLineNatSpecComment
+pub slang_solidity_v2_parser::LexemeKind::PragmaPeriod
+pub slang_solidity_v2_parser::LexemeKind::PragmaSemicolon
+pub slang_solidity_v2_parser::LexemeKind::PragmaSingleLineComment
+pub slang_solidity_v2_parser::LexemeKind::PragmaSingleLineNatSpecComment
+pub slang_solidity_v2_parser::LexemeKind::PragmaStringLiteral
+pub slang_solidity_v2_parser::LexemeKind::PragmaTilde
+pub slang_solidity_v2_parser::LexemeKind::PragmaWhitespace
+pub slang_solidity_v2_parser::LexemeKind::PrivateKeyword_Reserved
+pub slang_solidity_v2_parser::LexemeKind::PromiseKeyword_Reserved
+pub slang_solidity_v2_parser::LexemeKind::PublicKeyword_Reserved
+pub slang_solidity_v2_parser::LexemeKind::PureKeyword_Reserved
+pub slang_solidity_v2_parser::LexemeKind::QuestionMark
+pub slang_solidity_v2_parser::LexemeKind::ReceiveKeyword_Reserved
+pub slang_solidity_v2_parser::LexemeKind::ReferenceKeyword_Reserved
+pub slang_solidity_v2_parser::LexemeKind::RelocatableKeyword_Reserved
+pub slang_solidity_v2_parser::LexemeKind::ReturnKeyword_Reserved
+pub slang_solidity_v2_parser::LexemeKind::ReturnsKeyword_Reserved
+pub slang_solidity_v2_parser::LexemeKind::RevertKeyword_Unreserved
+pub slang_solidity_v2_parser::LexemeKind::SMTCheckerKeyword_Reserved
+pub slang_solidity_v2_parser::LexemeKind::SealedKeyword_Reserved
+pub slang_solidity_v2_parser::LexemeKind::SecondsKeyword_Reserved
+pub slang_solidity_v2_parser::LexemeKind::Semicolon
+pub slang_solidity_v2_parser::LexemeKind::SingleLineComment
+pub slang_solidity_v2_parser::LexemeKind::SingleLineNatSpecComment
+pub slang_solidity_v2_parser::LexemeKind::SizeOfKeyword_Reserved
+pub slang_solidity_v2_parser::LexemeKind::Slash
+pub slang_solidity_v2_parser::LexemeKind::SlashEqual
+pub slang_solidity_v2_parser::LexemeKind::SolidityKeyword_Reserved
+pub slang_solidity_v2_parser::LexemeKind::StaticKeyword_Reserved
+pub slang_solidity_v2_parser::LexemeKind::StorageKeyword_Reserved
+pub slang_solidity_v2_parser::LexemeKind::StringKeyword_Reserved
+pub slang_solidity_v2_parser::LexemeKind::StringLiteral
+pub slang_solidity_v2_parser::LexemeKind::StructKeyword_Reserved
+pub slang_solidity_v2_parser::LexemeKind::SuperKeyword_Reserved
+pub slang_solidity_v2_parser::LexemeKind::SupportsKeyword_Reserved
+pub slang_solidity_v2_parser::LexemeKind::SwitchKeyword_Reserved
+pub slang_solidity_v2_parser::LexemeKind::ThisKeyword_Reserved
+pub slang_solidity_v2_parser::LexemeKind::ThrowKeyword_Reserved
+pub slang_solidity_v2_parser::LexemeKind::Tilde
+pub slang_solidity_v2_parser::LexemeKind::TransientKeyword_Unreserved
+pub slang_solidity_v2_parser::LexemeKind::TrueKeyword_Reserved
+pub slang_solidity_v2_parser::LexemeKind::TryKeyword_Reserved
+pub slang_solidity_v2_parser::LexemeKind::TypeDefKeyword_Reserved
+pub slang_solidity_v2_parser::LexemeKind::TypeKeyword_Reserved
+pub slang_solidity_v2_parser::LexemeKind::TypeOfKeyword_Reserved
+pub slang_solidity_v2_parser::LexemeKind::UNRECOGNIZED
+pub slang_solidity_v2_parser::LexemeKind::UfixedKeyword_Reserved
+pub slang_solidity_v2_parser::LexemeKind::UintKeyword_Reserved
+pub slang_solidity_v2_parser::LexemeKind::UncheckedKeyword_Reserved
+pub slang_solidity_v2_parser::LexemeKind::UnicodeStringLiteral
+pub slang_solidity_v2_parser::LexemeKind::UsingKeyword_Reserved
+pub slang_solidity_v2_parser::LexemeKind::VarKeyword_Reserved
+pub slang_solidity_v2_parser::LexemeKind::VersionPragmaComponent
+pub slang_solidity_v2_parser::LexemeKind::ViewKeyword_Reserved
+pub slang_solidity_v2_parser::LexemeKind::VirtualKeyword_Reserved
+pub slang_solidity_v2_parser::LexemeKind::WeeksKeyword_Reserved
+pub slang_solidity_v2_parser::LexemeKind::WeiKeyword_Reserved
+pub slang_solidity_v2_parser::LexemeKind::WhileKeyword_Reserved
+pub slang_solidity_v2_parser::LexemeKind::Whitespace
+pub slang_solidity_v2_parser::LexemeKind::YearsKeyword_Reserved
+pub slang_solidity_v2_parser::LexemeKind::YulBreakKeyword_Reserved
+pub slang_solidity_v2_parser::LexemeKind::YulCaseKeyword_Reserved
+pub slang_solidity_v2_parser::LexemeKind::YulCloseBrace
+pub slang_solidity_v2_parser::LexemeKind::YulCloseParen
+pub slang_solidity_v2_parser::LexemeKind::YulColonEqual
+pub slang_solidity_v2_parser::LexemeKind::YulComma
+pub slang_solidity_v2_parser::LexemeKind::YulContinueKeyword_Reserved
+pub slang_solidity_v2_parser::LexemeKind::YulDecimalLiteral
+pub slang_solidity_v2_parser::LexemeKind::YulDefaultKeyword_Reserved
+pub slang_solidity_v2_parser::LexemeKind::YulEndOfLine
+pub slang_solidity_v2_parser::LexemeKind::YulFalseKeyword_Reserved
+pub slang_solidity_v2_parser::LexemeKind::YulForKeyword_Reserved
+pub slang_solidity_v2_parser::LexemeKind::YulFunctionKeyword_Reserved
+pub slang_solidity_v2_parser::LexemeKind::YulHexKeyword_Reserved
+pub slang_solidity_v2_parser::LexemeKind::YulHexLiteral
+pub slang_solidity_v2_parser::LexemeKind::YulHexStringLiteral
+pub slang_solidity_v2_parser::LexemeKind::YulIdentifier
+pub slang_solidity_v2_parser::LexemeKind::YulIfKeyword_Reserved
+pub slang_solidity_v2_parser::LexemeKind::YulLeaveKeyword_Reserved
+pub slang_solidity_v2_parser::LexemeKind::YulLetKeyword_Reserved
+pub slang_solidity_v2_parser::LexemeKind::YulMinusGreaterThan
+pub slang_solidity_v2_parser::LexemeKind::YulMultiLineComment
+pub slang_solidity_v2_parser::LexemeKind::YulMultiLineNatSpecComment
+pub slang_solidity_v2_parser::LexemeKind::YulOpenBrace
+pub slang_solidity_v2_parser::LexemeKind::YulOpenParen
+pub slang_solidity_v2_parser::LexemeKind::YulPeriod
+pub slang_solidity_v2_parser::LexemeKind::YulSingleLineComment
+pub slang_solidity_v2_parser::LexemeKind::YulSingleLineNatSpecComment
+pub slang_solidity_v2_parser::LexemeKind::YulStringLiteral
+pub slang_solidity_v2_parser::LexemeKind::YulSuperKeyword_Reserved
+pub slang_solidity_v2_parser::LexemeKind::YulSwitchKeyword_Reserved
+pub slang_solidity_v2_parser::LexemeKind::YulThisKeyword_Reserved
+pub slang_solidity_v2_parser::LexemeKind::YulTrueKeyword_Reserved
+pub slang_solidity_v2_parser::LexemeKind::YulWhitespace
+impl slang_solidity_v2_parser::LexemeKind
+pub fn slang_solidity_v2_parser::LexemeKind::is_natspec_comment(&self) -> bool
+pub fn slang_solidity_v2_parser::LexemeKind::is_trivia(&self) -> bool
+impl core::clone::Clone for slang_solidity_v2_parser::LexemeKind
+pub fn slang_solidity_v2_parser::LexemeKind::clone(&self) -> slang_solidity_v2_parser::LexemeKind
+impl core::cmp::PartialEq for slang_solidity_v2_parser::LexemeKind
+pub fn slang_solidity_v2_parser::LexemeKind::eq(&self, &slang_solidity_v2_parser::LexemeKind) -> bool
+impl core::convert::From<&slang_solidity_v2_parser::LexemeKind> for slang_solidity_v2_common::terminals::terminal_kind::TerminalKind
+pub fn slang_solidity_v2_common::terminals::terminal_kind::TerminalKind::from(&slang_solidity_v2_parser::LexemeKind) -> Self
+impl core::convert::From<slang_solidity_v2_parser::LexemeKind> for &'static str
+pub fn &'static str::from(slang_solidity_v2_parser::LexemeKind) -> &'static str
+impl core::convert::TryFrom<&str> for slang_solidity_v2_parser::LexemeKind
+pub type slang_solidity_v2_parser::LexemeKind::Error = strum::ParseError
+pub fn slang_solidity_v2_parser::LexemeKind::try_from(&str) -> core::result::Result<slang_solidity_v2_parser::LexemeKind, <Self as core::convert::TryFrom<&str>>::Error>
+impl core::fmt::Debug for slang_solidity_v2_parser::LexemeKind
+pub fn slang_solidity_v2_parser::LexemeKind::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::fmt::Display for slang_solidity_v2_parser::LexemeKind
+pub fn slang_solidity_v2_parser::LexemeKind::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::result::Result<(), core::fmt::Error>
+impl core::marker::StructuralPartialEq for slang_solidity_v2_parser::LexemeKind
+impl core::str::traits::FromStr for slang_solidity_v2_parser::LexemeKind
+pub type slang_solidity_v2_parser::LexemeKind::Err = strum::ParseError
+pub fn slang_solidity_v2_parser::LexemeKind::from_str(&str) -> core::result::Result<slang_solidity_v2_parser::LexemeKind, <Self as core::str::traits::FromStr>::Err>
+impl<'_derivative_strum> core::convert::From<&'_derivative_strum slang_solidity_v2_parser::LexemeKind> for &'static str
+pub fn &'static str::from(&'_derivative_strum slang_solidity_v2_parser::LexemeKind) -> &'static str
+pub struct slang_solidity_v2_parser::Lexeme
+pub slang_solidity_v2_parser::Lexeme::kind: slang_solidity_v2_parser::LexemeKind
+pub slang_solidity_v2_parser::Lexeme::range: core::ops::range::Range<usize>
+impl core::fmt::Debug for slang_solidity_v2_parser::Lexeme
+pub fn slang_solidity_v2_parser::Lexeme::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+pub struct slang_solidity_v2_parser::Lexer<'source>
+impl<'source> slang_solidity_v2_parser::Lexer<'source>
+pub fn slang_solidity_v2_parser::Lexer<'source>::new(&'source str, slang_solidity_v2_common::versions::version::LanguageVersion) -> Self
+pub fn slang_solidity_v2_parser::Lexer<'source>::next_lexeme(&mut self) -> core::option::Option<slang_solidity_v2_parser::Lexeme>
 pub struct slang_solidity_v2_parser::ParseOutput
 pub slang_solidity_v2_parser::ParseOutput::diagnostics: slang_solidity_v2_common::diagnostics::collection::DiagnosticCollection
 pub slang_solidity_v2_parser::ParseOutput::source_unit: slang_solidity_v2_cst::structured_cst::nodes::SourceUnit

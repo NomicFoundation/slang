@@ -10,6 +10,7 @@ use solidity_testing_perf_cargo::tests;
 use tests::slang_v2::ast_analysis::setup as ast_analysis_setup;
 use tests::slang_v2::ast_visitor::setup as ast_visitor_setup;
 use tests::slang_v2::compute_contracts_abi::setup as compute_contracts_abi_setup;
+use tests::slang_v2::infer_language_versions::setup as infer_language_versions_setup;
 use tests::slang_v2::ir_builder::setup as ir_builder_setup;
 use tests::slang_v2::parser::setup as parser_setup;
 use tests::slang_v2::semantic::setup as semantic_setup;
@@ -72,6 +73,17 @@ macro_rules! bench_projects {
             $($rest)*
         }
     };
+}
+
+bench_projects! {
+    #[library_benchmark(setup = infer_language_versions_setup)]
+    fn infer_language_versions(
+        input: tests::slang_v2::infer_language_versions::Input,
+    ) -> tests::slang_v2::infer_language_versions::Output {
+        black_box(tests::slang_v2::infer_language_versions::run(
+            black_box(input),
+        ))
+    }
 }
 
 bench_projects! {
@@ -141,7 +153,7 @@ bench_projects! {
 library_benchmark_group!(
     name = pipeline;
     // __SLANG_V2_INFRA_BENCHMARKS_LIST__ (keep in sync)
-    benchmarks = parser, ir_builder, semantic, compute_contracts_abi, ast_visitor, ast_analysis,
+    benchmarks = parser, ir_builder, semantic, compute_contracts_abi, ast_visitor, ast_analysis, infer_language_versions,
 );
 
 main!(

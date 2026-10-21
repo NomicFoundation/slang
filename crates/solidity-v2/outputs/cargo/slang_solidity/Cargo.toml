@@ -20,6 +20,7 @@ categories = ["compilers", "utilities"]
 
 [dependencies]
 rayon = { workspace = true }
+semver = { workspace = true }
 slang_solidity_v2_ast = { workspace = true }
 slang_solidity_v2_common = { workspace = true }
 slang_solidity_v2_cst = { workspace = true }

@@ -7,3 +7,4 @@ mod fixtures;
 mod support;
 mod thread_safety;
 mod unit;
+mod version_inference;
