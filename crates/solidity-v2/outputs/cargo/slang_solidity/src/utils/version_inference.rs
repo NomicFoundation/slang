@@ -76,11 +76,21 @@ fn find_version_pragmas(source: &str) -> Vec<ir::VersionPragma> {
         .next()
         .expect("the node-id space holds at least one group");
 
+    // Every directive starts with the `pragma` keyword, so none can start past
+    // the last place the source spells it, in code or not.
+    let Some(last_keyword_start) = source.rfind("pragma") else {
+        return Vec::new();
+    };
+
     let mut lexer = Lexer::new(source, SCAN_LANGUAGE_VERSION);
     let mut directive_start = None;
     let mut pragmas = Vec::new();
 
     while let Some(lexeme) = lexer.next_lexeme() {
+        if directive_start.is_none() && lexeme.range.start > last_keyword_start {
+            break;
+        }
+
         match lexeme.kind {
             LexemeKind::PragmaKeyword_Reserved => {
                 directive_start = Some(lexeme.range.start);
