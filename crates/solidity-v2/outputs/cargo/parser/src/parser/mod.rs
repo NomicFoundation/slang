@@ -80,6 +80,9 @@ pub struct ParseOutput {
 pub struct Parser;
 
 impl Parser {
+    // Never inlined: it runs LALRPOP's parsing loop, and inlining it into its caller makes the loop
+    // share registers with the caller's code, which changes how well the loop is compiled.
+    #[inline(never)]
     pub fn parse(file_id: &FileId, source: &str, language_version: LanguageVersion) -> ParseOutput {
         let natspec_stack = NatSpecStack::default();
         // TODO(v2): Include the trivia in future versions
