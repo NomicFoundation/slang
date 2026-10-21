@@ -1,4 +1,5 @@
 use semver::Version;
+use slang_solidity_v2_common::versions::LanguageVersionSpecifier;
 
 use crate::utils::{LanguageVersion, infer_language_versions};
 
@@ -19,15 +20,25 @@ fn matches(source: &str, versions: &[&str]) -> Vec<bool> {
         .collect()
 }
 
-/// Every supported version from `from` to `till`, both included.
-fn versions(from: LanguageVersion, till: LanguageVersion) -> Vec<LanguageVersion> {
+/// Every supported version from `from` (included) to `till` (excluded).
+fn range(from: LanguageVersion, till: LanguageVersion) -> Vec<LanguageVersion> {
+    expand_versions(&LanguageVersionSpecifier::range(from, till))
+}
+
+/// Every supported version from `from` (included) onwards.
+fn from(from: LanguageVersion) -> Vec<LanguageVersion> {
+    expand_versions(&LanguageVersionSpecifier::from(from))
+}
+
+fn expand_versions(specifier: &LanguageVersionSpecifier) -> Vec<LanguageVersion> {
     LanguageVersion::ALL
         .iter()
         .copied()
-        .filter(|version| (from..=till).contains(version))
+        .filter(|&version| specifier.contains(version))
         .collect()
 }
 
+/// Every supported version.
 fn all_versions() -> Vec<LanguageVersion> {
     LanguageVersion::ALL.to_vec()
 }
@@ -52,7 +63,7 @@ fn exact_version() {
 fn caret() {
     assert_eq!(
         infer("pragma solidity ^0.8.20;"),
-        versions(LanguageVersion::V0_8_20, LanguageVersion::LATEST),
+        from(LanguageVersion::V0_8_20),
     );
 }
 
@@ -60,7 +71,7 @@ fn caret() {
 fn tilde() {
     assert_eq!(
         infer("pragma solidity ~0.8.30;"),
-        versions(LanguageVersion::V0_8_30, LanguageVersion::LATEST),
+        from(LanguageVersion::V0_8_30),
     );
 }
 
@@ -68,11 +79,12 @@ fn tilde() {
 fn comparators_in_a_set_all_hold() {
     assert_eq!(
         infer("pragma solidity >=0.8.4 <0.8.10;"),
-        versions(LanguageVersion::V0_8_4, LanguageVersion::V0_8_9),
+        range(LanguageVersion::V0_8_4, LanguageVersion::V0_8_10),
     );
     assert_eq!(
         infer("pragma solidity >0.8.4 <=0.8.10;"),
-        versions(LanguageVersion::V0_8_5, LanguageVersion::V0_8_10),
+        // `till` is excluded, so this is up to 0.8.10 included.
+        range(LanguageVersion::V0_8_5, LanguageVersion::V0_8_11),
     );
 }
 
@@ -80,7 +92,7 @@ fn comparators_in_a_set_all_hold() {
 fn comparators_need_no_space_between_them() {
     assert_eq!(
         infer("pragma solidity>=0.8.4<0.8.10;"),
-        versions(LanguageVersion::V0_8_4, LanguageVersion::V0_8_9),
+        range(LanguageVersion::V0_8_4, LanguageVersion::V0_8_10),
     );
 }
 
@@ -88,14 +100,15 @@ fn comparators_need_no_space_between_them() {
 fn hyphen_range_includes_both_ends() {
     assert_eq!(
         infer("pragma solidity 0.8.2 - 0.8.5;"),
-        versions(LanguageVersion::V0_8_2, LanguageVersion::V0_8_5),
+        // `till` is excluded, so this is up to 0.8.5 included.
+        range(LanguageVersion::V0_8_2, LanguageVersion::V0_8_6),
     );
 }
 
 #[test]
 fn alternatives_can_leave_gaps() {
     let mut expected = vec![LanguageVersion::V0_8_1];
-    expected.extend(versions(LanguageVersion::V0_8_30, LanguageVersion::LATEST));
+    expected.extend(from(LanguageVersion::V0_8_30));
 
     assert_eq!(infer("pragma solidity 0.8.1 || >=0.8.30;"), expected);
 }
@@ -189,7 +202,7 @@ fn several_pragmas_all_hold() {
 
     assert_eq!(
         infer(source),
-        versions(LanguageVersion::V0_8_0, LanguageVersion::V0_8_4),
+        range(LanguageVersion::V0_8_0, LanguageVersion::V0_8_5),
     );
 }
 
@@ -413,7 +426,7 @@ fn trivia_inside_the_pragma() {
 
     assert_eq!(
         infer(source),
-        versions(LanguageVersion::V0_8_4, LanguageVersion::V0_8_5),
+        range(LanguageVersion::V0_8_4, LanguageVersion::V0_8_6),
     );
 }
 

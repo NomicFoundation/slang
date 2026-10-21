@@ -18,6 +18,17 @@ pub fn infer_language_versions(source: &str) -> VersionConstraint {
     }
 }
 
+/// The version that directives are lexed, parsed, and built with.
+///
+/// The pragma grammar is the same in every version, so any of them reads a
+/// directive the same way, but the lexer, parser, and IR builder should all agree
+/// on it.
+///
+/// Should the grammar ever start to differ between versions, a single
+/// version would no longer do, and each directive would have to be read with
+/// every version it could be meant for.
+const SCAN_LANGUAGE_VERSION: LanguageVersion = LanguageVersion::LATEST;
+
 /// The versions a source admits, as its `pragma solidity` directives state
 /// them. See [`infer_language_versions`].
 ///
@@ -65,7 +76,7 @@ fn find_version_pragmas(source: &str) -> Vec<ir::VersionPragma> {
         .next()
         .expect("the node-id space holds at least one group");
 
-    let mut lexer = Lexer::new(source, LanguageVersion::LATEST);
+    let mut lexer = Lexer::new(source, SCAN_LANGUAGE_VERSION);
     let mut directive_start = None;
     let mut pragmas = Vec::new();
 
@@ -94,18 +105,16 @@ fn build_version_pragma(
     directive: &str,
     id_generator: &mut NodeIdGenerator,
 ) -> Option<ir::VersionPragma> {
-    // The pragma grammar is the same in every version, so which one parses it
-    // does not matter. Diagnostics are dropped: a directive that does not parse
-    // comes out as an empty source unit, and one that does is only used for its
-    // version constraints.
-    let ParseOutput { source_unit, .. } =
-        Parser::parse(file_id, directive, LanguageVersion::LATEST);
+    // Diagnostics are dropped: a directive that does not parse comes out as an
+    // empty source unit, and one that does is only used for its version
+    // constraints.
+    let ParseOutput { source_unit, .. } = Parser::parse(file_id, directive, SCAN_LANGUAGE_VERSION);
 
     let ir::BuildOutput { ir_root, .. } = ir::build(
         file_id,
         &source_unit,
         &directive,
-        LanguageVersion::LATEST,
+        SCAN_LANGUAGE_VERSION,
         id_generator,
     );
 
