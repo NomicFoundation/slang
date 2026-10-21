@@ -218,12 +218,11 @@ impl<'a> StorageAnalyzer<'a> {
     pub(crate) const ADDRESS_BYTE_SIZE: usize = 20;
     pub(crate) const SELECTOR_SIZE: usize = 4;
 
-    pub(crate) fn storage_size_of_type_id(&self, type_id: TypeId) -> Option<StorageSize> {
-        self.storage_size(type_id).ok()
-    }
-
     /// How much storage `type_id` occupies, or why it has no size.
-    pub(crate) fn storage_size(&self, type_id: TypeId) -> Result<StorageSize, NoStorageSize> {
+    pub(crate) fn storage_size_of_type_id(
+        &self,
+        type_id: TypeId,
+    ) -> Result<StorageSize, NoStorageSize> {
         self.storage_size_impl(type_id, &mut Set::default())
     }
 
@@ -454,7 +453,7 @@ impl<'a> StorageAnalyzer<'a> {
             | Type::UserMetaType(_) => return None,
         };
         Some(StorageTypeLayout {
-            size: self.storage_size_of_type_id(type_id)?,
+            size: self.storage_size_of_type_id(type_id).ok()?,
             kind,
         })
     }

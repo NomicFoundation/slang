@@ -557,7 +557,9 @@ impl SemanticContext {
     }
 
     pub fn storage_size_of_type_id(&self, type_id: TypeId) -> Option<StorageSize> {
-        self.storage_analyzer().storage_size_of_type_id(type_id)
+        self.storage_analyzer()
+            .storage_size_of_type_id(type_id)
+            .ok()
     }
 
     /// The type table of a storage layout: `roots` (the types of its state
