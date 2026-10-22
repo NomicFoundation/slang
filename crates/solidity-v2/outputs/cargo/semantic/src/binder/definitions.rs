@@ -55,7 +55,9 @@ pub struct ContractDefinition {
     pub ir_node: ir::ContractDefinition,
     pub bases: Option<Vec<NodeId>>,
     pub(crate) constructor_parameters_scope_id: Option<ScopeId>,
-    pub base_slot: Option<U256>,
+    /// The effective base slot to use for this contract. `None` if not
+    /// computed yet, or the `layout at` specifier failed to evaluate.
+    pub effective_base_slot: Option<U256>,
 }
 
 #[derive(Debug)]
@@ -407,7 +409,7 @@ impl Definition {
             ir_node: Arc::clone(ir_node),
             bases: None,
             constructor_parameters_scope_id: None,
-            base_slot: None,
+            effective_base_slot: None,
         })
     }
 

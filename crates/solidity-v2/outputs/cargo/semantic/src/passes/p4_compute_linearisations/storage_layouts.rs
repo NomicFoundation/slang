@@ -29,18 +29,16 @@ pub(super) fn compute_storage_layouts(
 
     // TODO(validation) SDR[2]: it is an error if any contract in the hierarchy
     // other than the leaf has a custom offset layout
-    let persistent = match (&contract.storage_layout, definition.base_slot) {
-        // A base slot that failed to evaluate is already reported.
-        (Some(_), None) => None,
-        (_, base_slot) => lay_out(
+    let persistent = definition.effective_base_slot.and_then(|base_slot| {
+        lay_out(
             &analyzer,
             binder,
-            base_slot.unwrap_or(U256::ZERO),
+            base_slot,
             ir::StateVariableMutability::Mutable,
             state_variables,
         )
-        .ok(),
-    };
+        .ok()
+    });
     let transient = lay_out(
         &analyzer,
         binder,
