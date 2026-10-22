@@ -1,0 +1,11 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Source: >
+  1  │ 0e1                                                                              │ 0..3
+
+Errors: []
+
+Tree:
+  - (root꞉ DecimalNumberExpression): # "0e1\n" (0..4)
+      - (literal꞉ DecimalLiteral): "0e1" # (0..3)
+      - (trailing_trivia꞉ EndOfLine): "\n" # (3..4)

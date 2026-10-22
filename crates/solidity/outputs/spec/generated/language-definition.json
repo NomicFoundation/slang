@@ -5180,7 +5180,7 @@
                               "scanners": [
                                 {
                                   "TrailingContext": {
-                                    "scanner": { "Fragment": { "reference": "DecimalDigits" } },
+                                    "scanner": { "Fragment": { "reference": "DecimalInteger" } },
                                     "not_followed_by": { "Atom": { "atom": "." } }
                                   }
                                 },
@@ -5204,7 +5204,7 @@
                                     "scanner": {
                                       "Sequence": {
                                         "scanners": [
-                                          { "Fragment": { "reference": "DecimalDigits" } },
+                                          { "Fragment": { "reference": "DecimalInteger" } },
                                           { "Atom": { "atom": "." } }
                                         ]
                                       }
@@ -5227,7 +5227,7 @@
                           "scanner": {
                             "Sequence": {
                               "scanners": [
-                                { "Fragment": { "reference": "DecimalDigits" } },
+                                { "Fragment": { "reference": "DecimalInteger" } },
                                 { "Atom": { "atom": "." } },
                                 { "Fragment": { "reference": "DecimalDigits" } },
                                 { "Optional": { "scanner": { "Fragment": { "reference": "DecimalExponent" } } } }
@@ -5247,7 +5247,7 @@
                               "scanners": [
                                 {
                                   "TrailingContext": {
-                                    "scanner": { "Fragment": { "reference": "DecimalDigits" } },
+                                    "scanner": { "Fragment": { "reference": "DecimalInteger" } },
                                     "not_followed_by": { "Atom": { "atom": "._" } }
                                   }
                                 },
@@ -5272,6 +5272,53 @@
                       }
                     }
                   ]
+                }
+              }
+            },
+            {
+              "Fragment": {
+                "item": {
+                  "name": "DecimalInteger",
+                  "scanner": {
+                    "Choice": {
+                      "scanners": [
+                        {
+                          "TrailingContext": {
+                            "scanner": { "Atom": { "atom": "0" } },
+                            "not_followed_by": { "Range": { "inclusive_start": "0", "inclusive_end": "9" } }
+                          }
+                        },
+                        {
+                          "Sequence": {
+                            "scanners": [
+                              { "Range": { "inclusive_start": "1", "inclusive_end": "9" } },
+                              {
+                                "ZeroOrMore": {
+                                  "scanner": { "Range": { "inclusive_start": "0", "inclusive_end": "9" } }
+                                }
+                              },
+                              {
+                                "ZeroOrMore": {
+                                  "scanner": {
+                                    "Sequence": {
+                                      "scanners": [
+                                        { "Atom": { "atom": "_" } },
+                                        {
+                                          "OneOrMore": {
+                                            "scanner": { "Range": { "inclusive_start": "0", "inclusive_end": "9" } }
+                                          }
+                                        }
+                                      ]
+                                    }
+                                  }
+                                }
+                              }
+                            ]
+                          }
+                        }
+                      ]
+                    }
+                  }
                 }
               }
             },
@@ -6294,7 +6341,12 @@
                           "scanner": {
                             "Choice": {
                               "scanners": [
-                                { "Atom": { "atom": "0" } },
+                                {
+                                  "TrailingContext": {
+                                    "scanner": { "Atom": { "atom": "0" } },
+                                    "not_followed_by": { "Range": { "inclusive_start": "0", "inclusive_end": "9" } }
+                                  }
+                                },
                                 {
                                   "Sequence": {
                                     "scanners": [
