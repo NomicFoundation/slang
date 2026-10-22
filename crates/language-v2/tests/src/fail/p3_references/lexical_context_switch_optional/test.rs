@@ -21,7 +21,7 @@ language_v2_macros::compile!(Language(
                                 field_1 = Required(Three)
                             )
                         ),
-                        Keyword(name = Two, scanner = Atom("two"))
+                        Keyword(name = Two, scanner = Atom("two"), reject_suffix = Atom("_"))
                     ]
                 )]
             )]

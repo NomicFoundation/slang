@@ -1,0 +1,5 @@
+error: Keyword requires a 'reject_suffix', since its context 'ContextA' has no 'identifier_token'.
+  --> src/fail/p3_references/keyword_without_reject_suffix/test.rs:16:36
+   |
+16 |                     Keyword(name = Two, scanner = Atom("two")),
+   |                                    ^^^

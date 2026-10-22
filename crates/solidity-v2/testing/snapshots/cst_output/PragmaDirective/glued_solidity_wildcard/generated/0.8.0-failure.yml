@@ -1,0 +1,17 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Source: >
+  1  │ pragma solidityx;                                                                │ 0..17
+
+Diagnostics: # 1 total
+  - >
+    [syntax/unexpected-terminal] Error: Unexpected UNRECOGNIZED. One of AbicoderKeyword, ExperimentalKeyword, SolidityKeyword was expected
+       ╭─[crates/solidity-v2/testing/snapshots/cst_output/PragmaDirective/glued_solidity_wildcard/input.sol:1:8]
+       │
+     1 │ pragma solidityx;
+       │        ────┬────  
+       │            ╰────── Error occurred here.
+    ───╯
+Tree:
+  - (root꞉ SourceUnit):
+      - (members꞉ SourceUnitMembers): []

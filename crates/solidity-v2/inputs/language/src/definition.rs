@@ -138,13 +138,53 @@ language_v2_macros::compile!(Language(
                     Topic(
                         title = "Pragma Keywords",
                         items = [
-                            Keyword(name = AbicoderKeyword, scanner = Atom("abicoder")),
-                            Keyword(name = ExperimentalKeyword, scanner = Atom("experimental")),
-                            Keyword(name = AbicoderV1Keyword, scanner = Atom("v1")),
-                            Keyword(name = AbicoderV2Keyword, scanner = Atom("v2")),
-                            Keyword(name = ABIEncoderV2Keyword, scanner = Atom("ABIEncoderV2")),
-                            Keyword(name = SMTCheckerKeyword, scanner = Atom("SMTChecker")),
-                            Keyword(name = SolidityKeyword, scanner = Atom("solidity"))
+                            Keyword(
+                                name = AbicoderKeyword,
+                                scanner = Atom("abicoder"),
+                                reject_suffix = OneOrMore(Fragment(PragmaIdentifierPart))
+                            ),
+                            Keyword(
+                                name = ExperimentalKeyword,
+                                scanner = Atom("experimental"),
+                                reject_suffix = OneOrMore(Fragment(PragmaIdentifierPart))
+                            ),
+                            Keyword(
+                                name = AbicoderV1Keyword,
+                                scanner = Atom("v1"),
+                                reject_suffix = OneOrMore(Fragment(PragmaIdentifierPart))
+                            ),
+                            Keyword(
+                                name = AbicoderV2Keyword,
+                                scanner = Atom("v2"),
+                                reject_suffix = OneOrMore(Fragment(PragmaIdentifierPart))
+                            ),
+                            Keyword(
+                                name = ABIEncoderV2Keyword,
+                                scanner = Atom("ABIEncoderV2"),
+                                reject_suffix = OneOrMore(Fragment(PragmaIdentifierPart))
+                            ),
+                            Keyword(
+                                name = SMTCheckerKeyword,
+                                scanner = Atom("SMTChecker"),
+                                reject_suffix = OneOrMore(Fragment(PragmaIdentifierPart))
+                            ),
+                            Keyword(
+                                name = SolidityKeyword,
+                                scanner = Atom("solidity"),
+                                reject_suffix = OneOrMore(Fragment(PragmaIdentifierPart))
+                            ),
+                            // The pragma context has no identifier token, so the keywords reject the rest of a longer word
+                            // themselves, e.g. 'solidity0' in 'pragma solidity0.8.0;':
+                            Fragment(
+                                name = PragmaIdentifierPart,
+                                scanner = Choice([
+                                    Atom("_"),
+                                    Atom("$"),
+                                    Range(inclusive_start = 'a', inclusive_end = 'z'),
+                                    Range(inclusive_start = 'A', inclusive_end = 'Z'),
+                                    Range(inclusive_start = '0', inclusive_end = '9')
+                                ])
+                            )
                         ]
                     ),
                     Topic(

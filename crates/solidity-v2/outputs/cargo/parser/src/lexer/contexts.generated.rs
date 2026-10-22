@@ -75,6 +75,49 @@ impl<'source> ContextWrapper<'source> {
     }
 }
 
+/// Rejects a `AbicoderKeyword` match that ends with this suffix.
+#[derive(Logos)]
+enum RejectSuffixAbicoderKeyword {
+    #[regex(r#"(_|\$|[a-z]|[A-Z]|[0-9])+"#)]
+    Matched,
+}
+/// Rejects a `ExperimentalKeyword` match that ends with this suffix.
+#[derive(Logos)]
+enum RejectSuffixExperimentalKeyword {
+    #[regex(r#"(_|\$|[a-z]|[A-Z]|[0-9])+"#)]
+    Matched,
+}
+/// Rejects a `AbicoderV1Keyword` match that ends with this suffix.
+#[derive(Logos)]
+enum RejectSuffixAbicoderV1Keyword {
+    #[regex(r#"(_|\$|[a-z]|[A-Z]|[0-9])+"#)]
+    Matched,
+}
+/// Rejects a `AbicoderV2Keyword` match that ends with this suffix.
+#[derive(Logos)]
+enum RejectSuffixAbicoderV2Keyword {
+    #[regex(r#"(_|\$|[a-z]|[A-Z]|[0-9])+"#)]
+    Matched,
+}
+/// Rejects a `ABIEncoderV2Keyword` match that ends with this suffix.
+#[derive(Logos)]
+enum RejectSuffixABIEncoderV2Keyword {
+    #[regex(r#"(_|\$|[a-z]|[A-Z]|[0-9])+"#)]
+    Matched,
+}
+/// Rejects a `SMTCheckerKeyword` match that ends with this suffix.
+#[derive(Logos)]
+enum RejectSuffixSMTCheckerKeyword {
+    #[regex(r#"(_|\$|[a-z]|[A-Z]|[0-9])+"#)]
+    Matched,
+}
+/// Rejects a `SolidityKeyword` match that ends with this suffix.
+#[derive(Logos)]
+enum RejectSuffixSolidityKeyword {
+    #[regex(r#"(_|\$|[a-z]|[A-Z]|[0-9])+"#)]
+    Matched,
+}
+
 #[derive(Clone, Debug, Logos)]
 #[logos(extras = ContextExtras)]
 #[logos(subpattern PragmaAsciiEscape = r#"n|r|t|'|"|\\|\r\n|\r|\n"#)]
@@ -88,13 +131,13 @@ impl<'source> ContextWrapper<'source> {
 #[logos(subpattern PragmaSingleLineRegularCommentText = r#"(?&PragmaTextAfterSlashes)|(//[^\r\n]*)"#)]
 pub enum PragmaContext {
     #[regex(r#"([0-9]|x|X|\*)+"#, |_| { LexemeKind::VersionPragmaComponent }, priority = 2000001)]
-    #[regex(r#"abicoder"#, |_| { LexemeKind::AbicoderKeyword_Reserved }, priority = 3000002)]
-    #[regex(r#"experimental"#, |_| { LexemeKind::ExperimentalKeyword_Reserved }, priority = 3000003)]
-    #[regex(r#"v1"#, |_| { LexemeKind::AbicoderV1Keyword_Reserved }, priority = 3000004)]
-    #[regex(r#"v2"#, |_| { LexemeKind::AbicoderV2Keyword_Reserved }, priority = 3000005)]
-    #[regex(r#"ABIEncoderV2"#, |_| { LexemeKind::ABIEncoderV2Keyword_Reserved }, priority = 3000006)]
-    #[regex(r#"SMTChecker"#, |_| { LexemeKind::SMTCheckerKeyword_Reserved }, priority = 3000007)]
-    #[regex(r#"solidity"#, |_| { LexemeKind::SolidityKeyword_Reserved }, priority = 3000008)]
+    #[regex(r#"abicoder"#, |lexer| { let kind = LexemeKind::AbicoderKeyword_Reserved; reject_suffix::<RejectSuffixAbicoderKeyword, _>(lexer, kind) }, priority = 3000002)]
+    #[regex(r#"experimental"#, |lexer| { let kind = LexemeKind::ExperimentalKeyword_Reserved; reject_suffix::<RejectSuffixExperimentalKeyword, _>(lexer, kind) }, priority = 3000003)]
+    #[regex(r#"v1"#, |lexer| { let kind = LexemeKind::AbicoderV1Keyword_Reserved; reject_suffix::<RejectSuffixAbicoderV1Keyword, _>(lexer, kind) }, priority = 3000004)]
+    #[regex(r#"v2"#, |lexer| { let kind = LexemeKind::AbicoderV2Keyword_Reserved; reject_suffix::<RejectSuffixAbicoderV2Keyword, _>(lexer, kind) }, priority = 3000005)]
+    #[regex(r#"ABIEncoderV2"#, |lexer| { let kind = LexemeKind::ABIEncoderV2Keyword_Reserved; reject_suffix::<RejectSuffixABIEncoderV2Keyword, _>(lexer, kind) }, priority = 3000006)]
+    #[regex(r#"SMTChecker"#, |lexer| { let kind = LexemeKind::SMTCheckerKeyword_Reserved; reject_suffix::<RejectSuffixSMTCheckerKeyword, _>(lexer, kind) }, priority = 3000007)]
+    #[regex(r#"solidity"#, |lexer| { let kind = LexemeKind::SolidityKeyword_Reserved; reject_suffix::<RejectSuffixSolidityKeyword, _>(lexer, kind) }, priority = 3000008)]
     #[regex(r#"\|\|"#, |_| { LexemeKind::PragmaBarBar }, priority = 2000009)]
     #[regex(r#"\^"#, |_| { LexemeKind::PragmaCaret }, priority = 2000010)]
     #[regex(r#"="#, |_| { LexemeKind::PragmaEqual }, priority = 2000011)]

@@ -34,7 +34,13 @@ pub(crate) fn run(analysis: &mut Analysis) {
         for section in &lexical_context.sections {
             for topic in &section.topics {
                 for item in &topic.items {
-                    check_item(analysis, item, &enablement, &lexical_context.name);
+                    check_item(
+                        analysis,
+                        item,
+                        &enablement,
+                        &lexical_context.name,
+                        lexical_context.identifier_token.is_some(),
+                    );
                 }
             }
         }
@@ -46,6 +52,7 @@ fn check_item(
     item: &SpannedItem,
     enablement: &VersionSet,
     lexical_context: &Identifier,
+    has_identifier_token: bool,
 ) {
     match item {
         SpannedItem::Struct { item } => {
@@ -67,7 +74,13 @@ fn check_item(
             check_trivia(analysis, item, enablement, lexical_context);
         }
         SpannedItem::Keyword { item } => {
-            check_keyword(analysis, item, enablement, lexical_context);
+            check_keyword(
+                analysis,
+                item,
+                enablement,
+                lexical_context,
+                has_identifier_token,
+            );
         }
         SpannedItem::Token { item } => {
             check_token(analysis, item, enablement, lexical_context);
@@ -371,6 +384,7 @@ fn check_keyword(
     item: &SpannedKeywordItem,
     enablement: &VersionSet,
     lexical_context: &Identifier,
+    has_identifier_token: bool,
 ) {
     let SpannedKeywordItem {
         name,
@@ -382,8 +396,17 @@ fn check_keyword(
 
     let enablement = update_enablement(analysis, enablement, enabled.as_ref());
 
-    if let Some(scanner) = reject_suffix {
-        check_token_scanner(analysis, Some(name), scanner, &enablement, lexical_context);
+    match reject_suffix {
+        Some(scanner) => {
+            check_token_scanner(analysis, Some(name), scanner, &enablement, lexical_context);
+        }
+        None if !has_identifier_token => {
+            // Without an identifier to match the longer word, the keyword would match its start:
+            analysis
+                .errors
+                .add(name, &Errors::MissingKeywordRejectSuffix(lexical_context));
+        }
+        None => {}
     }
 }
 
@@ -568,4 +591,8 @@ enum Errors<'err> {
     UnnecessaryLexicalContextSwitch,
     #[error("First field in a context switch cannot be optional.")]
     OptionalGatewayField,
+    #[error(
+        "Keyword requires a 'reject_suffix', since its context '{0}' has no 'identifier_token'."
+    )]
+    MissingKeywordRejectSuffix(&'err Identifier),
 }

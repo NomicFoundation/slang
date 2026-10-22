@@ -20,6 +20,9 @@ pub struct KeywordItem {
     pub scanner: KeywordScanner,
 
     /// Rejects a keyword match that is immediately followed by this suffix.
+    ///
+    /// Required in lexical contexts without an `identifier_token`, where there is no longer
+    /// identifier match to stop a keyword from matching the start of a longer word.
     #[serde(skip_serializing_if = "Option::is_none")]
     pub reject_suffix: Option<TokenScanner>,
 }

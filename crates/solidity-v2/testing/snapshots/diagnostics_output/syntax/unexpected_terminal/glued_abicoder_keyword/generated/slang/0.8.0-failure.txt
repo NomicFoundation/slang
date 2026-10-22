@@ -1,0 +1,11 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 1
+
+[syntax/unexpected-terminal] Error: Unexpected UNRECOGNIZED. One of AbicoderKeyword, ExperimentalKeyword, SolidityKeyword was expected
+   ╭─[input.sol:3:8]
+   │
+ 3 │ pragma abicoderv2;
+   │        ─────┬────  
+   │             ╰────── Error occurred here.
+───╯
