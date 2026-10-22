@@ -80,6 +80,13 @@ impl<'source> ContextWrapper<'source> {
                     }
                 {%- endif %}
             {%- endfor %}
+        {%- elif lexeme.type == "Keyword" and lexeme.reject_suffix %}
+            /// Rejects a `{{ lexeme.kind }}` match that ends with this suffix.
+            #[derive(Logos)]
+            enum RejectSuffix{{ lexeme.kind }} {
+                #[regex(r#"{{ lexeme.reject_suffix }}"#)]
+                Matched,
+            }
         {%- endif %}
     {%- endfor %}
 
@@ -105,12 +112,18 @@ impl<'source> ContextWrapper<'source> {
             {%- elif lexeme.type == "Keyword" -%}
                 #[regex(r#"{{ lexeme.regex }}"#,
                     {{- " " -}}
+                    {%- if lexeme.reject_suffix -%}
+                        |lexer| { let kind = {{- " " -}}
+                    {%- endif -%}
                     {%- if lexeme.reserved.type == "Always" -%}
-                        |_| { LexemeKind::{{ lexeme.kind }}_Reserved }
+                        {%- if not lexeme.reject_suffix %}|_| {% endif -%}
+                        { LexemeKind::{{ lexeme.kind }}_Reserved }
                     {%- elif lexeme.reserved.type == "Never" -%}
-                        |_| { LexemeKind::{{ lexeme.kind }}_Unreserved }
+                        {%- if not lexeme.reject_suffix %}|_| {% endif -%}
+                        { LexemeKind::{{ lexeme.kind }}_Unreserved }
                     {%- else -%}
-                        |lexer| {
+                        {%- if not lexeme.reject_suffix %}|lexer| {% endif -%}
+                        {
                             if {{<v2.versions.specifier s={lexeme.reserved} />}}.contains(lexer.extras.language_version) {
                                 LexemeKind::{{ lexeme.kind }}_Reserved
                             }
@@ -118,6 +131,9 @@ impl<'source> ContextWrapper<'source> {
                                 LexemeKind::{{ lexeme.kind }}_Unreserved
                             }
                         }
+                    {%- endif -%}
+                    {%- if lexeme.reject_suffix -%}
+                        ; reject_suffix::<RejectSuffix{{ lexeme.kind }}, _>(lexer, kind) }
                     {%- endif -%}
                 , priority = {{ 3000000 + lexeme_index }})]
             {%- else -%}

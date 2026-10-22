@@ -47,6 +47,7 @@ pub enum Lexeme {
         identifier: Option<String>,
         regex: String,
         reserved: VersionSpecifier,
+        reject_suffix: Option<String>,
     },
 }
 

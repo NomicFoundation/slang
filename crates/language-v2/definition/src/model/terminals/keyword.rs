@@ -2,7 +2,7 @@ use itertools::Itertools;
 use language_v2_internal_macros::{ParseInputTokens, WriteOutputTokens, derive_spanned_type};
 use serde::{Deserialize, Serialize};
 
-use crate::model::{Identifier, VersionSpecifier};
+use crate::model::{Identifier, TokenScanner, VersionSpecifier};
 
 #[derive(Clone, Debug, Deserialize, Eq, PartialEq, Serialize)]
 #[derive_spanned_type(Clone, Debug, ParseInputTokens, WriteOutputTokens)]
@@ -18,6 +18,10 @@ pub struct KeywordItem {
 
     /// Underlying keyword scanner (i.e. identifier scanner)
     pub scanner: KeywordScanner,
+
+    /// Rejects a keyword match that is immediately followed by this suffix.
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub reject_suffix: Option<TokenScanner>,
 }
 
 impl KeywordItem {

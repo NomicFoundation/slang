@@ -1,0 +1,5 @@
+error: Reference to unknown item 'Unknown'.
+  --> src/fail/p3_references/keyword_reject_suffix_unknown_reference/test.rs:16:89
+   |
+16 |                     Keyword(name = Baz, scanner = Atom("baz"), reject_suffix = Fragment(Unknown))
+   |                                                                                         ^^^^^^^

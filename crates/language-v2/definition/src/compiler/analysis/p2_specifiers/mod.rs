@@ -191,6 +191,7 @@ fn check_keyword(analysis: &mut Analysis, item: &SpannedKeywordItem) {
         enabled,
         reserved,
         scanner: _,
+        reject_suffix: _,
     } = item;
 
     check_version_specifier(analysis, enabled.as_ref());

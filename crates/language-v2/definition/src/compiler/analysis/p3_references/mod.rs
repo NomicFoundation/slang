@@ -67,7 +67,7 @@ fn check_item(
             check_trivia(analysis, item, enablement, lexical_context);
         }
         SpannedItem::Keyword { item } => {
-            check_keyword(analysis, item, enablement);
+            check_keyword(analysis, item, enablement, lexical_context);
         }
         SpannedItem::Token { item } => {
             check_token(analysis, item, enablement, lexical_context);
@@ -366,15 +366,25 @@ fn check_trivia(
     check_token_scanner(analysis, Some(name), scanner, enablement, lexical_context);
 }
 
-fn check_keyword(analysis: &mut Analysis, item: &SpannedKeywordItem, enablement: &VersionSet) {
+fn check_keyword(
+    analysis: &mut Analysis,
+    item: &SpannedKeywordItem,
+    enablement: &VersionSet,
+    lexical_context: &Identifier,
+) {
     let SpannedKeywordItem {
-        name: _,
+        name,
         enabled,
         reserved: _,
         scanner: _,
+        reject_suffix,
     } = item;
 
-    let _ = update_enablement(analysis, enablement, enabled.as_ref());
+    let enablement = update_enablement(analysis, enablement, enabled.as_ref());
+
+    if let Some(scanner) = reject_suffix {
+        check_token_scanner(analysis, Some(name), scanner, &enablement, lexical_context);
+    }
 }
 
 fn check_token(

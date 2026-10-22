@@ -146,7 +146,7 @@ impl LexicalContextBuilder {
                 }
                 Item::Keyword { item } => {
                     let lexeme =
-                        Self::convert_keyword(item, language_context.identifier_token.as_ref());
+                        instance.convert_keyword(item, language_context.identifier_token.as_ref());
                     instance.lexemes.push(lexeme);
                 }
                 Item::Token { item } => {
@@ -189,12 +189,18 @@ impl LexicalContextBuilder {
         }
     }
 
-    fn convert_keyword(item: &KeywordItem, identifier: Option<&Identifier>) -> Lexeme {
+    fn convert_keyword(&mut self, item: &KeywordItem, identifier: Option<&Identifier>) -> Lexeme {
+        let reject_suffix = item
+            .reject_suffix
+            .as_ref()
+            .map(|scanner| self.convert_token_scanner(scanner, true));
+
         Lexeme::Keyword {
             kind: item.name.to_string(),
             identifier: identifier.map(|id| id.to_string()),
             regex: Self::convert_keyword_scanner(&item.scanner),
             reserved: item.reserved.clone().unwrap_or_default(),
+            reject_suffix,
         }
     }
 
