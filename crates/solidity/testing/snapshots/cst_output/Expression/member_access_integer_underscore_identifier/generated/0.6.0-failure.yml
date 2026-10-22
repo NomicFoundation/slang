@@ -1,0 +1,17 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Source: >
+  1  │ 1._f                                                                             │ 0..4
+
+Errors: # 1 total
+  - >
+    Error: Expected AddressKeyword or BoolKeyword or ByteKeyword or BytesKeyword or DecimalLiteral or DoubleQuotedHexStringLiteral or DoubleQuotedStringLiteral or FalseKeyword or FixedKeyword or HexLiteral or Identifier or IntKeyword or NewKeyword or OpenBracket or OpenParen or PayableKeyword or SingleQuotedHexStringLiteral or SingleQuotedStringLiteral or StringKeyword or SuperKeyword or ThisKeyword or TrueKeyword or TypeKeyword or UfixedKeyword or UintKeyword.
+       ╭─[crates/solidity/testing/snapshots/cst_output/Expression/member_access_integer_underscore_identifier/input.sol:1:1]
+       │
+     1 │ 1._f
+       │ ──┬──  
+       │   ╰──── Error occurred here.
+    ───╯
+
+Tree:
+  - (root꞉ Expression) ► (unrecognized꞉ UNRECOGNIZED): "1._f\n" # (0..5)

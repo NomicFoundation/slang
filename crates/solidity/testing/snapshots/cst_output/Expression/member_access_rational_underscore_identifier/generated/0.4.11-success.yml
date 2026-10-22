@@ -1,0 +1,13 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Source: >
+  1  │ 1.2._f                                                                           │ 0..6
+
+Errors: []
+
+Tree:
+  - (root꞉ Expression) ► (variant꞉ MemberAccessExpression): # "1.2._f\n" (0..7)
+      - (operand꞉ Expression) ► (variant꞉ DecimalNumberExpression) ► (literal꞉ DecimalLiteral): "1.2" # (0..3)
+      - (period꞉ Period): "." # (3..4)
+      - (member꞉ Identifier): "_f" # (4..6)
+      - (trailing_trivia꞉ EndOfLine): "\n" # (6..7)

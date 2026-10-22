@@ -740,6 +740,11 @@ mod expression {
     }
 
     #[test]
+    fn member_access_exponent_underscore_identifier() -> Result<()> {
+        run("Expression", "member_access_exponent_underscore_identifier")
+    }
+
+    #[test]
     fn member_access_function_call() -> Result<()> {
         run("Expression", "member_access_function_call")
     }
@@ -755,6 +760,31 @@ mod expression {
     }
 
     #[test]
+    fn member_access_integer_space_after_period() -> Result<()> {
+        run("Expression", "member_access_integer_space_after_period")
+    }
+
+    #[test]
+    fn member_access_integer_space_before_period() -> Result<()> {
+        run("Expression", "member_access_integer_space_before_period")
+    }
+
+    #[test]
+    fn member_access_integer_underscore() -> Result<()> {
+        run("Expression", "member_access_integer_underscore")
+    }
+
+    #[test]
+    fn member_access_integer_underscore_digits() -> Result<()> {
+        run("Expression", "member_access_integer_underscore_digits")
+    }
+
+    #[test]
+    fn member_access_integer_underscore_identifier() -> Result<()> {
+        run("Expression", "member_access_integer_underscore_identifier")
+    }
+
+    #[test]
     fn member_access_options() -> Result<()> {
         run("Expression", "member_access_options")
     }
@@ -767,6 +797,11 @@ mod expression {
     #[test]
     fn member_access_rational_leading_period() -> Result<()> {
         run("Expression", "member_access_rational_leading_period")
+    }
+
+    #[test]
+    fn member_access_rational_underscore_identifier() -> Result<()> {
+        run("Expression", "member_access_rational_underscore_identifier")
     }
 
     #[test]
