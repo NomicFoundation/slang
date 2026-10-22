@@ -1,0 +1,14 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 2
+
+[SyntaxError 4936] Error: Unknown pragma "solidity0"
+   ╭─[input.sol:2:1]
+   │
+ 2 │ pragma solidity0.8.0;
+   │ ──────────┬──────────  
+   │           ╰──────────── Error occurred here.
+───╯
+
+[Warning 3420] Warning: Source file does not specify required compiler version! Consider adding "pragma solidity ^0.8.14;"
+--> input.sol

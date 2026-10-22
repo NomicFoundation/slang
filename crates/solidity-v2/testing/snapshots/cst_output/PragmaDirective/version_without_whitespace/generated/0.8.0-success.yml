@@ -1,0 +1,21 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Source: >
+  1  │ pragma solidity^0.8.0;                                                           │ 0..22
+
+Tree:
+  - (root꞉ SourceUnit): # "pragma solidity^0.8.0;" (0..22)
+      - (members꞉ SourceUnitMembers): # "pragma solidity^0.8.0;" (0..22)
+          - (item꞉ SourceUnitMember) ► (pragma_directive꞉ PragmaDirective): # "pragma solidity^0.8.0;" (0..22)
+              - (pragma_keyword꞉ PragmaKeyword): "pragma" # (0..6)
+              - (pragma꞉ Pragma) ► (version_pragma꞉ VersionPragma): # "solidity^0.8.0" (7..21)
+                  - (solidity_keyword꞉ SolidityKeyword): "solidity" # (7..15)
+                  - (sets꞉ VersionPragmaExpressionSets): # "^0.8.0" (15..21)
+                      - (item꞉ VersionPragmaExpressionSet): # "^0.8.0" (15..21)
+                          - (item꞉ VersionPragmaExpression) ► (version_pragma_term꞉ VersionPragmaTerm): # "^0.8.0" (15..21)
+                              - (operator꞉ VersionPragmaOperator) ► (pragma_caret꞉ PragmaCaret): "^" # (15..16)
+                              - (specifier꞉ VersionPragmaSpecifier) ► (version_pragma_components꞉ VersionPragmaComponents): # "0.8.0" (16..21)
+                                  - (item꞉ VersionPragmaComponent): "0" # (16..17)
+                                  - (item꞉ VersionPragmaComponent): "8" # (18..19)
+                                  - (item꞉ VersionPragmaComponent): "0" # (20..21)
+              - (semicolon꞉ PragmaSemicolon): ";" # (21..22)

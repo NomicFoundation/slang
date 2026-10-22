@@ -1,0 +1,14 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Source: >
+  1  │ pragma experimentalSMTChecker;                                                   │ 0..30
+
+Tree:
+  - (root꞉ SourceUnit): # "pragma experimentalSMTChecker;" (0..30)
+      - (members꞉ SourceUnitMembers): # "pragma experimentalSMTChecker;" (0..30)
+          - (item꞉ SourceUnitMember) ► (pragma_directive꞉ PragmaDirective): # "pragma experimentalSMTChecker;" (0..30)
+              - (pragma_keyword꞉ PragmaKeyword): "pragma" # (0..6)
+              - (pragma꞉ Pragma) ► (experimental_pragma꞉ ExperimentalPragma): # "experimentalSMTChecker" (7..29)
+                  - (experimental_keyword꞉ ExperimentalKeyword): "experimental" # (7..19)
+                  - (feature꞉ ExperimentalFeature) ► (smt_checker_keyword꞉ SMTCheckerKeyword): "SMTChecker" # (19..29)
+              - (semicolon꞉ PragmaSemicolon): ";" # (29..30)
