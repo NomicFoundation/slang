@@ -1,0 +1,11 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 1
+
+[TypeError 3025] Error: Inline array type cannot be declared as LValue.
+   ╭─[input.sol:8:9]
+   │
+ 8 │         [1, 2, 3] = [4, 5, 6];
+   │         ────┬────  
+   │             ╰────── Error occurred here.
+───╯

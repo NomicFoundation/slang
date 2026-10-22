@@ -918,6 +918,14 @@ mod resolution {
         }
 
         #[test]
+        fn inherited_modifier_function_clash() -> Result<()> {
+            run(
+                "resolution/identifier_redeclaration",
+                "inherited_modifier_function_clash",
+            )
+        }
+
+        #[test]
         fn inherited_modifier_variable_clash() -> Result<()> {
             run(
                 "resolution/identifier_redeclaration",
@@ -1671,6 +1679,32 @@ mod resolution {
         #[test]
         fn state_variable_via_super() -> Result<()> {
             run("resolution/member_not_found", "state_variable_via_super")
+        }
+
+        #[test]
+        fn value_on_built_in_function() -> Result<()> {
+            run("resolution/member_not_found", "value_on_built_in_function")
+        }
+
+        #[test]
+        fn value_on_library_function() -> Result<()> {
+            run("resolution/member_not_found", "value_on_library_function")
+        }
+
+        #[test]
+        fn value_on_new_non_payable_contract() -> Result<()> {
+            run(
+                "resolution/member_not_found",
+                "value_on_new_non_payable_contract",
+            )
+        }
+
+        #[test]
+        fn value_on_non_payable_function() -> Result<()> {
+            run(
+                "resolution/member_not_found",
+                "value_on_non_payable_function",
+            )
         }
     }
 
@@ -4589,6 +4623,14 @@ mod syntax {
         use super::*;
 
         #[test]
+        fn constant_transient_state_variable() -> Result<()> {
+            run(
+                "syntax/multiple_mutability_specifiers",
+                "constant_transient_state_variable",
+            )
+        }
+
+        #[test]
         fn constructors() -> Result<()> {
             run("syntax/multiple_mutability_specifiers", "constructors")
         }
@@ -4609,6 +4651,14 @@ mod syntax {
         #[test]
         fn functions() -> Result<()> {
             run("syntax/multiple_mutability_specifiers", "functions")
+        }
+
+        #[test]
+        fn immutable_transient_state_variable() -> Result<()> {
+            run(
+                "syntax/multiple_mutability_specifiers",
+                "immutable_transient_state_variable",
+            )
         }
 
         #[test]
@@ -4763,6 +4813,11 @@ mod syntax {
 
     mod unexpected_terminal {
         use super::*;
+
+        #[test]
+        fn duplicate_indexed() -> Result<()> {
+            run("syntax/unexpected_terminal", "duplicate_indexed")
+        }
 
         #[test]
         fn in_expression() -> Result<()> {
@@ -5955,6 +6010,22 @@ mod type_system {
         }
 
         #[test]
+        fn inline_array_assignment() -> Result<()> {
+            run(
+                "type_system/expression_not_an_lvalue",
+                "inline_array_assignment",
+            )
+        }
+
+        #[test]
+        fn inline_array_increment() -> Result<()> {
+            run(
+                "type_system/expression_not_an_lvalue",
+                "inline_array_increment",
+            )
+        }
+
+        #[test]
         fn nested_tuple_component() -> Result<()> {
             run(
                 "type_system/expression_not_an_lvalue",
@@ -6009,6 +6080,22 @@ mod type_system {
         #[test]
         fn named_arguments() -> Result<()> {
             run("type_system/expression_not_callable", "named_arguments")
+        }
+
+        #[test]
+        fn super_with_arguments() -> Result<()> {
+            run(
+                "type_system/expression_not_callable",
+                "super_with_arguments",
+            )
+        }
+
+        #[test]
+        fn super_without_arguments() -> Result<()> {
+            run(
+                "type_system/expression_not_callable",
+                "super_without_arguments",
+            )
         }
 
         #[test]

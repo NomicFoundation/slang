@@ -1,0 +1,11 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 1
+
+[TypeError 1744] Error: Cannot convert to the super type.
+   ╭─[input.sol:8:9]
+   │
+ 8 │         super().x;
+   │         ───┬───  
+   │            ╰───── Error occurred here.
+───╯
