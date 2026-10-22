@@ -1,9 +1,9 @@
-use std::fmt::{self, Write as _};
+use std::fmt;
 
+use slang_solidity_v2_semantic::context::{AbiNameError, AbiTypeSpelling};
 use slang_solidity_v2_semantic::types::TypeId;
 
 use crate::abi::AbiParameter;
-use crate::abi::types::type_as_abi_type;
 use crate::ast::ParametersStruct;
 
 impl ParametersStruct {
@@ -18,7 +18,6 @@ impl ParametersStruct {
             // Bail out with `None` if any of the parameters fails typing
             let type_id = self.semantic.binder().node_typing(node_id).as_type_id()?;
             result.push(AbiParameter::new(
-                Some(node_id),
                 name,
                 type_id,
                 parameter.is_indexed,
@@ -30,52 +29,60 @@ impl ParametersStruct {
 
     pub(crate) fn compute_canonical_signature(&self) -> Option<String> {
         let mut signature = String::new();
-        self.write_canonical_signature(&mut signature)?;
+        self.write_canonical_signature(&mut signature).ok()?;
         Some(signature)
     }
 
     pub(crate) fn compute_internal_signature(&self) -> Option<String> {
         let mut signature = String::new();
         self.write_parameter_names(&mut signature, |out, type_id| {
-            out.write_str(&self.semantic.type_internal_name(type_id))
-                .ok()
-        })?;
+            Ok(self.semantic.write_type_internal_name(type_id, out)?)
+        })
+        .ok()?;
         Some(signature)
     }
 
-    pub(crate) fn write_canonical_signature<W: fmt::Write>(&self, out: &mut W) -> Option<()> {
-        self.write_parameter_names(out, |out, type_id| {
-            write!(out, "{}", type_as_abi_type(&self.semantic, type_id)?).ok()
-        })
+    pub(crate) fn write_canonical_signature<W: fmt::Write>(
+        &self,
+        out: &mut W,
+    ) -> Result<(), AbiNameError> {
+        self.write_abi_signature(AbiTypeSpelling::Selector, out)
     }
 
-    pub(crate) fn write_library_signature<W: fmt::Write>(&self, out: &mut W) -> Option<()> {
+    pub(crate) fn write_library_signature<W: fmt::Write>(
+        &self,
+        out: &mut W,
+    ) -> Result<(), AbiNameError> {
+        self.write_abi_signature(AbiTypeSpelling::LibrarySelector, out)
+    }
+
+    fn write_abi_signature<W: fmt::Write>(
+        &self,
+        spelling: AbiTypeSpelling,
+        out: &mut W,
+    ) -> Result<(), AbiNameError> {
         self.write_parameter_names(out, |out, type_id| {
-            out.write_str(&self.semantic.type_library_name(type_id)?)
-                .ok()
+            self.semantic.write_type_abi_name(type_id, spelling, out)
         })
     }
 
     fn write_parameter_names<W: fmt::Write>(
         &self,
         out: &mut W,
-        write_type: impl Fn(&mut W, TypeId) -> Option<()>,
-    ) -> Option<()> {
-        for (index, type_id) in self.parameter_types_iter().enumerate() {
+        write_type: impl Fn(&mut W, TypeId) -> Result<(), AbiNameError>,
+    ) -> Result<(), AbiNameError> {
+        for (index, parameter) in self.ir_nodes.iter().enumerate() {
             if index > 0 {
-                out.write_char(',').ok()?;
+                out.write_char(',')?;
             }
-            write_type(out, type_id?)?;
-        }
-        Some(())
-    }
-
-    fn parameter_types_iter(&self) -> impl Iterator<Item = Option<TypeId>> + '_ {
-        self.ir_nodes.iter().map(|parameter| {
-            self.semantic
+            let type_id = self
+                .semantic
                 .binder()
                 .node_typing(parameter.id())
                 .as_type_id()
-        })
+                .ok_or(AbiNameError::Unresolved(parameter.id()))?;
+            write_type(out, type_id)?;
+        }
+        Ok(())
     }
 }
