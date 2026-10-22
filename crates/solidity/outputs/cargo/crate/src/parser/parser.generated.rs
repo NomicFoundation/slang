@@ -1446,10 +1446,6 @@ impl Parser {
                 let result = self.fallback_function_definition(input);
                 choice.consider(input, result)?;
             }
-            if !self.version_is_at_least_0_6_0 {
-                let result = self.unnamed_function_definition(input);
-                choice.consider(input, result)?;
-            }
             let result = self.modifier_definition(input);
             choice.consider(input, result)?;
             let result = self.struct_definition(input);
@@ -1468,6 +1464,10 @@ impl Parser {
             }
             let result = self.state_variable_definition(input);
             choice.consider(input, result)?;
+            if !self.version_is_at_least_0_6_0 {
+                let result = self.unnamed_function_definition(input);
+                choice.consider(input, result)?;
+            }
             choice.finish(input)
         })
         .with_label(EdgeLabel::Variant)

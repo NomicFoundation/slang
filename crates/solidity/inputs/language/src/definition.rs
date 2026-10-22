@@ -2247,10 +2247,6 @@ language_macros::compile!(Language(
                                     reference = FallbackFunctionDefinition,
                                     enabled = From("0.6.0")
                                 ),
-                                EnumVariant(
-                                    reference = UnnamedFunctionDefinition,
-                                    enabled = Till("0.6.0")
-                                ),
                                 EnumVariant(reference = ModifierDefinition),
                                 EnumVariant(reference = StructDefinition),
                                 EnumVariant(reference = EnumDefinition),
@@ -2260,7 +2256,15 @@ language_macros::compile!(Language(
                                     reference = UserDefinedValueTypeDefinition,
                                     enabled = From("0.8.8")
                                 ),
-                                EnumVariant(reference = StateVariableDefinition)
+                                EnumVariant(reference = StateVariableDefinition),
+                                // Must come after `StateVariableDefinition`, so that `StateVariableDefinition` has a
+                                // higher priority.
+                                // `function() x;` should be parsed as a state variable named `x`,
+                                // not an unnamed function with an `x` modifier.
+                                EnumVariant(
+                                    reference = UnnamedFunctionDefinition,
+                                    enabled = Till("0.6.0")
+                                )
                             ]
                         )
                     ]
