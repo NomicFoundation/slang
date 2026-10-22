@@ -1,5 +1,6 @@
 mod alias_following;
 mod binder;
+mod constant_evaluation;
 mod contract_dependencies;
 mod getter_overrides;
 mod interface_functions;
