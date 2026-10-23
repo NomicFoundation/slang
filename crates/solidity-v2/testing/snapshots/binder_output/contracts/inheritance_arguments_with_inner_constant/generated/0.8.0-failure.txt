@@ -1,5 +1,16 @@
 # This file is generated automatically by infrastructure scripts. Please don't edit by hand.
 
+Diagnostics:
+[resolution/identifier-not-found] Error: Identifier not found.
+   ╭─[input.sol:7:26]
+   │
+ 7 │ contract Derived is Base(OTHER) { // the initializer expression should NOT bind
+   │                          ──┬──  
+   │                            ╰──── Error occurred here.
+───╯
+
+------------------------------------------------------------------------
+
 Definitions (3):
 - Def: #1 ["Base" @ input.sol:3:10] (contract)
 - Def: #2 ["Derived" @ input.sol:7:10] (contract)

@@ -167,6 +167,9 @@ impl Visitor for Pass<'_> {
                     let resolution = self.resolve_symbol_in_scope(scope_id, symbol);
                     filter_overridden_definitions(self.binder, self.types, resolution)
                 };
+                if matches!(resolution, Resolution::Unresolved) {
+                    self.push_diagnostic(identifier, IdentifierNotFound);
+                }
 
                 // Set the typing for the `Identifier` node.
                 // The resolution may point to an imported symbol, so we need to
@@ -700,13 +703,13 @@ impl Visitor for Pass<'_> {
             self.binder
                 .set_node_typing(node.id(), Typing::This(type_id));
         } else {
-            // TODO(validation) SDR[1473]: `this` cannot be used outside of a contract context
-            // The error 1473 doesn't directly match to this, but because of how we resolve
-            // `this` it flows through here.
+            // Outside a contract, interface or library, `this` names nothing.
+            self.push_diagnostic(node, IdentifierNotFound);
         }
     }
 
     fn leave_emit_statement(&mut self, node: &ir::EmitStatement) {
+        self.check_identifier_path_resolves(&node.event);
         let event_reference_id = node.event.last().unwrap().id();
         let event_resolution = self.followed_resolution_of_reference(event_reference_id);
         match &node.arguments {
@@ -758,6 +761,7 @@ impl Visitor for Pass<'_> {
     }
 
     fn leave_revert_statement(&mut self, node: &ir::RevertStatement) {
+        self.check_identifier_path_resolves(&node.error);
         match &node.arguments {
             ir::ArgumentsDeclaration::PositionalArguments(positional_arguments) => {
                 // Collect the argument types to ensure all of them type to a value

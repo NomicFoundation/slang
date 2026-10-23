@@ -33,6 +33,9 @@ pub(crate) enum EvaluationError {
     /// Evaluation did not produce a constant value (e.g. the expression is
     /// not a compile-time constant).
     CouldNotEvaluate,
+    /// An identifier cannot be resolved. Reference resolution reports it, so
+    /// the caller should not report the expression as non-constant too.
+    Unresolved,
 }
 
 impl From<DiagnosticKind> for EvaluationError {
@@ -178,6 +181,10 @@ impl Number {
 }
 
 pub(crate) enum ComptimeResolution<Scope> {
+    /// The identifier resolves, possibly ambiguously, but not to anything
+    /// usable as a constant in this context.
+    NotConstant,
+    /// The identifier resolves to nothing, not even a built-in.
     Unresolved,
     Constant {
         value: ir::Expression,
@@ -191,8 +198,9 @@ pub(crate) enum ComptimeResolution<Scope> {
 pub(crate) trait ConstantIdentifierResolver<Scope> {
     /// Resolve an identifier to a constant in the given context, returning the
     /// value expression of the constant and the scope in which the value
-    /// expression should be resolved. Returns `None` if the identifier cannot
-    /// be resolved to a constant.
+    /// expression should be resolved. Distinguishes an identifier that is not
+    /// usable as a constant (`NotConstant`) from one that does not resolve at
+    /// all (`Unresolved`).
     fn resolve_identifier_in_scope(
         &self,
         identifier: &str,
@@ -382,15 +390,19 @@ impl<Scope> CompileConstantEvaluator<'_, Scope> {
         identifier: &ir::Identifier,
     ) -> Result<TypedValue, EvaluationError> {
         let current_scope = self.scope_stack.last().expect("scope stack is empty");
-        let ComptimeResolution::Constant {
-            value: target_expression,
-            target_scope,
-            integer_type,
-        } = self
+        let (target_expression, target_scope, integer_type) = match self
             .identifier_resolver
             .resolve_identifier_in_scope(identifier.unparse(), current_scope)
-        else {
-            return Err(EvaluationError::CouldNotEvaluate);
+        {
+            ComptimeResolution::Constant {
+                value,
+                target_scope,
+                integer_type,
+            } => (value, target_scope, integer_type),
+            ComptimeResolution::Unresolved => return Err(EvaluationError::Unresolved),
+            ComptimeResolution::NotConstant | ComptimeResolution::BuiltIn(_) => {
+                return Err(EvaluationError::CouldNotEvaluate);
+            }
         };
         // Reject constants that are not declared with an integer type.
         let integer_type = integer_type.ok_or(EvaluationError::CouldNotEvaluate)?;
@@ -433,6 +445,7 @@ impl<Scope> CompileConstantEvaluator<'_, Scope> {
             ComptimeResolution::BuiltIn(InternalBuiltIn::Erc7201) => {
                 self.evaluate_erc7201_built_in_call(&call.arguments)
             }
+            ComptimeResolution::Unresolved => Err(EvaluationError::Unresolved),
             _ => Err(EvaluationError::CouldNotEvaluate),
         }
     }
@@ -489,15 +502,19 @@ impl<Scope> CompileConstantEvaluator<'_, Scope> {
         identifier: &ir::Identifier,
     ) -> Result<Vec<u8>, EvaluationError> {
         let current_scope = self.scope_stack.last().expect("scope stack is empty");
-        let ComptimeResolution::Constant {
-            value: target_expression,
-            target_scope,
-            ..
-        } = self
+        let (target_expression, target_scope) = match self
             .identifier_resolver
             .resolve_identifier_in_scope(identifier.unparse(), current_scope)
-        else {
-            return Err(EvaluationError::CouldNotEvaluate);
+        {
+            ComptimeResolution::Constant {
+                value,
+                target_scope,
+                ..
+            } => (value, target_scope),
+            ComptimeResolution::Unresolved => return Err(EvaluationError::Unresolved),
+            ComptimeResolution::NotConstant | ComptimeResolution::BuiltIn(_) => {
+                return Err(EvaluationError::CouldNotEvaluate);
+            }
         };
         if self.scope_stack.len() >= Self::MAX_SCOPE_DEPTH {
             return Err(DiagnosticKind::from(CyclicConstantDefinition).into());
@@ -547,7 +564,7 @@ fn declared_integer_type(type_name: &ir::TypeName) -> Option<IntegerType> {
 pub(crate) struct ConstantResolver<'a> {
     pub(crate) binder: &'a Binder,
     /// When set to the `(file id, offset)` of the evaluated expression,
-    /// same-file constants declared past that offset resolve as `Unresolved`.
+    /// same-file constants declared past that offset resolve as `NotConstant`.
     /// This is a hack to match solc behaviour: forward references are
     /// rejected in array lengths, but valid in storage base slots (`None`).
     pub(crate) use_site: Option<(&'a FileId, usize)>,
@@ -592,13 +609,13 @@ impl ConstantResolver<'_> {
         // Hack to match solc behavior by rejecting forward references
         // within the same file for array length.
         if self.is_forward_reference(declaration_start, enclosing_scope_id) {
-            return ComptimeResolution::Unresolved;
+            return ComptimeResolution::NotConstant;
         }
         let Some(value) = value else {
             // This is a `constant` state variable for which the grammar
             // allows an absent value expression but it's a semantic/syntactic
             // error which should be already reported.
-            return ComptimeResolution::Unresolved;
+            return ComptimeResolution::NotConstant;
         };
         ComptimeResolution::Constant {
             value: value.clone(),
@@ -651,13 +668,13 @@ impl ConstantIdentifierResolver<ScopeId> for ConstantResolver<'_> {
                             &variable_definition.ir_node.type_name,
                         )
                     }
-                    _ => ComptimeResolution::Unresolved,
+                    _ => ComptimeResolution::NotConstant,
                 }
             }
             Resolution::Ambiguous(_) => {
                 // If we resolved to multiple definitions, it's an error which
                 // should be already diagnosed.
-                ComptimeResolution::Unresolved
+                ComptimeResolution::NotConstant
             }
             Resolution::BuiltIn(_) => unreachable!("the binder doesn't resolve to built-ins"),
 

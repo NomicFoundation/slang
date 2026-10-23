@@ -664,11 +664,48 @@ mod resolution {
         use super::*;
 
         #[test]
+        fn enum_member_without_enum() -> Result<()> {
+            run(
+                "resolution/identifier_not_found",
+                "enum_member_without_enum",
+            )
+        }
+
+        #[test]
+        fn external_function_called_internally() -> Result<()> {
+            run(
+                "resolution/identifier_not_found",
+                "external_function_called_internally",
+            )
+        }
+
+        #[test]
         fn inherited_event_in_function() -> Result<()> {
             run(
                 "resolution/identifier_not_found",
                 "inherited_event_in_function",
             )
+        }
+
+        #[test]
+        fn library_function_without_library() -> Result<()> {
+            run(
+                "resolution/identifier_not_found",
+                "library_function_without_library",
+            )
+        }
+
+        #[test]
+        fn private_inherited_function() -> Result<()> {
+            run(
+                "resolution/identifier_not_found",
+                "private_inherited_function",
+            )
+        }
+
+        #[test]
+        fn removed_log_built_in() -> Result<()> {
+            run("resolution/identifier_not_found", "removed_log_built_in")
         }
 
         #[test]
@@ -687,8 +724,171 @@ mod resolution {
         }
 
         #[test]
+        fn this_in_free_function() -> Result<()> {
+            run("resolution/identifier_not_found", "this_in_free_function")
+        }
+
+        #[test]
+        fn undeclared_abi_decode_type() -> Result<()> {
+            run(
+                "resolution/identifier_not_found",
+                "undeclared_abi_decode_type",
+            )
+        }
+
+        #[test]
+        fn undeclared_array_length() -> Result<()> {
+            run("resolution/identifier_not_found", "undeclared_array_length")
+        }
+
+        #[test]
+        fn undeclared_array_length_in_function() -> Result<()> {
+            run(
+                "resolution/identifier_not_found",
+                "undeclared_array_length_in_function",
+            )
+        }
+
+        #[test]
+        fn undeclared_array_literal_element() -> Result<()> {
+            run(
+                "resolution/identifier_not_found",
+                "undeclared_array_literal_element",
+            )
+        }
+
+        #[test]
+        fn undeclared_assignment_target() -> Result<()> {
+            run(
+                "resolution/identifier_not_found",
+                "undeclared_assignment_target",
+            )
+        }
+
+        #[test]
+        fn undeclared_base_constructor_argument() -> Result<()> {
+            run(
+                "resolution/identifier_not_found",
+                "undeclared_base_constructor_argument",
+            )
+        }
+
+        #[test]
+        fn undeclared_constant_value() -> Result<()> {
+            run(
+                "resolution/identifier_not_found",
+                "undeclared_constant_value",
+            )
+        }
+
+        #[test]
+        fn undeclared_error() -> Result<()> {
+            run("resolution/identifier_not_found", "undeclared_error")
+        }
+
+        #[test]
+        fn undeclared_event() -> Result<()> {
+            run("resolution/identifier_not_found", "undeclared_event")
+        }
+
+        #[test]
+        fn undeclared_file_level_constant_value() -> Result<()> {
+            run(
+                "resolution/identifier_not_found",
+                "undeclared_file_level_constant_value",
+            )
+        }
+
+        #[test]
+        fn undeclared_function_call() -> Result<()> {
+            run(
+                "resolution/identifier_not_found",
+                "undeclared_function_call",
+            )
+        }
+
+        #[test]
+        fn undeclared_in_free_function() -> Result<()> {
+            run(
+                "resolution/identifier_not_found",
+                "undeclared_in_free_function",
+            )
+        }
+
+        #[test]
+        fn undeclared_member_access_operand() -> Result<()> {
+            run(
+                "resolution/identifier_not_found",
+                "undeclared_member_access_operand",
+            )
+        }
+
+        #[test]
+        fn undeclared_modifier_argument() -> Result<()> {
+            run(
+                "resolution/identifier_not_found",
+                "undeclared_modifier_argument",
+            )
+        }
+
+        #[test]
+        fn undeclared_name_in_constant_array_length() -> Result<()> {
+            run(
+                "resolution/identifier_not_found",
+                "undeclared_name_in_constant_array_length",
+            )
+        }
+
+        #[test]
+        fn undeclared_named_argument_value() -> Result<()> {
+            run(
+                "resolution/identifier_not_found",
+                "undeclared_named_argument_value",
+            )
+        }
+
+        #[test]
+        fn undeclared_storage_layout_base() -> Result<()> {
+            run(
+                "resolution/identifier_not_found",
+                "undeclared_storage_layout_base",
+            )
+        }
+
+        #[test]
+        fn undeclared_try_call_target() -> Result<()> {
+            run(
+                "resolution/identifier_not_found",
+                "undeclared_try_call_target",
+            )
+        }
+
+        #[test]
+        fn undeclared_variable() -> Result<()> {
+            run("resolution/identifier_not_found", "undeclared_variable")
+        }
+
+        #[test]
         fn unresolved_base() -> Result<()> {
             run("resolution/identifier_not_found", "unresolved_base")
+        }
+
+        #[test]
+        fn use_before_declaration() -> Result<()> {
+            run("resolution/identifier_not_found", "use_before_declaration")
+        }
+
+        #[test]
+        fn use_in_own_multi_declaration() -> Result<()> {
+            run(
+                "resolution/identifier_not_found",
+                "use_in_own_multi_declaration",
+            )
+        }
+
+        #[test]
+        fn use_out_of_block_scope() -> Result<()> {
+            run("resolution/identifier_not_found", "use_out_of_block_scope")
         }
     }
 
@@ -1533,6 +1733,22 @@ mod resolution {
         }
 
         #[test]
+        fn local_shadows_error_qualifier() -> Result<()> {
+            run(
+                "resolution/member_not_found",
+                "local_shadows_error_qualifier",
+            )
+        }
+
+        #[test]
+        fn local_shadows_event_qualifier() -> Result<()> {
+            run(
+                "resolution/member_not_found",
+                "local_shadows_event_qualifier",
+            )
+        }
+
+        #[test]
         fn member_not_found_via_super() -> Result<()> {
             run("resolution/member_not_found", "member_not_found_via_super")
         }
@@ -1563,6 +1779,40 @@ mod resolution {
         #[test]
         fn min_on_contract_meta_type() -> Result<()> {
             run("resolution/member_not_found", "min_on_contract_meta_type")
+        }
+
+        #[test]
+        fn missing_error_in_nested_path() -> Result<()> {
+            run(
+                "resolution/member_not_found",
+                "missing_error_in_nested_path",
+            )
+        }
+
+        #[test]
+        fn missing_error_on_interface_type() -> Result<()> {
+            run(
+                "resolution/member_not_found",
+                "missing_error_on_interface_type",
+            )
+        }
+
+        #[test]
+        fn missing_event_in_module() -> Result<()> {
+            run("resolution/member_not_found", "missing_event_in_module")
+        }
+
+        #[test]
+        fn missing_event_on_contract_type() -> Result<()> {
+            run(
+                "resolution/member_not_found",
+                "missing_event_on_contract_type",
+            )
+        }
+
+        #[test]
+        fn missing_event_on_library() -> Result<()> {
+            run("resolution/member_not_found", "missing_event_on_library")
         }
 
         #[test]
