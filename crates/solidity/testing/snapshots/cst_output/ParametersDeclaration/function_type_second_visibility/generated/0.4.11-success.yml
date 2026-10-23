@@ -1,0 +1,29 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Source: >
+  1  │ (function() external public f)                                                   │ 0..30
+
+Errors: []
+
+Tree:
+  - (root꞉ ParametersDeclaration): # "(function() external public f)\n" (0..31)
+      - (open_paren꞉ OpenParen): "(" # (0..1)
+      - (parameters꞉ Parameters): # "function() external public f" (1..29)
+          - (item꞉ Parameter): # "function() external public f" (1..29)
+              - (type_name꞉ TypeName) ► (variant꞉ FunctionType): # "function() external public" (1..27)
+                  - (function_keyword꞉ FunctionKeyword): "function" # (1..9)
+                  - (parameters꞉ ParametersDeclaration): # "()" (9..11)
+                      - (open_paren꞉ OpenParen): "(" # (9..10)
+                      - (parameters꞉ Parameters): [] # (10..10)
+                      - (close_paren꞉ CloseParen): ")" # (10..11)
+                  - (attributes꞉ FunctionTypeAttributes): # " external public" (11..27)
+                      - (item꞉ FunctionTypeAttribute): # " external" (11..20)
+                          - (leading_trivia꞉ Whitespace): " " # (11..12)
+                          - (variant꞉ ExternalKeyword): "external" # (12..20)
+                      - (item꞉ FunctionTypeAttribute): # " public" (20..27)
+                          - (leading_trivia꞉ Whitespace): " " # (20..21)
+                          - (variant꞉ PublicKeyword): "public" # (21..27)
+              - (leading_trivia꞉ Whitespace): " " # (27..28)
+              - (name꞉ Identifier): "f" # (28..29)
+      - (close_paren꞉ CloseParen): ")" # (29..30)
+      - (trailing_trivia꞉ EndOfLine): "\n" # (30..31)
