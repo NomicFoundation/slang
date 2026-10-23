@@ -2861,6 +2861,12 @@ impl TextStart for PragmaPeriod {
     }
 }
 
+impl TextStart for PragmaPragmaKeyword {
+    fn calculate_text_start(&self) -> Option<usize> {
+        Some(self.range.start)
+    }
+}
+
 impl TextStart for PragmaSemicolon {
     fn calculate_text_start(&self) -> Option<usize> {
         Some(self.range.start)

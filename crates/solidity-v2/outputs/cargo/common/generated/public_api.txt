@@ -5597,6 +5597,7 @@ pub slang_solidity_v2_common::terminals::TerminalKind::PragmaLessThan
 pub slang_solidity_v2_common::terminals::TerminalKind::PragmaLessThanEqual
 pub slang_solidity_v2_common::terminals::TerminalKind::PragmaMinus
 pub slang_solidity_v2_common::terminals::TerminalKind::PragmaPeriod
+pub slang_solidity_v2_common::terminals::TerminalKind::PragmaPragmaKeyword
 pub slang_solidity_v2_common::terminals::TerminalKind::PragmaSemicolon
 pub slang_solidity_v2_common::terminals::TerminalKind::PragmaStringLiteral
 pub slang_solidity_v2_common::terminals::TerminalKind::PragmaTilde
