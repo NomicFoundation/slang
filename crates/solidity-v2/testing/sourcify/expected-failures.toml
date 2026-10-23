@@ -125,8 +125,99 @@ contracts = [
 [[failures]]
 check = "bind"
 code = "resolution/ambiguous-reference"
-reason = "`MultiMint.initialize.selector` sees the `initialize` overload MultiMint inherits; solc exposes only its own declarations through the type name."
-issue = "https://github.com/NomicFoundation/slang/issues/2149"
+reason = "OpenZeppelin 4.x `Governor.hashProposal` overrides `IGovernor`'s `calldata` parameters with `memory`, which solc allowed before 0.8.14; Slang keeps both as candidates."
+issue = "https://github.com/NomicFoundation/slang/issues/2307"
+message = "No unique declaration found for 'hashProposal'"
+
+[[failures]]
+check = "bind"
+code = "resolution/ambiguous-reference"
+reason = "`using {f as *} for T global` binds `f` to the operator only; Slang also attaches it as a member, next to a library function of the same name."
+issue = "https://github.com/NomicFoundation/slang/issues/2308"
+contracts = [
+  "421614_0x07c6a3ad780cdfd5ef3ee6a93b2db757c2e843f9",
+  "421614_0x16e3a83939216b6625a57665209ff25d470e2d00",
+  "421614_0x1e0f8b4f5fa5ab66aa07aa077fae9ff906e06cc6",
+  "421614_0x36562bbf044b7ef73e3c474b6fcbbe1c11fd62ec",
+  "421614_0x3f9fcc6e96110004c7d6d45f3e13fc359d1135cb",
+  "421614_0x44d3e43262326abe6b8206d61cd40e8e797c0b59",
+  "421614_0x52ca8df654dacf38f5647419e2e0866d34af4b7c",
+  "421614_0x539645d7cea9839f0f37a91b8ee2a689fe084b35",
+  "421614_0x8e4f93bd5ee3ca5d4110bdf1c88ca6c961d52bff",
+  "421614_0x96856b740119d43c64da5eca2edd635e8e127bab",
+  "421614_0x9a950f605210ee7cfeefa5cc9974627119917942",
+  "421614_0xa90ac9710c19dc18b62129dea50a5a20b8df618d",
+  "421614_0xa9bfb2d658c49d214395aeccbf40e0443be453d8",
+  "421614_0xaf005dd965b4def00794c45e277415057d81337b",
+  "421614_0xb3d185c30ae2084f1f6eacb0f81a33baf8ea8b83",
+  "421614_0xb897ab1b1dcdefa4080dcfad3bd51ea2db34976f",
+  "421614_0xc0ae8de91ea90daa79830986cf5e6551f8ab129e",
+  "421614_0xc5b36d83691cd4d099d25cb35dc9ce2733e768f7",
+  "421614_0xd2a515c0912a186c21f8e086c6e0b6390cc614da",
+  "421614_0xdb91653f4b2c02794013d30faa563fedd2a7d8d0",
+  "8453_0x69cf9cf475d23aa68237aaa83d1fc5c88f0e8b87",
+]
+
+[[failures]]
+check = "bind"
+code = "resolution/ambiguous-reference"
+reason = "`using L for T` attaches L's private functions, which solc never does; they clash with a visible function or struct field of the same name."
+issue = "https://github.com/NomicFoundation/slang/issues/2309"
+contracts = [
+  "100_0x17b198f1ba26daa9d1fba35a51b807e091769af9",
+  "100_0x95676aaecd59b19c5b79008f86d3a291628b0947",
+  "100_0xd59067776240b2f19cd1d4ccc4ad2471d57b223f",
+  "100_0xd712a863766de7e7ca13289a97997e01832a6571",
+  "10_0x09f93ea360fd6d93c5f5cfa1291cb7766c038e0f",
+  "1_0x245681511257f3a68513c69a9bf71b2cd78e076a",
+  "1_0x39a65bfdb7b977a019564c2f9a81e1a29f7341fe",
+  "1_0x3c11f6265ddec22f4d049dde480615735f451646",
+  "1_0x4a303b4e823b97689bcc77ae3dde6b6e5b5d3007",
+  "1_0x6030331c9225ee5ae3f3d08fbd19e8bf053df498",
+  "1_0x744cec8f3df19f9330859a6c2af45c14bfeb4867",
+  "1_0x886c9a91bf10dbc5e3c66c29387be9421a00442d",
+  "1_0x8c76e1c2c57c343afa77c4374471eb4eb6a159ea",
+  "1_0x95676aaecd59b19c5b79008f86d3a291628b0947",
+  "1_0xac3fd4bbd8a5474bd9e3bee8a7a494e79dcb5392",
+  "1_0xad243c868e74b23c2ad778b201cdd4074ed98cdc",
+  "1_0xb5cd090010d4735f18306eb680d898ef9f36f044",
+  "1_0xcb611d0bd02a74c491b75d51d6ea5558f1887da3",
+  "1_0xcb6ea7fddfdf2afc2bc6bf715185a33f8e27b96b",
+  "1_0xd712a863766de7e7ca13289a97997e01832a6571",
+  "1_0xdf7fffa811a3d36ceb435821e3ee770e8e9ba5b1",
+  "1_0xdf818e63341767d5f5a9827088f1892e9c604a2d",
+  "1_0xfe820dfdb88ce7085633055d912aa9ecea5be8a6",
+  "42161_0x197fce3040b9ba1378830a71ec8491ff282a409c",
+  "56_0x8f556010a5b0b1418cd72bcf312bb25efd1f4d0c",
+  "8453_0x4b735b3d3df8b54c02857943820665e521cb377d",
+  "8453_0xd62465ac5f282e85589923d05ca7b1163f4ad094",
+]
+
+[[failures]]
+check = "bind"
+code = "resolution/ambiguous-reference"
+reason = "`C.f.selector` through a contract's type name sees C's private overload of `f`."
+issue = "https://github.com/NomicFoundation/slang/issues/2310"
+contracts = [
+  "421614_0x407abda66730eacad395d910c046646ee3f927fa",
+  "421614_0x5480c2401742704dc020b96f847f3fbc7d859060",
+  "421614_0x56d513950045240a95c09aaeb1c9f2f9a586ada7",
+  "421614_0x7bb2e49fbaa28558d2aaafa5390ba5662923ed84",
+  "421614_0xdfa0840ac55086ec018fc6e72a50fe25ba98d240",
+  "421614_0xe08e77a54b27825b937231453dc34035a913fd9d",
+]
+
+[[failures]]
+check = "bind"
+code = "resolution/ambiguous-reference"
+reason = "A `storage` argument also matches a `calldata` overload of the same struct."
+issue = "https://github.com/NomicFoundation/slang/issues/2311"
+contracts = [
+  "250_0x135f9e2fdc98a855244a8755f3bef2301de70f5e",
+  "250_0x5d450d730e1d910a78ffd8cc45bd3dac7b38bbfd",
+  "250_0x85701955c279f1352c04e8d46f5c0f8184d6be61",
+  "250_0xfd3acea549f254c77c0b47be3cfdafa795995ec1",
+]
 
 [[failures]]
 check = "parse"
