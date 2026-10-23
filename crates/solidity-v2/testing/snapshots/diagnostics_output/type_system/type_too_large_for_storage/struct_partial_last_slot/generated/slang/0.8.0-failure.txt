@@ -1,6 +1,16 @@
 # This file is generated automatically by infrastructure scripts. Please don't edit by hand.
 
-Diagnostics: 1
+Diagnostics: 2
+
+[type-system/contract-too-large-for-storage] Error: Contract requires too much storage.
+    ╭─[input.sol:11:1]
+    │
+ 11 │ ╭─▶ contract C {
+    ┆ ┆   
+ 13 │ ├─▶ }
+    │ │       
+    │ ╰─────── Error occurred here.
+────╯
 
 [type-system/type-too-large-for-storage] Error: Type too large for storage.
     ╭─[input.sol:12:5]

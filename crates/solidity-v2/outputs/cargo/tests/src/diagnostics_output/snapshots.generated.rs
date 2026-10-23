@@ -5112,6 +5112,55 @@ mod type_system {
         }
     }
 
+    mod contract_too_large_for_storage {
+        use super::*;
+
+        #[test]
+        fn inherited_variables() -> Result<()> {
+            run(
+                "type_system/contract_too_large_for_storage",
+                "inherited_variables",
+            )
+        }
+
+        #[test]
+        fn own_variables() -> Result<()> {
+            run(
+                "type_system/contract_too_large_for_storage",
+                "own_variables",
+            )
+        }
+
+        #[test]
+        fn packed_array() -> Result<()> {
+            run("type_system/contract_too_large_for_storage", "packed_array")
+        }
+
+        #[test]
+        fn packed_struct() -> Result<()> {
+            run(
+                "type_system/contract_too_large_for_storage",
+                "packed_struct",
+            )
+        }
+
+        #[test]
+        fn packed_values() -> Result<()> {
+            run(
+                "type_system/contract_too_large_for_storage",
+                "packed_values",
+            )
+        }
+
+        #[test]
+        fn partial_last_slot() -> Result<()> {
+            run(
+                "type_system/contract_too_large_for_storage",
+                "partial_last_slot",
+            )
+        }
+    }
+
     mod empty_array_literal {
         use super::*;
 
@@ -6293,6 +6342,30 @@ mod type_system {
         }
 
         #[test]
+        fn past_end_of_storage() -> Result<()> {
+            run(
+                "type_system/storage_layout_base_slot",
+                "past_end_of_storage",
+            )
+        }
+
+        #[test]
+        fn past_end_of_storage_packed_values() -> Result<()> {
+            run(
+                "type_system/storage_layout_base_slot",
+                "past_end_of_storage_packed_values",
+            )
+        }
+
+        #[test]
+        fn past_end_of_storage_partial_slot() -> Result<()> {
+            run(
+                "type_system/storage_layout_base_slot",
+                "past_end_of_storage_partial_slot",
+            )
+        }
+
+        #[test]
         fn type_max() -> Result<()> {
             run("type_system/storage_layout_base_slot", "type_max")
         }
@@ -6321,6 +6394,14 @@ mod type_system {
         #[test]
         fn valid() -> Result<()> {
             run("type_system/storage_layout_base_slot", "valid")
+        }
+
+        #[test]
+        fn zero_base_past_end_of_storage() -> Result<()> {
+            run(
+                "type_system/storage_layout_base_slot",
+                "zero_base_past_end_of_storage",
+            )
         }
     }
 

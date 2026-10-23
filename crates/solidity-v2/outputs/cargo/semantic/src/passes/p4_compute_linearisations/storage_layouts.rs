@@ -1,21 +1,32 @@
-//! Laying out each contract's state variables in storage.
+//! Laying out each contract's state variables in storage, and reporting the
+//! contracts whose persistent state variables extend past the end of storage.
 
 use std::sync::Arc;
 
 use ruint::aliases::U256;
+use slang_solidity_v2_common::diagnostics::DiagnosticCollection;
+use slang_solidity_v2_common::diagnostics::kinds::type_system::{
+    ContractTooLargeForStorage, StorageLayoutBasePastEnd,
+};
 use slang_solidity_v2_ir::ir;
 
 use crate::binder::{Binder, Definition};
-use crate::context::{NoStorageSize, StateVariablePosition, StorageAnalyzer, StorageLayoutBuilder};
+use crate::context::{
+    FileNodeMapper, NoStorageSize, StateVariablePosition, StorageAnalyzer, StorageLayoutBuilder,
+};
+use crate::passes::common::node_location;
 use crate::types::TypeRegistry;
 
 /// The persistent and transient storage layouts of `contract`, given the
-/// `state_variables` of its hierarchy. A layout is `None` when it overflows,
-/// when a variable has no storage size, or when the base slot failed to
-/// evaluate.
+/// `state_variables` of its hierarchy. Reports the persistent layout when it
+/// extends past the end of storage. A layout is `None` when it overflows, or
+/// when a variable has no storage size or the base slot failed to evaluate,
+/// both reported elsewhere.
 pub(super) fn compute_storage_layouts(
     binder: &Binder,
     types: &TypeRegistry,
+    file_node_mapper: &FileNodeMapper,
+    diagnostics: &mut DiagnosticCollection,
     contract: &ir::ContractDefinition,
     state_variables: &[ir::StateVariableDefinition],
 ) -> (
@@ -30,14 +41,33 @@ pub(super) fn compute_storage_layouts(
     // TODO(validation) SDR[2]: it is an error if any contract in the hierarchy
     // other than the leaf has a custom offset layout
     let persistent = definition.effective_base_slot.and_then(|base_slot| {
-        lay_out(
+        match lay_out(
             &analyzer,
             binder,
             base_slot,
             ir::StateVariableMutability::Mutable,
             state_variables,
-        )
-        .ok()
+        ) {
+            Ok(positions) => Some(positions),
+            Err(NoStorageSize::Unsized) => None,
+            Err(NoStorageSize::TooLarge) => {
+                if let Some(base_slot_expression) = &contract.storage_layout
+                    && !base_slot.is_zero()
+                {
+                    let (file_id, range) = node_location(base_slot_expression, file_node_mapper);
+                    diagnostics.push(file_id, range, StorageLayoutBasePastEnd);
+                } else {
+                    diagnostics.push(
+                        file_node_mapper
+                            .file_id_from_node_id(contract.id())
+                            .to_owned(),
+                        contract.range.clone(),
+                        ContractTooLargeForStorage,
+                    );
+                }
+                None
+            }
+        }
     });
     let transient = lay_out(
         &analyzer,
