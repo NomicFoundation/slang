@@ -9,14 +9,6 @@ use slang_solidity_v2_semantic::types::TypeId;
 
 pub(crate) use self::type_identifier::storage_type_identifier;
 
-/// Which storage a layout describes: the persistent storage, or the transient
-/// storage that is cleared at the end of each transaction.
-#[derive(Clone, Copy, Debug, Eq, PartialEq)]
-pub(crate) enum StorageKind {
-    Persistent,
-    Transient,
-}
-
 /// The state variables of one kind of storage, and the types they are laid
 /// out with. Serializes as the JSON storage layout, an object with the
 /// `storage` items and the `types` table keyed by [`StorageType::type_identifier`].

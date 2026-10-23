@@ -3,6 +3,7 @@ mod duplicate_declarations;
 mod linearisations;
 mod overrides;
 mod redeclarations;
+mod storage_layouts;
 
 use std::sync::Arc;
 
@@ -17,6 +18,7 @@ use self::abstractness::AbstractSlots;
 use self::duplicate_declarations::Overloads;
 use self::linearisations::compute_linearisations;
 use self::redeclarations::MemberKind;
+use self::storage_layouts::compute_storage_layouts;
 use crate::binder::{Binder, Definition};
 use crate::context::{ContractData, FileNodeMapper};
 use crate::types::TypeRegistry;
@@ -34,7 +36,9 @@ use crate::types::TypeRegistry;
 ///   isn't allowed to (see [`overrides`]); and
 /// - pre-compute, per contract and interface, the collections of functions,
 ///   state variables, errors and events visible in its hierarchy, stored in a
-///   `ContractData` (see [`linearisations`]).
+///   `ContractData` (see [`linearisations`]); and
+/// - lay out each contract's state variables in storage, also stored in the
+///   `ContractData` (see [`storage_layouts`]).
 ///
 /// The two are independent traversals with different needs: the checks fold
 /// the bases' members into per-name state, driven by a [`HierarchyChecker`],
@@ -96,7 +100,18 @@ pub fn run(
             *definition_id,
         );
         if linearise {
-            let linearisations = compute_linearisations(binder, types, *definition_id);
+            let mut linearisations = compute_linearisations(binder, types, *definition_id);
+            if let Definition::Contract(contract) = definition {
+                (
+                    linearisations.storage_layout,
+                    linearisations.transient_storage_layout,
+                ) = compute_storage_layouts(
+                    binder,
+                    types,
+                    &contract.ir_node,
+                    &linearisations.state_variables,
+                );
+            }
             linearisations_by_id.insert(*definition_id, linearisations);
         }
     }
