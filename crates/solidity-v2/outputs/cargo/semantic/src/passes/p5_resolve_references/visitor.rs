@@ -40,15 +40,15 @@ impl Visitor for Pass<'_> {
         // But any reference in the inheritance types and the storage layout
         // specifier should resolve in the parent scope.
         //
-        // The inheritance types still need the contract to be visible
-        // *structurally* though: a base-constructor argument may call a base
-        // function through its qualified name (eg. `is Base(Base.g())`), which
-        // is only legal because the enclosing contract derives from `Base` — so
-        // `is_foreign_contract` has to be able to see which contract is being
-        // defined, even while names resolve outside of it.
+        // Both still need the contract to be visible *structurally* though: a
+        // base-constructor argument may call a base function through its
+        // qualified name (eg. `is Base(Base.g())`), and a base slot may name a
+        // base constant (eg. `layout at Base.X`), which is only legal because
+        // the enclosing contract derives from `Base`. So `is_foreign_contract`
+        // has to be able to see which contract is being defined, even while
+        // names resolve outside of it.
         self.enter_structural_scope_for_node_id(node.id());
         ir::visitor::accept_inheritance_types(&node.inheritance_types, self);
-        self.leave_scope_for_node_id(node.id());
         if let Some(ref storage_layout) = node.storage_layout {
             // TODO(validation) SDR[56]: check that the expression is not binding constant variables up until 0.8.31
             // https://www.soliditylang.org/blog/2025/12/03/solidity-0.8.31-release-announcement
@@ -56,6 +56,7 @@ impl Visitor for Pass<'_> {
             // TODO(validation) SDR[743]: check that the base slot expression's
             // type, known from this point, is implicitly convertible to `uint256`.
         }
+        self.leave_scope_for_node_id(node.id());
 
         // We already visited the contract definition's children above to be
         // able to better control the scope stack, so don't recurse again
@@ -708,6 +709,12 @@ impl Visitor for Pass<'_> {
         }
     }
 
+    fn enter_emit_statement(&mut self, node: &ir::EmitStatement) -> bool {
+        // Resolved on entering, since leaving reads the event's reference.
+        self.resolve_emit_or_revert_target(&node.event);
+        true
+    }
+
     fn leave_emit_statement(&mut self, node: &ir::EmitStatement) {
         let event_reference_id = node.event.last().unwrap().id();
         let event_resolution = self.followed_resolution_of_reference(event_reference_id);
@@ -757,6 +764,12 @@ impl Visitor for Pass<'_> {
                 self.resolve_named_arguments(named_arguments, definition_id);
             }
         }
+    }
+
+    fn enter_revert_statement(&mut self, node: &ir::RevertStatement) -> bool {
+        // Resolved on entering, since leaving reads the error's reference.
+        self.resolve_emit_or_revert_target(&node.error);
+        true
     }
 
     fn leave_revert_statement(&mut self, node: &ir::RevertStatement) {

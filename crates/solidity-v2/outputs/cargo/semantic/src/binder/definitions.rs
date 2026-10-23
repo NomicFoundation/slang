@@ -315,6 +315,14 @@ impl Definition {
         )
     }
 
+    /// Whether this is a function declared with a body.
+    pub(crate) fn is_implemented_function(&self) -> bool {
+        matches!(
+            self,
+            Self::Function(function_definition) if function_definition.ir_node.body.is_some()
+        )
+    }
+
     pub(crate) fn is_private_or_internally_visible(&self) -> bool {
         if let Self::Function(function_definition) = self {
             !matches!(

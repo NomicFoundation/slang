@@ -480,6 +480,11 @@ mod contracts {
     }
 
     #[test]
+    fn super_skips_unimplemented() -> Result<()> {
+        run("contracts", "super_skips_unimplemented")
+    }
+
+    #[test]
     fn this_scope() -> Result<()> {
         run("contracts", "this_scope")
     }
@@ -1362,6 +1367,14 @@ mod using {
     }
 
     #[test]
+    fn external_function_calldata_parameter_on_memory_receiver() -> Result<()> {
+        run(
+            "using",
+            "external_function_calldata_parameter_on_memory_receiver",
+        )
+    }
+
+    #[test]
     fn for_fixed_arrays() -> Result<()> {
         run("using", "for_fixed_arrays")
     }
@@ -1429,6 +1442,11 @@ mod using {
     #[test]
     fn on_super_calls() -> Result<()> {
         run("using", "on_super_calls")
+    }
+
+    #[test]
+    fn operator_and_member_attached_function() -> Result<()> {
+        run("using", "operator_and_member_attached_function")
     }
 
     #[test]

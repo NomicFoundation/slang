@@ -515,11 +515,14 @@ impl Visitor for Pass<'_> {
                                     .entry(operator.into())
                                     .or_default()
                                     .extend_from_slice(&definition_ids);
+                            } else {
+                                // Only a function listed without an operator
+                                // is attached as a member.
+                                symbols.insert(
+                                    symbol_name.unparse().to_string(),
+                                    ScopeDefinitionIds::from_slice(&definition_ids),
+                                );
                             }
-                            symbols.insert(
-                                symbol_name.unparse().to_string(),
-                                ScopeDefinitionIds::from_slice(&definition_ids),
-                            );
                         }
 
                         let scope = Scope::new_using(node.id(), symbols);
@@ -559,26 +562,6 @@ impl Visitor for Pass<'_> {
             self.binder
                 .insert_using_directive_in_scope(directive, current_scope_id);
         }
-    }
-
-    fn enter_revert_statement(&mut self, node: &ir::RevertStatement) -> bool {
-        self.resolve_and_check_identifier_path_as_expression(&node.error);
-        true
-    }
-
-    fn leave_revert_statement(&mut self, node: &ir::RevertStatement) {
-        let type_id = self.type_of_identifier_path(&node.error, None);
-        self.binder.set_node_type(node.id(), type_id);
-    }
-
-    fn enter_emit_statement(&mut self, node: &ir::EmitStatement) -> bool {
-        self.resolve_and_check_identifier_path_as_expression(&node.event);
-        true
-    }
-
-    fn leave_emit_statement(&mut self, node: &ir::EmitStatement) {
-        let type_id = self.type_of_identifier_path(&node.event, None);
-        self.binder.set_node_type(node.id(), type_id);
     }
 
     fn leave_new_expression(&mut self, node: &ir::NewExpression) {

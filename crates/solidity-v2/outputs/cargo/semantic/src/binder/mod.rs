@@ -155,6 +155,34 @@ pub(crate) enum ResolveOptions {
     Super(NodeId),
 }
 
+impl ResolveOptions {
+    /// Whether a lookup under these options can see `definition`, declared in
+    /// the contract being searched (`in_own_contract`) or in one of its bases.
+    fn can_see(self, definition: &Definition, in_own_contract: bool) -> bool {
+        match self {
+            Self::Internal => {
+                if in_own_contract {
+                    definition.is_private_or_internally_visible()
+                } else {
+                    definition.is_internally_visible()
+                }
+            }
+            Self::Qualified => {
+                in_own_contract
+                    || definition.is_internally_visible()
+                    || definition.is_externally_visible()
+            }
+            Self::This(_) | Self::External => definition.is_externally_visible(),
+            // `super` reaches the implemented functions of the bases, and
+            // nothing else: not unimplemented functions, state variables,
+            // constants, or type definitions.
+            Self::Super(_) => {
+                definition.is_implemented_function() && definition.is_internally_visible()
+            }
+        }
+    }
+}
+
 /// A group of definitions, identified by their `NodeId`s. Held inline up to a
 /// handful of entries, which covers the sets that occur in practice: the
 /// definitions an ambiguous reference may name, and the working sets built
@@ -645,32 +673,7 @@ impl Binder {
                     continue;
                 };
                 for definition_id in definitions {
-                    let definition = &self.definitions[definition_id];
-                    let visible = match options {
-                        ResolveOptions::Internal => {
-                            if index == 0 {
-                                definition.is_private_or_internally_visible()
-                            } else {
-                                definition.is_internally_visible()
-                            }
-                        }
-                        ResolveOptions::Qualified => {
-                            index == 0
-                                || definition.is_internally_visible()
-                                || definition.is_externally_visible()
-                        }
-                        ResolveOptions::This(_) | ResolveOptions::External => {
-                            definition.is_externally_visible()
-                        }
-                        // `super` reaches the functions of the bases, and
-                        // nothing else: not state variables, constants, or
-                        // type definitions.
-                        ResolveOptions::Super(_) => {
-                            matches!(definition, Definition::Function(_))
-                                && definition.is_internally_visible()
-                        }
-                    };
-                    if visible {
+                    if options.can_see(&self.definitions[definition_id], index == 0) {
                         results.push(*definition_id);
                     }
                 }
@@ -697,9 +700,14 @@ impl Binder {
 
             Resolution::from(results)
         } else if let Some(definitions) = contract_scope.definitions.get(symbol) {
-            // This case shouldn't happen for valid Solidity, as all
-            // contracts should have a proper linearisation
-            Resolution::from(definitions.as_slice())
+            // Libraries are not linearised, and neither is a contract whose
+            // bases failed to linearise: search only the scope's own members.
+            let results: DefinitionIds = definitions
+                .iter()
+                .copied()
+                .filter(|definition_id| options.can_see(&self.definitions[definition_id], true))
+                .collect();
+            Resolution::from(results)
         } else {
             Resolution::Unresolved
         }
