@@ -239,18 +239,20 @@ impl<'a> Census<'a> {
     }
 
     fn write_totals(&self, out: &mut String, summary: &Summary) {
+        let deliberate = self.contracts(Category::Deliberate);
         writeln!(
             out,
-            "| contracts | passed | unexpected | known issues | deliberate | panicked | skipped |\n\
-             |---|---|---|---|---|---|---|\n\
-             | {} | {} | {} | {} | {} | {} | {} |",
+            "| contracts | passed | unexpected | known issues | deliberate | panicked | skipped | passed + deliberate |\n\
+             |---|---|---|---|---|---|---|---|\n\
+             | {} | {} | {} | {} | {} | {} | {} | {} |",
             summary.contracts,
             summary.passed,
             self.contracts(Category::Unexpected),
             self.contracts(Category::KnownIssue),
-            self.contracts(Category::Deliberate),
+            deliberate,
             summary.panicked,
-            summary.skipped
+            summary.skipped,
+            with_rate(summary.passed + deliberate, summary.contracts),
         )
         .unwrap();
         if !self.by_check.is_empty() {
@@ -434,6 +436,15 @@ impl Gate {
     }
 }
 
+/// `count` and its share of `total`, rounded down so that anything short of all
+/// never reads 100.00%.
+fn with_rate(count: usize, total: usize) -> String {
+    match (count * 10_000).checked_div(total) {
+        Some(hundredths) => format!("{count} ({}.{:02}%)", hundredths / 100, hundredths % 100),
+        None => count.to_string(),
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -517,7 +528,10 @@ mod tests {
         let report = summary.markdown(&expected);
 
         // `m` fails both ways and counts once, as unexpected.
-        assert!(report.contains("| 4 | 0 | 2 | 1 | 1 | 0 | 0 |"), "{report}");
+        assert!(
+            report.contains("| 4 | 0 | 2 | 1 | 1 | 0 | 0 | 1 (25.00%) |"),
+            "{report}"
+        );
         let unexpected = report.find("### Unexpected failures").expect(&report);
         let known = report.find("### Known issues").expect(&report);
         let deliberate = report
@@ -533,6 +547,21 @@ mod tests {
             "{report}"
         );
         assert!(report[deliberate..].contains("on purpose"), "{report}");
+    }
+
+    #[test]
+    fn the_pass_rate_counts_deliberate_failures_as_passing_rounded_down() {
+        let mut summary = Summary::default();
+        summary.add(&outcome("p", vec![], None));
+        summary.add(&outcome("d", vec![failure(Check::Bind, "y")], None));
+        summary.add(&outcome("u", vec![failure(Check::Bind, "x")], None));
+        let report = summary.markdown(&expected(
+            "[[failures]]\ncheck = \"bind\"\ncode = \"y\"\nreason = \"on purpose\"\ndeliberate = true\n",
+        ));
+        assert!(
+            report.contains("| 3 | 1 | 1 | 0 | 1 | 0 | 0 | 2 (66.66%) |"),
+            "{report}"
+        );
     }
 
     #[test]
