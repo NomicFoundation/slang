@@ -1218,6 +1218,11 @@ mod pragma_directive {
     }
 
     #[test]
+    fn version_component_above_signed_int() -> Result<()> {
+        run("PragmaDirective", "version_component_above_signed_int")
+    }
+
+    #[test]
     fn version_string() -> Result<()> {
         run("PragmaDirective", "version_string")
     }
