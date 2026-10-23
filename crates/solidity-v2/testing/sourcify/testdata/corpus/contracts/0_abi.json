@@ -1,0 +1,362 @@
+{
+  "name": "abi",
+  "chain_id": 0,
+  "version": "0.8.30",
+  "target": "Abi.sol",
+  "target_contract": "Abi",
+  "sources": {
+    "Abi.sol": "// SPDX-License-Identifier: MIT\npragma solidity ^0.8.22;\n\nlibrary Codec {\n    event Decoded(int8 indexed code);\n    error Undecodable(int8 code);\n}\n\nabstract contract Base {\n    event Moved(uint256 amount);\n    error Boom(uint256 code);\n\n    function zap() external virtual {}\n}\n\ncontract Abi is Base {\n    struct Order {\n        address maker;\n        uint96 price;\n        bytes32[] tags;\n    }\n\n    enum Side { Buy, Sell }\n\n    event Moved(address indexed from, address indexed to, uint256 amount);\n    error Rejected(Order order, Side side);\n\n    uint256 public total;\n    mapping(address => Order) public orders;\n\n    constructor(uint256 start) payable {\n        total = start;\n    }\n\n    receive() external payable {}\n\n    fallback(bytes calldata input) external returns (bytes memory) {\n        return input;\n    }\n\n    function place(Order calldata order, Side side) external returns (uint256 id, bool filled) {\n        if (order.price == 0) revert Rejected(order, side);\n        emit Moved(msg.sender, order.maker, order.price);\n        emit Codec.Decoded(1);\n        return (total, false);\n    }\n\n    function quote(uint256 amount) external pure returns (uint256) {\n        return amount;\n    }\n\n    function quote(address token, uint256 amount) external view returns (uint256) {\n        if (token == address(this)) revert Codec.Undecodable(-1);\n        return amount + total;\n    }\n\n    function zap() external override {\n        emit Base.Moved(total);\n        revert Boom(1);\n    }\n}\n"
+  },
+  "artifacts": {
+    "abi": [
+      {
+        "inputs": [
+          {
+            "internalType": "uint256",
+            "name": "start",
+            "type": "uint256"
+          }
+        ],
+        "stateMutability": "payable",
+        "type": "constructor"
+      },
+      {
+        "inputs": [
+          {
+            "internalType": "uint256",
+            "name": "code",
+            "type": "uint256"
+          }
+        ],
+        "name": "Boom",
+        "type": "error"
+      },
+      {
+        "inputs": [
+          {
+            "components": [
+              {
+                "internalType": "address",
+                "name": "maker",
+                "type": "address"
+              },
+              {
+                "internalType": "uint96",
+                "name": "price",
+                "type": "uint96"
+              },
+              {
+                "internalType": "bytes32[]",
+                "name": "tags",
+                "type": "bytes32[]"
+              }
+            ],
+            "internalType": "struct Abi.Order",
+            "name": "order",
+            "type": "tuple"
+          },
+          {
+            "internalType": "enum Abi.Side",
+            "name": "side",
+            "type": "uint8"
+          }
+        ],
+        "name": "Rejected",
+        "type": "error"
+      },
+      {
+        "inputs": [
+          {
+            "internalType": "int8",
+            "name": "code",
+            "type": "int8"
+          }
+        ],
+        "name": "Undecodable",
+        "type": "error"
+      },
+      {
+        "anonymous": false,
+        "inputs": [
+          {
+            "indexed": true,
+            "internalType": "int8",
+            "name": "code",
+            "type": "int8"
+          }
+        ],
+        "name": "Decoded",
+        "type": "event"
+      },
+      {
+        "anonymous": false,
+        "inputs": [
+          {
+            "indexed": false,
+            "internalType": "uint256",
+            "name": "amount",
+            "type": "uint256"
+          }
+        ],
+        "name": "Moved",
+        "type": "event"
+      },
+      {
+        "anonymous": false,
+        "inputs": [
+          {
+            "indexed": true,
+            "internalType": "address",
+            "name": "from",
+            "type": "address"
+          },
+          {
+            "indexed": true,
+            "internalType": "address",
+            "name": "to",
+            "type": "address"
+          },
+          {
+            "indexed": false,
+            "internalType": "uint256",
+            "name": "amount",
+            "type": "uint256"
+          }
+        ],
+        "name": "Moved",
+        "type": "event"
+      },
+      {
+        "stateMutability": "nonpayable",
+        "type": "fallback"
+      },
+      {
+        "inputs": [
+          {
+            "internalType": "address",
+            "name": "",
+            "type": "address"
+          }
+        ],
+        "name": "orders",
+        "outputs": [
+          {
+            "internalType": "address",
+            "name": "maker",
+            "type": "address"
+          },
+          {
+            "internalType": "uint96",
+            "name": "price",
+            "type": "uint96"
+          }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+      },
+      {
+        "inputs": [
+          {
+            "components": [
+              {
+                "internalType": "address",
+                "name": "maker",
+                "type": "address"
+              },
+              {
+                "internalType": "uint96",
+                "name": "price",
+                "type": "uint96"
+              },
+              {
+                "internalType": "bytes32[]",
+                "name": "tags",
+                "type": "bytes32[]"
+              }
+            ],
+            "internalType": "struct Abi.Order",
+            "name": "order",
+            "type": "tuple"
+          },
+          {
+            "internalType": "enum Abi.Side",
+            "name": "side",
+            "type": "uint8"
+          }
+        ],
+        "name": "place",
+        "outputs": [
+          {
+            "internalType": "uint256",
+            "name": "id",
+            "type": "uint256"
+          },
+          {
+            "internalType": "bool",
+            "name": "filled",
+            "type": "bool"
+          }
+        ],
+        "stateMutability": "nonpayable",
+        "type": "function"
+      },
+      {
+        "inputs": [
+          {
+            "internalType": "address",
+            "name": "token",
+            "type": "address"
+          },
+          {
+            "internalType": "uint256",
+            "name": "amount",
+            "type": "uint256"
+          }
+        ],
+        "name": "quote",
+        "outputs": [
+          {
+            "internalType": "uint256",
+            "name": "",
+            "type": "uint256"
+          }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+      },
+      {
+        "inputs": [
+          {
+            "internalType": "uint256",
+            "name": "amount",
+            "type": "uint256"
+          }
+        ],
+        "name": "quote",
+        "outputs": [
+          {
+            "internalType": "uint256",
+            "name": "",
+            "type": "uint256"
+          }
+        ],
+        "stateMutability": "pure",
+        "type": "function"
+      },
+      {
+        "inputs": [],
+        "name": "total",
+        "outputs": [
+          {
+            "internalType": "uint256",
+            "name": "",
+            "type": "uint256"
+          }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+      },
+      {
+        "inputs": [],
+        "name": "zap",
+        "outputs": [],
+        "stateMutability": "nonpayable",
+        "type": "function"
+      },
+      {
+        "stateMutability": "payable",
+        "type": "receive"
+      }
+    ],
+    "storageLayout": {
+      "storage": [
+        {
+          "astId": 54,
+          "contract": "Abi.sol:Abi",
+          "label": "total",
+          "offset": 0,
+          "slot": "0",
+          "type": "t_uint256"
+        },
+        {
+          "astId": 59,
+          "contract": "Abi.sol:Abi",
+          "label": "orders",
+          "offset": 0,
+          "slot": "1",
+          "type": "t_mapping(t_address,t_struct(Order)33_storage)"
+        }
+      ],
+      "types": {
+        "t_address": {
+          "encoding": "inplace",
+          "label": "address",
+          "numberOfBytes": "20"
+        },
+        "t_array(t_bytes32)dyn_storage": {
+          "base": "t_bytes32",
+          "encoding": "dynamic_array",
+          "label": "bytes32[]",
+          "numberOfBytes": "32"
+        },
+        "t_bytes32": {
+          "encoding": "inplace",
+          "label": "bytes32",
+          "numberOfBytes": "32"
+        },
+        "t_mapping(t_address,t_struct(Order)33_storage)": {
+          "encoding": "mapping",
+          "key": "t_address",
+          "label": "mapping(address => struct Abi.Order)",
+          "numberOfBytes": "32",
+          "value": "t_struct(Order)33_storage"
+        },
+        "t_struct(Order)33_storage": {
+          "encoding": "inplace",
+          "label": "struct Abi.Order",
+          "members": [
+            {
+              "astId": 27,
+              "contract": "Abi.sol:Abi",
+              "label": "maker",
+              "offset": 0,
+              "slot": "0",
+              "type": "t_address"
+            },
+            {
+              "astId": 29,
+              "contract": "Abi.sol:Abi",
+              "label": "price",
+              "offset": 20,
+              "slot": "0",
+              "type": "t_uint96"
+            },
+            {
+              "astId": 32,
+              "contract": "Abi.sol:Abi",
+              "label": "tags",
+              "offset": 0,
+              "slot": "1",
+              "type": "t_array(t_bytes32)dyn_storage"
+            }
+          ],
+          "numberOfBytes": "64"
+        },
+        "t_uint256": {
+          "encoding": "inplace",
+          "label": "uint256",
+          "numberOfBytes": "32"
+        },
+        "t_uint96": {
+          "encoding": "inplace",
+          "label": "uint96",
+          "numberOfBytes": "12"
+        }
+      }
+    },
+    "transientStorageLayout": {
+      "storage": [],
+      "types": null
+    }
+  }
+}
