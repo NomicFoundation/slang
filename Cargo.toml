@@ -64,6 +64,7 @@ members = [
     "crates/solidity-v2/outputs/cargo/tests",
     "crates/solidity-v2/testing/snapshots",
     "crates/solidity-v2/testing/solc",
+    "crates/solidity-v2/testing/sourcify",
     "crates/solidity-v2/testing/utils",
 ]
 
@@ -128,6 +129,7 @@ slang_solidity_v2_semantic = { path = "crates/solidity-v2/outputs/cargo/semantic
 solidity_v2_testing_utils = { path = "crates/solidity-v2/testing/utils", version = "1.3.9" }
 solidity_v2_testing_snapshots = { path = "crates/solidity-v2/testing/snapshots", version = "1.3.9" }
 solidity_v2_testing_solc = { path = "crates/solidity-v2/testing/solc", version = "1.3.9" }
+solidity_v2_testing_sourcify = { path = "crates/solidity-v2/testing/sourcify", version = "1.3.9" }
 solidity_v2_cargo_tests = { path = "crates/solidity-v2/outputs/cargo/tests", version = "1.3.9" }
 
 #
