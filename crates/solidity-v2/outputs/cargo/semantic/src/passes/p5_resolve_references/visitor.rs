@@ -709,7 +709,6 @@ impl Visitor for Pass<'_> {
     }
 
     fn leave_emit_statement(&mut self, node: &ir::EmitStatement) {
-        self.check_identifier_path_resolves(&node.event);
         let event_reference_id = node.event.last().unwrap().id();
         let event_resolution = self.followed_resolution_of_reference(event_reference_id);
         match &node.arguments {
@@ -761,7 +760,6 @@ impl Visitor for Pass<'_> {
     }
 
     fn leave_revert_statement(&mut self, node: &ir::RevertStatement) {
-        self.check_identifier_path_resolves(&node.error);
         match &node.arguments {
             ir::ArgumentsDeclaration::PositionalArguments(positional_arguments) => {
                 // Collect the argument types to ensure all of them type to a value
