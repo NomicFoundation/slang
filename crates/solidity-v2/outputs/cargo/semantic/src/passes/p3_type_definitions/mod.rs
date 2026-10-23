@@ -1,11 +1,12 @@
 use slang_solidity_v2_common::collections::Set;
 use slang_solidity_v2_common::diagnostics::DiagnosticCollection;
+use slang_solidity_v2_common::diagnostics::kinds::type_system::TypeTooLargeForStorage;
 use slang_solidity_v2_common::nodes::NodeId;
 use slang_solidity_v2_common::versions::LanguageVersion;
 use slang_solidity_v2_ir::ir;
 
 use crate::binder::{Binder, Definition, Scope, ScopeId};
-use crate::context::{FileNodeMapper, SemanticFile};
+use crate::context::{FileNodeMapper, SemanticFile, StorageAnalyzer};
 use crate::types::{ContractType, Type, TypeId, TypeRegistry, UserMetaType};
 
 mod recursive_structs;
@@ -173,6 +174,11 @@ impl<'a> Pass<'a> {
                         type_id,
                         storage_registered_structs,
                     );
+                    if StorageAnalyzer::new(self.binder, self.types)
+                        .is_too_large_for_storage(type_id)
+                    {
+                        self.push_diagnostic(state_var_definition, TypeTooLargeForStorage);
+                    }
                 }
                 if !matches!(
                     state_var_definition.attributes.visibility,

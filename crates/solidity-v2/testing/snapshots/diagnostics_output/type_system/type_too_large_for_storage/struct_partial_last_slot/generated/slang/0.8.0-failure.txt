@@ -1,0 +1,11 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 1
+
+[type-system/type-too-large-for-storage] Error: Type too large for storage.
+    ╭─[input.sol:12:5]
+    │
+ 12 │     S s;
+    │     ──┬─  
+    │       ╰─── Error occurred here.
+────╯
