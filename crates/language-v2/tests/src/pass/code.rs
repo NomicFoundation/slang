@@ -24,7 +24,7 @@ language_v2_macros::compile!(Language(
                             )
                         )
                     ),
-                    Token(name = Bar, scanner = Atom("bar"))
+                    Token(name = Bar, definitions = [TokenDefinition(scanner = Atom("bar"))])
                 ]
             )]
         )]

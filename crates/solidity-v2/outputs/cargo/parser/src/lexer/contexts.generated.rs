@@ -116,73 +116,18 @@ pub enum PragmaContext {
     Lexeme(LexemeKind),
 }
 
-/// Lookahead pattern guarding `HexLiteral`.
-///
-/// This is its own `Logos` enum so that the pattern is compiled into a DFA at
-/// build time. Building an equivalent `regex::Regex` on first use instead costs
-/// a few hundred thousand instructions per thread, which dominates the cost of
-/// the guard itself.
+/// Rejects a `HexLiteral` match that ends with this suffix.
 #[derive(Logos)]
-enum NotFollowedByHexLiteral {
+enum RejectSuffixHexLiteral1 {
     #[regex(r#"((_|\$|[a-z]|[A-Z])((_|\$|[a-z]|[A-Z])|[0-9])*)"#)]
     Matched,
 }
 
-// Kept out of line on purpose: this only runs after a `HexLiteral` match, and
-// inlining the lookahead DFA into the context lexer pushes the whole lexer past
-// the threshold for being inlined into the LALRPOP driver.
-#[inline(never)]
-#[allow(non_snake_case)]
-fn not_followed_by__HexLiteral(
-    lex: &mut Lexer<'_, SolidityContext>,
-) -> FilterResult<LexemeKind, ()> {
-    // `logos` only ever attempts a match at the lexer's current position, so an
-    // `Ok` from the very first `next()` is a match anchored at the start of the
-    // remainder, and its span length is the length of that match.
-    let mut lookahead = NotFollowedByHexLiteral::lexer(lex.remainder());
-
-    if matches!(lookahead.next(), Some(Ok(NotFollowedByHexLiteral::Matched))) {
-        lex.bump(lookahead.span().end);
-        FilterResult::Error(())
-    } else {
-        FilterResult::Emit(LexemeKind::HexLiteral)
-    }
-}
-
-/// Lookahead pattern guarding `DecimalLiteral`.
-///
-/// This is its own `Logos` enum so that the pattern is compiled into a DFA at
-/// build time. Building an equivalent `regex::Regex` on first use instead costs
-/// a few hundred thousand instructions per thread, which dominates the cost of
-/// the guard itself.
+/// Rejects a `DecimalLiteral` match that ends with this suffix.
 #[derive(Logos)]
-enum NotFollowedByDecimalLiteral {
+enum RejectSuffixDecimalLiteral1 {
     #[regex(r#"((_|\$|[a-z]|[A-Z])((_|\$|[a-z]|[A-Z])|[0-9])*)"#)]
     Matched,
-}
-
-// Kept out of line on purpose: this only runs after a `DecimalLiteral` match, and
-// inlining the lookahead DFA into the context lexer pushes the whole lexer past
-// the threshold for being inlined into the LALRPOP driver.
-#[inline(never)]
-#[allow(non_snake_case)]
-fn not_followed_by__DecimalLiteral(
-    lex: &mut Lexer<'_, SolidityContext>,
-) -> FilterResult<LexemeKind, ()> {
-    // `logos` only ever attempts a match at the lexer's current position, so an
-    // `Ok` from the very first `next()` is a match anchored at the start of the
-    // remainder, and its span length is the length of that match.
-    let mut lookahead = NotFollowedByDecimalLiteral::lexer(lex.remainder());
-
-    if matches!(
-        lookahead.next(),
-        Some(Ok(NotFollowedByDecimalLiteral::Matched))
-    ) {
-        lex.bump(lookahead.span().end);
-        FilterResult::Error(())
-    } else {
-        FilterResult::Emit(LexemeKind::DecimalLiteral)
-    }
 }
 
 #[derive(Clone, Debug, Logos)]
@@ -370,12 +315,8 @@ pub enum SolidityContext {
     #[regex(r#"/\*[^\*]*\*+([^/\*][^\*]*\*+)*/"#, |_| { LexemeKind::MultiLineComment }, priority = 1000164, allow_greedy = true)]
     #[regex(r#"///(?&TextAfterSlashes)?((?&LineBreak)((?&SpaceOrTab)*///(?&TextAfterSlashes)?(?&LineBreak))*((?&SpaceOrTab)*///(?&TextAfterSlashes))?)?"#, |_| { LexemeKind::SingleLineNatSpecComment }, priority = 1000165, allow_greedy = true)]
     #[regex(r#"/\*\*[^/\*][^\*]*\*+([^/\*][^\*]*\*+)*/"#, |_| { LexemeKind::MultiLineNatSpecComment }, priority = 1000166, allow_greedy = true)]
-    #[regex(
-        r#"0x(?&HexCharacter)+(_(?&HexCharacter)+)*"#,
-        not_followed_by__HexLiteral,
-        priority = 2000167
-    )]
-    #[regex(r#"((?&DecimalDigits)(\.(?&DecimalDigits))?(?&DecimalExponent)?)|(\.(?&DecimalDigits)(?&DecimalExponent)?)"#, not_followed_by__DecimalLiteral, priority = 2000168)]
+    #[regex(r#"0x(?&HexCharacter)+(_(?&HexCharacter)+)*"#, |lexer| { reject_suffix::<RejectSuffixHexLiteral1, _>(lexer, LexemeKind::HexLiteral) }, priority = 2000167)]
+    #[regex(r#"((?&DecimalDigits)(\.(?&DecimalDigits))?(?&DecimalExponent)?)|(\.(?&DecimalDigits)(?&DecimalExponent)?)"#, |lexer| { reject_suffix::<RejectSuffixDecimalLiteral1, _>(lexer, LexemeKind::DecimalLiteral) }, priority = 2000168)]
     #[regex(r#"('((?&EscapeSequence)|[ -&]|[\(-\[]|[\]-~])*')|("((?&EscapeSequence)|[ -!]|[#-\[]|[\]-~])*")"#, |_| { LexemeKind::StringLiteral }, priority = 2000169)]
     #[regex(r#"(hex'(?&HexStringContents)?')|(hex"(?&HexStringContents)?")"#, |_| { LexemeKind::HexStringLiteral }, priority = 2000170)]
     #[regex(r#"(unicode'((?&UnicodeEscapeSequence)|[^'\\\r\n])*')|(unicode"((?&UnicodeEscapeSequence)|[^"\\\r\n])*")"#, |_| { LexemeKind::UnicodeStringLiteral }, priority = 2000171)]
@@ -383,74 +324,18 @@ pub enum SolidityContext {
     Lexeme(LexemeKind),
 }
 
-/// Lookahead pattern guarding `YulDecimalLiteral`.
-///
-/// This is its own `Logos` enum so that the pattern is compiled into a DFA at
-/// build time. Building an equivalent `regex::Regex` on first use instead costs
-/// a few hundred thousand instructions per thread, which dominates the cost of
-/// the guard itself.
+/// Rejects a `YulDecimalLiteral` match that ends with this suffix.
 #[derive(Logos)]
-enum NotFollowedByYulDecimalLiteral {
+enum RejectSuffixYulDecimalLiteral1 {
     #[regex(r#"((_|\$|[a-z]|[A-Z])((_|\$|[a-z]|[A-Z])|[0-9])*)"#)]
     Matched,
 }
 
-// Kept out of line on purpose: this only runs after a `YulDecimalLiteral` match, and
-// inlining the lookahead DFA into the context lexer pushes the whole lexer past
-// the threshold for being inlined into the LALRPOP driver.
-#[inline(never)]
-#[allow(non_snake_case)]
-fn not_followed_by__YulDecimalLiteral(
-    lex: &mut Lexer<'_, YulContext>,
-) -> FilterResult<LexemeKind, ()> {
-    // `logos` only ever attempts a match at the lexer's current position, so an
-    // `Ok` from the very first `next()` is a match anchored at the start of the
-    // remainder, and its span length is the length of that match.
-    let mut lookahead = NotFollowedByYulDecimalLiteral::lexer(lex.remainder());
-
-    if matches!(
-        lookahead.next(),
-        Some(Ok(NotFollowedByYulDecimalLiteral::Matched))
-    ) {
-        lex.bump(lookahead.span().end);
-        FilterResult::Error(())
-    } else {
-        FilterResult::Emit(LexemeKind::YulDecimalLiteral)
-    }
-}
-
-/// Lookahead pattern guarding `YulHexLiteral`.
-///
-/// This is its own `Logos` enum so that the pattern is compiled into a DFA at
-/// build time. Building an equivalent `regex::Regex` on first use instead costs
-/// a few hundred thousand instructions per thread, which dominates the cost of
-/// the guard itself.
+/// Rejects a `YulHexLiteral` match that ends with this suffix.
 #[derive(Logos)]
-enum NotFollowedByYulHexLiteral {
+enum RejectSuffixYulHexLiteral1 {
     #[regex(r#"((_|\$|[a-z]|[A-Z])((_|\$|[a-z]|[A-Z])|[0-9])*)"#)]
     Matched,
-}
-
-// Kept out of line on purpose: this only runs after a `YulHexLiteral` match, and
-// inlining the lookahead DFA into the context lexer pushes the whole lexer past
-// the threshold for being inlined into the LALRPOP driver.
-#[inline(never)]
-#[allow(non_snake_case)]
-fn not_followed_by__YulHexLiteral(lex: &mut Lexer<'_, YulContext>) -> FilterResult<LexemeKind, ()> {
-    // `logos` only ever attempts a match at the lexer's current position, so an
-    // `Ok` from the very first `next()` is a match anchored at the start of the
-    // remainder, and its span length is the length of that match.
-    let mut lookahead = NotFollowedByYulHexLiteral::lexer(lex.remainder());
-
-    if matches!(
-        lookahead.next(),
-        Some(Ok(NotFollowedByYulHexLiteral::Matched))
-    ) {
-        lex.bump(lookahead.span().end);
-        FilterResult::Error(())
-    } else {
-        FilterResult::Emit(LexemeKind::YulHexLiteral)
-    }
 }
 
 #[derive(Clone, Debug, Logos)]
@@ -470,16 +355,8 @@ fn not_followed_by__YulHexLiteral(lex: &mut Lexer<'_, YulContext>) -> FilterResu
 #[logos(subpattern YulSingleLineRegularCommentText = r#"(?&YulTextAfterSlashes)|(//[^\r\n]*)"#)]
 pub enum YulContext {
     #[regex(r#"(?&YulIdentifierScanner)"#, |_| { LexemeKind::YulIdentifier }, priority = 2000001)]
-    #[regex(
-        r#"0|([1-9][0-9]*)"#,
-        not_followed_by__YulDecimalLiteral,
-        priority = 2000002
-    )]
-    #[regex(
-        r#"0x(?&YulHexCharacter)+"#,
-        not_followed_by__YulHexLiteral,
-        priority = 2000003
-    )]
+    #[regex(r#"0|([1-9][0-9]*)"#, |lexer| { reject_suffix::<RejectSuffixYulDecimalLiteral1, _>(lexer, LexemeKind::YulDecimalLiteral) }, priority = 2000002)]
+    #[regex(r#"0x(?&YulHexCharacter)+"#, |lexer| { reject_suffix::<RejectSuffixYulHexLiteral1, _>(lexer, LexemeKind::YulHexLiteral) }, priority = 2000003)]
     #[regex(r#"(hex'(?&YulHexStringContents)?')|(hex"(?&YulHexStringContents)?")"#, |_| { LexemeKind::YulHexStringLiteral }, priority = 2000004)]
     #[regex(r#"('((?&YulEscapeSequence)|[ -&]|[\(-\[]|[\]-~])*')|("((?&YulEscapeSequence)|[ -!]|[#-\[]|[\]-~])*")"#, |_| { LexemeKind::YulStringLiteral }, priority = 2000005)]
     #[regex(r#"break"#, |_| { LexemeKind::YulBreakKeyword_Reserved }, priority = 3000006)]
@@ -512,4 +389,32 @@ pub enum YulContext {
     #[regex(r#"///(?&YulTextAfterSlashes)?((?&YulLineBreak)((?&YulSpaceOrTab)*///(?&YulTextAfterSlashes)?(?&YulLineBreak))*((?&YulSpaceOrTab)*///(?&YulTextAfterSlashes))?)?"#, |_| { LexemeKind::YulSingleLineNatSpecComment }, priority = 1000033, allow_greedy = true)]
     #[regex(r#"/\*\*[^/\*][^\*]*\*+([^/\*][^\*]*\*+)*/"#, |_| { LexemeKind::YulMultiLineNatSpecComment }, priority = 1000034, allow_greedy = true)]
     Lexeme(LexemeKind),
+}
+
+/// Rejects the current match if it ends with a `Suffix` match, or emits it as `kind` otherwise.
+///
+/// Kept out of line on purpose: this only runs after a token match, and inlining the
+/// lookahead DFA into the context lexer pushes the whole lexer past the threshold for
+/// being inlined into the LALRPOP driver.
+#[inline(never)]
+fn reject_suffix<'source, Suffix, Context>(
+    lexer: &mut Lexer<'source, Context>,
+    kind: LexemeKind,
+) -> FilterResult<LexemeKind, ()>
+where
+    Suffix: Logos<'source, Source = str>,
+    Suffix::Extras: Default,
+    Context: Logos<'source, Source = str>,
+{
+    // `logos` only ever attempts a match at the lexer's current position, so an
+    // `Ok` from the very first `next()` is a match anchored at the start of the
+    // remainder, and its span length is the length of that match.
+    let mut lookahead = Suffix::lexer(lexer.remainder());
+
+    if matches!(lookahead.next(), Some(Ok(_))) {
+        lexer.bump(lookahead.span().end);
+        FilterResult::Error(())
+    } else {
+        FilterResult::Emit(kind)
+    }
 }

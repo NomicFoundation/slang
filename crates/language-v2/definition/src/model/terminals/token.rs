@@ -11,16 +11,25 @@ pub struct TokenItem {
     #[serde(skip_serializing_if = "Option::is_none")]
     pub enabled: Option<VersionSpecifier>,
 
-    /// Optional negative lookahead: rejects the token match if the remainder
-    /// matches the given scanner.
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub not_followed_by: Option<TokenScanner>,
-
-    pub scanner: TokenScanner,
+    pub definitions: Vec<TokenDefinition>,
 }
 
 impl TokenItem {
     pub fn unique_symbol(&self) -> Option<String> {
-        self.scanner.unique_symbol()
+        match self.definitions.as_slice() {
+            [definition] => definition.scanner.unique_symbol(),
+            _ => None,
+        }
     }
+}
+
+#[derive(Clone, Debug, Deserialize, Eq, PartialEq, Serialize)]
+#[derive_spanned_type(Clone, Debug, ParseInputTokens, WriteOutputTokens)]
+pub struct TokenDefinition {
+    pub scanner: TokenScanner,
+
+    // TODO(v2): instead of the lexer failing when this suffix is found,
+    // it should report more specific diagnostics, and create the lexeme successfully.
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub reject_suffix: Option<TokenScanner>,
 }

@@ -4,8 +4,8 @@ Source: >
   1  │ contract C {                                                                     │ 0..12
   2  │     function f() {                                                               │ 13..31
   3  │ // This is intentional, to test how the lexer behave when combining              │ 32..99
-  4  │ // a not_followed_by with EOF                                                    │ 100..129
-  5  │ 123                                                                              │ 130..133
+  4  │ // a reject_suffix with EOF                                                      │ 100..127
+  5  │ 123                                                                              │ 128..131
 
 Diagnostics: # 1 total
   - >

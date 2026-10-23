@@ -124,12 +124,14 @@ language_v2_macros::compile!(Language(
                             ),
                             Token(
                                 name = VersionPragmaComponent,
-                                scanner = OneOrMore(Choice([
-                                    Range(inclusive_start = '0', inclusive_end = '9'),
-                                    Atom("x"),
-                                    Atom("X"),
-                                    Atom("*")
-                                ]))
+                                definitions = [TokenDefinition(
+                                    scanner = OneOrMore(Choice([
+                                        Range(inclusive_start = '0', inclusive_end = '9'),
+                                        Atom("x"),
+                                        Atom("X"),
+                                        Atom("*")
+                                    ]))
+                                )]
                             )
                         ]
                     ),
@@ -148,17 +150,50 @@ language_v2_macros::compile!(Language(
                     Topic(
                         title = "Pragma Punctuation",
                         items = [
-                            Token(name = PragmaBarBar, scanner = Atom("||")),
-                            Token(name = PragmaCaret, scanner = Atom("^")),
-                            Token(name = PragmaEqual, scanner = Atom("=")),
-                            Token(name = PragmaGreaterThan, scanner = Atom(">")),
-                            Token(name = PragmaGreaterThanEqual, scanner = Atom(">=")),
-                            Token(name = PragmaLessThan, scanner = Atom("<")),
-                            Token(name = PragmaLessThanEqual, scanner = Atom("<=")),
-                            Token(name = PragmaMinus, scanner = Atom("-")),
-                            Token(name = PragmaPeriod, scanner = Atom(".")),
-                            Token(name = PragmaSemicolon, scanner = Atom(";")),
-                            Token(name = PragmaTilde, scanner = Atom("~"))
+                            Token(
+                                name = PragmaBarBar,
+                                definitions = [TokenDefinition(scanner = Atom("||"))]
+                            ),
+                            Token(
+                                name = PragmaCaret,
+                                definitions = [TokenDefinition(scanner = Atom("^"))]
+                            ),
+                            Token(
+                                name = PragmaEqual,
+                                definitions = [TokenDefinition(scanner = Atom("="))]
+                            ),
+                            Token(
+                                name = PragmaGreaterThan,
+                                definitions = [TokenDefinition(scanner = Atom(">"))]
+                            ),
+                            Token(
+                                name = PragmaGreaterThanEqual,
+                                definitions = [TokenDefinition(scanner = Atom(">="))]
+                            ),
+                            Token(
+                                name = PragmaLessThan,
+                                definitions = [TokenDefinition(scanner = Atom("<"))]
+                            ),
+                            Token(
+                                name = PragmaLessThanEqual,
+                                definitions = [TokenDefinition(scanner = Atom("<="))]
+                            ),
+                            Token(
+                                name = PragmaMinus,
+                                definitions = [TokenDefinition(scanner = Atom("-"))]
+                            ),
+                            Token(
+                                name = PragmaPeriod,
+                                definitions = [TokenDefinition(scanner = Atom("."))]
+                            ),
+                            Token(
+                                name = PragmaSemicolon,
+                                definitions = [TokenDefinition(scanner = Atom(";"))]
+                            ),
+                            Token(
+                                name = PragmaTilde,
+                                definitions = [TokenDefinition(scanner = Atom("~"))]
+                            )
                         ]
                     ),
                     Topic(
@@ -166,28 +201,30 @@ language_v2_macros::compile!(Language(
                         items = [
                             Token(
                                 name = PragmaStringLiteral,
-                                scanner = Choice([
-                                    Sequence([
-                                        Atom("'"),
-                                        ZeroOrMore(Choice([
-                                            Fragment(PragmaEscapeSequence),
-                                            Range(inclusive_start = ' ', inclusive_end = '&'),
-                                            Range(inclusive_start = '(', inclusive_end = '['),
-                                            Range(inclusive_start = ']', inclusive_end = '~')
-                                        ])),
-                                        Atom("'")
-                                    ]),
-                                    Sequence([
-                                        Atom("\""),
-                                        ZeroOrMore(Choice([
-                                            Fragment(PragmaEscapeSequence),
-                                            Range(inclusive_start = ' ', inclusive_end = '!'),
-                                            Range(inclusive_start = '#', inclusive_end = '['),
-                                            Range(inclusive_start = ']', inclusive_end = '~')
-                                        ])),
-                                        Atom("\"")
+                                definitions = [TokenDefinition(
+                                    scanner = Choice([
+                                        Sequence([
+                                            Atom("'"),
+                                            ZeroOrMore(Choice([
+                                                Fragment(PragmaEscapeSequence),
+                                                Range(inclusive_start = ' ', inclusive_end = '&'),
+                                                Range(inclusive_start = '(', inclusive_end = '['),
+                                                Range(inclusive_start = ']', inclusive_end = '~')
+                                            ])),
+                                            Atom("'")
+                                        ]),
+                                        Sequence([
+                                            Atom("\""),
+                                            ZeroOrMore(Choice([
+                                                Fragment(PragmaEscapeSequence),
+                                                Range(inclusive_start = ' ', inclusive_end = '!'),
+                                                Range(inclusive_start = '#', inclusive_end = '['),
+                                                Range(inclusive_start = ']', inclusive_end = '~')
+                                            ])),
+                                            Atom("\"")
+                                        ])
                                     ])
-                                ])
+                                )]
                             ),
                             Fragment(
                                 name = PragmaEscapeSequence,
@@ -1493,54 +1530,198 @@ language_v2_macros::compile!(Language(
                         Topic(
                             title = "Punctuation",
                             items = [
-                                Token(name = OpenParen, scanner = Atom("(")),
-                                Token(name = CloseParen, scanner = Atom(")")),
-                                Token(name = OpenBracket, scanner = Atom("[")),
-                                Token(name = CloseBracket, scanner = Atom("]")),
-                                Token(name = OpenBrace, scanner = Atom("{")),
-                                Token(name = CloseBrace, scanner = Atom("}")),
-                                Token(name = Comma, scanner = Atom(",")),
-                                Token(name = Period, scanner = Atom(".")),
-                                Token(name = QuestionMark, scanner = Atom("?")),
-                                Token(name = Semicolon, scanner = Atom(";")),
-                                Token(name = Colon, scanner = Atom(":")),
-                                Token(name = Equal, scanner = Atom("=")),
-                                Token(name = EqualEqual, scanner = Atom("==")),
-                                Token(name = EqualGreaterThan, scanner = Atom("=>")),
-                                Token(name = Asterisk, scanner = Atom("*")),
-                                Token(name = AsteriskEqual, scanner = Atom("*=")),
-                                Token(name = AsteriskAsterisk, scanner = Atom("**")),
-                                Token(name = Bar, scanner = Atom("|")),
-                                Token(name = BarEqual, scanner = Atom("|=")),
-                                Token(name = BarBar, scanner = Atom("||")),
-                                Token(name = Ampersand, scanner = Atom("&")),
-                                Token(name = AmpersandEqual, scanner = Atom("&=")),
-                                Token(name = AmpersandAmpersand, scanner = Atom("&&")),
-                                Token(name = LessThan, scanner = Atom("<")),
-                                Token(name = LessThanEqual, scanner = Atom("<=")),
-                                Token(name = LessThanLessThan, scanner = Atom("<<")),
-                                Token(name = LessThanLessThanEqual, scanner = Atom("<<=")),
-                                Token(name = GreaterThan, scanner = Atom(">")),
-                                Token(name = GreaterThanEqual, scanner = Atom(">=")),
-                                Token(name = GreaterThanGreaterThan, scanner = Atom(">>")),
-                                Token(name = GreaterThanGreaterThanEqual, scanner = Atom(">>=")),
-                                Token(name = GreaterThanGreaterThanGreaterThan, scanner = Atom(">>>")),
-                                Token(name = GreaterThanGreaterThanGreaterThanEqual, scanner = Atom(">>>=")),
-                                Token(name = Plus, scanner = Atom("+")),
-                                Token(name = PlusEqual, scanner = Atom("+=")),
-                                Token(name = PlusPlus, scanner = Atom("++")),
-                                Token(name = Minus, scanner = Atom("-")),
-                                Token(name = MinusEqual, scanner = Atom("-=")),
-                                Token(name = MinusMinus, scanner = Atom("--")),
-                                Token(name = Slash, scanner = Atom("/")),
-                                Token(name = SlashEqual, scanner = Atom("/=")),
-                                Token(name = Percent, scanner = Atom("%")),
-                                Token(name = PercentEqual, scanner = Atom("%=")),
-                                Token(name = Bang, scanner = Atom("!")),
-                                Token(name = BangEqual, scanner = Atom("!=")),
-                                Token(name = Caret, scanner = Atom("^")),
-                                Token(name = CaretEqual, scanner = Atom("^=")),
-                                Token(name = Tilde, scanner = Atom("~"))
+                                Token(
+                                    name = OpenParen,
+                                    definitions = [TokenDefinition(scanner = Atom("("))]
+                                ),
+                                Token(
+                                    name = CloseParen,
+                                    definitions = [TokenDefinition(scanner = Atom(")"))]
+                                ),
+                                Token(
+                                    name = OpenBracket,
+                                    definitions = [TokenDefinition(scanner = Atom("["))]
+                                ),
+                                Token(
+                                    name = CloseBracket,
+                                    definitions = [TokenDefinition(scanner = Atom("]"))]
+                                ),
+                                Token(
+                                    name = OpenBrace,
+                                    definitions = [TokenDefinition(scanner = Atom("{"))]
+                                ),
+                                Token(
+                                    name = CloseBrace,
+                                    definitions = [TokenDefinition(scanner = Atom("}"))]
+                                ),
+                                Token(
+                                    name = Comma,
+                                    definitions = [TokenDefinition(scanner = Atom(","))]
+                                ),
+                                Token(
+                                    name = Period,
+                                    definitions = [TokenDefinition(scanner = Atom("."))]
+                                ),
+                                Token(
+                                    name = QuestionMark,
+                                    definitions = [TokenDefinition(scanner = Atom("?"))]
+                                ),
+                                Token(
+                                    name = Semicolon,
+                                    definitions = [TokenDefinition(scanner = Atom(";"))]
+                                ),
+                                Token(
+                                    name = Colon,
+                                    definitions = [TokenDefinition(scanner = Atom(":"))]
+                                ),
+                                Token(
+                                    name = Equal,
+                                    definitions = [TokenDefinition(scanner = Atom("="))]
+                                ),
+                                Token(
+                                    name = EqualEqual,
+                                    definitions = [TokenDefinition(scanner = Atom("=="))]
+                                ),
+                                Token(
+                                    name = EqualGreaterThan,
+                                    definitions = [TokenDefinition(scanner = Atom("=>"))]
+                                ),
+                                Token(
+                                    name = Asterisk,
+                                    definitions = [TokenDefinition(scanner = Atom("*"))]
+                                ),
+                                Token(
+                                    name = AsteriskEqual,
+                                    definitions = [TokenDefinition(scanner = Atom("*="))]
+                                ),
+                                Token(
+                                    name = AsteriskAsterisk,
+                                    definitions = [TokenDefinition(scanner = Atom("**"))]
+                                ),
+                                Token(
+                                    name = Bar,
+                                    definitions = [TokenDefinition(scanner = Atom("|"))]
+                                ),
+                                Token(
+                                    name = BarEqual,
+                                    definitions = [TokenDefinition(scanner = Atom("|="))]
+                                ),
+                                Token(
+                                    name = BarBar,
+                                    definitions = [TokenDefinition(scanner = Atom("||"))]
+                                ),
+                                Token(
+                                    name = Ampersand,
+                                    definitions = [TokenDefinition(scanner = Atom("&"))]
+                                ),
+                                Token(
+                                    name = AmpersandEqual,
+                                    definitions = [TokenDefinition(scanner = Atom("&="))]
+                                ),
+                                Token(
+                                    name = AmpersandAmpersand,
+                                    definitions = [TokenDefinition(scanner = Atom("&&"))]
+                                ),
+                                Token(
+                                    name = LessThan,
+                                    definitions = [TokenDefinition(scanner = Atom("<"))]
+                                ),
+                                Token(
+                                    name = LessThanEqual,
+                                    definitions = [TokenDefinition(scanner = Atom("<="))]
+                                ),
+                                Token(
+                                    name = LessThanLessThan,
+                                    definitions = [TokenDefinition(scanner = Atom("<<"))]
+                                ),
+                                Token(
+                                    name = LessThanLessThanEqual,
+                                    definitions = [TokenDefinition(scanner = Atom("<<="))]
+                                ),
+                                Token(
+                                    name = GreaterThan,
+                                    definitions = [TokenDefinition(scanner = Atom(">"))]
+                                ),
+                                Token(
+                                    name = GreaterThanEqual,
+                                    definitions = [TokenDefinition(scanner = Atom(">="))]
+                                ),
+                                Token(
+                                    name = GreaterThanGreaterThan,
+                                    definitions = [TokenDefinition(scanner = Atom(">>"))]
+                                ),
+                                Token(
+                                    name = GreaterThanGreaterThanEqual,
+                                    definitions = [TokenDefinition(scanner = Atom(">>="))]
+                                ),
+                                Token(
+                                    name = GreaterThanGreaterThanGreaterThan,
+                                    definitions = [TokenDefinition(scanner = Atom(">>>"))]
+                                ),
+                                Token(
+                                    name = GreaterThanGreaterThanGreaterThanEqual,
+                                    definitions = [TokenDefinition(scanner = Atom(">>>="))]
+                                ),
+                                Token(
+                                    name = Plus,
+                                    definitions = [TokenDefinition(scanner = Atom("+"))]
+                                ),
+                                Token(
+                                    name = PlusEqual,
+                                    definitions = [TokenDefinition(scanner = Atom("+="))]
+                                ),
+                                Token(
+                                    name = PlusPlus,
+                                    definitions = [TokenDefinition(scanner = Atom("++"))]
+                                ),
+                                Token(
+                                    name = Minus,
+                                    definitions = [TokenDefinition(scanner = Atom("-"))]
+                                ),
+                                Token(
+                                    name = MinusEqual,
+                                    definitions = [TokenDefinition(scanner = Atom("-="))]
+                                ),
+                                Token(
+                                    name = MinusMinus,
+                                    definitions = [TokenDefinition(scanner = Atom("--"))]
+                                ),
+                                Token(
+                                    name = Slash,
+                                    definitions = [TokenDefinition(scanner = Atom("/"))]
+                                ),
+                                Token(
+                                    name = SlashEqual,
+                                    definitions = [TokenDefinition(scanner = Atom("/="))]
+                                ),
+                                Token(
+                                    name = Percent,
+                                    definitions = [TokenDefinition(scanner = Atom("%"))]
+                                ),
+                                Token(
+                                    name = PercentEqual,
+                                    definitions = [TokenDefinition(scanner = Atom("%="))]
+                                ),
+                                Token(
+                                    name = Bang,
+                                    definitions = [TokenDefinition(scanner = Atom("!"))]
+                                ),
+                                Token(
+                                    name = BangEqual,
+                                    definitions = [TokenDefinition(scanner = Atom("!="))]
+                                ),
+                                Token(
+                                    name = Caret,
+                                    definitions = [TokenDefinition(scanner = Atom("^"))]
+                                ),
+                                Token(
+                                    name = CaretEqual,
+                                    definitions = [TokenDefinition(scanner = Atom("^="))]
+                                ),
+                                Token(
+                                    name = Tilde,
+                                    definitions = [TokenDefinition(scanner = Atom("~"))]
+                                )
                             ]
                         ),
                         Topic(
@@ -3788,34 +3969,38 @@ TupleValues: TupleValues = {
                                 ),
                                 Token(
                                     name = HexLiteral,
-                                    not_followed_by = Fragment(IdentifierScanner),
-                                    scanner = Sequence([
-                                        Atom("0x"),
-                                        OneOrMore(Fragment(HexCharacter)),
-                                        ZeroOrMore(Sequence([
-                                            Atom("_"),
-                                            OneOrMore(Fragment(HexCharacter))
-                                        ]))
-                                    ])
+                                    definitions = [TokenDefinition(
+                                        scanner = Sequence([
+                                            Atom("0x"),
+                                            OneOrMore(Fragment(HexCharacter)),
+                                            ZeroOrMore(Sequence([
+                                                Atom("_"),
+                                                OneOrMore(Fragment(HexCharacter))
+                                            ]))
+                                        ]),
+                                        reject_suffix = Fragment(IdentifierScanner)
+                                    )]
                                 ),
                                 Token(
                                     name = DecimalLiteral,
-                                    not_followed_by = Fragment(IdentifierScanner),
-                                    scanner = Choice([
-                                        Sequence([
-                                            Fragment(DecimalDigits),
-                                            Optional(Sequence([
+                                    definitions = [TokenDefinition(
+                                        scanner = Choice([
+                                            Sequence([
+                                                Fragment(DecimalDigits),
+                                                Optional(Sequence([
+                                                    Atom("."),
+                                                    Fragment(DecimalDigits)
+                                                ])),
+                                                Optional(Fragment(DecimalExponent))
+                                            ]),
+                                            Sequence([
                                                 Atom("."),
-                                                Fragment(DecimalDigits)
-                                            ])),
-                                            Optional(Fragment(DecimalExponent))
+                                                Fragment(DecimalDigits),
+                                                Optional(Fragment(DecimalExponent))
+                                            ])
                                         ]),
-                                        Sequence([
-                                            Atom("."),
-                                            Fragment(DecimalDigits),
-                                            Optional(Fragment(DecimalExponent))
-                                        ])
-                                    ])
+                                        reject_suffix = Fragment(IdentifierScanner)
+                                    )]
                                 ),
                                 Fragment(
                                     name = DecimalDigits,
@@ -3876,28 +4061,30 @@ TupleValues: TupleValues = {
                                 ),
                                 Token(
                                     name = StringLiteral,
-                                    scanner = Choice([
-                                        Sequence([
-                                            Atom("'"),
-                                            ZeroOrMore(Choice([
-                                                Fragment(EscapeSequence),
-                                                Range(inclusive_start = ' ', inclusive_end = '&'),
-                                                Range(inclusive_start = '(', inclusive_end = '['),
-                                                Range(inclusive_start = ']', inclusive_end = '~')
-                                            ])),
-                                            Atom("'")
-                                        ]),
-                                        Sequence([
-                                            Atom("\""),
-                                            ZeroOrMore(Choice([
-                                                Fragment(EscapeSequence),
-                                                Range(inclusive_start = ' ', inclusive_end = '!'),
-                                                Range(inclusive_start = '#', inclusive_end = '['),
-                                                Range(inclusive_start = ']', inclusive_end = '~')
-                                            ])),
-                                            Atom("\"")
+                                    definitions = [TokenDefinition(
+                                        scanner = Choice([
+                                            Sequence([
+                                                Atom("'"),
+                                                ZeroOrMore(Choice([
+                                                    Fragment(EscapeSequence),
+                                                    Range(inclusive_start = ' ', inclusive_end = '&'),
+                                                    Range(inclusive_start = '(', inclusive_end = '['),
+                                                    Range(inclusive_start = ']', inclusive_end = '~')
+                                                ])),
+                                                Atom("'")
+                                            ]),
+                                            Sequence([
+                                                Atom("\""),
+                                                ZeroOrMore(Choice([
+                                                    Fragment(EscapeSequence),
+                                                    Range(inclusive_start = ' ', inclusive_end = '!'),
+                                                    Range(inclusive_start = '#', inclusive_end = '['),
+                                                    Range(inclusive_start = ']', inclusive_end = '~')
+                                                ])),
+                                                Atom("\"")
+                                            ])
                                         ])
-                                    ])
+                                    )]
                                 ),
                                 Fragment(
                                     name = EscapeSequence,
@@ -3916,18 +4103,20 @@ TupleValues: TupleValues = {
                                 ),
                                 Token(
                                     name = HexStringLiteral,
-                                    scanner = Choice([
-                                        Sequence([
-                                            Atom("hex'"),
-                                            Optional(Fragment(HexStringContents)),
-                                            Atom("'")
-                                        ]),
-                                        Sequence([
-                                            Atom("hex\""),
-                                            Optional(Fragment(HexStringContents)),
-                                            Atom("\"")
+                                    definitions = [TokenDefinition(
+                                        scanner = Choice([
+                                            Sequence([
+                                                Atom("hex'"),
+                                                Optional(Fragment(HexStringContents)),
+                                                Atom("'")
+                                            ]),
+                                            Sequence([
+                                                Atom("hex\""),
+                                                Optional(Fragment(HexStringContents)),
+                                                Atom("\"")
+                                            ])
                                         ])
-                                    ])
+                                    )]
                                 ),
                                 Fragment(
                                     name = HexStringContents,
@@ -3947,24 +4136,26 @@ TupleValues: TupleValues = {
                                 ),
                                 Token(
                                     name = UnicodeStringLiteral,
-                                    scanner = Choice([
-                                        Sequence([
-                                            Atom("unicode'"),
-                                            ZeroOrMore(Choice([
-                                                Fragment(UnicodeEscapeSequence),
-                                                Not(['\'', '\\', '\r', '\n'])
-                                            ])),
-                                            Atom("'")
-                                        ]),
-                                        Sequence([
-                                            Atom("unicode\""),
-                                            ZeroOrMore(Choice([
-                                                Fragment(UnicodeEscapeSequence),
-                                                Not(['"', '\\', '\r', '\n'])
-                                            ])),
-                                            Atom("\"")
+                                    definitions = [TokenDefinition(
+                                        scanner = Choice([
+                                            Sequence([
+                                                Atom("unicode'"),
+                                                ZeroOrMore(Choice([
+                                                    Fragment(UnicodeEscapeSequence),
+                                                    Not(['\'', '\\', '\r', '\n'])
+                                                ])),
+                                                Atom("'")
+                                            ]),
+                                            Sequence([
+                                                Atom("unicode\""),
+                                                ZeroOrMore(Choice([
+                                                    Fragment(UnicodeEscapeSequence),
+                                                    Not(['"', '\\', '\r', '\n'])
+                                                ])),
+                                                Atom("\"")
+                                            ])
                                         ])
-                                    ])
+                                    )]
                                 ),
                                 Fragment(
                                     name = UnicodeEscapeSequence,
@@ -4064,7 +4255,7 @@ IdentifierPathTailElement: (Period, IdentifierPathElement) = {
                                 ),
                                 Token(
                                     name = Identifier,
-                                    scanner = Fragment(IdentifierScanner)
+                                    definitions = [TokenDefinition(scanner = Fragment(IdentifierScanner))]
                                 ),
                                 Fragment(
                                     name = IdentifierScanner,
@@ -4305,7 +4496,7 @@ IdentifierPathTailElement: (Period, IdentifierPathElement) = {
                             ),
                             Token(
                                 name = YulIdentifier,
-                                scanner = Fragment(YulIdentifierScanner)
+                                definitions = [TokenDefinition(scanner = Fragment(YulIdentifierScanner))]
                             ),
                             Fragment(
                                 name = YulIdentifierScanner,
@@ -4343,40 +4534,46 @@ IdentifierPathTailElement: (Period, IdentifierPathElement) = {
                             ),
                             Token(
                                 name = YulDecimalLiteral,
-                                not_followed_by = Fragment(YulIdentifierScanner),
-                                scanner = Choice([
-                                    Atom("0"),
-                                    Sequence([
-                                        Range(inclusive_start = '1', inclusive_end = '9'),
-                                        ZeroOrMore(Range(
-                                            inclusive_start = '0',
-                                            inclusive_end = '9'
-                                        ))
-                                    ])
-                                ])
+                                definitions = [TokenDefinition(
+                                    scanner = Choice([
+                                        Atom("0"),
+                                        Sequence([
+                                            Range(inclusive_start = '1', inclusive_end = '9'),
+                                            ZeroOrMore(Range(
+                                                inclusive_start = '0',
+                                                inclusive_end = '9'
+                                            ))
+                                        ])
+                                    ]),
+                                    reject_suffix = Fragment(YulIdentifierScanner)
+                                )]
                             ),
                             Token(
                                 name = YulHexLiteral,
-                                not_followed_by = Fragment(YulIdentifierScanner),
-                                scanner = Sequence([
-                                    Atom("0x"),
-                                    OneOrMore(Fragment(YulHexCharacter))
-                                ])
+                                definitions = [TokenDefinition(
+                                    scanner = Sequence([
+                                        Atom("0x"),
+                                        OneOrMore(Fragment(YulHexCharacter))
+                                    ]),
+                                    reject_suffix = Fragment(YulIdentifierScanner)
+                                )]
                             ),
                             Token(
                                 name = YulHexStringLiteral,
-                                scanner = Choice([
-                                    Sequence([
-                                        Atom("hex'"),
-                                        Optional(Fragment(YulHexStringContents)),
-                                        Atom("'")
-                                    ]),
-                                    Sequence([
-                                        Atom("hex\""),
-                                        Optional(Fragment(YulHexStringContents)),
-                                        Atom("\"")
+                                definitions = [TokenDefinition(
+                                    scanner = Choice([
+                                        Sequence([
+                                            Atom("hex'"),
+                                            Optional(Fragment(YulHexStringContents)),
+                                            Atom("'")
+                                        ]),
+                                        Sequence([
+                                            Atom("hex\""),
+                                            Optional(Fragment(YulHexStringContents)),
+                                            Atom("\"")
+                                        ])
                                     ])
-                                ])
+                                )]
                             ),
                             Fragment(
                                 name = YulHexStringContents,
@@ -4392,28 +4589,30 @@ IdentifierPathTailElement: (Period, IdentifierPathElement) = {
                             ),
                             Token(
                                 name = YulStringLiteral,
-                                scanner = Choice([
-                                    Sequence([
-                                        Atom("'"),
-                                        ZeroOrMore(Choice([
-                                            Fragment(YulEscapeSequence),
-                                            Range(inclusive_start = ' ', inclusive_end = '&'),
-                                            Range(inclusive_start = '(', inclusive_end = '['),
-                                            Range(inclusive_start = ']', inclusive_end = '~')
-                                        ])),
-                                        Atom("'")
-                                    ]),
-                                    Sequence([
-                                        Atom("\""),
-                                        ZeroOrMore(Choice([
-                                            Fragment(YulEscapeSequence),
-                                            Range(inclusive_start = ' ', inclusive_end = '!'),
-                                            Range(inclusive_start = '#', inclusive_end = '['),
-                                            Range(inclusive_start = ']', inclusive_end = '~')
-                                        ])),
-                                        Atom("\"")
+                                definitions = [TokenDefinition(
+                                    scanner = Choice([
+                                        Sequence([
+                                            Atom("'"),
+                                            ZeroOrMore(Choice([
+                                                Fragment(YulEscapeSequence),
+                                                Range(inclusive_start = ' ', inclusive_end = '&'),
+                                                Range(inclusive_start = '(', inclusive_end = '['),
+                                                Range(inclusive_start = ']', inclusive_end = '~')
+                                            ])),
+                                            Atom("'")
+                                        ]),
+                                        Sequence([
+                                            Atom("\""),
+                                            ZeroOrMore(Choice([
+                                                Fragment(YulEscapeSequence),
+                                                Range(inclusive_start = ' ', inclusive_end = '!'),
+                                                Range(inclusive_start = '#', inclusive_end = '['),
+                                                Range(inclusive_start = ']', inclusive_end = '~')
+                                            ])),
+                                            Atom("\"")
+                                        ])
                                     ])
-                                ])
+                                )]
                             ),
                             Fragment(
                                 name = YulEscapeSequence,
@@ -4503,14 +4702,38 @@ IdentifierPathTailElement: (Period, IdentifierPathElement) = {
                     Topic(
                         title = "Yul Punctuation",
                         items = [
-                            Token(name = YulCloseBrace, scanner = Atom("}")),
-                            Token(name = YulCloseParen, scanner = Atom(")")),
-                            Token(name = YulColonEqual, scanner = Atom(":=")),
-                            Token(name = YulComma, scanner = Atom(",")),
-                            Token(name = YulMinusGreaterThan, scanner = Atom("->")),
-                            Token(name = YulOpenBrace, scanner = Atom("{")),
-                            Token(name = YulOpenParen, scanner = Atom("(")),
-                            Token(name = YulPeriod, scanner = Atom("."))
+                            Token(
+                                name = YulCloseBrace,
+                                definitions = [TokenDefinition(scanner = Atom("}"))]
+                            ),
+                            Token(
+                                name = YulCloseParen,
+                                definitions = [TokenDefinition(scanner = Atom(")"))]
+                            ),
+                            Token(
+                                name = YulColonEqual,
+                                definitions = [TokenDefinition(scanner = Atom(":="))]
+                            ),
+                            Token(
+                                name = YulComma,
+                                definitions = [TokenDefinition(scanner = Atom(","))]
+                            ),
+                            Token(
+                                name = YulMinusGreaterThan,
+                                definitions = [TokenDefinition(scanner = Atom("->"))]
+                            ),
+                            Token(
+                                name = YulOpenBrace,
+                                definitions = [TokenDefinition(scanner = Atom("{"))]
+                            ),
+                            Token(
+                                name = YulOpenParen,
+                                definitions = [TokenDefinition(scanner = Atom("("))]
+                            ),
+                            Token(
+                                name = YulPeriod,
+                                definitions = [TokenDefinition(scanner = Atom("."))]
+                            )
                         ]
                     ),
                     Topic(
