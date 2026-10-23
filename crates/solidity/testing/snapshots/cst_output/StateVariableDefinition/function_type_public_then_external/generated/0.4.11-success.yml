@@ -1,0 +1,27 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Source: >
+  1  │ function() public external x;                                                    │ 0..29
+
+Errors: []
+
+Tree:
+  - (root꞉ StateVariableDefinition): # "function() public external x;\n" (0..30)
+      - (type_name꞉ TypeName) ► (variant꞉ FunctionType): # "function() public external" (0..26)
+          - (function_keyword꞉ FunctionKeyword): "function" # (0..8)
+          - (parameters꞉ ParametersDeclaration): # "()" (8..10)
+              - (open_paren꞉ OpenParen): "(" # (8..9)
+              - (parameters꞉ Parameters): [] # (9..9)
+              - (close_paren꞉ CloseParen): ")" # (9..10)
+          - (attributes꞉ FunctionTypeAttributes): # " public external" (10..26)
+              - (item꞉ FunctionTypeAttribute): # " public" (10..17)
+                  - (leading_trivia꞉ Whitespace): " " # (10..11)
+                  - (variant꞉ PublicKeyword): "public" # (11..17)
+              - (item꞉ FunctionTypeAttribute): # " external" (17..26)
+                  - (leading_trivia꞉ Whitespace): " " # (17..18)
+                  - (variant꞉ ExternalKeyword): "external" # (18..26)
+      - (attributes꞉ StateVariableAttributes): [] # (26..26)
+      - (leading_trivia꞉ Whitespace): " " # (26..27)
+      - (name꞉ Identifier): "x" # (27..28)
+      - (semicolon꞉ Semicolon): ";" # (28..29)
+      - (trailing_trivia꞉ EndOfLine): "\n" # (29..30)
