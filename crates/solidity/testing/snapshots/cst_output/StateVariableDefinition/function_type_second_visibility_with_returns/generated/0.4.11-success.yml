@@ -1,0 +1,36 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Source: >
+  1  │ function() external public returns (uint) x;                                     │ 0..44
+
+Errors: []
+
+Tree:
+  - (root꞉ StateVariableDefinition): # "function() external public returns (uint) x;\n" (0..45)
+      - (type_name꞉ TypeName) ► (variant꞉ FunctionType): # "function() external public returns (uint)" (0..41)
+          - (function_keyword꞉ FunctionKeyword): "function" # (0..8)
+          - (parameters꞉ ParametersDeclaration): # "()" (8..10)
+              - (open_paren꞉ OpenParen): "(" # (8..9)
+              - (parameters꞉ Parameters): [] # (9..9)
+              - (close_paren꞉ CloseParen): ")" # (9..10)
+          - (attributes꞉ FunctionTypeAttributes): # " external public" (10..26)
+              - (item꞉ FunctionTypeAttribute): # " external" (10..19)
+                  - (leading_trivia꞉ Whitespace): " " # (10..11)
+                  - (variant꞉ ExternalKeyword): "external" # (11..19)
+              - (item꞉ FunctionTypeAttribute): # " public" (19..26)
+                  - (leading_trivia꞉ Whitespace): " " # (19..20)
+                  - (variant꞉ PublicKeyword): "public" # (20..26)
+          - (returns꞉ ReturnsDeclaration): # " returns (uint)" (26..41)
+              - (leading_trivia꞉ Whitespace): " " # (26..27)
+              - (returns_keyword꞉ ReturnsKeyword): "returns" # (27..34)
+              - (variables꞉ ParametersDeclaration): # " (uint)" (34..41)
+                  - (leading_trivia꞉ Whitespace): " " # (34..35)
+                  - (open_paren꞉ OpenParen): "(" # (35..36)
+                  - (parameters꞉ Parameters): # "uint" (36..40)
+                      - (item꞉ Parameter) ► (type_name꞉ TypeName) ► (variant꞉ ElementaryType) ► (variant꞉ UintKeyword): "uint" # (36..40)
+                  - (close_paren꞉ CloseParen): ")" # (40..41)
+      - (attributes꞉ StateVariableAttributes): [] # (41..41)
+      - (leading_trivia꞉ Whitespace): " " # (41..42)
+      - (name꞉ Identifier): "x" # (42..43)
+      - (semicolon꞉ Semicolon): ";" # (43..44)
+      - (trailing_trivia꞉ EndOfLine): "\n" # (44..45)

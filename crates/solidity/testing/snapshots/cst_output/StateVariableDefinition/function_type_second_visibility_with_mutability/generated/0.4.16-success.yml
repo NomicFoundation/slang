@@ -1,0 +1,31 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Source: >
+  1  │ function(uint256) internal view private x;                                       │ 0..42
+
+Errors: []
+
+Tree:
+  - (root꞉ StateVariableDefinition): # "function(uint256) internal view private x;\n" (0..43)
+      - (type_name꞉ TypeName) ► (variant꞉ FunctionType): # "function(uint256) internal view private" (0..39)
+          - (function_keyword꞉ FunctionKeyword): "function" # (0..8)
+          - (parameters꞉ ParametersDeclaration): # "(uint256)" (8..17)
+              - (open_paren꞉ OpenParen): "(" # (8..9)
+              - (parameters꞉ Parameters): # "uint256" (9..16)
+                  - (item꞉ Parameter) ► (type_name꞉ TypeName) ► (variant꞉ ElementaryType) ► (variant꞉ UintKeyword): "uint256" # (9..16)
+              - (close_paren꞉ CloseParen): ")" # (16..17)
+          - (attributes꞉ FunctionTypeAttributes): # " internal view private" (17..39)
+              - (item꞉ FunctionTypeAttribute): # " internal" (17..26)
+                  - (leading_trivia꞉ Whitespace): " " # (17..18)
+                  - (variant꞉ InternalKeyword): "internal" # (18..26)
+              - (item꞉ FunctionTypeAttribute): # " view" (26..31)
+                  - (leading_trivia꞉ Whitespace): " " # (26..27)
+                  - (variant꞉ ViewKeyword): "view" # (27..31)
+              - (item꞉ FunctionTypeAttribute): # " private" (31..39)
+                  - (leading_trivia꞉ Whitespace): " " # (31..32)
+                  - (variant꞉ PrivateKeyword): "private" # (32..39)
+      - (attributes꞉ StateVariableAttributes): [] # (39..39)
+      - (leading_trivia꞉ Whitespace): " " # (39..40)
+      - (name꞉ Identifier): "x" # (40..41)
+      - (semicolon꞉ Semicolon): ";" # (41..42)
+      - (trailing_trivia꞉ EndOfLine): "\n" # (42..43)
