@@ -1373,6 +1373,11 @@ mod source_unit {
     }
 
     #[test]
+    fn state_variable_function_or_fallback() -> Result<()> {
+        run("SourceUnit", "state_variable_function_or_fallback")
+    }
+
+    #[test]
     fn top_level_event() -> Result<()> {
         run("SourceUnit", "top_level_event")
     }

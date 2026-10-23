@@ -3239,14 +3239,14 @@
                     { "reference": "ConstructorDefinition", "enabled": { "From": { "from": "0.4.22" } } },
                     { "reference": "ReceiveFunctionDefinition", "enabled": { "From": { "from": "0.6.0" } } },
                     { "reference": "FallbackFunctionDefinition", "enabled": { "From": { "from": "0.6.0" } } },
-                    { "reference": "UnnamedFunctionDefinition", "enabled": { "Till": { "till": "0.6.0" } } },
                     { "reference": "ModifierDefinition" },
                     { "reference": "StructDefinition" },
                     { "reference": "EnumDefinition" },
                     { "reference": "EventDefinition" },
                     { "reference": "ErrorDefinition", "enabled": { "From": { "from": "0.8.4" } } },
                     { "reference": "UserDefinedValueTypeDefinition", "enabled": { "From": { "from": "0.8.8" } } },
-                    { "reference": "StateVariableDefinition" }
+                    { "reference": "StateVariableDefinition" },
+                    { "reference": "UnnamedFunctionDefinition", "enabled": { "Till": { "till": "0.6.0" } } }
                   ]
                 }
               }

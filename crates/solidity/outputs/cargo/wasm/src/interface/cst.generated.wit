@@ -333,14 +333,14 @@ interface cst {
             ///                | (* variant: *) ConstructorDefinition (* Introduced in 0.4.22 *)
             ///                | (* variant: *) ReceiveFunctionDefinition (* Introduced in 0.6.0 *)
             ///                | (* variant: *) FallbackFunctionDefinition (* Introduced in 0.6.0 *)
-            ///                | (* variant: *) UnnamedFunctionDefinition (* Deprecated in 0.6.0 *)
             ///                | (* variant: *) ModifierDefinition
             ///                | (* variant: *) StructDefinition
             ///                | (* variant: *) EnumDefinition
             ///                | (* variant: *) EventDefinition
             ///                | (* variant: *) ErrorDefinition (* Introduced in 0.8.4 *)
             ///                | (* variant: *) UserDefinedValueTypeDefinition (* Introduced in 0.8.8 *)
-            ///                | (* variant: *) StateVariableDefinition;
+            ///                | (* variant: *) StateVariableDefinition
+            ///                | (* variant: *) UnnamedFunctionDefinition; (* Deprecated in 0.6.0 *)
             /// ```
             %contract-member,
             /// Represents a node with kind `ContractMembers`, having the following structure:

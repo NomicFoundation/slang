@@ -8054,14 +8054,14 @@ export class ContractSpecifier {
  *                | (* variant: *) ConstructorDefinition (* Introduced in 0.4.22 *)
  *                | (* variant: *) ReceiveFunctionDefinition (* Introduced in 0.6.0 *)
  *                | (* variant: *) FallbackFunctionDefinition (* Introduced in 0.6.0 *)
- *                | (* variant: *) UnnamedFunctionDefinition (* Deprecated in 0.6.0 *)
  *                | (* variant: *) ModifierDefinition
  *                | (* variant: *) StructDefinition
  *                | (* variant: *) EnumDefinition
  *                | (* variant: *) EventDefinition
  *                | (* variant: *) ErrorDefinition (* Introduced in 0.8.4 *)
  *                | (* variant: *) UserDefinedValueTypeDefinition (* Introduced in 0.8.8 *)
- *                | (* variant: *) StateVariableDefinition;
+ *                | (* variant: *) StateVariableDefinition
+ *                | (* variant: *) UnnamedFunctionDefinition; (* Deprecated in 0.6.0 *)
  * ```
  */
 export class ContractMember {
@@ -8071,14 +8071,14 @@ export class ContractMember {
     | ConstructorDefinition
     | ReceiveFunctionDefinition
     | FallbackFunctionDefinition
-    | UnnamedFunctionDefinition
     | ModifierDefinition
     | StructDefinition
     | EnumDefinition
     | EventDefinition
     | ErrorDefinition
     | UserDefinedValueTypeDefinition
-    | StateVariableDefinition = once(() => {
+    | StateVariableDefinition
+    | UnnamedFunctionDefinition = once(() => {
     const variant = wasm.ast.Selectors.choice(this.cst);
 
     switch (variant.kind) {
@@ -8092,8 +8092,6 @@ export class ContractMember {
         return new ReceiveFunctionDefinition(variant as NonterminalNode);
       case NonterminalKind.FallbackFunctionDefinition:
         return new FallbackFunctionDefinition(variant as NonterminalNode);
-      case NonterminalKind.UnnamedFunctionDefinition:
-        return new UnnamedFunctionDefinition(variant as NonterminalNode);
       case NonterminalKind.ModifierDefinition:
         return new ModifierDefinition(variant as NonterminalNode);
       case NonterminalKind.StructDefinition:
@@ -8108,6 +8106,8 @@ export class ContractMember {
         return new UserDefinedValueTypeDefinition(variant as NonterminalNode);
       case NonterminalKind.StateVariableDefinition:
         return new StateVariableDefinition(variant as NonterminalNode);
+      case NonterminalKind.UnnamedFunctionDefinition:
+        return new UnnamedFunctionDefinition(variant as NonterminalNode);
 
       default:
         throw new Error(`Unexpected variant: '${variant.kind}'.`);
@@ -8135,14 +8135,14 @@ export class ContractMember {
     | ConstructorDefinition
     | ReceiveFunctionDefinition
     | FallbackFunctionDefinition
-    | UnnamedFunctionDefinition
     | ModifierDefinition
     | StructDefinition
     | EnumDefinition
     | EventDefinition
     | ErrorDefinition
     | UserDefinedValueTypeDefinition
-    | StateVariableDefinition {
+    | StateVariableDefinition
+    | UnnamedFunctionDefinition {
     return this.fetch();
   }
 }
