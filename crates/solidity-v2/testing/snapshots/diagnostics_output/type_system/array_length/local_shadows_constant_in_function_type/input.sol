@@ -1,0 +1,13 @@
+// SPDX-License-Identifier: MIT
+pragma solidity *;
+
+// The local `N` shadows the constant inside a function type parameter, so the
+// length is not a constant.
+contract C {
+    uint256 constant N = 2;
+
+    function f() public pure {
+        uint256 N = 1;
+        function(uint256[N] memory) internal pure g;
+    }
+}

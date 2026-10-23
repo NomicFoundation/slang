@@ -4,8 +4,9 @@ use slang_solidity_v2_common::nodes::NodeId;
 use slang_solidity_v2_common::versions::LanguageVersion;
 use slang_solidity_v2_ir::ir;
 
-use crate::binder::{Binder, Definition, Scope, ScopeId};
+use crate::binder::{Binder, Definition, ScopeId};
 use crate::context::{FileNodeMapper, SemanticFile};
+use crate::passes::common::ScopeStack;
 use crate::types::{ContractType, Type, TypeId, TypeRegistry, UserMetaType};
 
 mod recursive_structs;
@@ -61,7 +62,7 @@ pub fn run(
 }
 
 struct Pass<'a> {
-    scope_stack: Vec<ScopeId>,
+    scope_stack: ScopeStack,
     binder: &'a mut Binder,
     language_version: LanguageVersion,
     types: &'a mut TypeRegistry,
@@ -93,7 +94,7 @@ impl<'a> Pass<'a> {
         diagnostics: &'a mut DiagnosticCollection,
     ) {
         let mut pass = Self {
-            scope_stack: Vec::new(),
+            scope_stack: ScopeStack::default(),
             binder,
             language_version,
             types,
@@ -123,7 +124,7 @@ impl<'a> Pass<'a> {
         storage_registered_structs: &mut Set<NodeId>,
     ) {
         let mut pass = Self {
-            scope_stack: Vec::new(),
+            scope_stack: ScopeStack::default(),
             binder,
             language_version,
             types,
@@ -201,25 +202,21 @@ impl<'a> Pass<'a> {
         self.scope_stack.push(scope_id);
     }
 
-    fn leave_scope_for_node_id(&mut self, node_id: NodeId) {
-        let Some(current_scope_id) = self.scope_stack.pop() else {
-            unreachable!("attempt to pop an empty scope stack");
-        };
-        assert_eq!(
-            current_scope_id,
-            self.binder.scope_id_for_node_id(node_id).unwrap()
-        );
+    /// Makes the scope of `node_id` the one names resolve in, while keeping
+    /// the current frame. Used after a variable declaration statement, so
+    /// the following statements can see the declared variables.
+    fn replace_scope_for_node_id(&mut self, node_id: NodeId) {
+        let scope_id = self.binder.scope_id_for_node_id(node_id).unwrap();
+        self.scope_stack.replace(scope_id);
     }
 
-    fn current_contract_or_file_scope_id(&self) -> ScopeId {
-        for scope_id in self.scope_stack.iter().rev() {
-            let scope = self.binder.get_scope_by_id(*scope_id);
-            if matches!(scope, Scope::Contract(_) | Scope::File(_)) {
-                return *scope_id;
-            }
-        }
-        unreachable!(
-            "attempt to get the current contract scope without a contract or file scope in the stack"
-        );
+    fn leave_scope_for_node_id(&mut self, node_id: NodeId) {
+        let scope_id = self.binder.scope_id_for_node_id(node_id).unwrap();
+        self.scope_stack.pop(scope_id);
+    }
+
+    /// The scope names resolve in at the current point of the traversal.
+    fn current_scope_id(&self) -> ScopeId {
+        self.scope_stack.current()
     }
 }

@@ -155,12 +155,20 @@ impl Visitor for Pass<'_> {
         false
     }
 
+    fn enter_function_definition(&mut self, node: &ir::FunctionDefinition) -> bool {
+        self.enter_scope_for_node_id(node.id());
+        true
+    }
+
     fn leave_function_definition(&mut self, node: &ir::FunctionDefinition) {
         // type parameters and return variables
         self.visit_parameters(&node.parameters);
         if let Some(returns) = &node.returns {
             self.visit_parameters(returns);
         }
+        // Parameter types may name the parameters, so they are typed in the
+        // function scope.
+        self.leave_scope_for_node_id(node.id());
 
         // now we can compute the function type
         let type_id = self.type_of_function_definition(node, self.current_receiver_type);
@@ -387,6 +395,27 @@ impl Visitor for Pass<'_> {
                 }
             }
         }
+
+        // Statements that follow can see the declared variables.
+        self.replace_scope_for_node_id(node.id());
+    }
+
+    fn enter_block(&mut self, node: &ir::Block) -> bool {
+        self.enter_scope_for_node_id(node.id());
+        true
+    }
+
+    fn leave_block(&mut self, node: &ir::Block) {
+        self.leave_scope_for_node_id(node.id());
+    }
+
+    fn enter_for_statement(&mut self, node: &ir::ForStatement) -> bool {
+        self.enter_scope_for_node_id(node.id());
+        true
+    }
+
+    fn leave_for_statement(&mut self, node: &ir::ForStatement) {
+        self.leave_scope_for_node_id(node.id());
     }
 
     fn leave_struct_definition(&mut self, node: &ir::StructDefinition) {
@@ -526,7 +555,7 @@ impl Visitor for Pass<'_> {
         if node.is_global {
             self.binder.insert_global_using_directive(directive);
         } else {
-            let current_scope_id = self.current_contract_or_file_scope_id();
+            let current_scope_id = self.current_scope_id();
             self.binder
                 .insert_using_directive_in_scope(directive, current_scope_id);
         }
