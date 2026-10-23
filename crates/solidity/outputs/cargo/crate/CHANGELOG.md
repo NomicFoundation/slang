@@ -1,5 +1,12 @@
 # changelog
 
+## 1.3.10
+
+### Patch Changes
+
+- [#2305](https://github.com/NomicFoundation/slang/pull/2305) [`0887d8d`](https://github.com/NomicFoundation/slang/commit/0887d8d14ffa713283bd25b1b75e67492ce0e951) Thanks [@teofr](https://github.com/teofr)! - Fixed priority between `StateVariableDefinition` and `UnnamedFunctionDefinition` when parsing:
+  `function() x;` is parsed as a `StateVariableDefinition` named `x`, rather than an `UnnamedFunctionDefinition` with an `x` modifier.
+
 ## 1.3.9
 
 ### Patch Changes
