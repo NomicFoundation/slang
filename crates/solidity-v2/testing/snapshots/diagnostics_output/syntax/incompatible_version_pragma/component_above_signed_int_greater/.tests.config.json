@@ -1,0 +1,11 @@
+{
+  "expected_solc_divergence": [
+    {
+      "specifier": {
+        "type": "Till",
+        "till": "0.8.38"
+      },
+      "reason": "Until '0.8.38' solc cast version components to a signed 32-bit integer, so '3000000000' wrapped to a negative number and every version compared as above it, accepting the pragma. Slang compares the components as unsigned numbers and rejects it, which is what solc does from '0.8.38' on."
+    }
+  ]
+}

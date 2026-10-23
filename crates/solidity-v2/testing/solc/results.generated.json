@@ -302,5 +302,13 @@
     "expected_failures": 35,
     "unexpected_failures": 0,
     "unexpected_failures_paths": []
+  },
+  "0.8.38": {
+    "commit": "1835d247de183f23e7b0e2bc4a50732af525b77c",
+    "executed": 1674,
+    "passed": 1639,
+    "expected_failures": 35,
+    "unexpected_failures": 0,
+    "unexpected_failures_paths": []
   }
 }
