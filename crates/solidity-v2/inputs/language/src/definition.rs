@@ -3986,15 +3986,18 @@ TupleValues: TupleValues = {
                                     definitions = [
                                         // An integer, without a fraction or an exponent:
                                         TokenDefinition(
-                                            scanner = Fragment(DecimalDigits),
-                                            reject_suffix =
-                                                Choice([Fragment(IdentifierScanner), Atom("._")])
+                                            scanner = Fragment(DecimalInteger),
+                                            reject_suffix = Choice([
+                                                Fragment(IdentifierScanner),
+                                                Atom("._"),
+                                                Range(inclusive_start = '0', inclusive_end = '9')
+                                            ])
                                         ),
                                         // A number with a fraction, or an exponent, or both:
                                         TokenDefinition(
                                             scanner = Choice([
                                                 Sequence([
-                                                    Fragment(DecimalDigits),
+                                                    Fragment(DecimalInteger),
                                                     Choice([
                                                         Sequence([
                                                             Atom("."),
@@ -4013,6 +4016,27 @@ TupleValues: TupleValues = {
                                             reject_suffix = Fragment(IdentifierScanner)
                                         )
                                     ]
+                                ),
+                                // Unlike the fraction and the exponent, the integer part cannot have leading zeros:
+                                Fragment(
+                                    name = DecimalInteger,
+                                    scanner = Choice([
+                                        Atom("0"),
+                                        Sequence([
+                                            Range(inclusive_start = '1', inclusive_end = '9'),
+                                            ZeroOrMore(Range(
+                                                inclusive_start = '0',
+                                                inclusive_end = '9'
+                                            )),
+                                            ZeroOrMore(Sequence([
+                                                Atom("_"),
+                                                OneOrMore(Range(
+                                                    inclusive_start = '0',
+                                                    inclusive_end = '9'
+                                                ))
+                                            ]))
+                                        ])
+                                    ])
                                 ),
                                 Fragment(
                                     name = DecimalDigits,
@@ -4557,7 +4581,11 @@ IdentifierPathTailElement: (Period, IdentifierPathElement) = {
                                             ))
                                         ])
                                     ]),
-                                    reject_suffix = Fragment(YulIdentifierScanner)
+                                    // A digit after it means a leading zero, like in `01` (octal numbers are not allowed):
+                                    reject_suffix = Choice([
+                                        Fragment(YulIdentifierScanner),
+                                        Range(inclusive_start = '0', inclusive_end = '9')
+                                    ])
                                 )]
                             ),
                             Token(

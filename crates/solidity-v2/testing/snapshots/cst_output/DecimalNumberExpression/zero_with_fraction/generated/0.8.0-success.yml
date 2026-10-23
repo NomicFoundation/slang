@@ -1,0 +1,35 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Source: >
+  1  │ contract C {                                                                     │ 0..12
+  2  │     function f() {                                                               │ 13..31
+  3  │         0.05;                                                                    │ 32..45
+  4  │     }                                                                            │ 46..51
+  5  │ }                                                                                │ 52..53
+
+Tree:
+  - (root꞉ SourceUnit): # "contract C {\n    function f() {\n        0.05;\n    ..." (0..53)
+      - (members꞉ SourceUnitMembers): # "contract C {\n    function f() {\n        0.05;\n    ..." (0..53)
+          - (item꞉ SourceUnitMember) ► (contract_definition꞉ ContractDefinition): # "contract C {\n    function f() {\n        0.05;\n    ..." (0..53)
+              - (contract_keyword꞉ ContractKeyword): "contract" # (0..8)
+              - (name꞉ Identifier): "C" # (9..10)
+              - (specifiers꞉ ContractSpecifiers): []
+              - (open_brace꞉ OpenBrace): "{" # (11..12)
+              - (members꞉ ContractMembers): # "function f() {\n        0.05;\n    }" (17..51)
+                  - (item꞉ ContractMember) ► (function_definition꞉ FunctionDefinition): # "function f() {\n        0.05;\n    }" (17..51)
+                      - (function_keyword꞉ FunctionKeyword): "function" # (17..25)
+                      - (name꞉ FunctionName) ► (identifier꞉ Identifier): "f" # (26..27)
+                      - (parameters꞉ ParametersDeclaration): # "()" (27..29)
+                          - (open_paren꞉ OpenParen): "(" # (27..28)
+                          - (parameters꞉ Parameters): []
+                          - (close_paren꞉ CloseParen): ")" # (28..29)
+                      - (attributes꞉ FunctionAttributes): []
+                      - (body꞉ FunctionBody) ► (block꞉ Block): # "{\n        0.05;\n    }" (30..51)
+                          - (open_brace꞉ OpenBrace): "{" # (30..31)
+                          - (statements꞉ Statements): # "0.05;" (40..45)
+                              - (item꞉ Statement) ► (expression_statement꞉ ExpressionStatement): # "0.05;" (40..45)
+                                  - (expression꞉ Expression) ► (decimal_number_expression꞉ DecimalNumberExpression): # "0.05" (40..44)
+                                      - (literal꞉ DecimalLiteral): "0.05" # (40..44)
+                                  - (semicolon꞉ Semicolon): ";" # (44..45)
+                          - (close_brace꞉ CloseBrace): "}" # (50..51)
+              - (close_brace꞉ CloseBrace): "}" # (52..53)

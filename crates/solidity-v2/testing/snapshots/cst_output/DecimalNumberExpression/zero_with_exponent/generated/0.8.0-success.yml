@@ -1,0 +1,35 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Source: >
+  1  │ contract C {                                                                     │ 0..12
+  2  │     function f() {                                                               │ 13..31
+  3  │         0e1;                                                                     │ 32..44
+  4  │     }                                                                            │ 45..50
+  5  │ }                                                                                │ 51..52
+
+Tree:
+  - (root꞉ SourceUnit): # "contract C {\n    function f() {\n        0e1;\n    }..." (0..52)
+      - (members꞉ SourceUnitMembers): # "contract C {\n    function f() {\n        0e1;\n    }..." (0..52)
+          - (item꞉ SourceUnitMember) ► (contract_definition꞉ ContractDefinition): # "contract C {\n    function f() {\n        0e1;\n    }..." (0..52)
+              - (contract_keyword꞉ ContractKeyword): "contract" # (0..8)
+              - (name꞉ Identifier): "C" # (9..10)
+              - (specifiers꞉ ContractSpecifiers): []
+              - (open_brace꞉ OpenBrace): "{" # (11..12)
+              - (members꞉ ContractMembers): # "function f() {\n        0e1;\n    }" (17..50)
+                  - (item꞉ ContractMember) ► (function_definition꞉ FunctionDefinition): # "function f() {\n        0e1;\n    }" (17..50)
+                      - (function_keyword꞉ FunctionKeyword): "function" # (17..25)
+                      - (name꞉ FunctionName) ► (identifier꞉ Identifier): "f" # (26..27)
+                      - (parameters꞉ ParametersDeclaration): # "()" (27..29)
+                          - (open_paren꞉ OpenParen): "(" # (27..28)
+                          - (parameters꞉ Parameters): []
+                          - (close_paren꞉ CloseParen): ")" # (28..29)
+                      - (attributes꞉ FunctionAttributes): []
+                      - (body꞉ FunctionBody) ► (block꞉ Block): # "{\n        0e1;\n    }" (30..50)
+                          - (open_brace꞉ OpenBrace): "{" # (30..31)
+                          - (statements꞉ Statements): # "0e1;" (40..44)
+                              - (item꞉ Statement) ► (expression_statement꞉ ExpressionStatement): # "0e1;" (40..44)
+                                  - (expression꞉ Expression) ► (decimal_number_expression꞉ DecimalNumberExpression): # "0e1" (40..43)
+                                      - (literal꞉ DecimalLiteral): "0e1" # (40..43)
+                                  - (semicolon꞉ Semicolon): ";" # (43..44)
+                          - (close_brace꞉ CloseBrace): "}" # (49..50)
+              - (close_brace꞉ CloseBrace): "}" # (51..52)

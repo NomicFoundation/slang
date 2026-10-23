@@ -126,7 +126,7 @@ enum RejectSuffixHexLiteral1 {
 /// Rejects a `DecimalLiteral` match that ends with this suffix.
 #[derive(Logos)]
 enum RejectSuffixDecimalLiteral1 {
-    #[regex(r#"((_|\$|[a-z]|[A-Z])((_|\$|[a-z]|[A-Z])|[0-9])*)|\._"#)]
+    #[regex(r#"((_|\$|[a-z]|[A-Z])((_|\$|[a-z]|[A-Z])|[0-9])*)|\._|[0-9]"#)]
     Matched,
 }
 
@@ -144,6 +144,7 @@ enum RejectSuffixDecimalLiteral2 {
 #[logos(subpattern TextAfterSlashes = r#"[^/\r\n][^\r\n]*"#)]
 #[logos(subpattern SingleLineRegularCommentText = r#"(?&TextAfterSlashes)|(//[^\r\n]*)"#)]
 #[logos(subpattern HexCharacter = r#"[0-9]|[a-f]|[A-F]"#)]
+#[logos(subpattern DecimalInteger = r#"0|([1-9][0-9]*(_[0-9]+)*)"#)]
 #[logos(subpattern DecimalDigits = r#"[0-9]+(_[0-9]+)*"#)]
 #[logos(subpattern DecimalExponent = r#"(e|E)-?(?&DecimalDigits)"#)]
 #[logos(subpattern AsciiEscape = r#"n|r|t|'|"|\\|\r\n|\r|\n"#)]
@@ -323,8 +324,8 @@ pub enum SolidityContext {
     #[regex(r#"///(?&TextAfterSlashes)?((?&LineBreak)((?&SpaceOrTab)*///(?&TextAfterSlashes)?(?&LineBreak))*((?&SpaceOrTab)*///(?&TextAfterSlashes))?)?"#, |_| { LexemeKind::SingleLineNatSpecComment }, priority = 1000165, allow_greedy = true)]
     #[regex(r#"/\*\*[^/\*][^\*]*\*+([^/\*][^\*]*\*+)*/"#, |_| { LexemeKind::MultiLineNatSpecComment }, priority = 1000166, allow_greedy = true)]
     #[regex(r#"0x(?&HexCharacter)+(_(?&HexCharacter)+)*"#, |lexer| { reject_suffix::<RejectSuffixHexLiteral1, _>(lexer, LexemeKind::HexLiteral) }, priority = 2000167)]
-    #[regex(r#"(?&DecimalDigits)"#, |lexer| { reject_suffix::<RejectSuffixDecimalLiteral1, _>(lexer, LexemeKind::DecimalLiteral) }, priority = 2000168)]
-    #[regex(r#"((?&DecimalDigits)((\.(?&DecimalDigits)(?&DecimalExponent)?)|(?&DecimalExponent)))|(\.(?&DecimalDigits)(?&DecimalExponent)?)"#, |lexer| { reject_suffix::<RejectSuffixDecimalLiteral2, _>(lexer, LexemeKind::DecimalLiteral) }, priority = 2000168)]
+    #[regex(r#"(?&DecimalInteger)"#, |lexer| { reject_suffix::<RejectSuffixDecimalLiteral1, _>(lexer, LexemeKind::DecimalLiteral) }, priority = 2000168)]
+    #[regex(r#"((?&DecimalInteger)((\.(?&DecimalDigits)(?&DecimalExponent)?)|(?&DecimalExponent)))|(\.(?&DecimalDigits)(?&DecimalExponent)?)"#, |lexer| { reject_suffix::<RejectSuffixDecimalLiteral2, _>(lexer, LexemeKind::DecimalLiteral) }, priority = 2000168)]
     #[regex(r#"('((?&EscapeSequence)|[ -&]|[\(-\[]|[\]-~])*')|("((?&EscapeSequence)|[ -!]|[#-\[]|[\]-~])*")"#, |_| { LexemeKind::StringLiteral }, priority = 2000169)]
     #[regex(r#"(hex'(?&HexStringContents)?')|(hex"(?&HexStringContents)?")"#, |_| { LexemeKind::HexStringLiteral }, priority = 2000170)]
     #[regex(r#"(unicode'((?&UnicodeEscapeSequence)|[^'\\\r\n])*')|(unicode"((?&UnicodeEscapeSequence)|[^"\\\r\n])*")"#, |_| { LexemeKind::UnicodeStringLiteral }, priority = 2000171)]
@@ -335,7 +336,7 @@ pub enum SolidityContext {
 /// Rejects a `YulDecimalLiteral` match that ends with this suffix.
 #[derive(Logos)]
 enum RejectSuffixYulDecimalLiteral1 {
-    #[regex(r#"((_|\$|[a-z]|[A-Z])((_|\$|[a-z]|[A-Z])|[0-9])*)"#)]
+    #[regex(r#"((_|\$|[a-z]|[A-Z])((_|\$|[a-z]|[A-Z])|[0-9])*)|[0-9]"#)]
     Matched,
 }
 
