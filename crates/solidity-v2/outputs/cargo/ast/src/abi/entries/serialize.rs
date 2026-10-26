@@ -14,7 +14,7 @@ use slang_solidity_v2_semantic::types::{
     ArraySliceType, ArrayType, FixedSizeArrayType, StructType, Type, TypeId,
 };
 
-use crate::abi::{AbiEntry, AbiMutability, AbiParameter, ContractAbi};
+use super::{AbiEntry, AbiMutability, AbiParameter, ContractAbi};
 
 impl Serialize for ContractAbi {
     fn serialize<S: Serializer>(&self, serializer: S) -> Result<S::Ok, S::Error> {
