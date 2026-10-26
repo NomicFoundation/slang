@@ -3,9 +3,7 @@
 
 use std::rc::Rc;
 
-use crate::cst::{
-    BaseRewriter, Edge, EdgeLabel, Node, NonterminalKind, NonterminalNode, TerminalKind,
-};
+use crate::cst::{Edge, EdgeLabel, Node, NonterminalKind, NonterminalNode, TerminalKind};
 use crate::parser::Parser;
 
 impl Parser {
@@ -17,10 +15,7 @@ impl Parser {
             return tree;
         }
 
-        match FunctionTypeVisibility.rewrite_node(&Node::Nonterminal(Rc::clone(&tree))) {
-            Some(Node::Nonterminal(fixed)) => fixed,
-            _ => tree,
-        }
+        fix_up_function_type_visibility(&tree).unwrap_or(tree)
     }
 }
 
@@ -30,24 +25,45 @@ impl Parser {
 ///
 /// The generated parser consumes all of them as `FunctionTypeAttributes`, so this moves them
 /// to the `StateVariableAttributes` that encloses it, if any.
-struct FunctionTypeVisibility;
+///
+/// Returns a fixed copy of `node`, or `None` when nothing under it changed.
+fn fix_up_function_type_visibility(node: &Rc<NonterminalNode>) -> Option<Rc<NonterminalNode>> {
+    match node.kind {
+        NonterminalKind::StateVariableDefinition => {
+            // Don't build on top of a declaration that the parser had to recover from:
+            if contains_errors(node) {
+                return None;
+            }
 
-impl BaseRewriter for FunctionTypeVisibility {
-    fn rewrite_block(&mut self, node: &Rc<NonterminalNode>) -> Option<Node> {
-        // Blocks cannot contain state variables. Skip traversing them:
-        Some(Node::Nonterminal(Rc::clone(node)))
-    }
-
-    fn rewrite_state_variable_definition(&mut self, node: &Rc<NonterminalNode>) -> Option<Node> {
-        // Don't build on top of a declaration that the parser had to recover from:
-        if contains_errors(node) {
-            return Some(Node::Nonterminal(Rc::clone(node)));
-        }
-
-        Some(
             move_second_visibility(node)
-                .map_or_else(|| Node::Nonterminal(Rc::clone(node)), Node::Nonterminal),
-        )
+        }
+        // Only traverse the containers that can (transitively) hold state variables:
+        NonterminalKind::SourceUnit
+        | NonterminalKind::SourceUnitMembers
+        | NonterminalKind::SourceUnitMember
+        | NonterminalKind::ContractDefinition
+        | NonterminalKind::InterfaceDefinition
+        | NonterminalKind::LibraryDefinition
+        | NonterminalKind::ContractMembers
+        | NonterminalKind::InterfaceMembers
+        | NonterminalKind::LibraryMembers
+        | NonterminalKind::ContractMember => {
+            let mut children: Option<Vec<Edge>> = None;
+
+            for (index, edge) in node.children.iter().enumerate() {
+                if let Some(fixed) = edge
+                    .node
+                    .as_nonterminal()
+                    .and_then(fix_up_function_type_visibility)
+                {
+                    children.get_or_insert_with(|| node.children.clone())[index].node =
+                        Node::Nonterminal(fixed);
+                }
+            }
+
+            children.map(|children| NonterminalNode::create(node.kind, children))
+        }
+        _ => None,
     }
 }
 
