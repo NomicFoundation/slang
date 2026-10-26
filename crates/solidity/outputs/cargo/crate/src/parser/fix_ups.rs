@@ -90,7 +90,7 @@ fn move_second_visibility(variable: &Rc<NonterminalNode>) -> Option<Rc<Nontermin
 
     let function_attributes =
         child_with_label(function_type, EdgeLabel::Attributes)?.as_nonterminal()?;
-    let split = split_index(&function_attributes.children)?;
+    let split = index_of_second_visibility_attribute(&function_attributes.children)?;
 
     let (kept, moved) = function_attributes.children.split_at(split);
 
@@ -140,8 +140,8 @@ fn move_second_visibility(variable: &Rc<NonterminalNode>) -> Option<Rc<Nontermin
 }
 
 /// Returns the index of the first visibility that follows an `internal` or `external` one.
-fn split_index(items: &[Edge]) -> Option<usize> {
-    let mut armed = false;
+fn index_of_second_visibility_attribute(items: &[Edge]) -> Option<usize> {
+    let mut seen_function_type_visibility = false;
 
     for (index, item) in items.iter().enumerate() {
         match first_terminal_kind(&item.node)? {
@@ -149,11 +149,13 @@ fn split_index(items: &[Edge]) -> Option<usize> {
             | TerminalKind::ExternalKeyword
             | TerminalKind::PrivateKeyword
             | TerminalKind::PublicKeyword
-                if armed =>
+                if seen_function_type_visibility =>
             {
                 return Some(index);
             }
-            TerminalKind::InternalKeyword | TerminalKind::ExternalKeyword => armed = true,
+            TerminalKind::InternalKeyword | TerminalKind::ExternalKeyword => {
+                seen_function_type_visibility = true;
+            }
             _ => {}
         }
     }
