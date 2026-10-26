@@ -358,9 +358,9 @@ impl<'a> StorageAnalyzer<'a> {
         builder.slots_used().ok_or(NoStorageSize::TooLarge)
     }
 
-    /// Whether `type_id`, or a type it stores behind a dynamic array or a
-    /// mapping, extends past the end of storage. Types that have no size for
-    /// another reason are reported elsewhere.
+    /// Whether `type_id`, or a type it stores out of line (see
+    /// `has_out_of_line_type_too_large`), extends past the end of storage.
+    /// Types that have no size for another reason are reported elsewhere.
     pub(crate) fn is_too_large_for_storage(&self, type_id: TypeId) -> bool {
         self.is_too_large_for_storage_impl(type_id, &mut Set::default())
     }
@@ -371,26 +371,30 @@ impl<'a> StorageAnalyzer<'a> {
         visited_structs: &mut Set<NodeId>,
     ) -> bool {
         self.storage_size_of_type_id(type_id) == Err(NoStorageSize::TooLarge)
-            || self.has_indirect_type_too_large(type_id, visited_structs)
+            || self.has_out_of_line_type_too_large(type_id, visited_structs)
     }
 
-    /// Whether a type stored behind a dynamic array or a mapping in `type_id`
-    /// is too large, descending through the parts stored inline, which sizing
-    /// `type_id` already covers. Each struct is visited once.
-    fn has_indirect_type_too_large(
+    /// Whether a type that `type_id` stores out of line (a dynamic array
+    /// element or a mapping value, laid out from a hashed slot) is too large.
+    /// Inline parts (fixed-size array elements and struct members) are already
+    /// counted in the size of `type_id`, so they are only searched for
+    /// out-of-line types. Each struct is visited once.
+    fn has_out_of_line_type_too_large(
         &self,
         type_id: TypeId,
         visited_structs: &mut Set<NodeId>,
     ) -> bool {
         match self.types.get_type_by_id(type_id) {
+            // Out of line: sized on its own.
             Type::Array(ArrayType { element_type, .. }) => {
                 self.is_too_large_for_storage_impl(*element_type, visited_structs)
             }
             Type::Mapping(MappingType { value_type_id, .. }) => {
                 self.is_too_large_for_storage_impl(*value_type_id, visited_structs)
             }
+            // Inline: covered by the size of `type_id`.
             Type::FixedSizeArray(FixedSizeArrayType { element_type, .. }) => {
-                self.has_indirect_type_too_large(*element_type, visited_structs)
+                self.has_out_of_line_type_too_large(*element_type, visited_structs)
             }
             Type::Struct(StructType { definition_id, .. }) => {
                 if !visited_structs.insert(*definition_id) {
@@ -406,7 +410,7 @@ impl<'a> StorageAnalyzer<'a> {
                         .node_typing(member.id())
                         .as_type_id()
                         .is_some_and(|member_type_id| {
-                            self.has_indirect_type_too_large(member_type_id, visited_structs)
+                            self.has_out_of_line_type_too_large(member_type_id, visited_structs)
                         })
                 })
             }
