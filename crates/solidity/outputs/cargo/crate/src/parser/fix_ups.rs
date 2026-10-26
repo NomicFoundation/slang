@@ -30,7 +30,7 @@ impl Parser {
 fn fix_up_function_type_visibility(node: &Rc<NonterminalNode>) -> Option<Rc<NonterminalNode>> {
     match node.kind {
         NonterminalKind::StateVariableDefinition => {
-            let fixed = move_second_visibility(node)?;
+            let fixed = fix_up_function_typed_state_variable_visibility(node)?;
 
             // Don't build on top of a declaration that the parser had to recover from.
             // Checked last, as it walks the whole declaration and it's quite slow
@@ -77,7 +77,9 @@ fn fix_up_function_type_visibility(node: &Rc<NonterminalNode>) -> Option<Rc<Nont
 /// - the type isn't directly a function type, as in an array of function types;
 /// - the function type has `returns`, since it delimits the attributes;
 /// - a moved attribute isn't one a state variable can have, such as `view`.
-fn move_second_visibility(variable: &Rc<NonterminalNode>) -> Option<Rc<NonterminalNode>> {
+fn fix_up_function_typed_state_variable_visibility(
+    variable: &Rc<NonterminalNode>,
+) -> Option<Rc<NonterminalNode>> {
     let type_name = child_with_label(variable, EdgeLabel::TypeName)?.as_nonterminal()?;
     let function_type = child_with_label(type_name, EdgeLabel::Variant)?
         .as_nonterminal_with_kind(NonterminalKind::FunctionType)?;
