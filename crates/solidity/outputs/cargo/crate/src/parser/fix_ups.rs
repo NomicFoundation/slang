@@ -30,12 +30,15 @@ impl Parser {
 fn fix_up_function_type_visibility(node: &Rc<NonterminalNode>) -> Option<Rc<NonterminalNode>> {
     match node.kind {
         NonterminalKind::StateVariableDefinition => {
-            // Don't build on top of a declaration that the parser had to recover from:
+            let fixed = move_second_visibility(node)?;
+
+            // Don't build on top of a declaration that the parser had to recover from.
+            // Checked last, as it walks the whole declaration and it's quite slow
             if contains_errors(node) {
                 return None;
             }
 
-            move_second_visibility(node)
+            Some(fixed)
         }
         // Only traverse the containers that can (transitively) hold state variables:
         NonterminalKind::SourceUnit
