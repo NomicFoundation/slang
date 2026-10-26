@@ -1,0 +1,22 @@
+{
+  "override_language_versions": {
+    "specifier": {
+      "type": "From",
+      "from": "0.8.36"
+    },
+    "reason": "Amsterdam is only a target solc accepts from '0.8.36', so earlier versions would only measure solc declining the target."
+  },
+  "override_evm_target": {
+    "value": "Amsterdam",
+    "reason": "Amsterdam is only a target solc accepts from '0.8.36', so earlier versions would only measure solc declining the target."
+  },
+  "expected_solc_divergence": [
+    {
+      "specifier": {
+        "type": "From",
+        "from": "0.8.38"
+      },
+      "reason": "From '0.8.38' solc warns that `swapn`, `dupn` and `exchange` will be promoted to Yul reserved identifiers in the future (`Warning 5470`), but still accepts them."
+    }
+  ]
+}

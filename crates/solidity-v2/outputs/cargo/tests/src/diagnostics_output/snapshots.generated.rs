@@ -197,6 +197,14 @@ mod resolution {
         }
 
         #[test]
+        fn not_yet_reserved_swapn_dupn_exchange() -> Result<()> {
+            run(
+                "resolution/built_in_redeclaration",
+                "not_yet_reserved_swapn_dupn_exchange",
+            )
+        }
+
+        #[test]
         fn not_yet_reserved_until_amsterdam() -> Result<()> {
             run(
                 "resolution/built_in_redeclaration",
@@ -4322,6 +4330,22 @@ mod syntax {
             run(
                 "syntax/incompatible_version_pragma",
                 "caret_excludes_earlier_versions",
+            )
+        }
+
+        #[test]
+        fn component_above_signed_int_greater() -> Result<()> {
+            run(
+                "syntax/incompatible_version_pragma",
+                "component_above_signed_int_greater",
+            )
+        }
+
+        #[test]
+        fn component_above_signed_int_less() -> Result<()> {
+            run(
+                "syntax/incompatible_version_pragma",
+                "component_above_signed_int_less",
             )
         }
 

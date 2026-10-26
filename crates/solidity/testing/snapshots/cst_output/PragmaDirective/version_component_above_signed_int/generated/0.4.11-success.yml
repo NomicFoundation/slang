@@ -1,0 +1,27 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Source: >
+  1  │ pragma solidity <3000000000.0.0;                                                 │ 0..32
+
+Errors: []
+
+Tree:
+  - (root꞉ PragmaDirective): # "pragma solidity <3000000000.0.0;\n" (0..33)
+      - (pragma_keyword꞉ PragmaKeyword): "pragma" # (0..6)
+      - (pragma꞉ Pragma) ► (variant꞉ VersionPragma): # " solidity <3000000000.0.0" (6..31)
+          - (leading_trivia꞉ Whitespace): " " # (6..7)
+          - (solidity_keyword꞉ SolidityKeyword): "solidity" # (7..15)
+          - (sets꞉ VersionExpressionSets): # " <3000000000.0.0" (15..31)
+              - (item꞉ VersionExpressionSet): # " <3000000000.0.0" (15..31)
+                  - (item꞉ VersionExpression) ► (variant꞉ VersionTerm): # " <3000000000.0.0" (15..31)
+                      - (operator꞉ VersionOperator): # " <" (15..17)
+                          - (leading_trivia꞉ Whitespace): " " # (15..16)
+                          - (variant꞉ LessThan): "<" # (16..17)
+                      - (literal꞉ VersionLiteral) ► (variant꞉ SimpleVersionLiteral): # "3000000000.0.0" (17..31)
+                          - (item꞉ VersionSpecifier): "3000000000" # (17..27)
+                          - (separator꞉ Period): "." # (27..28)
+                          - (item꞉ VersionSpecifier): "0" # (28..29)
+                          - (separator꞉ Period): "." # (29..30)
+                          - (item꞉ VersionSpecifier): "0" # (30..31)
+      - (semicolon꞉ Semicolon): ";" # (31..32)
+      - (trailing_trivia꞉ EndOfLine): "\n" # (32..33)

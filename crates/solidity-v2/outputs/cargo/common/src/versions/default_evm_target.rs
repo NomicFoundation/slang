@@ -41,7 +41,8 @@ impl LanguageVersion {
             | Self::V0_8_34
             | Self::V0_8_35
             | Self::V0_8_36
-            | Self::V0_8_37 => EvmTarget::Osaka,
+            | Self::V0_8_37
+            | Self::V0_8_38 => EvmTarget::Osaka,
         }
     }
 }

@@ -5737,6 +5737,7 @@ pub slang_solidity_v2_common::versions::LanguageVersion::V0_8_34
 pub slang_solidity_v2_common::versions::LanguageVersion::V0_8_35
 pub slang_solidity_v2_common::versions::LanguageVersion::V0_8_36
 pub slang_solidity_v2_common::versions::LanguageVersion::V0_8_37
+pub slang_solidity_v2_common::versions::LanguageVersion::V0_8_38
 pub slang_solidity_v2_common::versions::LanguageVersion::V0_8_4
 pub slang_solidity_v2_common::versions::LanguageVersion::V0_8_5
 pub slang_solidity_v2_common::versions::LanguageVersion::V0_8_6
@@ -5744,7 +5745,7 @@ pub slang_solidity_v2_common::versions::LanguageVersion::V0_8_7
 pub slang_solidity_v2_common::versions::LanguageVersion::V0_8_8
 pub slang_solidity_v2_common::versions::LanguageVersion::V0_8_9
 impl slang_solidity_v2_common::versions::LanguageVersion
-pub const slang_solidity_v2_common::versions::LanguageVersion::ALL: &'static [slang_solidity_v2_common::versions::LanguageVersion; 38]
+pub const slang_solidity_v2_common::versions::LanguageVersion::ALL: &'static [slang_solidity_v2_common::versions::LanguageVersion; 39]
 pub const slang_solidity_v2_common::versions::LanguageVersion::EARLIEST: Self
 pub const slang_solidity_v2_common::versions::LanguageVersion::LATEST: Self
 impl slang_solidity_v2_common::versions::LanguageVersion
