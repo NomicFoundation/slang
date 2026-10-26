@@ -113,8 +113,16 @@ fn fix_up_function_typed_state_variable_visibility(
 
     let function_attributes =
         NonterminalNode::create(NonterminalKind::FunctionTypeAttributes, kept.to_vec());
-    let function_type = replace_child(function_type, EdgeLabel::Attributes, function_attributes);
-    let type_name = replace_child(type_name, EdgeLabel::Variant, function_type);
+    let function_type = with_updated_children(function_type, |edge| {
+        if edge.label == EdgeLabel::Attributes {
+            edge.node = Node::Nonterminal(Rc::clone(&function_attributes));
+        }
+    });
+    let type_name = with_updated_children(type_name, |edge| {
+        if edge.label == EdgeLabel::Variant {
+            edge.node = Node::Nonterminal(Rc::clone(&function_type));
+        }
+    });
 
     let variable_attributes =
         child_with_label(variable, EdgeLabel::Attributes)?.as_nonterminal()?;
@@ -133,12 +141,11 @@ fn fix_up_function_typed_state_variable_visibility(
             .collect(),
     );
 
-    let variable = replace_child(variable, EdgeLabel::TypeName, type_name);
-    Some(replace_child(
-        &variable,
-        EdgeLabel::Attributes,
-        variable_attributes,
-    ))
+    Some(with_updated_children(variable, |edge| match edge.label {
+        EdgeLabel::TypeName => edge.node = Node::Nonterminal(Rc::clone(&type_name)),
+        EdgeLabel::Attributes => edge.node = Node::Nonterminal(Rc::clone(&variable_attributes)),
+        _ => {}
+    }))
 }
 
 /// Returns the index of the first visibility that follows an `internal` or `external` one.
@@ -173,16 +180,13 @@ fn child_with_label(node: &Rc<NonterminalNode>, label: EdgeLabel) -> Option<&Nod
         .map(|edge| &edge.node)
 }
 
-/// Returns a copy of `node`, with the child under the edge `label` replaced by `child`.
-fn replace_child(
+/// Returns a copy of `node`, after letting `update` modify each of its children in place.
+fn with_updated_children(
     node: &Rc<NonterminalNode>,
-    label: EdgeLabel,
-    child: Rc<NonterminalNode>,
+    update: impl FnMut(&mut Edge),
 ) -> Rc<NonterminalNode> {
     let mut children = node.children.clone();
-    if let Some(edge) = children.iter_mut().find(|edge| edge.label == label) {
-        edge.node = Node::Nonterminal(child);
-    }
+    children.iter_mut().for_each(update);
 
     NonterminalNode::create(node.kind, children)
 }
