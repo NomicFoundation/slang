@@ -1,33 +1,17 @@
-//! Hand-written adjustments to the tree produced by the generated parser, for the few constructs
-//! that the language definition cannot express.
+//! State variables with function types need to properly capture attributes for either the
+//! type itself, or the variable. In `function() external public x;`, `external` belongs to
+//! the function type, while `public` belongs to the variable `x`.
+//!
+//! The generated parser consumes all of them as `FunctionTypeAttributes`, so this moves them
+//! to the `StateVariableAttributes` that encloses it, if any.
 
 use std::rc::Rc;
 
+use super::{child_with_label, contains_errors, first_terminal_kind, with_updated_children};
 use crate::cst::{Edge, EdgeLabel, Node, NonterminalKind, NonterminalNode, TerminalKind};
-use crate::parser::Parser;
 
-impl Parser {
-    /// Applied to the tree of every parse, after the generated parser functions.
-    /// It never adds or removes errors.
-    pub(crate) fn fix_up(&self, tree: Rc<NonterminalNode>) -> Rc<NonterminalNode> {
-        // This parsing mechanism should only be applied on >0.4.22
-        if !self.version_is_at_least_0_4_22 {
-            return tree;
-        }
-
-        fix_up_function_type_visibility(&tree).unwrap_or(tree)
-    }
-}
-
-/// State variables with function types need to properly capture attributes for either the
-/// type itself, or the variable. In `function() external public x;`, `external` belongs to
-/// the function type, while `public` belongs to the variable `x`.
-///
-/// The generated parser consumes all of them as `FunctionTypeAttributes`, so this moves them
-/// to the `StateVariableAttributes` that encloses it, if any.
-///
 /// Returns a fixed copy of `node`, or `None` when nothing under it changed.
-fn fix_up_function_type_visibility(node: &Rc<NonterminalNode>) -> Option<Rc<NonterminalNode>> {
+pub(super) fn fix_up(node: &Rc<NonterminalNode>) -> Option<Rc<NonterminalNode>> {
     match node.kind {
         NonterminalKind::StateVariableDefinition => {
             let fixed = fix_up_function_typed_state_variable_visibility(node)?;
@@ -54,11 +38,7 @@ fn fix_up_function_type_visibility(node: &Rc<NonterminalNode>) -> Option<Rc<Nont
             let mut children: Option<Vec<Edge>> = None;
 
             for (index, edge) in node.children.iter().enumerate() {
-                if let Some(fixed) = edge
-                    .node
-                    .as_nonterminal()
-                    .and_then(fix_up_function_type_visibility)
-                {
+                if let Some(fixed) = edge.node.as_nonterminal().and_then(fix_up) {
                     children.get_or_insert_with(|| node.children.clone())[index].node =
                         Node::Nonterminal(fixed);
                 }
@@ -170,36 +150,4 @@ fn index_of_second_visibility_attribute(items: &[Edge]) -> Option<usize> {
     }
 
     None
-}
-
-/// Returns the first child of `node` under the edge `label`.
-fn child_with_label(node: &Rc<NonterminalNode>, label: EdgeLabel) -> Option<&Node> {
-    node.children
-        .iter()
-        .find(|edge| edge.label == label)
-        .map(|edge| &edge.node)
-}
-
-/// Returns a copy of `node`, after letting `update` modify each of its children in place.
-fn with_updated_children(
-    node: &Rc<NonterminalNode>,
-    update: impl FnMut(&mut Edge),
-) -> Rc<NonterminalNode> {
-    let mut children = node.children.clone();
-    children.iter_mut().for_each(update);
-
-    NonterminalNode::create(node.kind, children)
-}
-
-/// Returns whether `node` contains a `MISSING` or `UNRECOGNIZED` terminal.
-fn contains_errors(node: &Rc<NonterminalNode>) -> bool {
-    Rc::clone(node).descendants().any(|edge| !edge.is_valid())
-}
-
-/// Returns the kind of the first terminal in `node`, skipping trivia.
-fn first_terminal_kind(node: &Node) -> Option<TerminalKind> {
-    node.clone()
-        .descendants()
-        .find(|edge| edge.is_terminal() && !edge.is_trivia())
-        .and_then(|edge| edge.as_terminal().map(|terminal| terminal.kind))
 }
