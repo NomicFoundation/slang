@@ -4,9 +4,8 @@
 
 use crate::abi::{AbiEntry, AbiFunction, AbiParameter, ContractAbi};
 
-fn getter<'a>(abi: &'a ContractAbi, name: &str) -> &'a AbiFunction {
+fn getter<'a>(abi: &'a ContractAbi, name: &str) -> AbiFunction<'a> {
     abi.entries()
-        .iter()
         .find_map(|entry| match entry {
             AbiEntry::Function(function) if function.name() == name => Some(function),
             _ => None,
@@ -14,11 +13,8 @@ fn getter<'a>(abi: &'a ContractAbi, name: &str) -> &'a AbiFunction {
         .unwrap_or_else(|| panic!("getter `{name}` is in the ABI"))
 }
 
-fn names(parameters: &[AbiParameter]) -> Vec<Option<&str>> {
-    parameters
-        .iter()
-        .map(|parameter| parameter.name())
-        .collect()
+fn names<'a>(parameters: impl Iterator<Item = AbiParameter<'a>>) -> Vec<Option<&'a str>> {
+    parameters.map(|parameter| parameter.name()).collect()
 }
 
 #[test]

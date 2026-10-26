@@ -4,6 +4,7 @@
 // pinning them by hand. Until then, a failure after a `LATEST` bump means re-deriving the
 // expectation from solc, not editing it.
 
+use crate::abi::AbiEntry;
 use crate::define_fixture;
 
 define_fixture!(
@@ -34,23 +35,16 @@ fn function_input_internal_types(contract: &str, function: &str) -> Vec<String> 
         .expect("contract exists")
         .compute_abi()
         .expect("the ABI is computable");
-    let json = serde_json::to_value(&abi).expect("the ABI serializes");
-    let entry = json
-        .as_array()
-        .expect("the ABI is an array")
-        .iter()
-        .find(|entry| entry["type"] == "function" && entry["name"] == function)
-        .expect("function is in the ABI");
-    entry["inputs"]
-        .as_array()
-        .expect("a function has inputs")
-        .iter()
-        .map(|input| {
-            input["internalType"]
-                .as_str()
-                .expect("an input has an internal type")
-                .to_owned()
+    let function = abi
+        .entries()
+        .find_map(|entry| match entry {
+            AbiEntry::Function(f) if f.name() == function => Some(f),
+            _ => None,
         })
+        .expect("function is in the ABI");
+    function
+        .inputs()
+        .map(|input| input.internal_type_name())
         .collect()
 }
 

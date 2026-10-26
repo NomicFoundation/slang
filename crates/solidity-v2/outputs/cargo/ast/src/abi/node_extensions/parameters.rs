@@ -3,11 +3,11 @@ use std::fmt;
 use slang_solidity_v2_semantic::context::{AbiNameError, AbiTypeSpelling};
 use slang_solidity_v2_semantic::types::TypeId;
 
-use crate::abi::AbiParameter;
+use crate::abi::entries::Parameter;
 use crate::ast::ParametersStruct;
 
 impl ParametersStruct {
-    pub(crate) fn compute_abi_parameters(&self) -> Option<Vec<AbiParameter>> {
+    pub(crate) fn compute_abi_parameters(&self) -> Option<Vec<Parameter>> {
         let mut result = Vec::with_capacity(self.ir_nodes.len());
         for parameter in self.ir_nodes.iter() {
             let node_id = parameter.id();
@@ -17,7 +17,7 @@ impl ParametersStruct {
                 .map(|name| name.unparse().to_string());
             // Bail out with `None` if any of the parameters fails typing
             let type_id = self.semantic.binder().node_typing(node_id).as_type_id()?;
-            result.push(AbiParameter::new(
+            result.push(Parameter::new(
                 name,
                 type_id,
                 parameter.is_indexed,

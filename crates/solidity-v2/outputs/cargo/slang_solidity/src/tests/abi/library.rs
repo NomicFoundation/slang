@@ -6,7 +6,6 @@ use crate::tests::fixtures;
 
 fn entry_names(abi: &ContractAbi) -> Vec<String> {
     abi.entries()
-        .iter()
         .map(|entry| match entry {
             AbiEntry::Function(function) => format!("function {}", function.name()),
             AbiEntry::Error(error) => format!("error {}", error.name()),

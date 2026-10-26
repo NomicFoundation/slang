@@ -3,10 +3,8 @@ use std::fmt;
 use slang_solidity_v2_ir::ir;
 use slang_solidity_v2_semantic::context::AbiNameError;
 
-use crate::abi::{
-    AbiConstructor, AbiEntry, AbiFallback, AbiFunction, AbiMutability, AbiReceive, SignatureHasher,
-    json_type_spelling,
-};
+use crate::abi::entries::{Constructor, Entry, Fallback, Function, Receive};
+use crate::abi::{AbiMutability, SignatureHasher, json_type_spelling};
 use crate::ast::{Definition, FunctionDefinitionStruct, FunctionVisibility};
 
 impl FunctionDefinitionStruct {
@@ -17,7 +15,7 @@ impl FunctionDefinitionStruct {
         )
     }
 
-    pub fn compute_abi_entry(&self) -> Option<AbiEntry> {
+    pub(crate) fn compute_abi_entry(&self) -> Option<Entry> {
         if !self.is_externally_visible() {
             return None;
         }
@@ -37,7 +35,7 @@ impl FunctionDefinitionStruct {
         let state_mutability: AbiMutability = (&self.ir_node.attributes.mutability).into();
 
         match self.ir_node.kind {
-            ir::FunctionKind::Regular => Some(AbiEntry::Function(AbiFunction {
+            ir::FunctionKind::Regular => Some(Entry::Function(Function {
                 node_id,
                 name: name?,
                 inputs,
@@ -45,16 +43,16 @@ impl FunctionDefinitionStruct {
                 state_mutability,
                 type_spelling: json_type_spelling(self.enclosing_definition().as_ref()),
             })),
-            ir::FunctionKind::Constructor => Some(AbiEntry::Constructor(AbiConstructor {
+            ir::FunctionKind::Constructor => Some(Entry::Constructor(Constructor {
                 node_id,
                 inputs,
                 state_mutability,
             })),
-            ir::FunctionKind::Fallback => Some(AbiEntry::Fallback(AbiFallback {
+            ir::FunctionKind::Fallback => Some(Entry::Fallback(Fallback {
                 node_id,
                 state_mutability,
             })),
-            ir::FunctionKind::Receive => Some(AbiEntry::Receive(AbiReceive {
+            ir::FunctionKind::Receive => Some(Entry::Receive(Receive {
                 node_id,
                 state_mutability,
             })),

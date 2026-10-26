@@ -1,11 +1,15 @@
 mod serialize;
 
+use std::fmt;
 use std::sync::Arc;
 
 use slang_solidity_v2_common::files::FileId;
 use slang_solidity_v2_common::nodes::NodeId;
-use slang_solidity_v2_semantic::context::{AbiTypeSpelling, SemanticContext};
-use slang_solidity_v2_semantic::types::{FunctionTypeMutability, TypeId};
+use slang_solidity_v2_semantic::binder::Definition as SemanticDefinition;
+use slang_solidity_v2_semantic::context::{AbiNameError, AbiTypeSpelling, SemanticContext};
+use slang_solidity_v2_semantic::types::{
+    ArraySliceType, ArrayType, FixedSizeArrayType, FunctionTypeMutability, StructType, Type, TypeId,
+};
 
 use crate::ast::Definition;
 
@@ -14,7 +18,7 @@ pub struct ContractAbi {
     node_id: NodeId,
     name: String,
     file_id: FileId,
-    entries: Vec<AbiEntry>,
+    entries: Vec<Entry>,
     semantic: Arc<SemanticContext>,
 }
 
@@ -24,7 +28,7 @@ impl ContractAbi {
         node_id: NodeId,
         name: String,
         file_id: FileId,
-        mut entries: Vec<AbiEntry>,
+        mut entries: Vec<Entry>,
         semantic: &Arc<SemanticContext>,
     ) -> Self {
         entries.sort_by(|this, other| this.sort_key().cmp(&other.sort_key()));
@@ -52,165 +56,79 @@ impl ContractAbi {
 
     /// The entries as the JSON lists them: by `type`, then by name, with a function's overloads in
     /// ascending selector order.
-    pub fn entries(&self) -> &[AbiEntry] {
-        &self.entries
+    pub fn entries(&self) -> impl ExactSizeIterator<Item = AbiEntry<'_>> + Clone {
+        self.entries
+            .iter()
+            .map(|entry| AbiEntry::new(entry, &self.semantic))
     }
 }
 
 pub type AbiMutability = FunctionTypeMutability;
 
 #[derive(Clone, Debug)]
-pub struct AbiConstructor {
+pub(crate) struct Constructor {
     pub(super) node_id: NodeId,
-    pub(super) inputs: Vec<AbiParameter>,
+    pub(super) inputs: Vec<Parameter>,
     pub(super) state_mutability: AbiMutability,
 }
 
-impl AbiConstructor {
-    pub fn node_id(&self) -> NodeId {
-        self.node_id
-    }
-
-    pub fn inputs(&self) -> &[AbiParameter] {
-        &self.inputs
-    }
-
-    pub fn state_mutability(&self) -> &AbiMutability {
-        &self.state_mutability
-    }
+#[derive(Clone, Debug)]
+pub(crate) struct Error {
+    pub(super) node_id: NodeId,
+    pub(super) name: String,
+    pub(super) inputs: Vec<Parameter>,
 }
 
 #[derive(Clone, Debug)]
-pub struct AbiError {
+pub(crate) struct Event {
     pub(super) node_id: NodeId,
     pub(super) name: String,
-    pub(super) inputs: Vec<AbiParameter>,
-}
-
-impl AbiError {
-    pub fn node_id(&self) -> NodeId {
-        self.node_id
-    }
-
-    pub fn name(&self) -> &str {
-        &self.name
-    }
-
-    pub fn inputs(&self) -> &[AbiParameter] {
-        &self.inputs
-    }
-}
-
-#[derive(Clone, Debug)]
-pub struct AbiEvent {
-    pub(super) node_id: NodeId,
-    pub(super) name: String,
-    pub(super) inputs: Vec<AbiParameter>,
+    pub(super) inputs: Vec<Parameter>,
     pub(super) anonymous: bool,
 }
 
-impl AbiEvent {
-    pub fn node_id(&self) -> NodeId {
-        self.node_id
-    }
-
-    pub fn name(&self) -> &str {
-        &self.name
-    }
-
-    pub fn inputs(&self) -> &[AbiParameter] {
-        &self.inputs
-    }
-
-    pub fn anonymous(&self) -> bool {
-        self.anonymous
-    }
-}
-
 #[derive(Clone, Debug)]
-pub struct AbiFallback {
+pub(crate) struct Fallback {
     pub(super) node_id: NodeId,
     pub(super) state_mutability: AbiMutability,
 }
 
-impl AbiFallback {
-    pub fn node_id(&self) -> NodeId {
-        self.node_id
-    }
-
-    pub fn state_mutability(&self) -> &AbiMutability {
-        &self.state_mutability
-    }
-}
-
 #[derive(Clone, Debug)]
-pub struct AbiFunction {
+pub(crate) struct Function {
     pub(super) node_id: NodeId,
     pub(super) name: String,
-    pub(super) inputs: Vec<AbiParameter>,
-    pub(super) outputs: Vec<AbiParameter>,
+    pub(super) inputs: Vec<Parameter>,
+    pub(super) outputs: Vec<Parameter>,
     pub(super) state_mutability: AbiMutability,
     /// How the JSON spells the parameters' `type`.
     pub(super) type_spelling: AbiTypeSpelling,
 }
 
-impl AbiFunction {
-    pub fn node_id(&self) -> NodeId {
-        self.node_id
-    }
-
-    pub fn name(&self) -> &str {
-        &self.name
-    }
-
-    pub fn inputs(&self) -> &[AbiParameter] {
-        &self.inputs
-    }
-
-    pub fn outputs(&self) -> &[AbiParameter] {
-        &self.outputs
-    }
-
-    pub fn state_mutability(&self) -> &AbiMutability {
-        &self.state_mutability
-    }
-}
-
 #[derive(Clone, Debug)]
-pub struct AbiReceive {
+pub(crate) struct Receive {
     pub(super) node_id: NodeId,
     pub(super) state_mutability: AbiMutability,
 }
 
-impl AbiReceive {
-    pub fn node_id(&self) -> NodeId {
-        self.node_id
-    }
-
-    pub fn state_mutability(&self) -> &AbiMutability {
-        &self.state_mutability
-    }
-}
-
 #[derive(Clone, Debug)]
-pub enum AbiEntry {
-    Constructor(AbiConstructor),
-    Error(AbiError),
-    Event(AbiEvent),
-    Fallback(AbiFallback),
-    Function(AbiFunction),
-    Receive(AbiReceive),
+pub(crate) enum Entry {
+    Constructor(Constructor),
+    Error(Error),
+    Event(Event),
+    Fallback(Fallback),
+    Function(Function),
+    Receive(Receive),
 }
 
-impl AbiEntry {
-    pub fn node_id(&self) -> NodeId {
+impl Entry {
+    pub(crate) fn node_id(&self) -> NodeId {
         match self {
-            AbiEntry::Constructor(inner) => inner.node_id(),
-            AbiEntry::Error(inner) => inner.node_id(),
-            AbiEntry::Event(inner) => inner.node_id(),
-            AbiEntry::Fallback(inner) => inner.node_id(),
-            AbiEntry::Function(inner) => inner.node_id(),
-            AbiEntry::Receive(inner) => inner.node_id(),
+            Entry::Constructor(inner) => inner.node_id,
+            Entry::Error(inner) => inner.node_id,
+            Entry::Event(inner) => inner.node_id,
+            Entry::Fallback(inner) => inner.node_id,
+            Entry::Function(inner) => inner.node_id,
+            Entry::Receive(inner) => inner.node_id,
         }
     }
 
@@ -218,19 +136,19 @@ impl AbiEntry {
     /// [`ContractAbi::new`] puts overloads in selector order.
     fn sort_key(&self) -> (u8, Option<&str>, NodeId) {
         match self {
-            AbiEntry::Constructor(inner) => (0, None, inner.node_id),
-            AbiEntry::Error(inner) => (1, Some(&inner.name), inner.node_id),
-            AbiEntry::Event(inner) => (2, Some(&inner.name), inner.node_id),
-            AbiEntry::Fallback(inner) => (3, None, inner.node_id),
-            AbiEntry::Function(inner) => (4, Some(&inner.name), inner.node_id),
-            AbiEntry::Receive(inner) => (5, None, inner.node_id),
+            Entry::Constructor(inner) => (0, None, inner.node_id),
+            Entry::Error(inner) => (1, Some(&inner.name), inner.node_id),
+            Entry::Event(inner) => (2, Some(&inner.name), inner.node_id),
+            Entry::Fallback(inner) => (3, None, inner.node_id),
+            Entry::Function(inner) => (4, Some(&inner.name), inner.node_id),
+            Entry::Receive(inner) => (5, None, inner.node_id),
         }
     }
 }
 
 /// Reorders each run of same-named functions in sorted `entries` by selector, hashing a selector
 /// only for a function that has overloads.
-fn order_overloads_by_selector(entries: &mut [AbiEntry], semantic: &Arc<SemanticContext>) {
+fn order_overloads_by_selector(entries: &mut [Entry], semantic: &Arc<SemanticContext>) {
     for run in entries.chunk_by_mut(same_function_name) {
         if run.len() > 1 {
             run.sort_by_cached_key(|entry| overload_selector(entry, semantic));
@@ -238,18 +156,18 @@ fn order_overloads_by_selector(entries: &mut [AbiEntry], semantic: &Arc<Semantic
     }
 }
 
-fn same_function_name(this: &AbiEntry, other: &AbiEntry) -> bool {
+fn same_function_name(this: &Entry, other: &Entry) -> bool {
     match (this, other) {
-        (AbiEntry::Function(this), AbiEntry::Function(other)) => this.name() == other.name(),
+        (Entry::Function(this), Entry::Function(other)) => this.name == other.name,
         _ => false,
     }
 }
 
-fn overload_selector(entry: &AbiEntry, semantic: &Arc<SemanticContext>) -> u32 {
-    let AbiEntry::Function(function) = entry else {
+fn overload_selector(entry: &Entry, semantic: &Arc<SemanticContext>) -> u32 {
+    let Entry::Function(function) = entry else {
         unreachable!("only functions share a name");
     };
-    let selector = match Definition::try_create(function.node_id(), semantic) {
+    let selector = match Definition::try_create(function.node_id, semantic) {
         Some(Definition::Function(definition)) => definition.compute_selector(),
         // A public state variable's getter can overload an inherited function.
         Some(Definition::StateVariable(definition)) => definition.compute_selector(),
@@ -259,15 +177,15 @@ fn overload_selector(entry: &AbiEntry, semantic: &Arc<SemanticContext>) -> u32 {
 }
 
 /// A parameter of an ABI entry. Its type's spellings are written from the interned `TypeId` when
-/// the ABI is serialized, rather than stored.
+/// they are asked for, rather than stored.
 #[derive(Clone, Debug)]
-pub struct AbiParameter {
+pub(crate) struct Parameter {
     name: Option<String>,
     type_id: TypeId,
     indexed: bool,
 }
 
-impl AbiParameter {
+impl Parameter {
     /// `None` when the type has no ABI representation, e.g. a mapping or a storage-only struct.
     pub(crate) fn new(
         name: Option<String>,
@@ -284,9 +202,224 @@ impl AbiParameter {
             indexed,
         })
     }
+}
 
-    pub fn name(&self) -> Option<&str> {
-        self.name.as_deref()
+/// An entry of a [`ContractAbi`].
+#[derive(Clone, Copy, Debug)]
+pub enum AbiEntry<'a> {
+    Constructor(AbiConstructor<'a>),
+    Error(AbiError<'a>),
+    Event(AbiEvent<'a>),
+    Fallback(AbiFallback<'a>),
+    Function(AbiFunction<'a>),
+    Receive(AbiReceive<'a>),
+}
+
+impl<'a> AbiEntry<'a> {
+    fn new(entry: &'a Entry, semantic: &'a Arc<SemanticContext>) -> Self {
+        match entry {
+            Entry::Constructor(constructor) => Self::Constructor(AbiConstructor {
+                constructor,
+                semantic,
+            }),
+            Entry::Error(error) => Self::Error(AbiError { error, semantic }),
+            Entry::Event(event) => Self::Event(AbiEvent { event, semantic }),
+            Entry::Fallback(fallback) => Self::Fallback(AbiFallback { fallback }),
+            Entry::Function(function) => Self::Function(AbiFunction { function, semantic }),
+            Entry::Receive(receive) => Self::Receive(AbiReceive { receive }),
+        }
+    }
+
+    pub fn node_id(&self) -> NodeId {
+        match self {
+            AbiEntry::Constructor(inner) => inner.node_id(),
+            AbiEntry::Error(inner) => inner.node_id(),
+            AbiEntry::Event(inner) => inner.node_id(),
+            AbiEntry::Fallback(inner) => inner.node_id(),
+            AbiEntry::Function(inner) => inner.node_id(),
+            AbiEntry::Receive(inner) => inner.node_id(),
+        }
+    }
+}
+
+#[derive(Clone, Copy)]
+pub struct AbiConstructor<'a> {
+    constructor: &'a Constructor,
+    semantic: &'a Arc<SemanticContext>,
+}
+
+impl<'a> AbiConstructor<'a> {
+    pub fn node_id(&self) -> NodeId {
+        self.constructor.node_id
+    }
+
+    pub fn inputs(&self) -> impl ExactSizeIterator<Item = AbiParameter<'a>> + Clone + use<'a> {
+        parameters(
+            &self.constructor.inputs,
+            AbiTypeSpelling::Json,
+            false,
+            self.semantic,
+        )
+    }
+
+    pub fn state_mutability(&self) -> &'a AbiMutability {
+        &self.constructor.state_mutability
+    }
+}
+
+#[derive(Clone, Copy)]
+pub struct AbiError<'a> {
+    error: &'a Error,
+    semantic: &'a Arc<SemanticContext>,
+}
+
+impl<'a> AbiError<'a> {
+    pub fn node_id(&self) -> NodeId {
+        self.error.node_id
+    }
+
+    pub fn name(&self) -> &'a str {
+        &self.error.name
+    }
+
+    pub fn inputs(&self) -> impl ExactSizeIterator<Item = AbiParameter<'a>> + Clone + use<'a> {
+        parameters(
+            &self.error.inputs,
+            AbiTypeSpelling::Json,
+            false,
+            self.semantic,
+        )
+    }
+}
+
+#[derive(Clone, Copy)]
+pub struct AbiEvent<'a> {
+    event: &'a Event,
+    semantic: &'a Arc<SemanticContext>,
+}
+
+impl<'a> AbiEvent<'a> {
+    pub fn node_id(&self) -> NodeId {
+        self.event.node_id
+    }
+
+    pub fn name(&self) -> &'a str {
+        &self.event.name
+    }
+
+    pub fn inputs(&self) -> impl ExactSizeIterator<Item = AbiParameter<'a>> + Clone + use<'a> {
+        parameters(
+            &self.event.inputs,
+            AbiTypeSpelling::Json,
+            true,
+            self.semantic,
+        )
+    }
+
+    pub fn anonymous(&self) -> bool {
+        self.event.anonymous
+    }
+}
+
+#[derive(Clone, Copy)]
+pub struct AbiFallback<'a> {
+    fallback: &'a Fallback,
+}
+
+impl<'a> AbiFallback<'a> {
+    pub fn node_id(&self) -> NodeId {
+        self.fallback.node_id
+    }
+
+    pub fn state_mutability(&self) -> &'a AbiMutability {
+        &self.fallback.state_mutability
+    }
+}
+
+#[derive(Clone, Copy)]
+pub struct AbiFunction<'a> {
+    function: &'a Function,
+    semantic: &'a Arc<SemanticContext>,
+}
+
+impl<'a> AbiFunction<'a> {
+    pub fn node_id(&self) -> NodeId {
+        self.function.node_id
+    }
+
+    pub fn name(&self) -> &'a str {
+        &self.function.name
+    }
+
+    pub fn inputs(&self) -> impl ExactSizeIterator<Item = AbiParameter<'a>> + Clone + use<'a> {
+        parameters(
+            &self.function.inputs,
+            self.function.type_spelling,
+            false,
+            self.semantic,
+        )
+    }
+
+    pub fn outputs(&self) -> impl ExactSizeIterator<Item = AbiParameter<'a>> + Clone + use<'a> {
+        parameters(
+            &self.function.outputs,
+            self.function.type_spelling,
+            false,
+            self.semantic,
+        )
+    }
+
+    pub fn state_mutability(&self) -> &'a AbiMutability {
+        &self.function.state_mutability
+    }
+}
+
+#[derive(Clone, Copy)]
+pub struct AbiReceive<'a> {
+    receive: &'a Receive,
+}
+
+impl<'a> AbiReceive<'a> {
+    pub fn node_id(&self) -> NodeId {
+        self.receive.node_id
+    }
+
+    pub fn state_mutability(&self) -> &'a AbiMutability {
+        &self.receive.state_mutability
+    }
+}
+
+/// Views over an entry's `parameters`, spelling their types as `spelling` does. Only an event's
+/// inputs are marked `indexed` in the JSON, hence `with_indexed`.
+fn parameters<'a>(
+    parameters: &'a [Parameter],
+    spelling: AbiTypeSpelling,
+    with_indexed: bool,
+    semantic: &'a Arc<SemanticContext>,
+) -> impl ExactSizeIterator<Item = AbiParameter<'a>> + Clone {
+    parameters.iter().map(move |parameter| AbiParameter {
+        name: parameter.name.as_deref(),
+        type_id: parameter.type_id,
+        indexed: with_indexed.then_some(parameter.indexed),
+        spelling,
+        semantic,
+    })
+}
+
+/// A parameter of an ABI entry, or a component of a `tuple` parameter.
+#[derive(Clone, Copy)]
+pub struct AbiParameter<'a> {
+    name: Option<&'a str>,
+    type_id: TypeId,
+    /// `Some` only on an event's input, the only parameter the JSON marks `indexed`.
+    indexed: Option<bool>,
+    spelling: AbiTypeSpelling,
+    semantic: &'a Arc<SemanticContext>,
+}
+
+impl<'a> AbiParameter<'a> {
+    pub fn name(&self) -> Option<&'a str> {
+        self.name
     }
 
     pub fn type_id(&self) -> TypeId {
@@ -294,6 +427,118 @@ impl AbiParameter {
     }
 
     pub fn indexed(&self) -> bool {
-        self.indexed
+        self.indexed.unwrap_or(false)
+    }
+
+    /// The JSON ABI `type`, e.g. `uint256[]`, or `tuple` for a struct whose members are its
+    /// [`Self::components`].
+    pub fn type_name(&self) -> String {
+        let mut name = String::new();
+        self.write_type_name(&mut name)
+            .expect("writing to a String never fails");
+        name
+    }
+
+    /// The JSON ABI `internalType`, which names the type as declared, e.g. `struct C.S[]`.
+    pub fn internal_type_name(&self) -> String {
+        self.semantic.type_abi_internal_name(self.type_id)
+    }
+
+    /// The members of the struct behind a `tuple` type, through any arrays, in declaration order.
+    /// `None` when the type is not a `tuple`.
+    pub fn components(
+        &self,
+    ) -> Option<impl ExactSizeIterator<Item = AbiParameter<'a>> + Clone + use<'a>> {
+        let struct_id = struct_behind(self.semantic, self.type_id)?;
+        let Some(SemanticDefinition::Struct(definition)) =
+            self.semantic.binder().find_definition_by_id(struct_id)
+        else {
+            unreachable!("a struct type resolves to a struct definition");
+        };
+        let (spelling, semantic) = (self.spelling, self.semantic);
+        Some(definition.ir_node.members.iter().map(move |member| {
+            AbiParameter {
+                name: Some(member.name.unparse()),
+                type_id: semantic
+                    .binder()
+                    .node_typing(member.id())
+                    .as_type_id()
+                    .expect("a struct member in the ABI is typed"),
+                indexed: None,
+                spelling,
+                semantic,
+            }
+        }))
+    }
+
+    fn write_type_name(&self, out: &mut impl fmt::Write) -> fmt::Result {
+        self.semantic
+            .write_type_abi_name(self.type_id, self.spelling, out)
+            .map_err(|error| match error {
+                AbiNameError::Write(error) => error,
+                // The parameter was checked to have an ABI type when it was built.
+                error => unreachable!("a parameter in the ABI has an ABI type: {error}"),
+            })
+    }
+}
+
+/// The struct behind a `tuple` type, through any arrays.
+fn struct_behind(semantic: &SemanticContext, type_id: TypeId) -> Option<NodeId> {
+    match semantic.types().get_type_by_id(type_id) {
+        Type::Array(ArrayType { element_type, .. })
+        | Type::FixedSizeArray(FixedSizeArrayType { element_type, .. }) => {
+            struct_behind(semantic, *element_type)
+        }
+        Type::ArraySlice(ArraySliceType { array_type_id }) => {
+            struct_behind(semantic, *array_type_id)
+        }
+        Type::Struct(StructType { definition_id, .. }) => Some(*definition_id),
+        _ => None,
+    }
+}
+
+impl fmt::Debug for AbiConstructor<'_> {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        self.constructor.fmt(f)
+    }
+}
+
+impl fmt::Debug for AbiError<'_> {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        self.error.fmt(f)
+    }
+}
+
+impl fmt::Debug for AbiEvent<'_> {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        self.event.fmt(f)
+    }
+}
+
+impl fmt::Debug for AbiFallback<'_> {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        self.fallback.fmt(f)
+    }
+}
+
+impl fmt::Debug for AbiFunction<'_> {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        self.function.fmt(f)
+    }
+}
+
+impl fmt::Debug for AbiReceive<'_> {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        self.receive.fmt(f)
+    }
+}
+
+impl fmt::Debug for AbiParameter<'_> {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        f.debug_struct("AbiParameter")
+            .field("name", &self.name)
+            .field("type_id", &self.type_id)
+            .field("indexed", &self.indexed)
+            .finish_non_exhaustive()
     }
 }

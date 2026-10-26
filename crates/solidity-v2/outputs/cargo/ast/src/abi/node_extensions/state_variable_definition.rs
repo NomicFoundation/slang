@@ -5,9 +5,8 @@ use slang_solidity_v2_ir::ir;
 use slang_solidity_v2_semantic::context::{AbiNameError, AbiTypeSpelling};
 use slang_solidity_v2_semantic::types::{FunctionType, TupleType, Type};
 
-use crate::abi::{
-    AbiEntry, AbiFunction, AbiMutability, AbiParameter, SignatureHasher, json_type_spelling,
-};
+use crate::abi::entries::{Entry, Function, Parameter};
+use crate::abi::{AbiMutability, SignatureHasher, json_type_spelling};
 use crate::ast::{StateVariableDefinitionStruct, StateVariableVisibility};
 
 impl StateVariableDefinitionStruct {
@@ -29,7 +28,7 @@ impl StateVariableDefinitionStruct {
     }
 
     /// The getter's ABI inputs and outputs.
-    fn extract_getter_type_parameters_abi(&self) -> Option<(Vec<AbiParameter>, Vec<AbiParameter>)> {
+    fn extract_getter_type_parameters_abi(&self) -> Option<(Vec<Parameter>, Vec<Parameter>)> {
         let function_type = self.getter_function_type()?;
         let (input_names, output_names) = self.compute_input_output_parameter_names();
 
@@ -43,7 +42,7 @@ impl StateVariableDefinitionStruct {
             .iter()
             .zip(input_names)
             .map(|(parameter_type_id, name)| {
-                AbiParameter::new(name, *parameter_type_id, false, &self.semantic)
+                Parameter::new(name, *parameter_type_id, false, &self.semantic)
             })
             .collect::<Option<Vec<_>>>()?;
 
@@ -65,7 +64,7 @@ impl StateVariableDefinitionStruct {
         let outputs = output_types
             .zip(output_names)
             .map(|(output_type_id, name)| {
-                AbiParameter::new(name, *output_type_id, false, &self.semantic)
+                Parameter::new(name, *output_type_id, false, &self.semantic)
             })
             .collect::<Option<Vec<_>>>()?;
         Some((inputs, outputs))
@@ -110,13 +109,13 @@ impl StateVariableDefinitionStruct {
         (input_names, output_names)
     }
 
-    pub fn compute_abi_entry(&self) -> Option<AbiEntry> {
+    pub(crate) fn compute_abi_entry(&self) -> Option<Entry> {
         if !self.is_externally_visible() {
             return None;
         }
         let (inputs, outputs) = self.extract_getter_type_parameters_abi()?;
 
-        Some(AbiEntry::Function(AbiFunction {
+        Some(Entry::Function(Function {
             node_id: self.ir_node.id(),
             name: self.ir_node.name.unparse().to_string(),
             inputs,

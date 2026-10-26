@@ -1,4 +1,5 @@
-use crate::abi::{AbiEntry, AbiError, selector_from_signature};
+use crate::abi::entries::{Entry, Error};
+use crate::abi::selector_from_signature;
 use crate::ast::ErrorDefinitionStruct;
 
 impl ErrorDefinitionStruct {
@@ -14,10 +15,10 @@ impl ErrorDefinitionStruct {
         Some(format!("{name}({parameters})"))
     }
 
-    pub fn compute_abi_entry(&self) -> Option<AbiEntry> {
+    pub(crate) fn compute_abi_entry(&self) -> Option<Entry> {
         let inputs = self.parameters().compute_abi_parameters()?;
 
-        Some(AbiEntry::Error(AbiError {
+        Some(Entry::Error(Error {
             node_id: self.ir_node.id(),
             name: self.ir_node.name.unparse().to_string(),
             inputs,

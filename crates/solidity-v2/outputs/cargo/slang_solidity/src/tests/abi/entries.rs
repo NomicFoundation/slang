@@ -1,5 +1,5 @@
 use super::fixtures;
-use crate::abi::AbiEntry;
+use crate::abi::{AbiEntry, AbiParameter};
 
 #[test]
 fn test_get_contracts_abi() {
@@ -11,7 +11,7 @@ fn test_get_contracts_abi() {
     assert_eq!("main.sol", contracts[0].file_id().as_str());
     assert_eq!(7, contracts[0].entries().len());
 
-    let entries = contracts[0].entries();
+    let entries = contracts[0].entries().collect::<Vec<_>>();
 
     assert!(matches!(entries[0], AbiEntry::Constructor(_)));
     assert!(matches!(&entries[1], AbiEntry::Function(f) if f.name() == "click"));
@@ -31,11 +31,11 @@ fn test_full_abi_with_events_and_errors() {
     assert_eq!(contracts_abi[0].name(), "Base");
     assert_eq!(contracts_abi[1].name(), "Test");
 
-    let entries = contracts_abi[0].entries();
+    let entries = contracts_abi[0].entries().collect::<Vec<_>>();
     assert_eq!(entries.len(), 1);
     assert!(matches!(&entries[0], AbiEntry::Function(f) if f.name() == "xs"));
 
-    let entries = contracts_abi[1].entries();
+    let entries = contracts_abi[1].entries().collect::<Vec<_>>();
     assert_eq!(entries.len(), 10);
     assert!(matches!(entries[0], AbiEntry::Constructor(_)));
     assert!(matches!(&entries[1], AbiEntry::Error(e) if e.name() == "InsufficientBalance"));
@@ -57,7 +57,7 @@ fn test_abi_entries_with_tuples() {
     assert_eq!(contracts_abi.len(), 1);
     assert_eq!(contracts_abi[0].name(), "Test");
 
-    let entries = contracts_abi[0].entries();
+    let entries = contracts_abi[0].entries().collect::<Vec<_>>();
     assert_eq!(entries.len(), 5);
 
     // The parameters' types are pinned by `json::tuples_and_getters_serialize`, on the same
@@ -68,20 +68,20 @@ fn test_abi_entries_with_tuples() {
         panic!("expected ABI for function");
     };
     assert_eq!(f.name(), "f");
-    let inputs = f.inputs();
+    let inputs = f.inputs().collect::<Vec<_>>();
     assert_eq!(inputs.len(), 3);
     assert_eq!(inputs[0].name(), None);
     assert_eq!(inputs[1].name(), None);
     assert_eq!(inputs[2].name(), Some("x"));
-    assert!(f.outputs().is_empty());
+    assert_eq!(f.outputs().len(), 0);
 
     // g() returns (S memory s, T memory t, uint)
     let AbiEntry::Function(g) = &entries[1] else {
         panic!("expected ABI for function");
     };
     assert_eq!(g.name(), "g");
-    assert!(g.inputs().is_empty());
-    let outputs = g.outputs();
+    assert_eq!(g.inputs().len(), 0);
+    let outputs = g.outputs().collect::<Vec<_>>();
     assert_eq!(outputs.len(), 3);
     assert_eq!(outputs[0].name(), Some("s"));
     assert_eq!(outputs[1].name(), Some("t"));
@@ -93,8 +93,8 @@ fn test_abi_entries_with_tuples() {
         panic!("expected ABI for function");
     };
     assert_eq!(getter.name(), "t");
-    assert!(getter.inputs().is_empty());
-    let outputs = getter.outputs();
+    assert_eq!(getter.inputs().len(), 0);
+    let outputs = getter.outputs().collect::<Vec<_>>();
     assert_eq!(outputs.len(), 2);
 
     // t_components() returns (uint, uint)
@@ -102,8 +102,8 @@ fn test_abi_entries_with_tuples() {
         panic!("expected ABI for function");
     };
     assert_eq!(t_components.name(), "t_components");
-    assert!(t_components.inputs().is_empty());
-    let outputs = t_components.outputs();
+    assert_eq!(t_components.inputs().len(), 0);
+    let outputs = t_components.outputs().collect::<Vec<_>>();
     assert_eq!(outputs.len(), 2);
     assert_eq!(outputs[0].name(), None);
     assert_eq!(outputs[1].name(), None);
@@ -113,10 +113,64 @@ fn test_abi_entries_with_tuples() {
         panic!("expected ABI for function");
     };
     assert_eq!(t_struct.name(), "t_struct");
-    assert!(t_struct.inputs().is_empty());
-    let outputs = t_struct.outputs();
+    assert_eq!(t_struct.inputs().len(), 0);
+    let outputs = t_struct.outputs().collect::<Vec<_>>();
     assert_eq!(outputs.len(), 1);
     assert_eq!(outputs[0].name(), None);
+}
+
+/// A parameter spells its JSON `type` and `internalType`, and a `tuple` lists its struct's members
+/// as components, through any arrays.
+#[test]
+fn parameters_expose_type_names_and_components() {
+    let unit = super::AbiWithTuples::build_compilation_unit();
+    let contracts_abi = unit.compute_contracts_abi();
+    let Some(AbiEntry::Function(f)) = contracts_abi[0].entries().next() else {
+        panic!("expected ABI for function");
+    };
+    assert_eq!(f.name(), "f");
+
+    let inputs = f.inputs().collect::<Vec<_>>();
+    let types =
+        |parameter: &AbiParameter<'_>| (parameter.type_name(), parameter.internal_type_name());
+    assert_eq!(
+        inputs.iter().map(types).collect::<Vec<_>>(),
+        [
+            ("tuple".to_owned(), "struct Test.S".to_owned()),
+            ("tuple".to_owned(), "struct Test.T".to_owned()),
+            ("uint256".to_owned(), "uint256".to_owned()),
+        ]
+    );
+    assert!(inputs[2].components().is_none());
+
+    let s_members = inputs[0]
+        .components()
+        .expect("a struct has components")
+        .collect::<Vec<_>>();
+    assert_eq!(
+        s_members
+            .iter()
+            .map(|member| member.name())
+            .collect::<Vec<_>>(),
+        [Some("a"), Some("b"), Some("c")]
+    );
+    assert_eq!(
+        s_members.iter().map(types).collect::<Vec<_>>(),
+        [
+            ("uint256".to_owned(), "uint256".to_owned()),
+            ("uint256[]".to_owned(), "uint256[]".to_owned()),
+            ("tuple[]".to_owned(), "struct Test.T[]".to_owned()),
+        ]
+    );
+    assert!(s_members[1].components().is_none());
+
+    // The components of `T[] c` are `T`'s members, through the array.
+    let t_members = s_members[2]
+        .components()
+        .expect("an array of structs has components")
+        .map(|member| member.name())
+        .collect::<Vec<_>>();
+    assert_eq!(t_members, [Some("x"), Some("y")]);
 }
 
 /// An abstract contract cannot run its constructor, so solc leaves it out of the ABI.
@@ -129,7 +183,9 @@ fn abstract_contract_has_no_constructor_entry() {
         .expect("contract AB exists")
         .compute_abi()
         .expect("the ABI is computable");
-    assert!(matches!(abi.entries(), [AbiEntry::Function(f)] if f.name() == "extra"));
+    assert!(
+        matches!(abi.entries().collect::<Vec<_>>()[..], [AbiEntry::Function(f)] if f.name() == "extra")
+    );
 }
 
 /// With the `function` keyword, `receive` and `fallback` are ordinary names: solc lists both
@@ -138,7 +194,7 @@ fn abstract_contract_has_no_constructor_entry() {
 fn functions_named_receive_and_fallback_are_regular_functions() {
     let unit = super::FunctionsNamedReceiveAndFallback::build_compilation_unit();
     let contracts_abi = unit.compute_contracts_abi();
-    let entries = contracts_abi[0].entries();
+    let entries = contracts_abi[0].entries().collect::<Vec<_>>();
     assert_eq!(entries.len(), 4);
     assert!(matches!(entries[0], AbiEntry::Fallback(_)));
     assert!(matches!(&entries[1], AbiEntry::Function(f) if f.name() == "fallback"));
