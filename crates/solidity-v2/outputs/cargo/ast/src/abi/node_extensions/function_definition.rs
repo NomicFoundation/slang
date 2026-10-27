@@ -3,8 +3,8 @@ use std::fmt;
 use slang_solidity_v2_ir::ir;
 use slang_solidity_v2_semantic::context::AbiNameError;
 
-use crate::abi::entries::{Constructor, Entry, Fallback, Function, Receive};
-use crate::abi::{AbiMutability, SignatureHasher, json_type_spelling};
+use crate::abi::entries::{Constructor, Entry, Fallback, Function, Receive, SpellingPolicy};
+use crate::abi::{AbiMutability, SignatureHasher};
 use crate::ast::{Definition, FunctionDefinitionStruct, FunctionVisibility};
 
 impl FunctionDefinitionStruct {
@@ -41,7 +41,7 @@ impl FunctionDefinitionStruct {
                 inputs,
                 outputs,
                 state_mutability,
-                type_spelling: json_type_spelling(self.enclosing_definition().as_ref()),
+                spelling_policy: SpellingPolicy::of(self.enclosing_definition().as_ref()),
             })),
             ir::FunctionKind::Constructor => Some(Entry::Constructor(Constructor {
                 node_id,

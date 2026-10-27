@@ -5,7 +5,6 @@ mod storage_layout;
 use std::fmt;
 
 use sha3::{Digest, Keccak256};
-use slang_solidity_v2_semantic::context::AbiTypeSpelling;
 
 pub use self::entries::{
     AbiConstructor, AbiEntry, AbiError, AbiEvent, AbiFallback, AbiFunction, AbiMutability,
@@ -15,16 +14,6 @@ pub(crate) use self::storage_layout::storage_type_identifier;
 pub use self::storage_layout::{
     StorageLayout, StoragePosition, StorageSize, StorageType, StorageTypeKind, StorageVariable,
 };
-use crate::ast::Definition;
-
-/// How the JSON spells the parameter `type`s of a function declared in `enclosing_definition`:
-/// by name in a library, as its selectors do.
-pub(crate) fn json_type_spelling(enclosing_definition: Option<&Definition>) -> AbiTypeSpelling {
-    match enclosing_definition {
-        Some(Definition::Library(_)) => AbiTypeSpelling::LibraryJson,
-        _ => AbiTypeSpelling::Json,
-    }
-}
 
 pub fn hash_from_signature(signature: &str) -> [u8; 32] {
     Keccak256::digest(signature).into()

@@ -97,6 +97,19 @@ library L {
 );
 
 define_fixture!(
+    LibraryUserTypes,
+    file: "main.sol", r#"
+pragma solidity *;
+library L {
+    enum E { A, B }
+    struct S { E e; uint256[] xs; }
+
+    function f(S[] memory s, E e) external pure {}
+}
+"#,
+);
+
+define_fixture!(
     LibraryMembers,
     file: "main.sol", r#"
 pragma solidity ^0.8.0;

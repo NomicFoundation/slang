@@ -86,7 +86,10 @@ impl Serialize for AbiParameter<'_> {
             &written(|f| self.semantic.write_type_abi_internal_name(self.type_id, f)),
         )?;
         map.serialize_entry("name", self.name.unwrap_or_default())?;
-        map.serialize_entry("type", &written(|f| self.write_type_name(f)))?;
+        map.serialize_entry(
+            "type",
+            &written(|f| self.write_type_name(self.spelling_policy.json(), f)),
+        )?;
         map.end()
     }
 }

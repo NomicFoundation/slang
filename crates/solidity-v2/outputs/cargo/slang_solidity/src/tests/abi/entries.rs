@@ -119,8 +119,8 @@ fn test_abi_entries_with_tuples() {
     assert_eq!(outputs[0].name(), None);
 }
 
-/// A parameter spells its JSON `type` and `internalType`, and a `tuple` lists its struct's members
-/// as components, through any arrays.
+/// A parameter spells its JSON `type`, selector type and `internalType`, and a `tuple` lists its
+/// struct's members as components, through any arrays.
 #[test]
 fn parameters_expose_type_names_and_components() {
     let unit = super::AbiWithTuples::build_compilation_unit();
@@ -131,14 +131,31 @@ fn parameters_expose_type_names_and_components() {
     assert_eq!(f.name(), "f");
 
     let inputs = f.inputs().collect::<Vec<_>>();
-    let types =
-        |parameter: &AbiParameter<'_>| (parameter.type_name(), parameter.internal_type_name());
+    let types = |parameter: &AbiParameter<'_>| {
+        (
+            parameter.json_type_name(),
+            parameter.selector_type_name(),
+            parameter.internal_type_name(),
+        )
+    };
     assert_eq!(
         inputs.iter().map(types).collect::<Vec<_>>(),
         [
-            ("tuple".to_owned(), "struct Test.S".to_owned()),
-            ("tuple".to_owned(), "struct Test.T".to_owned()),
-            ("uint256".to_owned(), "uint256".to_owned()),
+            (
+                "tuple".to_owned(),
+                "(uint256,uint256[],(uint256,uint256)[])".to_owned(),
+                "struct Test.S".to_owned()
+            ),
+            (
+                "tuple".to_owned(),
+                "(uint256,uint256)".to_owned(),
+                "struct Test.T".to_owned()
+            ),
+            (
+                "uint256".to_owned(),
+                "uint256".to_owned(),
+                "uint256".to_owned()
+            ),
         ]
     );
     assert!(inputs[2].components().is_none());
@@ -157,9 +174,21 @@ fn parameters_expose_type_names_and_components() {
     assert_eq!(
         s_members.iter().map(types).collect::<Vec<_>>(),
         [
-            ("uint256".to_owned(), "uint256".to_owned()),
-            ("uint256[]".to_owned(), "uint256[]".to_owned()),
-            ("tuple[]".to_owned(), "struct Test.T[]".to_owned()),
+            (
+                "uint256".to_owned(),
+                "uint256".to_owned(),
+                "uint256".to_owned()
+            ),
+            (
+                "uint256[]".to_owned(),
+                "uint256[]".to_owned(),
+                "uint256[]".to_owned()
+            ),
+            (
+                "tuple[]".to_owned(),
+                "(uint256,uint256)[]".to_owned(),
+                "struct Test.T[]".to_owned()
+            ),
         ]
     );
     assert!(s_members[1].components().is_none());
@@ -200,4 +229,52 @@ fn functions_named_receive_and_fallback_are_regular_functions() {
     assert!(matches!(&entries[1], AbiEntry::Function(f) if f.name() == "fallback"));
     assert!(matches!(&entries[2], AbiEntry::Function(f) if f.name() == "receive"));
     assert!(matches!(entries[3], AbiEntry::Receive(_)));
+}
+
+/// In a library, the selector type names user-defined types, as the library's selectors do,
+/// while the JSON `type` still expands them.
+#[test]
+fn library_parameters_name_user_types_in_selector_type() {
+    let unit = super::LibraryUserTypes::build_compilation_unit();
+    let abi = fixtures::find_library(&unit, "L")
+        .compute_abi()
+        .expect("the ABI is computable");
+    let Some(AbiEntry::Function(f)) = abi.entries().next() else {
+        panic!("expected ABI for function");
+    };
+
+    let types = |parameter: AbiParameter<'_>| {
+        (
+            parameter.json_type_name(),
+            parameter.selector_type_name(),
+            parameter.internal_type_name(),
+        )
+    };
+    let inputs = f.inputs().collect::<Vec<_>>();
+    assert_eq!(
+        inputs.iter().copied().map(types).collect::<Vec<_>>(),
+        [
+            (
+                "tuple[]".to_owned(),
+                "L.S[]".to_owned(),
+                "struct L.S[]".to_owned()
+            ),
+            ("L.E".to_owned(), "L.E".to_owned(), "enum L.E".to_owned()),
+        ]
+    );
+    assert_eq!(
+        inputs[0]
+            .components()
+            .expect("an array of structs has components")
+            .map(types)
+            .collect::<Vec<_>>(),
+        [
+            ("L.E".to_owned(), "L.E".to_owned(), "enum L.E".to_owned()),
+            (
+                "uint256[]".to_owned(),
+                "uint256[]".to_owned(),
+                "uint256[]".to_owned()
+            ),
+        ]
+    );
 }

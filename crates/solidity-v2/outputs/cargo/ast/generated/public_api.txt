@@ -79,9 +79,10 @@ impl<'a> slang_solidity_v2_ast::abi::AbiParameter<'a>
 pub fn slang_solidity_v2_ast::abi::AbiParameter<'a>::components(&self) -> core::option::Option<impl core::iter::traits::exact_size::ExactSizeIterator<Item = slang_solidity_v2_ast::abi::AbiParameter<'a>> + core::clone::Clone + use<'a>>
 pub fn slang_solidity_v2_ast::abi::AbiParameter<'a>::indexed(&self) -> bool
 pub fn slang_solidity_v2_ast::abi::AbiParameter<'a>::internal_type_name(&self) -> alloc::string::String
+pub fn slang_solidity_v2_ast::abi::AbiParameter<'a>::json_type_name(&self) -> alloc::string::String
 pub fn slang_solidity_v2_ast::abi::AbiParameter<'a>::name(&self) -> core::option::Option<&'a str>
+pub fn slang_solidity_v2_ast::abi::AbiParameter<'a>::selector_type_name(&self) -> alloc::string::String
 pub fn slang_solidity_v2_ast::abi::AbiParameter<'a>::type_id(&self) -> slang_solidity_v2_semantic::types::TypeId
-pub fn slang_solidity_v2_ast::abi::AbiParameter<'a>::type_name(&self) -> alloc::string::String
 impl core::fmt::Debug for slang_solidity_v2_ast::abi::AbiParameter<'_>
 pub fn slang_solidity_v2_ast::abi::AbiParameter<'_>::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
 impl serde_core::ser::Serialize for slang_solidity_v2_ast::abi::AbiParameter<'_>

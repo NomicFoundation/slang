@@ -100,8 +100,39 @@ pub(crate) struct Function {
     pub(super) inputs: Vec<Parameter>,
     pub(super) outputs: Vec<Parameter>,
     pub(super) state_mutability: AbiMutability,
-    /// How the JSON spells the parameters' `type`.
-    pub(super) type_spelling: AbiTypeSpelling,
+    pub(super) spelling_policy: SpellingPolicy,
+}
+
+/// How an entry spells its parameters' types: by name in a library, as its selectors do, or
+/// canonically otherwise. Each target, JSON or selector, then has its own [`AbiTypeSpelling`].
+#[derive(Clone, Copy, Debug)]
+pub(crate) enum SpellingPolicy {
+    Canonical,
+    Library,
+}
+
+impl SpellingPolicy {
+    /// The policy of a function declared in `enclosing_definition`.
+    pub(crate) fn of(enclosing_definition: Option<&Definition>) -> Self {
+        match enclosing_definition {
+            Some(Definition::Library(_)) => Self::Library,
+            _ => Self::Canonical,
+        }
+    }
+
+    fn json(self) -> AbiTypeSpelling {
+        match self {
+            Self::Canonical => AbiTypeSpelling::Json,
+            Self::Library => AbiTypeSpelling::LibraryJson,
+        }
+    }
+
+    fn selector(self) -> AbiTypeSpelling {
+        match self {
+            Self::Canonical => AbiTypeSpelling::Selector,
+            Self::Library => AbiTypeSpelling::LibrarySelector,
+        }
+    }
 }
 
 #[derive(Clone, Debug)]
@@ -256,7 +287,7 @@ impl<'a> AbiConstructor<'a> {
     pub fn inputs(&self) -> impl ExactSizeIterator<Item = AbiParameter<'a>> + Clone + use<'a> {
         parameters(
             &self.constructor.inputs,
-            AbiTypeSpelling::Json,
+            SpellingPolicy::Canonical,
             false,
             self.semantic,
         )
@@ -285,7 +316,7 @@ impl<'a> AbiError<'a> {
     pub fn inputs(&self) -> impl ExactSizeIterator<Item = AbiParameter<'a>> + Clone + use<'a> {
         parameters(
             &self.error.inputs,
-            AbiTypeSpelling::Json,
+            SpellingPolicy::Canonical,
             false,
             self.semantic,
         )
@@ -310,7 +341,7 @@ impl<'a> AbiEvent<'a> {
     pub fn inputs(&self) -> impl ExactSizeIterator<Item = AbiParameter<'a>> + Clone + use<'a> {
         parameters(
             &self.event.inputs,
-            AbiTypeSpelling::Json,
+            SpellingPolicy::Canonical,
             true,
             self.semantic,
         )
@@ -354,7 +385,7 @@ impl<'a> AbiFunction<'a> {
     pub fn inputs(&self) -> impl ExactSizeIterator<Item = AbiParameter<'a>> + Clone + use<'a> {
         parameters(
             &self.function.inputs,
-            self.function.type_spelling,
+            self.function.spelling_policy,
             false,
             self.semantic,
         )
@@ -363,7 +394,7 @@ impl<'a> AbiFunction<'a> {
     pub fn outputs(&self) -> impl ExactSizeIterator<Item = AbiParameter<'a>> + Clone + use<'a> {
         parameters(
             &self.function.outputs,
-            self.function.type_spelling,
+            self.function.spelling_policy,
             false,
             self.semantic,
         )
@@ -389,11 +420,11 @@ impl<'a> AbiReceive<'a> {
     }
 }
 
-/// Views over an entry's `parameters`, spelling their types as `spelling` does. Only an event's
+/// Views over an entry's `parameters`, spelling their types under `spelling_policy`. Only an event's
 /// inputs are marked `indexed` in the JSON, hence `with_indexed`.
 fn parameters<'a>(
     parameters: &'a [Parameter],
-    spelling: AbiTypeSpelling,
+    spelling_policy: SpellingPolicy,
     with_indexed: bool,
     semantic: &'a Arc<SemanticContext>,
 ) -> impl ExactSizeIterator<Item = AbiParameter<'a>> + Clone {
@@ -401,7 +432,7 @@ fn parameters<'a>(
         name: parameter.name.as_deref(),
         type_id: parameter.type_id,
         indexed: with_indexed.then_some(parameter.indexed),
-        spelling,
+        spelling_policy,
         semantic,
     })
 }
@@ -413,7 +444,7 @@ pub struct AbiParameter<'a> {
     type_id: TypeId,
     /// `Some` only on an event's input, the only parameter the JSON marks `indexed`.
     indexed: Option<bool>,
-    spelling: AbiTypeSpelling,
+    spelling_policy: SpellingPolicy,
     semantic: &'a Arc<SemanticContext>,
 }
 
@@ -432,11 +463,14 @@ impl<'a> AbiParameter<'a> {
 
     /// The JSON ABI `type`, e.g. `uint256[]`, or `tuple` for a struct whose members are its
     /// [`Self::components`].
-    pub fn type_name(&self) -> String {
-        let mut name = String::new();
-        self.write_type_name(&mut name)
-            .expect("writing to a String never fails");
-        name
+    pub fn json_type_name(&self) -> String {
+        self.type_name(self.spelling_policy.json())
+    }
+
+    /// The type as the entry's selector signature spells it, e.g. `(uint256,bool)[]` for an array
+    /// of structs, or `L.S[]` in a library, which names user-defined types.
+    pub fn selector_type_name(&self) -> String {
+        self.type_name(self.spelling_policy.selector())
     }
 
     /// The JSON ABI `internalType`, which names the type as declared, e.g. `struct C.S[]`.
@@ -455,7 +489,7 @@ impl<'a> AbiParameter<'a> {
         else {
             unreachable!("a struct type resolves to a struct definition");
         };
-        let (spelling, semantic) = (self.spelling, self.semantic);
+        let (spelling_policy, semantic) = (self.spelling_policy, self.semantic);
         Some(definition.ir_node.members.iter().map(move |member| {
             AbiParameter {
                 name: Some(member.name.unparse()),
@@ -465,15 +499,22 @@ impl<'a> AbiParameter<'a> {
                     .as_type_id()
                     .expect("a struct member in the ABI is typed"),
                 indexed: None,
-                spelling,
+                spelling_policy,
                 semantic,
             }
         }))
     }
 
-    fn write_type_name(&self, out: &mut impl fmt::Write) -> fmt::Result {
+    fn type_name(&self, spelling: AbiTypeSpelling) -> String {
+        let mut name = String::new();
+        self.write_type_name(spelling, &mut name)
+            .expect("writing to a String never fails");
+        name
+    }
+
+    fn write_type_name(&self, spelling: AbiTypeSpelling, out: &mut impl fmt::Write) -> fmt::Result {
         self.semantic
-            .write_type_abi_name(self.type_id, self.spelling, out)
+            .write_type_abi_name(self.type_id, spelling, out)
             .map_err(|error| match error {
                 AbiNameError::Write(error) => error,
                 // The parameter was checked to have an ABI type when it was built.
