@@ -1,0 +1,36 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Source: >
+  1  │ function(uint256) external public x                                              │ 0..35
+
+Errors: # 1 total
+  - >
+    Error: Expected Equal or Semicolon.
+       ╭─[crates/solidity/testing/snapshots/cst_output/StateVariableDefinition/function_type_second_visibility_missing_semicolon/input.sol:1:37]
+       │
+     1 │ function(uint256) external public x
+       │                                     │ 
+       │                                     ╰─ Error occurred here.
+    ───╯
+
+Tree:
+  - (root꞉ StateVariableDefinition): # "function(uint256) external public x\n" (0..36)
+      - (type_name꞉ TypeName) ► (variant꞉ FunctionType): # "function(uint256) external public" (0..33)
+          - (function_keyword꞉ FunctionKeyword): "function" # (0..8)
+          - (parameters꞉ ParametersDeclaration): # "(uint256)" (8..17)
+              - (open_paren꞉ OpenParen): "(" # (8..9)
+              - (parameters꞉ Parameters): # "uint256" (9..16)
+                  - (item꞉ Parameter) ► (type_name꞉ TypeName) ► (variant꞉ ElementaryType) ► (variant꞉ UintKeyword): "uint256" # (9..16)
+              - (close_paren꞉ CloseParen): ")" # (16..17)
+          - (attributes꞉ FunctionTypeAttributes): # " external public" (17..33)
+              - (item꞉ FunctionTypeAttribute): # " external" (17..26)
+                  - (leading_trivia꞉ Whitespace): " " # (17..18)
+                  - (variant꞉ ExternalKeyword): "external" # (18..26)
+              - (item꞉ FunctionTypeAttribute): # " public" (26..33)
+                  - (leading_trivia꞉ Whitespace): " " # (26..27)
+                  - (variant꞉ PublicKeyword): "public" # (27..33)
+      - (attributes꞉ StateVariableAttributes): [] # (33..33)
+      - (leading_trivia꞉ Whitespace): " " # (33..34)
+      - (name꞉ Identifier): "x" # (34..35)
+      - (trailing_trivia꞉ EndOfLine): "\n" # (35..36)
+      - (missing꞉ MISSING): "" # (36..36)

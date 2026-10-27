@@ -921,6 +921,11 @@ mod function_type {
     }
 
     #[test]
+    fn duplicate_visibility() -> Result<()> {
+        run("FunctionType", "duplicate_visibility")
+    }
+
+    #[test]
     fn pure_state_mutability() -> Result<()> {
         run("FunctionType", "pure_state_mutability")
     }
@@ -1151,6 +1156,15 @@ mod new_expression {
     #[test]
     fn identifier_path() -> Result<()> {
         run("NewExpression", "identifier_path")
+    }
+}
+
+mod parameters_declaration {
+    use super::*;
+
+    #[test]
+    fn function_type_second_visibility() -> Result<()> {
+        run("ParametersDeclaration", "function_type_second_visibility")
     }
 }
 
@@ -1458,6 +1472,43 @@ mod source_unit {
 
 mod state_variable_definition {
     use super::*;
+
+    #[test]
+    fn function_type_public_then_external() -> Result<()> {
+        run(
+            "StateVariableDefinition",
+            "function_type_public_then_external",
+        )
+    }
+
+    #[test]
+    fn function_type_second_visibility() -> Result<()> {
+        run("StateVariableDefinition", "function_type_second_visibility")
+    }
+
+    #[test]
+    fn function_type_second_visibility_missing_semicolon() -> Result<()> {
+        run(
+            "StateVariableDefinition",
+            "function_type_second_visibility_missing_semicolon",
+        )
+    }
+
+    #[test]
+    fn function_type_second_visibility_with_mutability() -> Result<()> {
+        run(
+            "StateVariableDefinition",
+            "function_type_second_visibility_with_mutability",
+        )
+    }
+
+    #[test]
+    fn function_type_second_visibility_with_returns() -> Result<()> {
+        run(
+            "StateVariableDefinition",
+            "function_type_second_visibility_with_returns",
+        )
+    }
 
     #[test]
     fn transient() -> Result<()> {
