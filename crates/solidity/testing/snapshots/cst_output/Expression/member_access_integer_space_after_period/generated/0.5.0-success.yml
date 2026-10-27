@@ -1,0 +1,14 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Source: >
+  1  │ 1. _2                                                                            │ 0..5
+
+Errors: []
+
+Tree:
+  - (root꞉ Expression) ► (variant꞉ MemberAccessExpression): # "1. _2\n" (0..6)
+      - (operand꞉ Expression) ► (variant꞉ DecimalNumberExpression) ► (literal꞉ DecimalLiteral): "1" # (0..1)
+      - (period꞉ Period): "." # (1..2)
+      - (leading_trivia꞉ Whitespace): " " # (2..3)
+      - (member꞉ Identifier): "_2" # (3..5)
+      - (trailing_trivia꞉ EndOfLine): "\n" # (5..6)

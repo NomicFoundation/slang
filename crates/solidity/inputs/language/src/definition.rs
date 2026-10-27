@@ -3895,7 +3895,10 @@ language_macros::compile!(Language(
                                     enabled = From("0.5.0"),
                                     scanner = TrailingContext(
                                         scanner = Sequence([
-                                            Fragment(DecimalDigits),
+                                            TrailingContext(
+                                                scanner = Fragment(DecimalDigits),
+                                                not_followed_by = Atom("._")
+                                            ),
                                             Optional(Sequence([
                                                 Atom("."),
                                                 Fragment(DecimalDigits)

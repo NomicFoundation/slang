@@ -7210,7 +7210,11 @@ impl Parser {
                 scan_not_followed_by!(
                     input,
                     scan_sequence!(
-                        self.decimal_digits(input),
+                        scan_not_followed_by!(
+                            input,
+                            self.decimal_digits(input),
+                            scan_chars!(input, '.', '_')
+                        ),
                         scan_optional!(
                             input,
                             scan_sequence!(scan_chars!(input, '.'), self.decimal_digits(input))
