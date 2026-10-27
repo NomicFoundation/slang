@@ -77,6 +77,7 @@ impl<'a> core::marker::Copy for slang_solidity_v2_ast::abi::AbiFunction<'a>
 pub struct slang_solidity_v2_ast::abi::AbiParameter<'a>
 impl<'a> slang_solidity_v2_ast::abi::AbiParameter<'a>
 pub fn slang_solidity_v2_ast::abi::AbiParameter<'a>::components(&self) -> core::option::Option<impl core::iter::traits::exact_size::ExactSizeIterator<Item = slang_solidity_v2_ast::abi::AbiParameter<'a>> + core::clone::Clone + use<'a>>
+pub fn slang_solidity_v2_ast::abi::AbiParameter<'a>::get_type(&self) -> slang_solidity_v2_ast::ast::Type
 pub fn slang_solidity_v2_ast::abi::AbiParameter<'a>::indexed(&self) -> bool
 pub fn slang_solidity_v2_ast::abi::AbiParameter<'a>::internal_type_name(&self) -> alloc::string::String
 pub fn slang_solidity_v2_ast::abi::AbiParameter<'a>::json_type_name(&self) -> alloc::string::String

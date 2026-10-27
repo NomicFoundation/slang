@@ -83,12 +83,18 @@ impl Serialize for AbiParameter<'_> {
         }
         map.serialize_entry(
             "internalType",
-            &written(|f| self.semantic.write_type_abi_internal_name(self.type_id, f)),
+            &format_args!(
+                "{}",
+                fmt::from_fn(|f| self.semantic.write_type_abi_internal_name(self.type_id, f))
+            ),
         )?;
         map.serialize_entry("name", self.name.unwrap_or_default())?;
         map.serialize_entry(
             "type",
-            &written(|f| self.write_type_name(self.spelling_policy.json(), f)),
+            &format_args!(
+                "{}",
+                fmt::from_fn(|f| self.write_type_name(self.spelling_policy.json(), f))
+            ),
         )?;
         map.end()
     }
@@ -104,26 +110,6 @@ where
 {
     fn serialize<S: Serializer>(&self, serializer: S) -> Result<S::Ok, S::Error> {
         serializer.collect_seq(self.0.clone())
-    }
-}
-
-/// Serializes as the string a closure writes, streaming it into the output instead of building
-/// it first.
-struct Written<F>(F);
-
-fn written<F: Fn(&mut fmt::Formatter<'_>) -> fmt::Result>(write: F) -> Written<F> {
-    Written(write)
-}
-
-impl<F: Fn(&mut fmt::Formatter<'_>) -> fmt::Result> fmt::Display for Written<F> {
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        (self.0)(f)
-    }
-}
-
-impl<F: Fn(&mut fmt::Formatter<'_>) -> fmt::Result> Serialize for Written<F> {
-    fn serialize<S: Serializer>(&self, serializer: S) -> Result<S::Ok, S::Error> {
-        serializer.collect_str(self)
     }
 }
 

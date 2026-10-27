@@ -304,8 +304,8 @@ impl SemanticContext {
         Ok(())
     }
 
-    /// Whether the type has an ABI representation, i.e. [`Self::write_type_abi_name`] can write
-    /// it in every spelling: a struct only when all its members do.
+    /// Whether the type has an ABI representation: exactly the types the `Selector` spelling can
+    /// write. The other spellings also write some types without one, so this is the gate for all.
     pub fn has_abi_type(&self, type_id: TypeId) -> bool {
         self.has_abi_type_impl(type_id, &mut Set::default())
     }

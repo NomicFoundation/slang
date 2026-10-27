@@ -1,5 +1,6 @@
 use super::fixtures;
 use crate::abi::{AbiEntry, AbiParameter};
+use crate::ast::{Definition, Type};
 
 #[test]
 fn test_get_contracts_abi() {
@@ -159,6 +160,16 @@ fn parameters_expose_type_names_and_components() {
         ]
     );
     assert!(inputs[2].components().is_none());
+
+    // The type behind a `tuple` is its struct.
+    let Type::Struct(s_type) = inputs[0].get_type() else {
+        panic!("expected a struct type");
+    };
+    let Definition::Struct(s_definition) = s_type.definition() else {
+        panic!("expected a struct definition");
+    };
+    assert_eq!(s_definition.name().name(), "S");
+    assert!(matches!(inputs[2].get_type(), Type::Integer(_)));
 
     let s_members = inputs[0]
         .components()

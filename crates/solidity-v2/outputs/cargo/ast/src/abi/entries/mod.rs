@@ -11,7 +11,7 @@ use slang_solidity_v2_semantic::types::{
     ArraySliceType, ArrayType, FixedSizeArrayType, FunctionTypeMutability, StructType, Type, TypeId,
 };
 
-use crate::ast::Definition;
+use crate::ast::{self, Definition};
 
 /// Serializes as the JSON ABI, the array of its entries.
 pub struct ContractAbi {
@@ -455,6 +455,11 @@ impl<'a> AbiParameter<'a> {
 
     pub fn type_id(&self) -> TypeId {
         self.type_id
+    }
+
+    /// The Solidity type behind the parameter.
+    pub fn get_type(&self) -> ast::Type {
+        ast::Type::create(self.type_id, self.semantic)
     }
 
     pub fn indexed(&self) -> bool {

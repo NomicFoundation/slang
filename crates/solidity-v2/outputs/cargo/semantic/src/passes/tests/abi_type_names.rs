@@ -3,8 +3,9 @@ use slang_solidity_v2_common::evm_targets::EvmTarget;
 use super::support::{Analyse, Analysis};
 use crate::context::AbiTypeSpelling;
 
-/// `has_abi_type` decides on its own what `write_type_abi_name` can spell, so the two must agree
-/// on every type: the JSON ABI relies on it to skip parameters it cannot write.
+/// `has_abi_type` decides on its own what `write_type_abi_name` can spell. Every spelling must write
+/// a type that passes it, since ABI parameters are spelled without checking for failure, and the
+/// `Selector` spelling must fail on every other type.
 #[test]
 fn has_abi_type_agrees_with_write_type_abi_name() {
     let source = r#"
@@ -17,9 +18,11 @@ fn has_abi_type_agrees_with_write_type_abi_name() {
             struct T { address payable p; bytes4 sel; int8 n; bool flag; }
             struct S { uint256 a; E e; I i; W w; bytes b; string s; uint256[] xs; T[2] ts; }
             struct M { mapping(uint256 => uint256) m; uint256 x; }
+            struct Node { Node[] children; uint256 v; }
             error Bad(S s);
             event Ev(T t);
             mapping(uint256 => M) ms;
+            Node root;
             ufixed128x18 fx;
             function(uint256) external returns (S memory) cb;
             function f(S calldata s, T[] calldata ts, uint256[] calldata xs)
@@ -46,18 +49,30 @@ fn has_abi_type_agrees_with_write_type_abi_name() {
 
     let (mut with_abi_type, mut without_abi_type) = (0, 0);
     for type_id in context.types().type_ids() {
-        let mut name = String::new();
-        let writable = context
-            .write_type_abi_name(type_id, AbiTypeSpelling::Selector, &mut name)
-            .is_ok();
+        let writable = |spelling| {
+            context
+                .write_type_abi_name(type_id, spelling, &mut String::new())
+                .is_ok()
+        };
         let has_abi_type = context.has_abi_type(type_id);
         assert_eq!(
             has_abi_type,
-            writable,
-            "`has_abi_type` and `write_type_abi_name` disagree on {:?}",
+            writable(AbiTypeSpelling::Selector),
+            "`has_abi_type` and the `Selector` spelling disagree on {:?}",
             context.types().get_type_by_id(type_id),
         );
         if has_abi_type {
+            for spelling in [
+                AbiTypeSpelling::LibrarySelector,
+                AbiTypeSpelling::Json,
+                AbiTypeSpelling::LibraryJson,
+            ] {
+                assert!(
+                    writable(spelling),
+                    "{spelling:?} cannot write {:?}, which has an ABI type",
+                    context.types().get_type_by_id(type_id),
+                );
+            }
             with_abi_type += 1;
         } else {
             without_abi_type += 1;

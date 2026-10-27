@@ -3,7 +3,7 @@ use std::fmt;
 use itertools::Either;
 use slang_solidity_v2_ir::ir;
 use slang_solidity_v2_semantic::context::{AbiNameError, AbiTypeSpelling};
-use slang_solidity_v2_semantic::types::{FunctionType, TupleType, Type};
+use slang_solidity_v2_semantic::types::{FunctionType, TupleType, Type, TypeId};
 
 use crate::abi::entries::{Entry, Function, Parameter, SpellingPolicy};
 use crate::abi::{AbiMutability, SignatureHasher};
@@ -17,7 +17,8 @@ impl StateVariableDefinitionStruct {
         )
     }
 
-    /// The type of the variable's generated getter, if it has one.
+    /// The type of the variable's generated getter. Only a public variable has one, so every getter
+    /// computation starts here.
     fn getter_function_type(&self) -> Option<&FunctionType> {
         let Type::Function(function_type) =
             self.semantic.types().get_type_by_id(self.getter_type_id()?)
@@ -110,9 +111,6 @@ impl StateVariableDefinitionStruct {
     }
 
     pub(crate) fn compute_abi_entry(&self) -> Option<Entry> {
-        if !self.is_externally_visible() {
-            return None;
-        }
         let (inputs, outputs) = self.extract_getter_type_parameters_abi()?;
 
         Some(Entry::Function(Function {
@@ -133,28 +131,17 @@ impl StateVariableDefinitionStruct {
     }
 
     pub fn compute_internal_signature(&self) -> Option<String> {
-        if !self.is_externally_visible() {
-            // There is no getter defined if the variable is not public
-            return None;
-        }
-        let getter_type = self.getter_function_type()?;
-        let mut signature = format!("{}(", self.ir_node.name.unparse());
-        for (index, type_id) in getter_type.parameter_types.iter().enumerate() {
-            if index > 0 {
-                signature.push(',');
-            }
-            self.semantic
-                .write_type_internal_name(*type_id, &mut signature)
-                .ok()?;
-        }
-        signature.push(')');
+        let mut signature = String::new();
+        self.write_signature(
+            self.getter_function_type()?,
+            &mut signature,
+            |out, type_id| Ok(self.semantic.write_type_internal_name(type_id, out)?),
+        )
+        .ok()?;
         Some(signature)
     }
 
     pub fn compute_selector(&self) -> Option<u32> {
-        if !self.is_externally_visible() {
-            return None;
-        }
         let mut hasher = SignatureHasher::default();
         self.write_canonical_signature(self.getter_function_type()?, &mut hasher)
             .ok()?;
@@ -166,13 +153,25 @@ impl StateVariableDefinitionStruct {
         getter_type: &FunctionType,
         out: &mut impl fmt::Write,
     ) -> Result<(), AbiNameError> {
+        self.write_signature(getter_type, out, |out, type_id| {
+            self.semantic
+                .write_type_abi_name(type_id, AbiTypeSpelling::Selector, out)
+        })
+    }
+
+    /// Writes `name(T1,T2)` over the getter's parameter types, each written by `write_type`.
+    fn write_signature<W: fmt::Write>(
+        &self,
+        getter_type: &FunctionType,
+        out: &mut W,
+        write_type: impl Fn(&mut W, TypeId) -> Result<(), AbiNameError>,
+    ) -> Result<(), AbiNameError> {
         write!(out, "{}(", self.ir_node.name.unparse())?;
         for (index, type_id) in getter_type.parameter_types.iter().enumerate() {
             if index > 0 {
                 out.write_char(',')?;
             }
-            self.semantic
-                .write_type_abi_name(*type_id, AbiTypeSpelling::Selector, out)?;
+            write_type(out, *type_id)?;
         }
         Ok(out.write_char(')')?)
     }
