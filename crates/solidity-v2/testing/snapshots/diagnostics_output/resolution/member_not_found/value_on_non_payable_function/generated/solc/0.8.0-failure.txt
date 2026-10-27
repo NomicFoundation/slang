@@ -1,0 +1,11 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 1
+
+[TypeError 8820] Error: Member "value" is only available for payable functions.
+    ╭─[input.sol:12:9]
+    │
+ 12 │         this.f.value();
+    │         ──────┬─────  
+    │               ╰─────── Error occurred here.
+────╯

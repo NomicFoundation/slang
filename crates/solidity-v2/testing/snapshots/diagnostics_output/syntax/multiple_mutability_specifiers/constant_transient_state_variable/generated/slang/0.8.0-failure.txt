@@ -1,0 +1,19 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 2
+
+[syntax/incompatible-syntax-version] Error: This syntax was introduced in version '0.8.27'.
+   ╭─[input.sol:7:25]
+   │
+ 7 │     int constant public transient x = 0;
+   │                         ────┬────  
+   │                             ╰────── Error occurred here.
+───╯
+
+[syntax/multiple-mutability-specifiers] Error: Only a single mutability specifier can be provided.
+   ╭─[input.sol:7:25]
+   │
+ 7 │     int constant public transient x = 0;
+   │                         ────┬────  
+   │                             ╰────── Error occurred here.
+───╯
