@@ -411,7 +411,8 @@ impl SemanticContext {
                 self.write_type_abi_name_impl(*element_type, spelling, out, visited_structs)?;
                 write!(out, "[{size}]")?;
             }
-            // A user-defined value type is spelled as the type it wraps, which is always elementary.
+            // A user-defined value type is spelled as the type it wraps, which is always
+            // elementary.
             Type::UserDefinedValue(UserDefinedValueType { definition_id }) => {
                 let target_type_id = self
                     .binder

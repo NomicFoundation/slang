@@ -225,9 +225,8 @@ fn abstract_contract_has_no_constructor_entry() {
         .expect("contract AB exists")
         .compute_abi()
         .expect("the ABI is computable");
-    assert!(
-        matches!(abi.entries().iter().collect::<Vec<_>>()[..], [AbiEntry::Function(f)] if f.name() == "extra")
-    );
+    let entries = abi.entries().iter().collect::<Vec<_>>();
+    assert!(matches!(entries[..], [AbiEntry::Function(f)] if f.name() == "extra"));
 }
 
 /// With the `function` keyword, `receive` and `fallback` are ordinary names: solc lists both

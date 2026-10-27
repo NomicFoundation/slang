@@ -14,7 +14,7 @@ fn getter<'a>(abi: &'a ContractAbi, name: &str) -> AbiFunction<'a> {
         .unwrap_or_else(|| panic!("getter `{name}` is in the ABI"))
 }
 
-fn names<'a>(parameters: AbiParameters<'a>) -> Vec<Option<&'a str>> {
+fn names(parameters: AbiParameters<'_>) -> Vec<Option<&str>> {
     parameters
         .iter()
         .map(|parameter| parameter.name())

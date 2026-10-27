@@ -56,8 +56,8 @@ impl ContractAbi {
         &self.file_id
     }
 
-    /// The entries as the JSON lists them: by `type`, then by name, with a function's overloads in
-    /// ascending selector order.
+    /// The entries as the JSON lists them: sorted by `type`, then by name, with
+    /// a function's overloads in ascending selector order.
     pub fn entries(&self) -> AbiEntries<'_> {
         AbiEntries {
             entries: &self.entries,

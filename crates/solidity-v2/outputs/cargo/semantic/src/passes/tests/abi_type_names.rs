@@ -3,9 +3,9 @@ use slang_solidity_v2_common::evm_targets::EvmTarget;
 use super::support::{Analyse, Analysis};
 use crate::context::AbiTypeSpelling;
 
-/// `has_abi_type` decides on its own what `write_type_abi_name` can spell. Every spelling must write
-/// a type that passes it, since ABI parameters are spelled without checking for failure, and the
-/// `Selector` spelling must fail on every other type.
+/// `has_abi_type` decides on its own what `write_type_abi_name` can spell. Every spelling must
+/// write a type that passes it, since ABI parameters are spelled without checking for failure, and
+/// the `Selector` spelling must fail on every other type.
 #[test]
 fn has_abi_type_agrees_with_write_type_abi_name() {
     let source = r#"

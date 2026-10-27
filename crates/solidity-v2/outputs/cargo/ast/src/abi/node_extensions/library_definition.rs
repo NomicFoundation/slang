@@ -21,7 +21,8 @@ impl LibraryDefinitionStruct {
                 {
                     Some(function.compute_abi_entry())
                 }
-                // Library state variables are all constant, the p1 structural checks reject the rest.
+                // Library state variables are all constant, the p1 structural checks reject the
+                // rest.
                 ContractMember::StateVariableDefinition(state_variable)
                     if state_variable.is_externally_visible() =>
                 {
