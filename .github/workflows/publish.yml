@@ -175,10 +175,7 @@ jobs:
         uses: "./.github/actions/publish/prepare"
 
       - name: "infra publish mkdocs --dry-run"
-        run: |
-          git config user.name "github-actions[bot]"
-          git config user.email "github-actions[bot]@users.noreply.github.com"
-          ./scripts/bin/infra publish mkdocs --target main-branch --dry-run
+        run: "./scripts/bin/infra publish mkdocs --target main-branch --dry-run"
 
       - name: "Upload publish artifacts"
         uses: "actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9" # v7.0.2

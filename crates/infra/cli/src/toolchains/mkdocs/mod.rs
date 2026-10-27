@@ -71,5 +71,12 @@ fn mkdocs() -> Command {
 }
 
 fn mike() -> Command {
-    PipEnv::run("mike").current_dir(Path::repo_path("documentation"))
+    // 'mike deploy' commits to 'gh-pages' branch:
+    PipEnv::run("mike")
+        .current_dir(Path::repo_path("documentation"))
+        .env("GIT_COMMITTER_NAME", "github-actions[bot]")
+        .env(
+            "GIT_COMMITTER_EMAIL",
+            "github-actions[bot]@users.noreply.github.com",
+        )
 }
