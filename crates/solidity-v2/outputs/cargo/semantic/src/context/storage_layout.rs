@@ -358,6 +358,66 @@ impl<'a> StorageAnalyzer<'a> {
         builder.slots_used().ok_or(NoStorageSize::TooLarge)
     }
 
+    /// Whether `type_id`, or a type it stores out of line (see
+    /// `has_out_of_line_type_too_large`), extends past the end of storage.
+    /// Types that have no size for another reason are reported elsewhere.
+    pub(crate) fn is_too_large_for_storage(&self, type_id: TypeId) -> bool {
+        self.is_too_large_for_storage_impl(type_id, &mut Set::default())
+    }
+
+    fn is_too_large_for_storage_impl(
+        &self,
+        type_id: TypeId,
+        visited_structs: &mut Set<NodeId>,
+    ) -> bool {
+        self.storage_size_of_type_id(type_id) == Err(NoStorageSize::TooLarge)
+            || self.has_out_of_line_type_too_large(type_id, visited_structs)
+    }
+
+    /// Whether a type that `type_id` stores out of line (a dynamic array
+    /// element or a mapping value, laid out from a hashed slot) is too large.
+    /// Inline parts (fixed-size array elements and struct members) are already
+    /// counted in the size of `type_id`, so they are only searched for
+    /// out-of-line types. Each struct is visited once.
+    fn has_out_of_line_type_too_large(
+        &self,
+        type_id: TypeId,
+        visited_structs: &mut Set<NodeId>,
+    ) -> bool {
+        match self.types.get_type_by_id(type_id) {
+            // Out of line: sized on its own.
+            Type::Array(ArrayType { element_type, .. }) => {
+                self.is_too_large_for_storage_impl(*element_type, visited_structs)
+            }
+            Type::Mapping(MappingType { value_type_id, .. }) => {
+                self.is_too_large_for_storage_impl(*value_type_id, visited_structs)
+            }
+            // Inline: covered by the size of `type_id`.
+            Type::FixedSizeArray(FixedSizeArrayType { element_type, .. }) => {
+                self.has_out_of_line_type_too_large(*element_type, visited_structs)
+            }
+            Type::Struct(StructType { definition_id, .. }) => {
+                if !visited_structs.insert(*definition_id) {
+                    return false;
+                }
+                let Some(Definition::Struct(struct_definition)) =
+                    self.binder.find_definition_by_id(*definition_id)
+                else {
+                    return false;
+                };
+                struct_definition.ir_node.members.iter().any(|member| {
+                    self.binder
+                        .node_typing(member.id())
+                        .as_type_id()
+                        .is_some_and(|member_type_id| {
+                            self.has_out_of_line_type_too_large(member_type_id, visited_structs)
+                        })
+                })
+            }
+            _ => false,
+        }
+    }
+
     /// The type table of a storage layout: `roots` (the types of its state
     /// variables) and every type those refer to, each with `describe` applied
     /// to how it is laid out. `None` when one of them cannot be stored or
