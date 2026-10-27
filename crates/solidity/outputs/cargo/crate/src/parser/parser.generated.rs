@@ -7152,6 +7152,29 @@ impl Parser {
     }
 
     #[allow(unused_assignments, unused_parens)]
+    fn decimal_integer(&self, input: &mut ParserContext<'_>) -> bool {
+        scan_choice!(
+            input,
+            scan_not_followed_by!(
+                input,
+                scan_chars!(input, '0'),
+                scan_char_range!(input, '0'..='9')
+            ),
+            scan_sequence!(
+                scan_char_range!(input, '1'..='9'),
+                scan_zero_or_more!(input, scan_char_range!(input, '0'..='9')),
+                scan_zero_or_more!(
+                    input,
+                    scan_sequence!(
+                        scan_chars!(input, '_'),
+                        scan_one_or_more!(input, scan_char_range!(input, '0'..='9'))
+                    )
+                )
+            )
+        )
+    }
+
+    #[allow(unused_assignments, unused_parens)]
     fn decimal_literal(&self, input: &mut ParserContext<'_>) -> bool {
         scan_choice!(
             input,
@@ -7169,7 +7192,7 @@ impl Parser {
                 scan_sequence!(
                     scan_not_followed_by!(
                         input,
-                        self.decimal_digits(input),
+                        self.decimal_integer(input),
                         scan_chars!(input, '.')
                     ),
                     scan_optional!(input, self.decimal_exponent(input))
@@ -7182,7 +7205,7 @@ impl Parser {
                     scan_sequence!(
                         scan_not_followed_by!(
                             input,
-                            scan_sequence!(self.decimal_digits(input), scan_chars!(input, '.')),
+                            scan_sequence!(self.decimal_integer(input), scan_chars!(input, '.')),
                             self.decimal_digits(input)
                         ),
                         scan_optional!(input, self.decimal_exponent(input))
@@ -7196,7 +7219,7 @@ impl Parser {
                 scan_not_followed_by!(
                     input,
                     scan_sequence!(
-                        self.decimal_digits(input),
+                        self.decimal_integer(input),
                         scan_chars!(input, '.'),
                         self.decimal_digits(input),
                         scan_optional!(input, self.decimal_exponent(input))
@@ -7212,7 +7235,7 @@ impl Parser {
                     scan_sequence!(
                         scan_not_followed_by!(
                             input,
-                            self.decimal_digits(input),
+                            self.decimal_integer(input),
                             scan_chars!(input, '.', '_')
                         ),
                         scan_optional!(
@@ -7685,7 +7708,11 @@ impl Parser {
             input,
             scan_choice!(
                 input,
-                scan_chars!(input, '0'),
+                scan_not_followed_by!(
+                    input,
+                    scan_chars!(input, '0'),
+                    scan_char_range!(input, '0'..='9')
+                ),
                 scan_sequence!(
                     scan_char_range!(input, '1'..='9'),
                     scan_zero_or_more!(input, scan_char_range!(input, '0'..='9'))

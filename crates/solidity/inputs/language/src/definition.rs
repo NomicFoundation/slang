@@ -3853,7 +3853,7 @@ language_macros::compile!(Language(
                                     scanner = TrailingContext(
                                         scanner = Sequence([
                                             TrailingContext(
-                                                scanner = Fragment(DecimalDigits),
+                                                scanner = Fragment(DecimalInteger),
                                                 not_followed_by = Atom(".")
                                             ),
                                             Optional(Fragment(DecimalExponent))
@@ -3868,7 +3868,7 @@ language_macros::compile!(Language(
                                         scanner = Sequence([
                                             TrailingContext(
                                                 scanner =
-                                                    Sequence([Fragment(DecimalDigits), Atom(".")]),
+                                                    Sequence([Fragment(DecimalInteger), Atom(".")]),
                                                 not_followed_by = Fragment(DecimalDigits)
                                             ),
                                             Optional(Fragment(DecimalExponent))
@@ -3881,7 +3881,7 @@ language_macros::compile!(Language(
                                     enabled = Till("0.5.0"),
                                     scanner = TrailingContext(
                                         scanner = Sequence([
-                                            Fragment(DecimalDigits),
+                                            Fragment(DecimalInteger),
                                             Atom("."),
                                             Fragment(DecimalDigits),
                                             Optional(Fragment(DecimalExponent))
@@ -3896,7 +3896,7 @@ language_macros::compile!(Language(
                                     scanner = TrailingContext(
                                         scanner = Sequence([
                                             TrailingContext(
-                                                scanner = Fragment(DecimalDigits),
+                                                scanner = Fragment(DecimalInteger),
                                                 not_followed_by = Atom("._")
                                             ),
                                             Optional(Sequence([
@@ -3909,6 +3909,28 @@ language_macros::compile!(Language(
                                     )
                                 )
                             ]
+                        ),
+                        // Unlike the fraction and the exponent, the integer part cannot have leading zeros (octal numbers):
+                        Fragment(
+                            name = DecimalInteger,
+                            scanner = Choice([
+                                TrailingContext(
+                                    scanner = Atom("0"),
+                                    not_followed_by =
+                                        Range(inclusive_start = '0', inclusive_end = '9')
+                                ),
+                                Sequence([
+                                    Range(inclusive_start = '1', inclusive_end = '9'),
+                                    ZeroOrMore(Range(inclusive_start = '0', inclusive_end = '9')),
+                                    ZeroOrMore(Sequence([
+                                        Atom("_"),
+                                        OneOrMore(Range(
+                                            inclusive_start = '0',
+                                            inclusive_end = '9'
+                                        ))
+                                    ]))
+                                ])
+                            ])
                         ),
                         Fragment(
                             name = DecimalDigits,
@@ -4539,7 +4561,12 @@ language_macros::compile!(Language(
                             definitions = [TokenDefinition(
                                 scanner = TrailingContext(
                                     scanner = Choice([
-                                        Atom("0"),
+                                        // A leading zero cannot be followed by more digits (octal numbers):
+                                        TrailingContext(
+                                            scanner = Atom("0"),
+                                            not_followed_by =
+                                                Range(inclusive_start = '0', inclusive_end = '9')
+                                        ),
                                         Sequence([
                                             Range(inclusive_start = '1', inclusive_end = '9'),
                                             ZeroOrMore(Range(

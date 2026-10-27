@@ -2904,16 +2904,16 @@ export declare enum TerminalKind {
    * ```ebnf
    * DECIMAL_LITERAL = "." «DECIMAL_DIGITS» «DECIMAL_EXPONENT»? (?!«IDENTIFIER_START»);
    *
-   * DECIMAL_LITERAL = «DECIMAL_DIGITS» (?!".") «DECIMAL_EXPONENT»? (?!«IDENTIFIER_START»);
+   * DECIMAL_LITERAL = «DECIMAL_INTEGER» (?!".") «DECIMAL_EXPONENT»? (?!«IDENTIFIER_START»);
    *
    * (* Deprecated in 0.5.0 *)
-   * DECIMAL_LITERAL = «DECIMAL_DIGITS» "." (?!«DECIMAL_DIGITS») «DECIMAL_EXPONENT»? (?!«IDENTIFIER_START»);
+   * DECIMAL_LITERAL = «DECIMAL_INTEGER» "." (?!«DECIMAL_DIGITS») «DECIMAL_EXPONENT»? (?!«IDENTIFIER_START»);
    *
    * (* Deprecated in 0.5.0 *)
-   * DECIMAL_LITERAL = «DECIMAL_DIGITS» "." «DECIMAL_DIGITS» «DECIMAL_EXPONENT»? (?!«IDENTIFIER_START»);
+   * DECIMAL_LITERAL = «DECIMAL_INTEGER» "." «DECIMAL_DIGITS» «DECIMAL_EXPONENT»? (?!«IDENTIFIER_START»);
    *
    * (* Introduced in 0.5.0 *)
-   * DECIMAL_LITERAL = «DECIMAL_DIGITS» (?!"._") ("." «DECIMAL_DIGITS»)? «DECIMAL_EXPONENT»? (?!«IDENTIFIER_START»);
+   * DECIMAL_LITERAL = «DECIMAL_INTEGER» (?!"._") ("." «DECIMAL_DIGITS»)? «DECIMAL_EXPONENT»? (?!«IDENTIFIER_START»);
    * ```
    */
   DecimalLiteral = "DecimalLiteral",
@@ -4334,7 +4334,7 @@ export declare enum TerminalKind {
    * Represents a node with kind `YulDecimalLiteral`, having the following structure:
    *
    * ```ebnf
-   * YUL_DECIMAL_LITERAL = ("0" | ("1"…"9" "0"…"9"*)) (?!«IDENTIFIER_START»);
+   * YUL_DECIMAL_LITERAL = (("0" (?!"0"…"9")) | ("1"…"9" "0"…"9"*)) (?!«IDENTIFIER_START»);
    * ```
    */
   YulDecimalLiteral = "YulDecimalLiteral",

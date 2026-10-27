@@ -1,0 +1,11 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Source: >
+  1  │ 0.05                                                                             │ 0..4
+
+Errors: []
+
+Tree:
+  - (root꞉ DecimalNumberExpression): # "0.05\n" (0..5)
+      - (literal꞉ DecimalLiteral): "0.05" # (0..4)
+      - (trailing_trivia꞉ EndOfLine): "\n" # (4..5)
