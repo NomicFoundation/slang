@@ -7,8 +7,8 @@ use std::fmt;
 use sha3::{Digest, Keccak256};
 
 pub use self::entries::{
-    AbiConstructor, AbiEntry, AbiError, AbiEvent, AbiFallback, AbiFunction, AbiMutability,
-    AbiParameter, AbiReceive, ContractAbi,
+    AbiConstructor, AbiEntries, AbiEntry, AbiError, AbiEvent, AbiFallback, AbiFunction,
+    AbiMutability, AbiParameter, AbiParameters, AbiReceive, ContractAbi,
 };
 pub(crate) use self::storage_layout::storage_type_identifier;
 pub use self::storage_layout::{

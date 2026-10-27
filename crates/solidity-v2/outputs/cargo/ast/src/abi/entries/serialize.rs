@@ -7,11 +7,23 @@ use std::fmt;
 use serde::Serialize;
 use serde::ser::{SerializeMap, Serializer};
 
-use super::{AbiEntry, AbiMutability, AbiParameter, ContractAbi};
+use super::{AbiEntries, AbiEntry, AbiMutability, AbiParameter, AbiParameters, ContractAbi};
 
 impl Serialize for ContractAbi {
     fn serialize<S: Serializer>(&self, serializer: S) -> Result<S::Ok, S::Error> {
-        serializer.collect_seq(self.entries())
+        self.entries().serialize(serializer)
+    }
+}
+
+impl Serialize for AbiEntries<'_> {
+    fn serialize<S: Serializer>(&self, serializer: S) -> Result<S::Ok, S::Error> {
+        serializer.collect_seq(self.iter())
+    }
+}
+
+impl Serialize for AbiParameters<'_> {
+    fn serialize<S: Serializer>(&self, serializer: S) -> Result<S::Ok, S::Error> {
+        serializer.collect_seq(self.iter())
     }
 }
 
@@ -20,7 +32,7 @@ impl Serialize for AbiEntry<'_> {
         match self {
             AbiEntry::Constructor(constructor) => {
                 let mut map = serializer.serialize_map(Some(3))?;
-                map.serialize_entry("inputs", &Seq(constructor.inputs()))?;
+                map.serialize_entry("inputs", &constructor.inputs())?;
                 map.serialize_entry(
                     "stateMutability",
                     &Mutability(constructor.state_mutability()),
@@ -30,7 +42,7 @@ impl Serialize for AbiEntry<'_> {
             }
             AbiEntry::Error(error) => {
                 let mut map = serializer.serialize_map(Some(3))?;
-                map.serialize_entry("inputs", &Seq(error.inputs()))?;
+                map.serialize_entry("inputs", &error.inputs())?;
                 map.serialize_entry("name", error.name())?;
                 map.serialize_entry("type", "error")?;
                 map.end()
@@ -38,7 +50,7 @@ impl Serialize for AbiEntry<'_> {
             AbiEntry::Event(event) => {
                 let mut map = serializer.serialize_map(Some(4))?;
                 map.serialize_entry("anonymous", &event.anonymous())?;
-                map.serialize_entry("inputs", &Seq(event.inputs()))?;
+                map.serialize_entry("inputs", &event.inputs())?;
                 map.serialize_entry("name", event.name())?;
                 map.serialize_entry("type", "event")?;
                 map.end()
@@ -51,9 +63,9 @@ impl Serialize for AbiEntry<'_> {
             }
             AbiEntry::Function(function) => {
                 let mut map = serializer.serialize_map(Some(5))?;
-                map.serialize_entry("inputs", &Seq(function.inputs()))?;
+                map.serialize_entry("inputs", &function.inputs())?;
                 map.serialize_entry("name", function.name())?;
-                map.serialize_entry("outputs", &Seq(function.outputs()))?;
+                map.serialize_entry("outputs", &function.outputs())?;
                 map.serialize_entry("stateMutability", &Mutability(function.state_mutability()))?;
                 map.serialize_entry("type", "function")?;
                 map.end()
@@ -76,7 +88,7 @@ impl Serialize for AbiParameter<'_> {
             3 + usize::from(components.is_some()) + usize::from(self.indexed.is_some()),
         ))?;
         if let Some(components) = components {
-            map.serialize_entry("components", &Seq(components))?;
+            map.serialize_entry("components", &components)?;
         }
         if let Some(indexed) = self.indexed {
             map.serialize_entry("indexed", &indexed)?;
@@ -97,19 +109,6 @@ impl Serialize for AbiParameter<'_> {
             ),
         )?;
         map.end()
-    }
-}
-
-/// Serializes as the sequence of the views an iterator yields.
-struct Seq<I>(I);
-
-impl<I> Serialize for Seq<I>
-where
-    I: Iterator + Clone,
-    I::Item: Serialize,
-{
-    fn serialize<S: Serializer>(&self, serializer: S) -> Result<S::Ok, S::Error> {
-        serializer.collect_seq(self.0.clone())
     }
 }
 

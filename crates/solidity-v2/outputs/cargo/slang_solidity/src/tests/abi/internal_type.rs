@@ -37,6 +37,7 @@ fn function_input_internal_types(contract: &str, function: &str) -> Vec<String> 
         .expect("the ABI is computable");
     let function = abi
         .entries()
+        .iter()
         .find_map(|entry| match entry {
             AbiEntry::Function(f) if f.name() == function => Some(f),
             _ => None,
@@ -44,6 +45,7 @@ fn function_input_internal_types(contract: &str, function: &str) -> Vec<String> 
         .expect("function is in the ABI");
     function
         .inputs()
+        .iter()
         .map(|input| input.internal_type_name())
         .collect()
 }

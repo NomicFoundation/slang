@@ -3,8 +3,10 @@ mod serialize;
 use std::fmt;
 use std::sync::Arc;
 
+use itertools::Either;
 use slang_solidity_v2_common::files::FileId;
 use slang_solidity_v2_common::nodes::NodeId;
+use slang_solidity_v2_ir::ir;
 use slang_solidity_v2_semantic::binder::Definition as SemanticDefinition;
 use slang_solidity_v2_semantic::context::{AbiNameError, AbiTypeSpelling, SemanticContext};
 use slang_solidity_v2_semantic::types::{
@@ -56,10 +58,11 @@ impl ContractAbi {
 
     /// The entries as the JSON lists them: by `type`, then by name, with a function's overloads in
     /// ascending selector order.
-    pub fn entries(&self) -> impl ExactSizeIterator<Item = AbiEntry<'_>> + Clone {
-        self.entries
-            .iter()
-            .map(|entry| AbiEntry::new(entry, &self.semantic))
+    pub fn entries(&self) -> AbiEntries<'_> {
+        AbiEntries {
+            entries: &self.entries,
+            semantic: &self.semantic,
+        }
     }
 }
 
@@ -235,6 +238,30 @@ impl Parameter {
     }
 }
 
+/// The entries of a [`ContractAbi`].
+#[derive(Clone, Copy)]
+pub struct AbiEntries<'a> {
+    entries: &'a [Entry],
+    semantic: &'a Arc<SemanticContext>,
+}
+
+impl<'a> AbiEntries<'a> {
+    pub fn iter(&self) -> impl Iterator<Item = AbiEntry<'a>> + use<'a> {
+        let semantic = self.semantic;
+        self.entries
+            .iter()
+            .map(move |entry| AbiEntry::new(entry, semantic))
+    }
+
+    pub fn len(&self) -> usize {
+        self.entries.len()
+    }
+
+    pub fn is_empty(&self) -> bool {
+        self.entries.is_empty()
+    }
+}
+
 /// An entry of a [`ContractAbi`].
 #[derive(Clone, Copy, Debug)]
 pub enum AbiEntry<'a> {
@@ -284,8 +311,8 @@ impl<'a> AbiConstructor<'a> {
         self.constructor.node_id
     }
 
-    pub fn inputs(&self) -> impl ExactSizeIterator<Item = AbiParameter<'a>> + Clone + use<'a> {
-        parameters(
+    pub fn inputs(&self) -> AbiParameters<'a> {
+        AbiParameters::of_entry(
             &self.constructor.inputs,
             SpellingPolicy::Canonical,
             false,
@@ -313,8 +340,8 @@ impl<'a> AbiError<'a> {
         &self.error.name
     }
 
-    pub fn inputs(&self) -> impl ExactSizeIterator<Item = AbiParameter<'a>> + Clone + use<'a> {
-        parameters(
+    pub fn inputs(&self) -> AbiParameters<'a> {
+        AbiParameters::of_entry(
             &self.error.inputs,
             SpellingPolicy::Canonical,
             false,
@@ -338,8 +365,8 @@ impl<'a> AbiEvent<'a> {
         &self.event.name
     }
 
-    pub fn inputs(&self) -> impl ExactSizeIterator<Item = AbiParameter<'a>> + Clone + use<'a> {
-        parameters(
+    pub fn inputs(&self) -> AbiParameters<'a> {
+        AbiParameters::of_entry(
             &self.event.inputs,
             SpellingPolicy::Canonical,
             true,
@@ -382,8 +409,8 @@ impl<'a> AbiFunction<'a> {
         &self.function.name
     }
 
-    pub fn inputs(&self) -> impl ExactSizeIterator<Item = AbiParameter<'a>> + Clone + use<'a> {
-        parameters(
+    pub fn inputs(&self) -> AbiParameters<'a> {
+        AbiParameters::of_entry(
             &self.function.inputs,
             self.function.spelling_policy,
             false,
@@ -391,8 +418,8 @@ impl<'a> AbiFunction<'a> {
         )
     }
 
-    pub fn outputs(&self) -> impl ExactSizeIterator<Item = AbiParameter<'a>> + Clone + use<'a> {
-        parameters(
+    pub fn outputs(&self) -> AbiParameters<'a> {
+        AbiParameters::of_entry(
             &self.function.outputs,
             self.function.spelling_policy,
             false,
@@ -420,21 +447,81 @@ impl<'a> AbiReceive<'a> {
     }
 }
 
-/// Views over an entry's `parameters`, spelling their types under `spelling_policy`. Only an event's
-/// inputs are marked `indexed` in the JSON, hence `with_indexed`.
-fn parameters<'a>(
-    parameters: &'a [Parameter],
+/// The parameters of an ABI entry, or the components of a `tuple` parameter.
+#[derive(Clone, Copy)]
+pub struct AbiParameters<'a> {
+    source: ParameterSource<'a>,
     spelling_policy: SpellingPolicy,
-    with_indexed: bool,
     semantic: &'a Arc<SemanticContext>,
-) -> impl ExactSizeIterator<Item = AbiParameter<'a>> + Clone {
-    parameters.iter().map(move |parameter| AbiParameter {
-        name: parameter.name.as_deref(),
-        type_id: parameter.type_id,
-        indexed: with_indexed.then_some(parameter.indexed),
-        spelling_policy,
-        semantic,
-    })
+}
+
+#[derive(Clone, Copy)]
+enum ParameterSource<'a> {
+    /// An entry's parameters. Only an event's inputs are marked `indexed` in the JSON.
+    Entry {
+        parameters: &'a [Parameter],
+        with_indexed: bool,
+    },
+    /// The members of the struct behind a `tuple`.
+    Members(&'a [ir::StructMember]),
+}
+
+impl<'a> AbiParameters<'a> {
+    fn of_entry(
+        parameters: &'a [Parameter],
+        spelling_policy: SpellingPolicy,
+        with_indexed: bool,
+        semantic: &'a Arc<SemanticContext>,
+    ) -> Self {
+        Self {
+            source: ParameterSource::Entry {
+                parameters,
+                with_indexed,
+            },
+            spelling_policy,
+            semantic,
+        }
+    }
+
+    pub fn iter(&self) -> impl Iterator<Item = AbiParameter<'a>> + use<'a> {
+        let (spelling_policy, semantic) = (self.spelling_policy, self.semantic);
+        match self.source {
+            ParameterSource::Entry {
+                parameters,
+                with_indexed,
+            } => Either::Left(parameters.iter().map(move |parameter| AbiParameter {
+                name: parameter.name.as_deref(),
+                type_id: parameter.type_id,
+                indexed: with_indexed.then_some(parameter.indexed),
+                spelling_policy,
+                semantic,
+            })),
+            ParameterSource::Members(members) => Either::Right(members.iter().map(move |member| {
+                AbiParameter {
+                    name: Some(member.name.unparse()),
+                    type_id: semantic
+                        .binder()
+                        .node_typing(member.id())
+                        .as_type_id()
+                        .expect("a struct member in the ABI is typed"),
+                    indexed: None,
+                    spelling_policy,
+                    semantic,
+                }
+            })),
+        }
+    }
+
+    pub fn len(&self) -> usize {
+        match self.source {
+            ParameterSource::Entry { parameters, .. } => parameters.len(),
+            ParameterSource::Members(members) => members.len(),
+        }
+    }
+
+    pub fn is_empty(&self) -> bool {
+        self.len() == 0
+    }
 }
 
 /// A parameter of an ABI entry, or a component of a `tuple` parameter.
@@ -485,29 +572,18 @@ impl<'a> AbiParameter<'a> {
 
     /// The members of the struct behind a `tuple` type, through any arrays, in declaration order.
     /// `None` when the type is not a `tuple`.
-    pub fn components(
-        &self,
-    ) -> Option<impl ExactSizeIterator<Item = AbiParameter<'a>> + Clone + use<'a>> {
+    pub fn components(&self) -> Option<AbiParameters<'a>> {
         let struct_id = struct_behind(self.semantic, self.type_id)?;
         let Some(SemanticDefinition::Struct(definition)) =
             self.semantic.binder().find_definition_by_id(struct_id)
         else {
             unreachable!("a struct type resolves to a struct definition");
         };
-        let (spelling_policy, semantic) = (self.spelling_policy, self.semantic);
-        Some(definition.ir_node.members.iter().map(move |member| {
-            AbiParameter {
-                name: Some(member.name.unparse()),
-                type_id: semantic
-                    .binder()
-                    .node_typing(member.id())
-                    .as_type_id()
-                    .expect("a struct member in the ABI is typed"),
-                indexed: None,
-                spelling_policy,
-                semantic,
-            }
-        }))
+        Some(AbiParameters {
+            source: ParameterSource::Members(&definition.ir_node.members),
+            spelling_policy: self.spelling_policy,
+            semantic: self.semantic,
+        })
     }
 
     fn type_name(&self, spelling: AbiTypeSpelling) -> String {
@@ -540,6 +616,12 @@ fn struct_behind(semantic: &SemanticContext, type_id: TypeId) -> Option<NodeId> 
         }
         Type::Struct(StructType { definition_id, .. }) => Some(*definition_id),
         _ => None,
+    }
+}
+
+impl fmt::Debug for AbiEntries<'_> {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        f.debug_list().entries(self.iter()).finish()
     }
 }
 
@@ -576,6 +658,12 @@ impl fmt::Debug for AbiFunction<'_> {
 impl fmt::Debug for AbiReceive<'_> {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         self.receive.fmt(f)
+    }
+}
+
+impl fmt::Debug for AbiParameters<'_> {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        f.debug_list().entries(self.iter()).finish()
     }
 }
 

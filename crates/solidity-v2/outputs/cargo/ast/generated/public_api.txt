@@ -24,7 +24,7 @@ pub fn slang_solidity_v2_ast::abi::AbiEntry<'a>::fmt(&self, &mut core::fmt::Form
 impl<'a> core::marker::Copy for slang_solidity_v2_ast::abi::AbiEntry<'a>
 pub struct slang_solidity_v2_ast::abi::AbiConstructor<'a>
 impl<'a> slang_solidity_v2_ast::abi::AbiConstructor<'a>
-pub fn slang_solidity_v2_ast::abi::AbiConstructor<'a>::inputs(&self) -> impl core::iter::traits::exact_size::ExactSizeIterator<Item = slang_solidity_v2_ast::abi::AbiParameter<'a>> + core::clone::Clone + use<'a>
+pub fn slang_solidity_v2_ast::abi::AbiConstructor<'a>::inputs(&self) -> slang_solidity_v2_ast::abi::AbiParameters<'a>
 pub fn slang_solidity_v2_ast::abi::AbiConstructor<'a>::node_id(&self) -> slang_solidity_v2_common::nodes::NodeId
 pub fn slang_solidity_v2_ast::abi::AbiConstructor<'a>::state_mutability(&self) -> &'a slang_solidity_v2_ast::abi::AbiMutability
 impl core::fmt::Debug for slang_solidity_v2_ast::abi::AbiConstructor<'_>
@@ -32,9 +32,21 @@ pub fn slang_solidity_v2_ast::abi::AbiConstructor<'_>::fmt(&self, &mut core::fmt
 impl<'a> core::clone::Clone for slang_solidity_v2_ast::abi::AbiConstructor<'a>
 pub fn slang_solidity_v2_ast::abi::AbiConstructor<'a>::clone(&self) -> slang_solidity_v2_ast::abi::AbiConstructor<'a>
 impl<'a> core::marker::Copy for slang_solidity_v2_ast::abi::AbiConstructor<'a>
+pub struct slang_solidity_v2_ast::abi::AbiEntries<'a>
+impl<'a> slang_solidity_v2_ast::abi::AbiEntries<'a>
+pub fn slang_solidity_v2_ast::abi::AbiEntries<'a>::is_empty(&self) -> bool
+pub fn slang_solidity_v2_ast::abi::AbiEntries<'a>::iter(&self) -> impl core::iter::traits::iterator::Iterator<Item = slang_solidity_v2_ast::abi::AbiEntry<'a>> + use<'a>
+pub fn slang_solidity_v2_ast::abi::AbiEntries<'a>::len(&self) -> usize
+impl core::fmt::Debug for slang_solidity_v2_ast::abi::AbiEntries<'_>
+pub fn slang_solidity_v2_ast::abi::AbiEntries<'_>::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl serde_core::ser::Serialize for slang_solidity_v2_ast::abi::AbiEntries<'_>
+pub fn slang_solidity_v2_ast::abi::AbiEntries<'_>::serialize<S: serde_core::ser::Serializer>(&self, S) -> core::result::Result<<S as serde_core::ser::Serializer>::Ok, <S as serde_core::ser::Serializer>::Error>
+impl<'a> core::clone::Clone for slang_solidity_v2_ast::abi::AbiEntries<'a>
+pub fn slang_solidity_v2_ast::abi::AbiEntries<'a>::clone(&self) -> slang_solidity_v2_ast::abi::AbiEntries<'a>
+impl<'a> core::marker::Copy for slang_solidity_v2_ast::abi::AbiEntries<'a>
 pub struct slang_solidity_v2_ast::abi::AbiError<'a>
 impl<'a> slang_solidity_v2_ast::abi::AbiError<'a>
-pub fn slang_solidity_v2_ast::abi::AbiError<'a>::inputs(&self) -> impl core::iter::traits::exact_size::ExactSizeIterator<Item = slang_solidity_v2_ast::abi::AbiParameter<'a>> + core::clone::Clone + use<'a>
+pub fn slang_solidity_v2_ast::abi::AbiError<'a>::inputs(&self) -> slang_solidity_v2_ast::abi::AbiParameters<'a>
 pub fn slang_solidity_v2_ast::abi::AbiError<'a>::name(&self) -> &'a str
 pub fn slang_solidity_v2_ast::abi::AbiError<'a>::node_id(&self) -> slang_solidity_v2_common::nodes::NodeId
 impl core::fmt::Debug for slang_solidity_v2_ast::abi::AbiError<'_>
@@ -45,7 +57,7 @@ impl<'a> core::marker::Copy for slang_solidity_v2_ast::abi::AbiError<'a>
 pub struct slang_solidity_v2_ast::abi::AbiEvent<'a>
 impl<'a> slang_solidity_v2_ast::abi::AbiEvent<'a>
 pub fn slang_solidity_v2_ast::abi::AbiEvent<'a>::anonymous(&self) -> bool
-pub fn slang_solidity_v2_ast::abi::AbiEvent<'a>::inputs(&self) -> impl core::iter::traits::exact_size::ExactSizeIterator<Item = slang_solidity_v2_ast::abi::AbiParameter<'a>> + core::clone::Clone + use<'a>
+pub fn slang_solidity_v2_ast::abi::AbiEvent<'a>::inputs(&self) -> slang_solidity_v2_ast::abi::AbiParameters<'a>
 pub fn slang_solidity_v2_ast::abi::AbiEvent<'a>::name(&self) -> &'a str
 pub fn slang_solidity_v2_ast::abi::AbiEvent<'a>::node_id(&self) -> slang_solidity_v2_common::nodes::NodeId
 impl core::fmt::Debug for slang_solidity_v2_ast::abi::AbiEvent<'_>
@@ -64,10 +76,10 @@ pub fn slang_solidity_v2_ast::abi::AbiFallback<'a>::clone(&self) -> slang_solidi
 impl<'a> core::marker::Copy for slang_solidity_v2_ast::abi::AbiFallback<'a>
 pub struct slang_solidity_v2_ast::abi::AbiFunction<'a>
 impl<'a> slang_solidity_v2_ast::abi::AbiFunction<'a>
-pub fn slang_solidity_v2_ast::abi::AbiFunction<'a>::inputs(&self) -> impl core::iter::traits::exact_size::ExactSizeIterator<Item = slang_solidity_v2_ast::abi::AbiParameter<'a>> + core::clone::Clone + use<'a>
+pub fn slang_solidity_v2_ast::abi::AbiFunction<'a>::inputs(&self) -> slang_solidity_v2_ast::abi::AbiParameters<'a>
 pub fn slang_solidity_v2_ast::abi::AbiFunction<'a>::name(&self) -> &'a str
 pub fn slang_solidity_v2_ast::abi::AbiFunction<'a>::node_id(&self) -> slang_solidity_v2_common::nodes::NodeId
-pub fn slang_solidity_v2_ast::abi::AbiFunction<'a>::outputs(&self) -> impl core::iter::traits::exact_size::ExactSizeIterator<Item = slang_solidity_v2_ast::abi::AbiParameter<'a>> + core::clone::Clone + use<'a>
+pub fn slang_solidity_v2_ast::abi::AbiFunction<'a>::outputs(&self) -> slang_solidity_v2_ast::abi::AbiParameters<'a>
 pub fn slang_solidity_v2_ast::abi::AbiFunction<'a>::state_mutability(&self) -> &'a slang_solidity_v2_ast::abi::AbiMutability
 impl core::fmt::Debug for slang_solidity_v2_ast::abi::AbiFunction<'_>
 pub fn slang_solidity_v2_ast::abi::AbiFunction<'_>::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
@@ -76,7 +88,7 @@ pub fn slang_solidity_v2_ast::abi::AbiFunction<'a>::clone(&self) -> slang_solidi
 impl<'a> core::marker::Copy for slang_solidity_v2_ast::abi::AbiFunction<'a>
 pub struct slang_solidity_v2_ast::abi::AbiParameter<'a>
 impl<'a> slang_solidity_v2_ast::abi::AbiParameter<'a>
-pub fn slang_solidity_v2_ast::abi::AbiParameter<'a>::components(&self) -> core::option::Option<impl core::iter::traits::exact_size::ExactSizeIterator<Item = slang_solidity_v2_ast::abi::AbiParameter<'a>> + core::clone::Clone + use<'a>>
+pub fn slang_solidity_v2_ast::abi::AbiParameter<'a>::components(&self) -> core::option::Option<slang_solidity_v2_ast::abi::AbiParameters<'a>>
 pub fn slang_solidity_v2_ast::abi::AbiParameter<'a>::get_type(&self) -> slang_solidity_v2_ast::ast::Type
 pub fn slang_solidity_v2_ast::abi::AbiParameter<'a>::indexed(&self) -> bool
 pub fn slang_solidity_v2_ast::abi::AbiParameter<'a>::internal_type_name(&self) -> alloc::string::String
@@ -91,6 +103,18 @@ pub fn slang_solidity_v2_ast::abi::AbiParameter<'_>::serialize<S: serde_core::se
 impl<'a> core::clone::Clone for slang_solidity_v2_ast::abi::AbiParameter<'a>
 pub fn slang_solidity_v2_ast::abi::AbiParameter<'a>::clone(&self) -> slang_solidity_v2_ast::abi::AbiParameter<'a>
 impl<'a> core::marker::Copy for slang_solidity_v2_ast::abi::AbiParameter<'a>
+pub struct slang_solidity_v2_ast::abi::AbiParameters<'a>
+impl<'a> slang_solidity_v2_ast::abi::AbiParameters<'a>
+pub fn slang_solidity_v2_ast::abi::AbiParameters<'a>::is_empty(&self) -> bool
+pub fn slang_solidity_v2_ast::abi::AbiParameters<'a>::iter(&self) -> impl core::iter::traits::iterator::Iterator<Item = slang_solidity_v2_ast::abi::AbiParameter<'a>> + use<'a>
+pub fn slang_solidity_v2_ast::abi::AbiParameters<'a>::len(&self) -> usize
+impl core::fmt::Debug for slang_solidity_v2_ast::abi::AbiParameters<'_>
+pub fn slang_solidity_v2_ast::abi::AbiParameters<'_>::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl serde_core::ser::Serialize for slang_solidity_v2_ast::abi::AbiParameters<'_>
+pub fn slang_solidity_v2_ast::abi::AbiParameters<'_>::serialize<S: serde_core::ser::Serializer>(&self, S) -> core::result::Result<<S as serde_core::ser::Serializer>::Ok, <S as serde_core::ser::Serializer>::Error>
+impl<'a> core::clone::Clone for slang_solidity_v2_ast::abi::AbiParameters<'a>
+pub fn slang_solidity_v2_ast::abi::AbiParameters<'a>::clone(&self) -> slang_solidity_v2_ast::abi::AbiParameters<'a>
+impl<'a> core::marker::Copy for slang_solidity_v2_ast::abi::AbiParameters<'a>
 pub struct slang_solidity_v2_ast::abi::AbiReceive<'a>
 impl<'a> slang_solidity_v2_ast::abi::AbiReceive<'a>
 pub fn slang_solidity_v2_ast::abi::AbiReceive<'a>::node_id(&self) -> slang_solidity_v2_common::nodes::NodeId
@@ -102,7 +126,7 @@ pub fn slang_solidity_v2_ast::abi::AbiReceive<'a>::clone(&self) -> slang_solidit
 impl<'a> core::marker::Copy for slang_solidity_v2_ast::abi::AbiReceive<'a>
 pub struct slang_solidity_v2_ast::abi::ContractAbi
 impl slang_solidity_v2_ast::abi::ContractAbi
-pub fn slang_solidity_v2_ast::abi::ContractAbi::entries(&self) -> impl core::iter::traits::exact_size::ExactSizeIterator<Item = slang_solidity_v2_ast::abi::AbiEntry<'_>> + core::clone::Clone
+pub fn slang_solidity_v2_ast::abi::ContractAbi::entries(&self) -> slang_solidity_v2_ast::abi::AbiEntries<'_>
 pub fn slang_solidity_v2_ast::abi::ContractAbi::file_id(&self) -> &slang_solidity_v2_common::files::FileId
 pub fn slang_solidity_v2_ast::abi::ContractAbi::name(&self) -> &str
 pub fn slang_solidity_v2_ast::abi::ContractAbi::node_id(&self) -> slang_solidity_v2_common::nodes::NodeId

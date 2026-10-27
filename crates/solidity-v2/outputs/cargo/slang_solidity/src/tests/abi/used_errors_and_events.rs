@@ -9,6 +9,7 @@ use crate::tests::fixtures;
 
 fn errors_and_events(abi: &ContractAbi) -> Vec<String> {
     abi.entries()
+        .iter()
         .filter_map(|entry| match entry {
             AbiEntry::Error(error) => Some(format!("error {}", error.name())),
             AbiEntry::Event(event) => Some(format!("event {}", event.name())),

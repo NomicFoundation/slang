@@ -6,6 +6,7 @@ use crate::tests::{fixtures, support};
 
 fn entry_names(abi: &ContractAbi) -> Vec<String> {
     abi.entries()
+        .iter()
         .map(|entry| match entry {
             AbiEntry::Function(function) => format!("function {}", function.name()),
             AbiEntry::Error(error) => format!("error {}", error.name()),
@@ -60,6 +61,7 @@ fn a_derived_interface_lists_the_hierarchy_once() {
         .expect("`IDerived` declares `move`");
     let listed_move = abi
         .entries()
+        .iter()
         .find(|entry| matches!(entry, AbiEntry::Function(function) if function.name() == "move"))
         .expect("`move` is listed");
     assert_eq!(listed_move.node_id(), own_move.node_id());
