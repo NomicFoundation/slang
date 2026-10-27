@@ -1,3 +1,19 @@
+{#- Renders the `LexemeKind` of a keyword match, choosing between its reserved and unreserved kinds by language version if needed. -#}
+{%- component v2.lexer.keyword_kind(keyword) -%}
+    {%- if keyword.reserved.type == "Always" -%}
+        LexemeKind::{{ keyword.kind }}_Reserved
+    {%- elif keyword.reserved.type == "Never" -%}
+        LexemeKind::{{ keyword.kind }}_Unreserved
+    {%- else -%}
+        if {{<v2.versions.specifier s={keyword.reserved} />}}.contains(lexer.extras.language_version) {
+            LexemeKind::{{ keyword.kind }}_Reserved
+        }
+        else {
+            LexemeKind::{{ keyword.kind }}_Unreserved
+        }
+    {%- endif -%}
+{%- endcomponent v2.lexer.keyword_kind -%}
+
 use logos::{FilterResult, Lexer, Logos};
 use slang_solidity_v2_common::versions::LanguageVersion;
 
@@ -109,33 +125,17 @@ impl<'source> ContextWrapper<'source> {
                         #[regex(r#"{{ definition.regex }}"#, |_| { LexemeKind::{{ lexeme.kind }} }, priority = {{ 2000000 + lexeme_index }})]
                     {%- endif -%}
                 {%- endfor -%}
+            {%- elif lexeme.type == "Keyword" and lexeme.reject_suffix -%}
+                #[regex(r#"{{ lexeme.regex }}"#, |lexer| { let kind = {{<v2.lexer.keyword_kind keyword={lexeme} />}}; reject_suffix::<RejectSuffix{{ lexeme.kind }}, _>(lexer, kind) }, priority = {{ 3000000 + lexeme_index }})]
             {%- elif lexeme.type == "Keyword" -%}
-                #[regex(r#"{{ lexeme.regex }}"#,
-                    {{- " " -}}
-                    {%- if lexeme.reject_suffix -%}
-                        |lexer| { let kind = {{- " " -}}
-                    {%- endif -%}
-                    {%- if lexeme.reserved.type == "Always" -%}
-                        {%- if not lexeme.reject_suffix %}|_| {% endif -%}
-                        { LexemeKind::{{ lexeme.kind }}_Reserved }
-                    {%- elif lexeme.reserved.type == "Never" -%}
-                        {%- if not lexeme.reject_suffix %}|_| {% endif -%}
-                        { LexemeKind::{{ lexeme.kind }}_Unreserved }
-                    {%- else -%}
-                        {%- if not lexeme.reject_suffix %}|lexer| {% endif -%}
-                        {
-                            if {{<v2.versions.specifier s={lexeme.reserved} />}}.contains(lexer.extras.language_version) {
-                                LexemeKind::{{ lexeme.kind }}_Reserved
-                            }
-                            else {
-                                LexemeKind::{{ lexeme.kind }}_Unreserved
-                            }
-                        }
-                    {%- endif -%}
-                    {%- if lexeme.reject_suffix -%}
-                        ; reject_suffix::<RejectSuffix{{ lexeme.kind }}, _>(lexer, kind) }
-                    {%- endif -%}
-                , priority = {{ 3000000 + lexeme_index }})]
+                {#- Only the version check needs the lexer: -#}
+                {%- if lexeme.reserved.type == "Always" or lexeme.reserved.type == "Never" -%}
+                    #[regex(r#"{{ lexeme.regex }}"#, |_| { {{<v2.lexer.keyword_kind keyword={lexeme} />}} }, priority = {{ 3000000 + lexeme_index }})]
+                {%- else -%}
+                    #[regex(r#"{{ lexeme.regex }}"#, |lexer| {
+                        {{<v2.lexer.keyword_kind keyword={lexeme} />}}
+                    }, priority = {{ 3000000 + lexeme_index }})]
+                {%- endif -%}
             {%- else -%}
                 {{ throw(message = "Unrecognized lexeme type: " ~ lexeme.type) }}
             {%- endif -%}
