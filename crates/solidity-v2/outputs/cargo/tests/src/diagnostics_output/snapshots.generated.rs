@@ -4977,6 +4977,11 @@ mod syntax {
         }
 
         #[test]
+        fn keyword_without_whitespace() -> Result<()> {
+            run("syntax/version_pragma", "keyword_without_whitespace")
+        }
+
+        #[test]
         fn large_component() -> Result<()> {
             run("syntax/version_pragma", "large_component")
         }
