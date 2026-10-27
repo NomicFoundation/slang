@@ -51,8 +51,20 @@ pub(super) fn compute_storage_layouts(
             Ok(positions) => Some(positions),
             Err(NoStorageSize::Unsized) => None,
             Err(NoStorageSize::TooLarge) => {
+                // For a non-zero base layout, we report
+                // `StorageLayoutBasePastEnd` only if the contract can fit when
+                // laid out at 0. Otherwise, the contract is too big for
+                // storage.
                 if let Some(base_slot_expression) = &contract.storage_layout
                     && !base_slot.is_zero()
+                    && lay_out(
+                        &analyzer,
+                        binder,
+                        U256::ZERO,
+                        ir::StateVariableMutability::Mutable,
+                        state_variables,
+                    )
+                    .is_ok()
                 {
                     let (file_id, range) = node_location(base_slot_expression, file_node_mapper);
                     diagnostics.push(file_id, range, StorageLayoutBasePastEnd);

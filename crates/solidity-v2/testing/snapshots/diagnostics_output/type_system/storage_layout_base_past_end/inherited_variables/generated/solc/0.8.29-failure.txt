@@ -1,0 +1,21 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 2
+
+[Warning 3495] Warning: This contract is very close to the end of storage. This limits its future upgradability.
+   ╭─[input.sol:6:1]
+   │
+ 6 │ ╭─▶ contract B {
+   ┆ ┆   
+ 8 │ ├─▶ }
+   │ │       
+   │ ╰─────── Warning occurred here.
+───╯
+
+[TypeError 5015] Error: Contract extends past the end of storage when this base slot value is specified.
+    ╭─[input.sol:10:27]
+    │
+ 10 │ contract C is B layout at 1 {
+    │                           ┬  
+    │                           ╰── Error occurred here.
+────╯

@@ -5,7 +5,7 @@ Diagnostics: 1
 [ParserError 2314] Error: Expected '{' but got identifier
    ╭─[input.sol:6:12]
    │
- 6 │ contract C layout at 0 {
+ 6 │ contract C layout at 1 {
    │            ───┬──  
    │               ╰──── Error occurred here.
 ───╯
