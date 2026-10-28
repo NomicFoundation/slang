@@ -27,6 +27,7 @@ pub(crate) enum Scope {
     Function(FunctionScope),
     Modifier(ModifierScope),
     Parameters(ParametersScope),
+    Signature(SignatureScope),
     Struct(StructScope),
     Using(UsingScope),
     YulBlock(YulBlockScope),
@@ -123,6 +124,15 @@ pub(crate) struct ParametersScope {
     pub(crate) parameters: Vec<ParameterDefinition>,
 }
 
+/// The scope of an event, an error or a try statement, where their parameters
+/// are visible to the parameter types and, for a try statement, to its body.
+#[allow(clippy::struct_field_names)]
+pub(crate) struct SignatureScope {
+    pub(crate) node_id: NodeId,
+    pub(crate) parent_scope_id: ScopeId,
+    pub(crate) parameters_scope_id: ScopeId,
+}
+
 pub(crate) struct StructScope {
     pub(crate) node_id: NodeId,
     pub(crate) definitions: Map<String, NodeId>,
@@ -159,6 +169,7 @@ impl Scope {
             Self::Function(function_scope) => function_scope.node_id,
             Self::Modifier(modifier_scope) => modifier_scope.node_id,
             Self::Parameters(_) => unreachable!("parameters scope don't have a node ID"),
+            Self::Signature(signature_scope) => signature_scope.node_id,
             Self::Struct(struct_scope) => struct_scope.node_id,
             Self::Using(using_scope) => using_scope.node_id,
             Self::YulBlock(yul_block_scope) => yul_block_scope.node_id,
@@ -177,6 +188,9 @@ impl Scope {
             Self::Modifier(modifier_scope) => modifier_scope.insert_definition(symbol, node_id),
             Self::Parameters(_) => {
                 unreachable!("cannot insert a definition into parameters scope directly")
+            }
+            Self::Signature(_) => {
+                unreachable!("cannot insert a definition into a signature scope directly")
             }
             Self::Struct(struct_scope) => struct_scope.insert_definition(symbol, node_id),
             Self::Using(_) => unreachable!("cannot insert a definition into a using clause scope"),
@@ -229,6 +243,18 @@ impl Scope {
 
     pub(crate) fn new_modifier(node_id: NodeId, parent_scope_id: ScopeId) -> Self {
         Self::Modifier(ModifierScope::new(node_id, parent_scope_id))
+    }
+
+    pub(crate) fn new_signature(
+        node_id: NodeId,
+        parent_scope_id: ScopeId,
+        parameters_scope_id: ScopeId,
+    ) -> Self {
+        Self::Signature(SignatureScope::new(
+            node_id,
+            parent_scope_id,
+            parameters_scope_id,
+        ))
     }
 
     pub(crate) fn new_struct(node_id: NodeId) -> Self {
@@ -418,6 +444,16 @@ impl ParametersScope {
             .iter()
             .find(|parameter| parameter.name.as_ref().is_some_and(|name| name == symbol))
             .map(|parameter| parameter.node_id)
+    }
+}
+
+impl SignatureScope {
+    fn new(node_id: NodeId, parent_scope_id: ScopeId, parameters_scope_id: ScopeId) -> Self {
+        Self {
+            node_id,
+            parent_scope_id,
+            parameters_scope_id,
+        }
     }
 }
 

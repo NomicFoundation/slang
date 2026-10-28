@@ -1,0 +1,11 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 1
+
+[TypeError 8381] Error: Tuple component cannot be empty.
+   ╭─[input.sol:9:20]
+   │
+ 9 │         try this.g((1, )) returns (uint256) {} catch {}
+   │                    ──┬──  
+   │                      ╰──── Error occurred here.
+───╯

@@ -213,10 +213,23 @@ impl Visitor for Pass<'_> {
         }
     }
 
-    fn leave_try_statement(&mut self, node: &ir::TryStatement) {
+    fn enter_try_statement(&mut self, node: &ir::TryStatement) -> bool {
+        ir::visitor::accept_expression(&node.expression, self);
+
+        // Return types may name the return variables, which are also visible
+        // in the body.
+        self.enter_scope_for_node_id(node.id());
         if let Some(returns) = &node.returns {
+            ir::visitor::accept_parameters(returns, self);
             self.visit_parameters(returns);
         }
+        ir::visitor::accept_block(&node.body, self);
+        self.leave_scope_for_node_id(node.id());
+
+        ir::visitor::accept_catch_clauses(&node.catch_clauses, self);
+
+        // We've driven recursion into the children ourselves.
+        false
     }
 
     fn leave_catch_clause(&mut self, node: &ir::CatchClause) {
@@ -312,6 +325,11 @@ impl Visitor for Pass<'_> {
         false
     }
 
+    fn enter_event_definition(&mut self, node: &ir::EventDefinition) -> bool {
+        self.enter_scope_for_node_id(node.id());
+        true
+    }
+
     fn leave_event_definition(&mut self, node: &ir::EventDefinition) {
         self.mark_user_meta_type_node(node.id());
 
@@ -337,6 +355,13 @@ impl Visitor for Pass<'_> {
             unreachable!("scope is not a ParametersScope");
         };
         parameters_scope.set_parameter_types(&parameter_types);
+
+        self.leave_scope_for_node_id(node.id());
+    }
+
+    fn enter_error_definition(&mut self, node: &ir::ErrorDefinition) -> bool {
+        self.enter_scope_for_node_id(node.id());
+        true
     }
 
     fn leave_error_definition(&mut self, node: &ir::ErrorDefinition) {
@@ -350,6 +375,7 @@ impl Visitor for Pass<'_> {
             let type_id = self.resolve_type_name(&parameter.type_name, Some(DataLocation::Memory));
             self.binder.set_node_type(parameter.id(), type_id);
         }
+        self.leave_scope_for_node_id(node.id());
     }
 
     fn leave_state_variable_definition(&mut self, node: &ir::StateVariableDefinition) {

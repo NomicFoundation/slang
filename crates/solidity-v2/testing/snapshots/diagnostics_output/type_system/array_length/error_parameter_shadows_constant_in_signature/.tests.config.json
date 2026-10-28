@@ -1,0 +1,9 @@
+{
+  "override_language_versions": {
+    "specifier": {
+      "type": "From",
+      "from": "0.8.4"
+    },
+    "reason": "Error definitions were introduced in '0.8.4'."
+  }
+}

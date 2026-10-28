@@ -92,6 +92,14 @@ pub(super) fn find_conflicting_solidity_definition(
         Scope::Parameters(parameters_scope) => parameters_scope
             .lookup_definition(symbol)
             .and_then(|existing| conflicting_definition(binder, existing, new_definition)),
+        // Like a function scope, only the parameters are checked: shadowing
+        // the enclosing scope is allowed.
+        Scope::Signature(signature_scope) => find_conflicting_solidity_definition(
+            binder,
+            signature_scope.parameters_scope_id,
+            symbol,
+            new_definition,
+        ),
         // Namespace scopes are only checked against their own definitions;
         // the `Vec`-based ones may hold several entries for a symbol (eg.
         // function/event overloads).

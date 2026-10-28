@@ -1094,6 +1094,11 @@ mod resolution {
         }
 
         #[test]
+        fn try_return_variable() -> Result<()> {
+            run("resolution/identifier_redeclaration", "try_return_variable")
+        }
+
+        #[test]
         fn user_defined_value_type() -> Result<()> {
             run(
                 "resolution/identifier_redeclaration",
@@ -3717,6 +3722,11 @@ mod structure {
         }
 
         #[test]
+        fn try_call_argument() -> Result<()> {
+            run("structure/empty_tuple_component", "try_call_argument")
+        }
+
+        #[test]
         fn unary_operand() -> Result<()> {
             run("structure/empty_tuple_component", "unary_operand")
         }
@@ -5051,6 +5061,22 @@ mod type_system {
         }
 
         #[test]
+        fn error_parameter_shadows_constant_in_signature() -> Result<()> {
+            run(
+                "type_system/array_length",
+                "error_parameter_shadows_constant_in_signature",
+            )
+        }
+
+        #[test]
+        fn event_parameter_shadows_constant_in_signature() -> Result<()> {
+            run(
+                "type_system/array_length",
+                "event_parameter_shadows_constant_in_signature",
+            )
+        }
+
+        #[test]
         fn for_init_shadows_constant() -> Result<()> {
             run("type_system/array_length", "for_init_shadows_constant")
         }
@@ -5208,6 +5234,14 @@ mod type_system {
             run(
                 "type_system/array_length",
                 "try_return_variable_shadows_constant",
+            )
+        }
+
+        #[test]
+        fn try_return_variable_shadows_constant_in_signature() -> Result<()> {
+            run(
+                "type_system/array_length",
+                "try_return_variable_shadows_constant_in_signature",
             )
         }
 

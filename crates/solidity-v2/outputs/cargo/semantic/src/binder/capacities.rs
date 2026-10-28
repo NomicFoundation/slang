@@ -140,6 +140,9 @@ const SCOPE_NODE_KINDS: &[NodeKind] = &[
     NodeKind::InterfaceDefinition,          // contract scope
     NodeKind::LibraryDefinition,            // contract scope
     NodeKind::FunctionDefinition,           // function or modifier scope
+    NodeKind::EventDefinition,              // signature scope
+    NodeKind::ErrorDefinition,              // signature scope
+    NodeKind::TryStatement,                 // signature scope
     NodeKind::EnumDefinition,               // enum scope
     NodeKind::StructDefinition,             // struct scope
     NodeKind::VariableDeclarationStatement, // chained scope
@@ -159,6 +162,7 @@ const PARAMETER_SCOPE_NODE_KINDS: &[NodeKind] = &[
     NodeKind::FunctionDefinition,
     NodeKind::ErrorDefinition,
     NodeKind::EventDefinition,
+    NodeKind::TryStatement,
 ];
 
 /// IR node kinds that get linearised (one `linearisations` entry each).
