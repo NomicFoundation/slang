@@ -1205,6 +1205,16 @@ mod scoping {
     }
 
     #[test]
+    fn self_reference_in_initializer() -> Result<()> {
+        run("scoping", "self_reference_in_initializer")
+    }
+
+    #[test]
+    fn self_reference_in_type() -> Result<()> {
+        run("scoping", "self_reference_in_type")
+    }
+
+    #[test]
     fn shadowing() -> Result<()> {
         run("scoping", "shadowing")
     }

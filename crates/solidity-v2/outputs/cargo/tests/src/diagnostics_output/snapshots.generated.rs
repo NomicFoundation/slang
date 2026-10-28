@@ -5132,6 +5132,22 @@ mod type_system {
         }
 
         #[test]
+        fn named_return_shadows_constant_declared_later() -> Result<()> {
+            run(
+                "type_system/array_length",
+                "named_return_shadows_constant_declared_later",
+            )
+        }
+
+        #[test]
+        fn named_return_shadows_constant_in_parameter() -> Result<()> {
+            run(
+                "type_system/array_length",
+                "named_return_shadows_constant_in_parameter",
+            )
+        }
+
+        #[test]
         fn negative() -> Result<()> {
             run("type_system/array_length", "negative")
         }
