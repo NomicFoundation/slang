@@ -119,6 +119,9 @@ jobs:
         env:
           GITHUB_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
 
+      - name: "gh auth setup-git"
+        run: "./bin/gh auth setup-git --hostname github.com --force"
+
       - name: "infra publish mkdocs --target main-branch"
         run: "./scripts/bin/infra publish mkdocs --target main-branch"
         env:
