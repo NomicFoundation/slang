@@ -5203,6 +5203,14 @@ mod type_system {
         }
 
         #[test]
+        fn nested_struct() -> Result<()> {
+            run(
+                "type_system/contract_too_large_for_storage",
+                "nested_struct",
+            )
+        }
+
+        #[test]
         fn non_zero_base_slot() -> Result<()> {
             run(
                 "type_system/contract_too_large_for_storage",

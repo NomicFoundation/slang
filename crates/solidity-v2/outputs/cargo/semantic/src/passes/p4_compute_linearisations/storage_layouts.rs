@@ -44,39 +44,38 @@ pub(super) fn compute_storage_layouts(
         match lay_out(
             &analyzer,
             binder,
-            base_slot,
             ir::StateVariableMutability::Mutable,
             state_variables,
         ) {
-            Ok(positions) => Some(positions),
-            Err(NoStorageSize::Unsized) => None,
-            Err(NoStorageSize::TooLarge) => {
-                // For a non-zero base layout, we report
-                // `StorageLayoutBasePastEnd` only if the contract can fit when
-                // laid out at 0. Otherwise, the contract is too big for
-                // storage.
-                if let Some(base_slot_expression) = &contract.storage_layout
-                    && !base_slot.is_zero()
-                    && lay_out(
-                        &analyzer,
-                        binder,
-                        U256::ZERO,
-                        ir::StateVariableMutability::Mutable,
-                        state_variables,
-                    )
-                    .is_ok()
-                {
+            Ok((mut positions, slots_used)) => {
+                // Every position lies below `slots_used`, so once the whole
+                // layout fits from `base_slot`, shifting cannot overflow.
+                if base_slot.checked_add(slots_used).is_some() {
+                    for variable_position in &mut positions {
+                        variable_position.position.slot += base_slot;
+                    }
+                    Some(positions)
+                } else {
+                    // A layout that fits from slot 0 can only overflow from a
+                    // non-zero base slot.
+                    let Some(base_slot_expression) = &contract.storage_layout else {
+                        unreachable!("expected contract to have a base layout expression");
+                    };
                     let (file_id, range) = node_location(base_slot_expression, file_node_mapper);
                     diagnostics.push(file_id, range, StorageLayoutBasePastEnd);
-                } else {
-                    diagnostics.push(
-                        file_node_mapper
-                            .file_id_from_node_id(contract.id())
-                            .to_owned(),
-                        contract.range.clone(),
-                        ContractTooLargeForStorage,
-                    );
+                    None
                 }
+            }
+            Err(NoStorageSize::Unsized) => None,
+            Err(NoStorageSize::TooLarge) => {
+                diagnostics.push(
+                    file_node_mapper
+                        .file_id_from_node_id(contract.id())
+                        .to_owned(),
+                    contract.range.clone(),
+                    ContractTooLargeForStorage,
+                );
+
                 None
             }
         }
@@ -84,33 +83,32 @@ pub(super) fn compute_storage_layouts(
     let transient = lay_out(
         &analyzer,
         binder,
-        U256::ZERO,
         ir::StateVariableMutability::Transient,
         state_variables,
     )
-    .ok();
+    .ok()
+    .map(|(positions, _)| positions);
 
     (persistent, transient)
 }
 
-/// Positions the `state_variables` with the given `mutability` from
-/// `base_slot`, in order.
+/// Positions the `state_variables` with the given `mutability` from slot 0,
+/// in order, along with the number of slots they use.
 fn lay_out(
     analyzer: &StorageAnalyzer<'_>,
     binder: &Binder,
-    base_slot: U256,
     mutability: ir::StateVariableMutability,
     state_variables: &[ir::StateVariableDefinition],
-) -> Result<Vec<StateVariablePosition>, NoStorageSize> {
+) -> Result<(Vec<StateVariablePosition>, U256), NoStorageSize> {
     let count = state_variables
         .iter()
         .filter(|state_variable| state_variable.attributes.mutability == mutability)
         .count();
     if count == 0 {
-        return Ok(Vec::new());
+        return Ok((Vec::new(), U256::ZERO));
     }
     let mut positions = Vec::with_capacity(count);
-    let mut builder = StorageLayoutBuilder::new(base_slot);
+    let mut builder = StorageLayoutBuilder::new(U256::ZERO);
     for state_variable in state_variables {
         if state_variable.attributes.mutability != mutability {
             continue;
@@ -127,6 +125,6 @@ fn lay_out(
             position,
         });
     }
-    builder.slots_used().ok_or(NoStorageSize::TooLarge)?;
-    Ok(positions)
+    let slots_used = builder.slots_used().ok_or(NoStorageSize::TooLarge)?;
+    Ok((positions, slots_used))
 }
