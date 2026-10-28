@@ -1,0 +1,44 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Definitions (5):
+- Def: #1 ["C" @ input.sol:5:10] (contract)
+- Def: #2 ["N" @ input.sol:6:22] (constant, type: uint256)
+- Def: #3 ["f" @ input.sol:8:14] (function, type: function () returns ())
+- Def: #4 ["N" @ input.sol:10:21] (variable, type: uint256)
+- Def: #5 ["a" @ input.sol:12:27] (variable, type: uint256[2] memory)
+
+------------------------------------------------------------------------
+
+References (1):
+- Ref: ["N" @ input.sol:12:17] -> #2
+
+------------------------------------------------------------------------
+
+Unbound identifiers (0):
+
+------------------------------------------------------------------------
+
+Bindings: 
+    ╭─[input.sol:1:1]
+    │
+  5 │ contract C {
+    │          ┬  
+    │          ╰── name: 1
+  6 │     uint256 constant N = 2;
+    │                      ┬  
+    │                      ╰── name: 2
+    │ 
+  8 │     function f() public pure {
+    │              ┬  
+    │              ╰── name: 3
+    │ 
+ 10 │             uint256 N = 1;
+    │                     ┬  
+    │                     ╰── name: 4
+    │ 
+ 12 │         uint256[N] memory a;
+    │                 ┬         ┬  
+    │                 ╰──────────── ref: 2
+    │                           │  
+    │                           ╰── name: 5
+────╯
