@@ -32,13 +32,19 @@ pub struct Tally {
 }
 
 impl Tally {
+    /// Keeps the smallest ids as examples and the smallest id's message, so the report
+    /// does not depend on the order parallel runs wrote their outcomes in.
     fn add(&mut self, id: &str, message: &str) {
         self.contracts += 1;
-        if self.examples.len() < EXAMPLES {
-            self.examples.push(id.to_owned());
-        }
-        if self.message.is_empty() {
-            self.message = message.lines().next().unwrap_or_default().to_owned();
+        let position = self
+            .examples
+            .partition_point(|example| example.as_str() < id);
+        if position < EXAMPLES {
+            if position == 0 {
+                self.message = message.lines().next().unwrap_or_default().to_owned();
+            }
+            self.examples.insert(position, id.to_owned());
+            self.examples.truncate(EXAMPLES);
         }
     }
 }
@@ -227,6 +233,11 @@ impl<'a> Census<'a> {
                     .or_default()
                     .push(occurrence);
             }
+        }
+        // A row's examples and message are its first occurrences, so they go by contract
+        // id rather than by the order parallel runs wrote their outcomes in.
+        for occurrences in census.rows.values_mut() {
+            occurrences.sort_by(|a, b| a.contract.cmp(&b.contract));
         }
         census
     }
@@ -615,6 +626,26 @@ mod tests {
                 .verdict()
                 .unwrap_err()
                 .contains("2 contract(s) panicked")
+        );
+    }
+
+    #[test]
+    fn the_report_does_not_depend_on_the_order_outcomes_arrive_in() {
+        let report = |ids: &[&str]| {
+            let mut summary = Summary::default();
+            for id in ids {
+                let mut failure = failure(Check::Bind, "x");
+                failure.message = format!("{id} message");
+                summary.add(&outcome(id, vec![failure], None));
+            }
+            let verdict = summary.gate(&expected(""), false).verdict().unwrap_err();
+            (summary.markdown(&expected("")), verdict)
+        };
+        let (markdown, verdict) = report(&["d", "c", "b", "a"]);
+        assert_eq!(report(&["a", "b", "c", "d"]), (markdown.clone(), verdict));
+        assert!(
+            markdown.contains("| `bind:x` | 4 | 4 | a, b, c | a message |"),
+            "{markdown}"
         );
     }
 
