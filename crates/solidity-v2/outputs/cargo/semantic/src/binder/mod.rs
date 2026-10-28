@@ -702,12 +702,15 @@ impl Binder {
         } else if let Some(definitions) = contract_scope.definitions.get(symbol) {
             // Libraries are not linearised, and neither is a contract whose
             // bases failed to linearise: search only the scope's own members.
-            let results: DefinitionIds = definitions
-                .iter()
-                .copied()
-                .filter(|definition_id| options.can_see(&self.definitions[definition_id], true))
-                .collect();
-            Resolution::from(results)
+            // A qualified lookup sees all of a scope's own members.
+            let can_see =
+                |definition_id: &NodeId| options.can_see(&self.definitions[definition_id], true);
+            if matches!(options, ResolveOptions::Qualified) || definitions.iter().all(can_see) {
+                Resolution::from(definitions.as_slice())
+            } else {
+                let results: DefinitionIds = definitions.iter().copied().filter(can_see).collect();
+                Resolution::from(results)
+            }
         } else {
             Resolution::Unresolved
         }
