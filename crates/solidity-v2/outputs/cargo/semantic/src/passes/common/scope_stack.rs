@@ -48,14 +48,13 @@ impl ScopeStack {
             .lexical_scope_id = lexical_scope_id;
     }
 
-    /// Pops the current frame, which must have been pushed for `scope_id`.
+    /// Pops the current frame, returning the scope it was pushed for.
     #[inline]
-    pub(crate) fn pop(&mut self, scope_id: ScopeId) {
-        let frame = self
-            .frames
+    pub(crate) fn pop(&mut self) -> ScopeId {
+        self.frames
             .pop()
-            .expect("attempt to pop an empty scope stack");
-        assert_eq!(frame.structural_scope_id, scope_id);
+            .expect("attempt to pop an empty scope stack")
+            .structural_scope_id
     }
 
     /// The scope names resolve in at the current point of the traversal.

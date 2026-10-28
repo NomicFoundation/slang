@@ -217,8 +217,8 @@ impl<'a> Pass<'a> {
     }
 
     fn leave_scope_for_node_id(&mut self, node_id: NodeId) {
-        let scope_id = self.binder.scope_id_for_node_id(node_id).unwrap();
-        self.scope_stack.pop(scope_id);
+        let scope_id = self.scope_stack.pop();
+        debug_assert_eq!(Some(scope_id), self.binder.scope_id_for_node_id(node_id));
     }
 
     /// The scope names resolve in at the current point of the traversal.
