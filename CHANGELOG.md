@@ -1,5 +1,20 @@
 # changelog
 
+## 1.3.10
+
+### Patch Changes
+
+- [#2312](https://github.com/NomicFoundation/slang/pull/2312) [`47c552f`](https://github.com/NomicFoundation/slang/commit/47c552fc8a9dfe460d47de4099cf8bd024305969) Thanks [@teofr](https://github.com/teofr)! - Add support for Solidity `0.8.38`.
+
+- [#2305](https://github.com/NomicFoundation/slang/pull/2305) [`0887d8d`](https://github.com/NomicFoundation/slang/commit/0887d8d14ffa713283bd25b1b75e67492ce0e951) Thanks [@teofr](https://github.com/teofr)! - Fixed priority between `StateVariableDefinition` and `UnnamedFunctionDefinition` when parsing:
+  `function() x;` is parsed as a `StateVariableDefinition` named `x`, rather than an `UnnamedFunctionDefinition` with an `x` modifier.
+
+- [#2313](https://github.com/NomicFoundation/slang/pull/2313) [`f90065c`](https://github.com/NomicFoundation/slang/commit/f90065c69dbb278e8bdeec728fc085b63ffc01cb) Thanks [@teofr](https://github.com/teofr)! - Fixed parsing of function typed state variables, `function() external public x;` is now parsed as a state variable `x` with `public` visibility, of type `function() external`, rather than `function() external public`.
+
+- [#2299](https://github.com/NomicFoundation/slang/pull/2299) [`0daf2b9`](https://github.com/NomicFoundation/slang/commit/0daf2b988e0fcedca962157452e1c49e05efad2d) Thanks [@OmarTawfik](https://github.com/OmarTawfik)! - Bug fix: reject `DecimalLiteral` followed by `._` (e.g. `1._2`) starting from Solidity `0.5.0`.
+
+- [#2301](https://github.com/NomicFoundation/slang/pull/2301) [`2d8406f`](https://github.com/NomicFoundation/slang/commit/2d8406f6fe87b7307f4f6af55fb6bbc06cae3811) Thanks [@OmarTawfik](https://github.com/OmarTawfik)! - Bug fix: reject `DecimalLiteral` and `YulDecimalLiteral` with a leading zero (octal numbers), like `01`, `01.5` or `0_1`.
+
 ## 1.3.9
 
 ### Patch Changes
