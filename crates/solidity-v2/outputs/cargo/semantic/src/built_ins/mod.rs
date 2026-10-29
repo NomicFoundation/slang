@@ -4,8 +4,8 @@ use slang_solidity_v2_common::nodes::NodeId;
 
 use super::binder::{Binder, Definition, Typing};
 use super::types::{
-    AddressType, ArrayType, BytesType, CallMode, ContractType, DataLocation, MetaType, TupleType,
-    Type, TypeId, TypeRegistry, UserDefinedValueType, UserMetaType,
+    AddressType, ArrayType, BytesType, CallMode, ContractType, DataLocation, FunctionType,
+    MetaType, TupleType, Type, TypeId, TypeRegistry, UserDefinedValueType, UserMetaType,
 };
 
 mod availability;
@@ -284,10 +284,77 @@ impl<'a> BuiltInsResolver<'a> {
         }
     }
 
+    /// The members of a function value depend on how it is called:
+    /// - an external function has an address and a selector;
+    /// - a library call has no address of its own, only the selector of the
+    ///   function it names;
+    /// - an internal function only has a selector when it names a `public` or
+    ///   `external` function of another contract, eg. `B.f` or `super.f` in a
+    ///   contract deriving from `B`.
+    ///
+    /// A function value that does not name its declaration (eg. the result of
+    /// a conditional) has no selector unless it is external.
+    fn lookup_member_of_function_type(
+        &self,
+        function_type: &FunctionType,
+        symbol: &str,
+        current_contract_id: Option<NodeId>,
+    ) -> Option<InternalBuiltIn> {
+        match symbol {
+            "address" => function_type
+                .call_mode
+                .is_external()
+                .then_some(InternalBuiltIn::FunctionAddress),
+            "selector" => {
+                match function_type.call_mode {
+                    CallMode::External | CallMode::ExternalWithCallOptions => true,
+                    CallMode::Delegate { .. } => function_type.definition_id.is_some(),
+                    CallMode::Internal { .. } => {
+                        function_type.definition_id.is_some_and(|definition_id| {
+                            // `public` functions are typed with an internal call
+                            // mode by default, but they expose a selector if
+                            // queried outside the contract/library they are defined
+                            // in.
+                            self.is_externally_visible_function_of_another_contract(
+                                definition_id,
+                                current_contract_id,
+                            )
+                        })
+                    }
+                }
+                .then_some(InternalBuiltIn::FunctionSelector)
+            }
+            _ => None,
+        }
+    }
+
+    /// Whether `definition_id` is a `public` or `external` function declared
+    /// in a contract other than `current_contract_id`.
+    fn is_externally_visible_function_of_another_contract(
+        &self,
+        definition_id: NodeId,
+        current_contract_id: Option<NodeId>,
+    ) -> bool {
+        let Some(current_contract_id) = current_contract_id else {
+            return false;
+        };
+        matches!(
+            self.binder.find_definition_by_id(definition_id),
+            Some(Definition::Function(function_definition))
+                if function_definition.ir_node.is_externally_visible()
+        ) && self
+            .binder
+            .enclosing_definition_node_id(definition_id)
+            .is_some_and(|contract_id| contract_id != current_contract_id)
+    }
+
+    /// Looks up the built-in member `symbol` of a value of type `type_id`,
+    /// accessed from within `current_contract_id` (if any).
     pub(crate) fn lookup_member_of_type_id(
         &self,
         type_id: TypeId,
         symbol: &str,
+        current_contract_id: Option<NodeId>,
     ) -> Option<InternalBuiltIn> {
         let type_ = self.types.get_type_by_id(type_id);
         match type_ {
@@ -327,16 +394,8 @@ impl<'a> BuiltInsResolver<'a> {
                 "length" => Some(InternalBuiltIn::Length),
                 _ => None,
             },
-            Type::Function(ftype) => {
-                if self.binder.is_externally_visible_function(ftype) {
-                    match symbol {
-                        "address" => Some(InternalBuiltIn::FunctionAddress),
-                        "selector" => Some(InternalBuiltIn::FunctionSelector),
-                        _ => None,
-                    }
-                } else {
-                    None
-                }
+            Type::Function(function_type) => {
+                self.lookup_member_of_function_type(function_type, symbol, current_contract_id)
             }
             Type::Integer(_) => None,
             Type::Literal(_) => None,

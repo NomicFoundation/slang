@@ -833,6 +833,18 @@ impl TypeRegistry {
             Type::Function(function_type) if function_type.call_mode.is_partially_applied() => {
                 Err(NoMobileType::PartiallyAppliedFunction)
             }
+            // Since 0.8.21, a function value no longer names its declaration
+            // once it flows through an expression, eg. `cond ? f : g`.
+            Type::Function(function_type)
+                if function_type.definition_id.is_some()
+                    && self.language_version >= LanguageVersion::V0_8_21 =>
+            {
+                let function_type = FunctionType {
+                    definition_id: None,
+                    ..function_type.clone()
+                };
+                Ok(self.register_type(Type::Function(function_type)))
+            }
             // Matches solc behaviour, except for module types
             Type::MetaType(_) | Type::UserMetaType(_) => Err(NoMobileType::NotAValue),
             _ => Ok(type_id),
