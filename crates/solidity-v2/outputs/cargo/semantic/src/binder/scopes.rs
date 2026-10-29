@@ -96,12 +96,12 @@ pub(crate) struct FunctionScope {
     pub(crate) definitions: Map<String, NodeId>,
 }
 
-// TODO: this is similar to a function scope, but it doesn't have a separate
-// parameters scope; it also should bind the special `_` symbol to the built-in.
-// There are other functions that don't need a separate parameters scope (eg.
-// receive/fallback/unnamed), but they don't need to bind `_`. Should we
-// refactor? Or remove this and make the parameters optional in FunctionScope?
-// Probably the latter as we can control resolution in the relevant pass.
+// TODO: Consider replacing this with a `SignatureScope`. Right now the modifier
+// parameters are stored in the `definitions` which is odd. We don't need
+// parameter ordering for modifiers, so it works.
+// The other singularity of `ModifierScope` is that it's used to decide if we
+// bind the `_` placeholder, but that's easily replaceable with a lookup of the
+// associated definition.
 pub(crate) struct ModifierScope {
     pub(crate) node_id: NodeId,
     pub(crate) parent_scope_id: ScopeId,

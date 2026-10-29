@@ -92,8 +92,9 @@ pub(super) fn find_conflicting_solidity_definition(
         Scope::Parameters(parameters_scope) => parameters_scope
             .lookup_definition(symbol)
             .and_then(|existing| conflicting_definition(binder, existing, new_definition)),
-        // Like a function scope, only the parameters are checked: shadowing
-        // the enclosing scope is allowed.
+        // A definition appearing in a `SignatureScope` can only conflict with
+        // other parameters defined there.  Shadowing the enclosing scope is
+        // allowed.
         Scope::Signature(signature_scope) => find_conflicting_solidity_definition(
             binder,
             signature_scope.parameters_scope_id,
