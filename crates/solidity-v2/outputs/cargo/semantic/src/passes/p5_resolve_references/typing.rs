@@ -1031,9 +1031,7 @@ impl Pass<'_> {
                     )
                 })
             {
-                return self
-                    .types
-                    .partially_apply_function_type(function_type.clone());
+                return self.types.bind_function_type(function_type.clone());
             }
 
             if let Some(declaration_type_id) = self.as_foreign_function_declaration_type(
