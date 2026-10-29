@@ -473,12 +473,15 @@ pub fn slang_solidity_v2_semantic::types::literals::value_of_string_literals(&[s
 pub fn slang_solidity_v2_semantic::types::literals::value_of_unicode_string_literals(&[slang_solidity_v2_ir::ir::nodes::UnicodeStringLiteral]) -> alloc::vec::Vec<u8>
 pub fn slang_solidity_v2_semantic::types::literals::yul_literal_value(&slang_solidity_v2_ir::ir::nodes::YulLiteral) -> core::option::Option<ruint::aliases::U256>
 pub enum slang_solidity_v2_semantic::types::CallMode
+pub slang_solidity_v2_semantic::types::CallMode::Delegate
+pub slang_solidity_v2_semantic::types::CallMode::Delegate::bound: bool
 pub slang_solidity_v2_semantic::types::CallMode::External
 pub slang_solidity_v2_semantic::types::CallMode::ExternalWithCallOptions
 pub slang_solidity_v2_semantic::types::CallMode::Internal
 pub slang_solidity_v2_semantic::types::CallMode::Internal::bound: bool
 impl slang_solidity_v2_semantic::types::CallMode
 pub fn slang_solidity_v2_semantic::types::CallMode::is_bound(self) -> bool
+pub fn slang_solidity_v2_semantic::types::CallMode::is_delegate(self) -> bool
 pub fn slang_solidity_v2_semantic::types::CallMode::is_external(self) -> bool
 pub fn slang_solidity_v2_semantic::types::CallMode::is_partially_applied(self) -> bool
 pub fn slang_solidity_v2_semantic::types::CallMode::unapplied(self) -> Self
