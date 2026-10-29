@@ -1,10 +1,10 @@
 {
   "name": "@slang-private/workspace",
   "private": true,
-  "packageManager": "pnpm@11.28.5",
+  "packageManager": "pnpm@11.28.8",
   "engines": {
     "node": "^24.15.0",
-    "pnpm": "11.28.5"
+    "pnpm": "11.28.8"
   },
   "devDependencies": {
     "@changesets/changelog-github": "catalog:",
