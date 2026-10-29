@@ -3990,6 +3990,7 @@ TupleValues: TupleValues = {
                                             reject_suffix = Choice([
                                                 Fragment(IdentifierScanner),
                                                 Atom("._"),
+                                                // A digit matched after it means a leading zero, like in `01`, and octal numbers are not allowed:
                                                 Range(inclusive_start = '0', inclusive_end = '9')
                                             ])
                                         ),
@@ -4581,9 +4582,9 @@ IdentifierPathTailElement: (Period, IdentifierPathElement) = {
                                             ))
                                         ])
                                     ]),
-                                    // A digit after it means a leading zero, like in `01` (octal numbers are not allowed):
                                     reject_suffix = Choice([
                                         Fragment(YulIdentifierScanner),
+                                        // A digit matched after it means a leading zero, like in `01`, and octal numbers are not allowed:
                                         Range(inclusive_start = '0', inclusive_end = '9')
                                     ])
                                 )]
