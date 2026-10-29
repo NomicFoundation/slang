@@ -7,7 +7,7 @@ use slang_solidity_v2_ir::ir;
 use smallvec::{SmallVec, smallvec};
 
 use super::built_ins::InternalBuiltIn;
-use super::types::{FunctionType, TypeId};
+use super::types::TypeId;
 
 mod assembly;
 mod capacities;
@@ -256,22 +256,6 @@ impl Binder {
 
     pub fn find_definition_by_id(&self, node_id: NodeId) -> Option<&Definition> {
         self.definitions.get(&node_id)
-    }
-
-    /// Whether a function value refers to an externally visible function: it
-    /// is called externally, or it names a function declared `public` or
-    /// `external` (or a public state variable's getter).
-    pub(crate) fn is_externally_visible_function(&self, function_type: &FunctionType) -> bool {
-        function_type.call_mode.is_external()
-            || function_type
-                .definition_id
-                .and_then(|definition_id| self.find_definition_by_id(definition_id))
-                .is_some_and(|definition| {
-                    matches!(
-                        definition,
-                        Definition::Function(_) | Definition::StateVariable(_)
-                    ) && definition.is_externally_visible()
-                })
     }
 
     pub fn find_definition_by_identifier_node_id(&self, node_id: NodeId) -> Option<&Definition> {
