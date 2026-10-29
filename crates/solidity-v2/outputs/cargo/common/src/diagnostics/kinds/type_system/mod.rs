@@ -3,6 +3,7 @@ mod array_length_negative;
 mod array_length_not_constant;
 mod array_length_too_large;
 mod array_length_zero;
+mod call_options_not_allowed;
 mod cannot_call_via_contract_type_name;
 mod compound_assignment_to_tuple;
 mod constant_arithmetic_error;
@@ -39,6 +40,7 @@ pub use array_length_negative::ArrayLengthNegative;
 pub use array_length_not_constant::ArrayLengthNotConstant;
 pub use array_length_too_large::ArrayLengthTooLarge;
 pub use array_length_zero::ArrayLengthZero;
+pub use call_options_not_allowed::CallOptionsNotAllowed;
 pub use cannot_call_via_contract_type_name::CannotCallViaContractTypeName;
 pub use compound_assignment_to_tuple::CompoundAssignmentToTuple;
 pub use constant_arithmetic_error::ConstantArithmeticError;
@@ -133,6 +135,9 @@ define_diagnostic_kind! {
         /// The operand of an index access is not an array, a mapping or a type
         /// name.
         ExpressionNotIndexable(ExpressionNotIndexable),
+        /// Call options are set on a function that is not called by a message
+        /// call (eg. an internal or library function).
+        CallOptionsNotAllowed(CallOptionsNotAllowed),
         /// An expression in a position that requires a value names a built-in,
         /// `super`, or an uncalled `new` instead. Its `kind` says which.
         ExpressionNotAValue(ExpressionNotAValue),
