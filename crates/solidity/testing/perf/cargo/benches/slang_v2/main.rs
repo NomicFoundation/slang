@@ -10,6 +10,7 @@ use solidity_testing_perf_cargo::tests;
 use tests::slang_v2::ast_analysis::setup as ast_analysis_setup;
 use tests::slang_v2::ast_visitor::setup as ast_visitor_setup;
 use tests::slang_v2::compute_abi::setup as compute_abi_setup;
+use tests::slang_v2::compute_storage_layout::setup as compute_storage_layout_setup;
 use tests::slang_v2::infer_language_versions::setup as infer_language_versions_setup;
 use tests::slang_v2::ir_builder::setup as ir_builder_setup;
 use tests::slang_v2::parser::setup as parser_setup;
@@ -128,6 +129,17 @@ bench_projects! {
 }
 
 bench_projects! {
+    #[library_benchmark(setup = compute_storage_layout_setup)]
+    fn compute_storage_layout(
+        input: tests::slang_v2::compute_storage_layout::Input,
+    ) -> tests::slang_v2::compute_storage_layout::Output {
+        black_box(tests::slang_v2::compute_storage_layout::run(
+            black_box(input),
+        ))
+    }
+}
+
+bench_projects! {
     #[library_benchmark(setup = ast_visitor_setup)]
     fn ast_visitor(
         input: tests::slang_v2::ast_visitor::Input,
@@ -152,7 +164,7 @@ bench_projects! {
 library_benchmark_group!(
     name = pipeline;
     // __SLANG_V2_INFRA_BENCHMARKS_LIST__ (keep in sync)
-    benchmarks = parser, ir_builder, semantic, compute_abi, ast_visitor, ast_analysis, infer_language_versions,
+    benchmarks = parser, ir_builder, semantic, compute_abi, compute_storage_layout, ast_visitor, ast_analysis, infer_language_versions,
 );
 
 main!(

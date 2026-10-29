@@ -18,6 +18,9 @@ mod unit_tests {
     const PROJECT_TO_TEST: &str = "ui_pool_data_provider_v3";
     // Sum of the contracts, interfaces, and libraries in all of the files of the project.
     const CONTRACT_COUNT: usize = 25;
+    // Subset of `CONTRACT_COUNT` made up of `contract` definitions that have a storage layout.
+    // Interfaces and libraries are excluded.
+    const STORAGE_LAYOUT_COUNT: usize = 2;
     // Sum of the identifiers in the project.
     const IDENTIFIER_COUNT: usize = 2829;
     // Sum of the references resolved by the binder.
@@ -103,6 +106,12 @@ mod unit_tests {
         );
 
         define_payload_test_and_assert_count_eq!(compute_abi, count_abis, super::CONTRACT_COUNT);
+
+        define_payload_test_and_assert_count_eq!(
+            compute_storage_layout,
+            count_storage_layouts,
+            super::STORAGE_LAYOUT_COUNT
+        );
 
         define_payload_test_and_assert_count_eq!(
             ast_visitor,
