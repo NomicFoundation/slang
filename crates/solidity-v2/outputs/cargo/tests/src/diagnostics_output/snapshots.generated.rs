@@ -2485,6 +2485,11 @@ mod resolution {
         }
 
         #[test]
+        fn super_public_overload() -> Result<()> {
+            run("resolution/member_not_found", "super_public_overload")
+        }
+
+        #[test]
         fn unimplemented_function_via_super() -> Result<()> {
             run(
                 "resolution/member_not_found",
@@ -2631,6 +2636,14 @@ mod resolution {
         }
 
         #[test]
+        fn library_public_overload_called_internally() -> Result<()> {
+            run(
+                "resolution/no_matching_callable_declaration",
+                "library_public_overload_called_internally",
+            )
+        }
+
+        #[test]
         fn named_arguments_incompatible_types() -> Result<()> {
             run(
                 "resolution/no_matching_callable_declaration",
@@ -2659,6 +2672,14 @@ mod resolution {
             run(
                 "resolution/no_matching_callable_declaration",
                 "positional_arguments",
+            )
+        }
+
+        #[test]
+        fn public_overload_called_internally() -> Result<()> {
+            run(
+                "resolution/no_matching_callable_declaration",
+                "public_overload_called_internally",
             )
         }
     }

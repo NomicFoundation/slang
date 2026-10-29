@@ -816,12 +816,28 @@ impl Pass<'_> {
         // indicate the external access.
         if let Some(type_id) = typing.as_type_id()
             && let Type::Function(function_type) = self.types.get_type_by_id(type_id)
-            && self.binder.is_externally_visible_function(function_type)
+            && self.is_externally_visible_function(function_type)
         {
             return Typing::Resolved(self.types.externalize_function_type(type_id));
         }
 
         typing
+    }
+
+    /// Whether a function value refers to an externally visible function: it
+    /// is called externally, or it names a function declared `public` or
+    /// `external` (or a public state variable's getter).
+    fn is_externally_visible_function(&self, function_type: &FunctionType) -> bool {
+        function_type.call_mode.is_external()
+            || function_type
+                .definition_id
+                .and_then(|definition_id| self.binder.find_definition_by_id(definition_id))
+                .is_some_and(|definition| {
+                    matches!(
+                        definition,
+                        Definition::Function(_) | Definition::StateVariable(_)
+                    ) && definition.is_externally_visible()
+                })
     }
 
     /// Whether `contract_id` is accessed from a scope that neither is it nor
@@ -897,7 +913,7 @@ impl Pass<'_> {
                     self.types.implicitly_convertible_to_for_call(
                         receiver_type_id,
                         *first,
-                        self.binder.is_externally_visible_function(function_type),
+                        is_delegate_called,
                     )
                 })
             {
@@ -930,7 +946,7 @@ impl Pass<'_> {
     /// Whether `definition_id` is a library function that is called by a
     /// delegate call when reached through its library or bound by a `using`
     /// directive: one declared `public` or `external`.
-    fn is_delegate_called_library_function(&self, definition_id: NodeId) -> bool {
+    pub(super) fn is_delegate_called_library_function(&self, definition_id: NodeId) -> bool {
         matches!(
             self.binder.find_definition_by_id(definition_id),
             Some(Definition::Function(function_definition))
