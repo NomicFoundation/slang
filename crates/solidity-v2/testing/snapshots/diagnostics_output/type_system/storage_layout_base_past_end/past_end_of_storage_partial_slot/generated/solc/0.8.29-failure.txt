@@ -1,0 +1,11 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 1
+
+[TypeError 5015] Error: Contract extends past the end of storage when this base slot value is specified.
+   ╭─[input.sol:5:22]
+   │
+ 5 │ contract C layout at 2 ** 256 - 1 {
+   │                      ──────┬─────  
+   │                            ╰─────── Error occurred here.
+───╯

@@ -1,0 +1,11 @@
+{
+  "expected_solc_divergence": [
+    {
+      "specifier": {
+        "type": "From",
+        "from": "0.8.0"
+      },
+      "reason": "Slang is intentionally more lenient than solc here. Slang lays out storage exactly, packing values narrower than a slot, so these variables fit. solc measures the contract with an upper bound that gives every value type a full slot, never packs array elements, and adds an extra slot for every struct, so it rejects them."
+    }
+  ]
+}

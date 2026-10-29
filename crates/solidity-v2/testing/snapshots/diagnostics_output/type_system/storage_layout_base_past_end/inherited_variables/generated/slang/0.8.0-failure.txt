@@ -1,0 +1,19 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 2
+
+[syntax/incompatible-syntax-version] Error: This syntax was introduced in version '0.8.29'.
+    ╭─[input.sol:10:17]
+    │
+ 10 │ contract C is B layout at 1 {
+    │                 ─────┬─────  
+    │                      ╰─────── Error occurred here.
+────╯
+
+[type-system/storage-layout-base-past-end] Error: Contract extends past the end of storage from this base slot.
+    ╭─[input.sol:10:27]
+    │
+ 10 │ contract C is B layout at 1 {
+    │                           ┬  
+    │                           ╰── Error occurred here.
+────╯
