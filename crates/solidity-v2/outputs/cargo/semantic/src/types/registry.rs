@@ -389,8 +389,8 @@ impl TypeRegistry {
                 // This is full equality except for mutability which can be
                 // converted to, the call mode which must have nothing applied,
                 // and definition_id and implicit_receiver_type which can differ.
-                // An internal function only converts to an internal one, and an
-                // external to an external one.
+                // Each call mode only converts to itself, so a library call
+                // never becomes a function pointer: no type name produces one.
                 //
                 // Note: solc checks that the `from` and `to` function types have
                 // the same call options or bound argument applied in the same way,
@@ -653,11 +653,15 @@ impl TypeRegistry {
         type_id
     }
 
-    // Binds the first argument of a function attached by a `using` directive,
-    // eg. `a.foo`.
-    pub(crate) fn bind_function_type(&mut self, function_type: FunctionType) -> TypeId {
+    // Changes how a function is called where it is used, eg. binding its first
+    // argument (`a.foo`) or calling it as a library (`L.foo`).
+    pub(crate) fn function_type_with_call_mode(
+        &mut self,
+        function_type: FunctionType,
+        call_mode: CallMode,
+    ) -> TypeId {
         self.register_type(Type::Function(FunctionType {
-            call_mode: CallMode::Internal { bound: true },
+            call_mode,
             ..function_type
         }))
     }
@@ -665,7 +669,7 @@ impl TypeRegistry {
     // Pre-applies call options to an external function, eg. `foo{value: 3}`.
     // TODO(validation) SDR[828]: call options on an internal function are
     // invalid, but it is typed as an external call with options meanwhile.
-    pub(crate) fn apply_call_options_to_function_type(
+    pub(crate) fn function_type_with_call_options_applied(
         &mut self,
         function_type: FunctionType,
     ) -> TypeId {
