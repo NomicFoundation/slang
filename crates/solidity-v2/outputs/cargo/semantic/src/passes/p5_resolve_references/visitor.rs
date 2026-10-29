@@ -685,16 +685,20 @@ impl Visitor for Pass<'_> {
         let typing = match operand_typing.as_type_id() {
             Some(type_id) => match self.types.get_type_by_id(type_id) {
                 // TODO(validation) SDR[828]: call options only apply to external
-                // calls, so a bound function cannot take them. It stays bound
-                // meanwhile, so that its call still passes one argument less.
-                Type::Function(function_type) if function_type.call_mode.is_bound() => {
+                // calls, so neither a bound function nor a library call can take
+                // them. They keep their call mode meanwhile, so that a bound one
+                // still passes one argument less.
+                Type::Function(function_type)
+                    if function_type.call_mode.is_bound()
+                        || function_type.call_mode.is_delegate() =>
+                {
                     operand_typing
                 }
                 Type::Function(function_type) => {
                     let function_type = function_type.clone();
                     Typing::Resolved(
                         self.types
-                            .apply_call_options_to_function_type(function_type),
+                            .function_type_with_call_options_applied(function_type),
                     )
                 }
                 _ => operand_typing,

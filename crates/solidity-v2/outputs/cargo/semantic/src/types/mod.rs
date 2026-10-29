@@ -244,11 +244,6 @@ pub struct FunctionType {
 ///
 /// Whether the function is declared `public` is not part of its type: that is
 /// a property of the declaration, reached through `definition_id`.
-///
-/// TODO: add `Delegate { bound }` for library calls (`L.f`, or `x.f` bound by
-/// a `using` directive), which have no `.address`, do not convert to external
-/// function types and take no call options. They are typed as `External` or
-/// `Internal` per their declaration meanwhile.
 #[derive(Clone, Copy, Debug, Eq, Hash, PartialEq)]
 pub enum CallMode {
     /// Called by jumping to the function's code, eg. a free function, a
@@ -262,6 +257,12 @@ pub enum CallMode {
     External,
     /// An external call with pre-applied call options, eg. `c.f{value: 3}`.
     ExternalWithCallOptions,
+    /// Called by a delegate call to a library, running against the caller's
+    /// storage: a `public` or `external` library function reached through the
+    /// library, eg. `L.f`, or bound by a `using` directive, eg. `x.f`. It has
+    /// no address of its own, so it converts to no other function type and
+    /// takes no call options. `bound` is as in `Internal`.
+    Delegate { bound: bool },
 }
 
 impl CallMode {
@@ -271,13 +272,23 @@ impl CallMode {
     pub fn is_partially_applied(self) -> bool {
         matches!(
             self,
-            Self::Internal { bound: true } | Self::ExternalWithCallOptions
+            Self::Internal { bound: true }
+                | Self::ExternalWithCallOptions
+                | Self::Delegate { bound: true }
         )
     }
 
     /// Whether the function's first argument is bound.
     pub fn is_bound(self) -> bool {
-        matches!(self, Self::Internal { bound: true })
+        matches!(
+            self,
+            Self::Internal { bound: true } | Self::Delegate { bound: true }
+        )
+    }
+
+    /// Whether the function is called by a delegate call to a library.
+    pub fn is_delegate(self) -> bool {
+        matches!(self, Self::Delegate { .. })
     }
 
     /// Whether the function is called by a message call.
@@ -291,6 +302,7 @@ impl CallMode {
         match self {
             Self::Internal { .. } => Self::Internal { bound: false },
             Self::External | Self::ExternalWithCallOptions => Self::External,
+            Self::Delegate { .. } => Self::Delegate { bound: false },
         }
     }
 }

@@ -1733,6 +1733,14 @@ mod resolution {
         use super::*;
 
         #[test]
+        fn library_function_argument() -> Result<()> {
+            run(
+                "resolution/no_matching_callable_declaration",
+                "library_function_argument",
+            )
+        }
+
+        #[test]
         fn named_arguments_incompatible_types() -> Result<()> {
             run(
                 "resolution/no_matching_callable_declaration",

@@ -20,9 +20,9 @@ use crate::built_ins::{BuiltInCallError, InternalBuiltIn};
 use crate::context::FileNodeMapper;
 use crate::passes::common::node_location;
 use crate::types::{
-    AddressType, ArraySliceType, ArrayType, ContractType, ConversionError, DataLocation, ErrorType,
-    EventType, FixedSizeArrayType, FunctionType, IntegerType, LiteralKind, MetaType, NoMobileType,
-    Number, StringType, Type, TypeId, UserMetaType, literals,
+    AddressType, ArraySliceType, ArrayType, CallMode, ContractType, ConversionError, DataLocation,
+    ErrorType, EventType, FixedSizeArrayType, FunctionType, IntegerType, LiteralKind, MetaType,
+    NoMobileType, Number, StringType, Type, TypeId, UserMetaType, literals,
 };
 
 impl Pass<'_> {
@@ -846,6 +846,8 @@ impl Pass<'_> {
     ///   location;
     /// - functions attached via `using for` bind the receiver as their first
     ///   argument, producing a partially applied function;
+    /// - `public` and `external` library functions, reached through the library
+    ///   or bound, are called by a delegate call;
     /// - function declarations that are not callable through the operand's
     ///   contract/interface type name become the user meta type of their
     ///   definition.
@@ -869,13 +871,31 @@ impl Pass<'_> {
         } else if let Type::Function(function_type) = type_
             && let Some(receiver_type_id) = operand_typing.as_type_id()
         {
+            let is_delegate_called = function_type.definition_id.is_some_and(|definition_id| {
+                self.is_delegate_called_library_function(definition_id)
+            });
+
             if function_type.implicit_receiver_type.is_none()
                 && function_type.parameter_types.first().is_some_and(|first| {
                     self.types
                         .implicitly_convertible_to_for_external_call(receiver_type_id, *first)
                 })
             {
-                return self.types.bind_function_type(function_type.clone());
+                let call_mode = if is_delegate_called {
+                    CallMode::Delegate { bound: true }
+                } else {
+                    CallMode::Internal { bound: true }
+                };
+                return self
+                    .types
+                    .function_type_with_call_mode(function_type.clone(), call_mode);
+            }
+
+            if is_delegate_called && self.is_library_type_name(receiver_type_id) {
+                return self.types.function_type_with_call_mode(
+                    function_type.clone(),
+                    CallMode::Delegate { bound: false },
+                );
             }
 
             if let Some(declaration_type_id) = self
@@ -885,6 +905,34 @@ impl Pass<'_> {
             }
         }
         type_id
+    }
+
+    /// Whether `definition_id` is a library function that is called by a
+    /// delegate call when reached through its library or bound by a `using`
+    /// directive: one declared `public` or `external`.
+    fn is_delegate_called_library_function(&self, definition_id: NodeId) -> bool {
+        matches!(
+            self.binder.find_definition_by_id(definition_id),
+            Some(Definition::Function(function_definition))
+                if function_definition.ir_node.is_externally_visible()
+        ) && matches!(
+            self.binder
+                .enclosing_definition_node_id(definition_id)
+                .and_then(|library_id| self.binder.find_definition_by_id(library_id)),
+            Some(Definition::Library(_))
+        )
+    }
+
+    /// Whether `type_id` is the type of a library's name, eg. `L` in `L.f`.
+    fn is_library_type_name(&self, type_id: TypeId) -> bool {
+        matches!(
+            self.types.get_type_by_id(type_id),
+            Type::UserMetaType(UserMetaType { definition_id })
+                if matches!(
+                    self.binder.find_definition_by_id(*definition_id),
+                    Some(Definition::Library(_))
+                )
+        )
     }
 
     /// Returns the user meta type of a function's definition when reaching the
