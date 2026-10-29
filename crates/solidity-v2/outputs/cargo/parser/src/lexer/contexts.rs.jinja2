@@ -63,7 +63,7 @@ impl<'source> ContextWrapper<'source> {
             {%- for definition in lexeme.definitions %}
                 {%- if definition.reject_suffix %}
                     {#
-                        TODO: Most not_followed_by patterns are the same, in the future it may
+                        TODO: Most reject_suffix patterns are the same, in the future it may
                         be worth it to deduplicate them and generate unique instances.
                     #}
                     {#

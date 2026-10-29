@@ -12,8 +12,8 @@ use crate::model::{
     SpannedEnumItem, SpannedEnumVariant, SpannedEvmTargetSpecifier, SpannedField,
     SpannedFragmentItem, SpannedItem, SpannedKeywordItem, SpannedPrecedenceExpression,
     SpannedPrecedenceItem, SpannedPrecedenceOperator, SpannedPrimaryExpression,
-    SpannedRepeatedItem, SpannedSeparatedItem, SpannedStructItem, SpannedTokenDefinition,
-    SpannedTokenItem, SpannedVersionSpecifier,
+    SpannedRepeatedItem, SpannedSeparatedItem, SpannedStructItem, SpannedTokenItem,
+    SpannedVersionSpecifier,
 };
 
 pub(crate) fn run(analysis: &mut Analysis) {
@@ -201,17 +201,10 @@ fn check_token(analysis: &mut Analysis, item: &SpannedTokenItem) {
     let SpannedTokenItem {
         name: _,
         enabled,
-        definitions,
+        definitions: _,
     } = item;
 
     check_version_specifier(analysis, enabled.as_ref());
-
-    for definition in definitions {
-        let SpannedTokenDefinition {
-            scanner: _,
-            reject_suffix: _,
-        } = definition;
-    }
 }
 
 fn check_fragment(analysis: &mut Analysis, item: &SpannedFragmentItem) {

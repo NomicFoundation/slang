@@ -31,7 +31,10 @@ language_v2_macros::compile!(Language(
                     ),
                     Token(
                         name = Baz,
-                        definitions = [TokenDefinition(scanner = Atom("baz"))]
+                        definitions = [
+                            TokenDefinition(scanner = Atom("baz1")),
+                            TokenDefinition(scanner = Atom("baz2"))
+                        ]
                     )
                 ]
             )]
@@ -108,10 +111,20 @@ fn definition() {
                                 item: TokenItem {
                                     name: "Baz".into(),
                                     enabled: None,
-                                    definitions: vec![TokenDefinition {
-                                        scanner: TokenScanner::Atom { atom: "baz".into() },
-                                        reject_suffix: None,
-                                    }],
+                                    definitions: vec![
+                                        TokenDefinition {
+                                            scanner: TokenScanner::Atom {
+                                                atom: "baz1".into()
+                                            },
+                                            reject_suffix: None,
+                                        },
+                                        TokenDefinition {
+                                            scanner: TokenScanner::Atom {
+                                                atom: "baz2".into()
+                                            },
+                                            reject_suffix: None,
+                                        }
+                                    ],
                                 }
                                 .into()
                             }
