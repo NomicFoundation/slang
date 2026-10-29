@@ -328,6 +328,9 @@ impl FixedPointNumberType {
 }
 
 impl FunctionType {
+    /// The function or getter this type was declared by, if it names one.
+    /// A function value that flows through an expression no longer does, eg.
+    /// `cond ? f : g`.
     pub fn associated_definition(&self) -> Option<Definition> {
         self.inner.definition_id.map(|definition_id| {
             Definition::try_create(definition_id, &self.semantic)
