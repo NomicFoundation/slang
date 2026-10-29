@@ -201,8 +201,7 @@ fn check_token(analysis: &mut Analysis, item: &SpannedTokenItem) {
     let SpannedTokenItem {
         name: _,
         enabled,
-        not_followed_by: _,
-        scanner: _,
+        definitions: _,
     } = item;
 
     check_version_specifier(analysis, enabled.as_ref());
