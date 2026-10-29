@@ -161,7 +161,7 @@ fn write_location(location: DataLocation, is_pointer: bool, out: &mut String) {
 
 /// `t_function_{internal|external}_{mutability}(T1,T2)returns(R1,R2)`.
 fn write_function(semantic: &SemanticContext, function_type: &FunctionType, out: &mut String) {
-    let visibility = if function_type.is_externally_visible() {
+    let visibility = if function_type.call_mode.is_external() {
         "external"
     } else {
         "internal"

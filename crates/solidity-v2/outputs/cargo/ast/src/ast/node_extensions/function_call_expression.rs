@@ -35,9 +35,9 @@ impl FunctionCallExpressionStruct {
             .node_typing(arguments.first()?.node_id()?)
             .as_type_id()?;
         let type_id = match semantic.types().get_type_by_id(callee_type_id) {
-            // A `Public` function value was named without a receiver, so it is internal.
+            // A `public` function named without a receiver is called internally.
             types::Type::Function(function_type)
-                if function_type.visibility == types::FunctionTypeVisibility::External =>
+                if function_type.call_mode == types::CallMode::External =>
             {
                 semantic
                     .types()

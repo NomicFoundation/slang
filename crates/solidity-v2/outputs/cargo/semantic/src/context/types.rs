@@ -284,7 +284,7 @@ impl SemanticContext {
             FunctionTypeMutability::Payable => " payable",
             FunctionTypeMutability::NonPayable => "",
         })?;
-        if function_type.is_externally_visible() {
+        if function_type.call_mode.is_external() {
             out.write_str(" external")?;
         }
         if let Type::Tuple(TupleType { types }) =
