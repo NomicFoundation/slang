@@ -651,9 +651,7 @@ impl TypeRegistry {
         }))
     }
 
-    // Pre-applies call options to an external function, eg. `foo{value: 3}`.
-    // TODO(validation) SDR[828]: call options on an internal function are
-    // invalid, but it is typed as an external call with options meanwhile.
+    // Pre-applies call options to an external function, eg. `c.foo{value: 3}`.
     pub(crate) fn function_type_with_call_options_applied(
         &mut self,
         function_type: FunctionType,

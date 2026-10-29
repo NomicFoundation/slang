@@ -5327,6 +5327,64 @@ mod type_system {
         }
     }
 
+    mod call_options_not_allowed {
+        use super::*;
+
+        #[test]
+        fn array_creation() -> Result<()> {
+            run("type_system/call_options_not_allowed", "array_creation")
+        }
+
+        #[test]
+        fn bound_library_function() -> Result<()> {
+            run(
+                "type_system/call_options_not_allowed",
+                "bound_library_function",
+            )
+        }
+
+        #[test]
+        fn built_in_function() -> Result<()> {
+            run("type_system/call_options_not_allowed", "built_in_function")
+        }
+
+        #[test]
+        fn event_without_emit() -> Result<()> {
+            run("type_system/call_options_not_allowed", "event_without_emit")
+        }
+
+        #[test]
+        fn free_function() -> Result<()> {
+            run("type_system/call_options_not_allowed", "free_function")
+        }
+
+        #[test]
+        fn internal_function() -> Result<()> {
+            run("type_system/call_options_not_allowed", "internal_function")
+        }
+
+        #[test]
+        fn library_function() -> Result<()> {
+            run("type_system/call_options_not_allowed", "library_function")
+        }
+
+        #[test]
+        fn overloaded_internal_function() -> Result<()> {
+            run(
+                "type_system/call_options_not_allowed",
+                "overloaded_internal_function",
+            )
+        }
+
+        #[test]
+        fn public_function_by_name() -> Result<()> {
+            run(
+                "type_system/call_options_not_allowed",
+                "public_function_by_name",
+            )
+        }
+    }
+
     mod cannot_call_via_contract_type_name {
         use super::*;
 

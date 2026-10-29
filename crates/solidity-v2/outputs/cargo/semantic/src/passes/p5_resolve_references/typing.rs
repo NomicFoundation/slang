@@ -774,24 +774,41 @@ impl Pass<'_> {
         &mut self,
         resolution: &Resolution,
     ) -> Typing {
+        match resolution {
+            Resolution::Definition(definition_id) => self.typing_of_contract_member(*definition_id),
+            // Each overload is accessed externally, as a single member is.
+            Resolution::Ambiguous(definition_ids) => Typing::Undetermined(
+                definition_ids
+                    .iter()
+                    .filter_map(|definition_id| {
+                        self.typing_of_contract_member(*definition_id).as_type_id()
+                    })
+                    .collect(),
+            ),
+            Resolution::Unresolved | Resolution::BuiltIn(_) => {
+                self.typing_of_resolution(resolution)
+            }
+        }
+    }
+
+    /// The typing of the member `definition_id` reached through `this` or a
+    /// contract reference, which accesses it externally.
+    fn typing_of_contract_member(&mut self, definition_id: NodeId) -> Typing {
         // Check if the target is a state variable with a getter or a function
         // with an externalized type; the member is accessed through that type.
-        if let Resolution::Definition(definition_id) = resolution
-            && let Some(member_type_id) =
-                match self.binder.find_definition_by_id(*definition_id).unwrap() {
-                    Definition::StateVariable(state_var_definition) => {
-                        state_var_definition.getter_type_id
-                    }
-                    Definition::Function(function_definition) => {
-                        function_definition.externalized_type_id
-                    }
-                    _ => None,
-                }
+        if let Some(member_type_id) = match self
+            .binder
+            .find_definition_by_id(definition_id)
+            .unwrap()
         {
+            Definition::StateVariable(state_var_definition) => state_var_definition.getter_type_id,
+            Definition::Function(function_definition) => function_definition.externalized_type_id,
+            _ => None,
+        } {
             return Typing::Resolved(member_type_id);
         }
 
-        let mut typing = self.typing_of_resolution(resolution);
+        let typing = self.binder.node_typing(definition_id).clone();
 
         // If the resolved type is a function and the operand is either
         // `this` or something of an address type, the function is being
@@ -801,7 +818,7 @@ impl Pass<'_> {
             && let Type::Function(function_type) = self.types.get_type_by_id(type_id)
             && self.binder.is_externally_visible_function(function_type)
         {
-            typing = Typing::Resolved(self.types.externalize_function_type(type_id));
+            return Typing::Resolved(self.types.externalize_function_type(type_id));
         }
 
         typing
@@ -1491,6 +1508,56 @@ impl Pass<'_> {
         definition_id
             .and_then(|definition_id| self.binder.find_definition_by_id(definition_id))
             .is_some_and(|definition| matches!(definition, Definition::Modifier(_)))
+    }
+
+    /// Whether a callee typed as `typing` can take call options: only a
+    /// function called by a message call can, ie. an external function, a
+    /// contract creation, or the low-level `call`, `delegatecall` and
+    /// `staticcall` of an address. Returns `None` when `typing` is not a
+    /// function at all, or did not resolve.
+    pub(super) fn call_options_allowed(&self, typing: &Typing) -> Option<bool> {
+        match typing {
+            Typing::Resolved(type_id) => self.call_options_allowed_for_type(*type_id),
+            Typing::NewExpression(type_id) => Some(matches!(
+                self.types.get_type_by_id(*type_id),
+                Type::Contract(_)
+            )),
+            Typing::BuiltIn(built_in) => match built_in {
+                InternalBuiltIn::AddressCall
+                | InternalBuiltIn::AddressDelegatecall
+                | InternalBuiltIn::AddressStaticcall => Some(true),
+                InternalBuiltIn::Abi
+                | InternalBuiltIn::Block
+                | InternalBuiltIn::Msg
+                | InternalBuiltIn::Tx
+                | InternalBuiltIn::ModifierUnderscore => None,
+                _ => Some(false),
+            },
+            // Overloads of one name are all called the same way, so the set is
+            // rejected only when none of them can take call options.
+            Typing::Undetermined(type_ids) => type_ids
+                .iter()
+                .filter_map(|type_id| self.call_options_allowed_for_type(*type_id))
+                .reduce(|any_allowed, allowed| any_allowed || allowed),
+            Typing::This(_) | Typing::Super(_) | Typing::Unresolved => None,
+        }
+    }
+
+    fn call_options_allowed_for_type(&self, type_id: TypeId) -> Option<bool> {
+        match self.types.get_type_by_id(type_id) {
+            Type::Function(function_type) => Some(function_type.call_mode == CallMode::External),
+            // A function declaration reached through its contract's name, or an
+            // event or error, is called as a function but not externally.
+            Type::UserMetaType(UserMetaType { definition_id }) => {
+                match self.binder.find_definition_by_id(*definition_id) {
+                    Some(Definition::Function(_) | Definition::Event(_) | Definition::Error(_)) => {
+                        Some(false)
+                    }
+                    _ => None,
+                }
+            }
+            _ => None,
+        }
     }
 }
 
