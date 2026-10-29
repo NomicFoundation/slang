@@ -6,8 +6,8 @@ use super::Pass;
 use crate::binder::Definition;
 use crate::types::{
     AddressType, ArrayType, CallMode, ContractType, DataLocation, EnumType, FixedSizeArrayType,
-    FunctionType, FunctionTypeMutability, FunctionTypeVisibility, InterfaceType, LibraryType,
-    MappingType, StringType, StructType, TupleType, Type, TypeId, UserDefinedValueType,
+    FunctionType, FunctionTypeMutability, InterfaceType, LibraryType, MappingType, StringType,
+    StructType, TupleType, Type, TypeId, UserDefinedValueType,
 };
 
 impl Pass<'_> {
@@ -158,9 +158,8 @@ impl Pass<'_> {
             implicit_receiver_type,
             parameter_types,
             return_type,
-            visibility: (&function_definition.attributes.visibility).into(),
             mutability: (&function_definition.attributes.mutability).into(),
-            call_mode: CallMode::UNAPPLIED,
+            call_mode: (&function_definition.attributes.visibility).into(),
         })))
     }
 
@@ -173,10 +172,7 @@ impl Pass<'_> {
         function_definition: &ir::FunctionDefinition,
         type_id: TypeId,
     ) -> Option<TypeId> {
-        let Type::Function(function_type) = self.types.get_type_by_id(type_id) else {
-            unreachable!("function definition is not typed as a function");
-        };
-        if !function_type.is_externally_visible()
+        if !function_definition.is_externally_visible()
             || !matches!(function_definition.kind, ir::FunctionKind::Regular)
         {
             return None;
@@ -354,9 +350,8 @@ impl Pass<'_> {
             implicit_receiver_type: receiver_type_id,
             parameter_types,
             return_type,
-            visibility: FunctionTypeVisibility::External,
             mutability: FunctionTypeMutability::View,
-            call_mode: CallMode::UNAPPLIED,
+            call_mode: CallMode::External,
         });
         Some((self.types.register_type(getter_type), returned_member_ids))
     }

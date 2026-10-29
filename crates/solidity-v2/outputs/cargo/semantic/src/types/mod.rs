@@ -230,7 +230,6 @@ pub struct FunctionType {
     pub parameter_types: Vec<TypeId>,
     // Multiple return values are modeled by returning a tuple
     pub return_type: TypeId,
-    pub visibility: FunctionTypeVisibility,
     pub mutability: FunctionTypeMutability,
     /// The type of the implicit receiver in contract or interface
     /// methods (ie. the type of `this`)
@@ -239,70 +238,72 @@ pub struct FunctionType {
     pub call_mode: CallMode,
 }
 
-impl FunctionType {
-    pub fn is_externally_visible(&self) -> bool {
-        matches!(
-            self.visibility,
-            FunctionTypeVisibility::External | FunctionTypeVisibility::Public
-        )
-    }
-}
-
 /// How a function value is called at its use site, including what was already
 /// applied to it there. This decides how it can be called and whether it can
 /// be used as a value.
 ///
-/// TODO: name the call mechanism in every variant, eg. `Internal { bound } |
-/// External | ExternalWithCallOptions | Delegate { bound }`, decided where the
-/// function is used. `Plain` currently defers to the declared visibility, so a
-/// `public` function called by its bare name is treated as an external call
-/// even though it is an internal one. `Delegate` would cover library calls
-/// (`L.f`, or `x.f` bound by `using`), which have no `.address`, do not convert
-/// to external function types and take no call options.
+/// Whether the function is declared `public` is not part of its type: that is
+/// a property of the declaration, reached through `definition_id`.
+///
+/// TODO: add `Delegate { bound }` for library calls (`L.f`, or `x.f` bound by
+/// a `using` directive), which have no `.address`, do not convert to external
+/// function types and take no call options. They are typed as `External` or
+/// `Internal` per their declaration meanwhile.
 #[derive(Clone, Copy, Debug, Eq, Hash, PartialEq)]
 pub enum CallMode {
-    /// A function called as declared. When `bound`, its first argument is
-    /// already bound, eg. `a.foo` where `foo` is attached to the type of `a`
-    /// by a `using` directive, so a call passes one argument less than the
-    /// parameters.
-    Plain { bound: bool },
-    /// An external function with pre-applied call options, eg. `foo{value: 3}`.
-    WithCallOptions,
+    /// Called by jumping to the function's code, eg. a free function, a
+    /// function named by its bare name, `super.f`, or a value of an `internal`
+    /// function type. When `bound`, its first argument is already bound, eg.
+    /// `a.foo` where `foo` is attached to the type of `a` by a `using`
+    /// directive, so a call passes one argument less than the parameters.
+    Internal { bound: bool },
+    /// Called by a message call to an address and a selector, eg. `this.f`,
+    /// `c.f`, or a value of an `external` function type.
+    External,
+    /// An external call with pre-applied call options, eg. `c.f{value: 3}`.
+    ExternalWithCallOptions,
 }
 
 impl CallMode {
-    /// A function as declared, with nothing applied.
-    pub const UNAPPLIED: Self = Self::Plain { bound: false };
-
     /// Whether something was applied to the function: a bound first argument
     /// or call options. Such a function can only be called, not used as a
     /// value.
     pub fn is_partially_applied(self) -> bool {
-        self != Self::UNAPPLIED
+        matches!(
+            self,
+            Self::Internal { bound: true } | Self::ExternalWithCallOptions
+        )
     }
 
     /// Whether the function's first argument is bound.
     pub fn is_bound(self) -> bool {
-        matches!(self, Self::Plain { bound: true })
+        matches!(self, Self::Internal { bound: true })
+    }
+
+    /// Whether the function is called by a message call.
+    pub fn is_external(self) -> bool {
+        matches!(self, Self::External | Self::ExternalWithCallOptions)
+    }
+
+    /// The same call mode, with nothing applied.
+    #[must_use]
+    pub fn unapplied(self) -> Self {
+        match self {
+            Self::Internal { .. } => Self::Internal { bound: false },
+            Self::External | Self::ExternalWithCallOptions => Self::External,
+        }
     }
 }
 
-// Mirrors `ir::FunctionVisibility`
-#[derive(Clone, Copy, Debug, Eq, Hash, PartialEq)]
-pub enum FunctionTypeVisibility {
-    Public,
-    Private,
-    Internal,
-    External,
-}
-
-impl From<&ir::FunctionVisibility> for FunctionTypeVisibility {
-    fn from(value: &ir::FunctionVisibility) -> Self {
-        match value {
-            ir::FunctionVisibility::Public => Self::Public,
-            ir::FunctionVisibility::Private => Self::Private,
-            ir::FunctionVisibility::Internal => Self::Internal,
+impl From<&ir::FunctionVisibility> for CallMode {
+    /// How a function declared with `visibility` is called when named directly:
+    /// only an `external` one is called by a message call.
+    fn from(visibility: &ir::FunctionVisibility) -> Self {
+        match visibility {
             ir::FunctionVisibility::External => Self::External,
+            ir::FunctionVisibility::Public
+            | ir::FunctionVisibility::Internal
+            | ir::FunctionVisibility::Private => Self::Internal { bound: false },
         }
     }
 }
@@ -341,31 +342,6 @@ pub(crate) enum ConversionError {
 
 pub(crate) trait ImplicitlyConvertible<T> {
     fn implicitly_convertible_to(&self, target: T) -> bool;
-}
-
-impl ImplicitlyConvertible<FunctionTypeVisibility> for FunctionTypeVisibility {
-    fn implicitly_convertible_to(&self, target: Self) -> bool {
-        matches!(
-            (self, target),
-            // public converts to public or internal. It does *not* convert to
-            // external: a public function reached externally (through `this` or
-            // a contract reference) is already externalised at the point of
-            // access, so a value still carrying `Public` here is a plain
-            // reference, which denotes the internal function.
-            (
-                FunctionTypeVisibility::Public,
-                FunctionTypeVisibility::Public | FunctionTypeVisibility::Internal,
-            )
-                // private converts to private or internal
-                | (
-                    FunctionTypeVisibility::Private,
-                    FunctionTypeVisibility::Private | FunctionTypeVisibility::Internal,
-                )
-                // internal and external only convert to themselves
-                | (FunctionTypeVisibility::Internal, FunctionTypeVisibility::Internal)
-                | (FunctionTypeVisibility::External, FunctionTypeVisibility::External)
-        )
-    }
 }
 
 impl ImplicitlyConvertible<FunctionTypeMutability> for FunctionTypeMutability {
@@ -475,9 +451,9 @@ impl Type {
             | Type::String(_)
             | Type::Struct(_)
             | Type::UserDefinedValue(_) => true,
-            Type::Function(FunctionType { visibility, .. }) => {
+            Type::Function(FunctionType { call_mode, .. }) => {
                 // Function types can only be returned if they're external
-                visibility == &FunctionTypeVisibility::External
+                call_mode.is_external()
             }
 
             // Can be returned, just not inside a struct
