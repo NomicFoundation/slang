@@ -23,8 +23,7 @@ use crate::passes::common::{
     resolve_identifier_path_as_type_in_scope,
 };
 use crate::types::{
-    ArrayType, CallMode, DataLocation, FixedSizeArrayType, FunctionType, MappingType, TupleType,
-    Type, TypeId,
+    ArrayType, DataLocation, FixedSizeArrayType, FunctionType, MappingType, TupleType, Type, TypeId,
 };
 
 impl Pass<'_> {
@@ -217,9 +216,8 @@ impl Pass<'_> {
                     implicit_receiver_type: None,
                     parameter_types,
                     return_type,
-                    visibility: (&function_type.attributes.visibility).into(),
                     mutability: (&function_type.attributes.mutability).into(),
-                    call_mode: CallMode::UNAPPLIED,
+                    call_mode: (&function_type.attributes.visibility).into(),
                 })))
             }
             ir::TypeName::MappingType(mapping_type) => {

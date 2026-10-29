@@ -136,7 +136,12 @@ fn test_function_get_type() {
     let ast::Type::Function(function_type) = increment_type else {
         panic!("method's type is expected to be a function");
     };
-    assert!(function_type.is_externally_visible());
+    // Named directly, a `public` function is called internally.
+    assert!(increment.is_externally_visible());
+    assert_eq!(
+        function_type.call_mode(),
+        ast::CallMode::Internal { bound: false }
+    );
     assert!(matches!(function_type.return_type(), ast::Type::Integer(_)));
     assert!(
         function_type
@@ -186,7 +191,7 @@ fn test_state_variable_getter_type() {
         panic!("expected the getter to type as a function");
     };
 
-    assert_eq!(getter.visibility(), ast::FunctionTypeVisibility::External);
+    assert_eq!(getter.call_mode(), ast::CallMode::External);
 
     let parameter_types = getter.parameter_types();
     let [key_type] = parameter_types.as_slice() else {
@@ -758,10 +763,7 @@ fn test_function_externalized_type() {
     else {
         panic!("expected the externalized type to be a function");
     };
-    assert_eq!(
-        externalized.visibility(),
-        ast::FunctionTypeVisibility::External
-    );
+    assert_eq!(externalized.call_mode(), ast::CallMode::External);
 
     let parameter_types = externalized.parameter_types();
     let [parameter] = parameter_types.as_slice() else {
@@ -923,8 +925,8 @@ fn assert_external_taking_bytes_in_memory(shape: &str, callee: Option<ast::Type>
         panic!("the `{shape}` callee should type as a function");
     };
     assert_eq!(
-        function.visibility(),
-        ast::FunctionTypeVisibility::External,
+        function.call_mode(),
+        ast::CallMode::External,
         "the `{shape}` callee is externally callable"
     );
 

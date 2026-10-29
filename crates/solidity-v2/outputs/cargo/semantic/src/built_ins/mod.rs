@@ -4,8 +4,8 @@ use slang_solidity_v2_common::nodes::NodeId;
 
 use super::binder::{Binder, Definition, Typing};
 use super::types::{
-    AddressType, ArrayType, BytesType, ContractType, DataLocation, FunctionTypeVisibility,
-    MetaType, TupleType, Type, TypeId, TypeRegistry, UserDefinedValueType, UserMetaType,
+    AddressType, ArrayType, BytesType, CallMode, ContractType, DataLocation, MetaType, TupleType,
+    Type, TypeId, TypeRegistry, UserDefinedValueType, UserMetaType,
 };
 
 mod availability;
@@ -328,7 +328,7 @@ impl<'a> BuiltInsResolver<'a> {
                 _ => None,
             },
             Type::Function(ftype) => {
-                if ftype.is_externally_visible() {
+                if self.binder.is_externally_visible_function(ftype) {
                     match symbol {
                         "address" => Some(InternalBuiltIn::FunctionAddress),
                         "selector" => Some(InternalBuiltIn::FunctionSelector),
@@ -571,14 +571,14 @@ impl<'a> BuiltInsResolver<'a> {
     }
 
     /// Interns the externalized type of an `External` callee for the AST to look up.
-    /// A `Public` function value was named without a receiver, so it is internal; a
+    /// A `public` function named without a receiver is called internally; a
     /// declaration reached through a type name already carries its externalized type.
     fn externalize_encode_call_callee(&mut self, argument_types: &[TypeId]) {
         let Some(&callee) = argument_types.first() else {
             return;
         };
         if let Type::Function(function_type) = self.types.get_type_by_id(callee)
-            && function_type.visibility == FunctionTypeVisibility::External
+            && function_type.call_mode == CallMode::External
         {
             self.types.externalize_function_type(callee);
         }

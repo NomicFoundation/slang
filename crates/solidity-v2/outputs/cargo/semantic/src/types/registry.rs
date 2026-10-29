@@ -7,8 +7,8 @@ use slang_solidity_v2_common::versions::LanguageVersion;
 use super::literals::numbers;
 use super::{
     AddressType, ArraySliceType, ArrayType, ByteArrayType, BytesType, CallMode, ContractType,
-    DataLocation, FixedSizeArrayType, FunctionType, FunctionTypeVisibility, IntegerType,
-    InterfaceType, LiteralKind, Number, StringType, StructType, TupleType, Type, TypeId,
+    DataLocation, FixedSizeArrayType, FunctionType, IntegerType, InterfaceType, LiteralKind,
+    Number, StringType, StructType, TupleType, Type, TypeId,
 };
 use crate::types::{ConversionError, ImplicitlyConvertible};
 
@@ -386,10 +386,11 @@ impl TypeRegistry {
             ) => from_width <= to_width,
 
             (Type::Function(from_function_type), Type::Function(to_function_type)) => {
-                // This is full equality except for visibility and mutability
-                // which can be converted to, the call mode which must have nothing
-                // applied, and definition_id and implicit_receiver_type which can
-                // differ.
+                // This is full equality except for mutability which can be
+                // converted to, the call mode which must have nothing applied,
+                // and definition_id and implicit_receiver_type which can differ.
+                // An internal function only converts to an internal one, and an
+                // external to an external one.
                 //
                 // Note: solc checks that the `from` and `to` function types have
                 // the same call options or bound argument applied in the same way,
@@ -397,10 +398,7 @@ impl TypeRegistry {
                 // Therefore we have a stronger check here that has the same effect
                 // for users.
                 !from_function_type.call_mode.is_partially_applied()
-                    && !to_function_type.call_mode.is_partially_applied()
-                    && from_function_type
-                        .visibility
-                        .implicitly_convertible_to(to_function_type.visibility)
+                    && from_function_type.call_mode == to_function_type.call_mode
                     && from_function_type
                         .mutability
                         .implicitly_convertible_to(to_function_type.mutability)
@@ -569,7 +567,7 @@ impl TypeRegistry {
         }
     }
 
-    // Changes a function type to have external visibility and its parameters and
+    // Changes a function type to be called externally, with its parameters and
     // results normalized for that (ie. `calldata` location is changed to `memory`),
     // returning the interned result's id, which is the input itself when the
     // type already has that shape. Remembers the pair for
@@ -578,7 +576,7 @@ impl TypeRegistry {
         let Type::Function(function_type) = self.get_type_by_id(type_id) else {
             unreachable!("can only externalize a function type");
         };
-        if matches!(function_type.visibility, FunctionTypeVisibility::External)
+        if function_type.call_mode.is_external()
             && function_type
                 .parameter_types
                 .iter()
@@ -590,7 +588,7 @@ impl TypeRegistry {
         }
         let function_type = function_type.clone();
         let externalized_function_type = FunctionType {
-            visibility: FunctionTypeVisibility::External,
+            call_mode: CallMode::External,
             parameter_types: function_type
                 .parameter_types
                 .into_iter()
@@ -643,18 +641,20 @@ impl TypeRegistry {
     // eg. `a.foo`.
     pub(crate) fn bind_function_type(&mut self, function_type: FunctionType) -> TypeId {
         self.register_type(Type::Function(FunctionType {
-            call_mode: CallMode::Plain { bound: true },
+            call_mode: CallMode::Internal { bound: true },
             ..function_type
         }))
     }
 
     // Pre-applies call options to an external function, eg. `foo{value: 3}`.
+    // TODO(validation) SDR[828]: call options on an internal function are
+    // invalid, but it is typed as an external call with options meanwhile.
     pub(crate) fn apply_call_options_to_function_type(
         &mut self,
         function_type: FunctionType,
     ) -> TypeId {
         self.register_type(Type::Function(FunctionType {
-            call_mode: CallMode::WithCallOptions,
+            call_mode: CallMode::ExternalWithCallOptions,
             ..function_type
         }))
     }
@@ -697,17 +697,16 @@ impl TypeRegistry {
             Type::Function(FunctionType {
                 parameter_types,
                 return_type,
-                visibility,
                 mutability,
+                call_mode,
                 ..
             }) => Type::Function(FunctionType {
                 definition_id: None,
                 implicit_receiver_type: None,
                 parameter_types: parameter_types.clone(),
                 return_type: *return_type,
-                visibility: *visibility,
                 mutability: *mutability,
-                call_mode: CallMode::UNAPPLIED,
+                call_mode: call_mode.unapplied(),
             }),
 
             Type::Address(_)

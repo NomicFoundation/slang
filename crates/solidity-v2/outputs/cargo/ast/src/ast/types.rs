@@ -6,7 +6,7 @@ use slang_solidity_v2_common::nodes::NodeId;
 use slang_solidity_v2_semantic::binder;
 use slang_solidity_v2_semantic::context::SemanticContext;
 use slang_solidity_v2_semantic::types::{
-    self, DataLocation, FunctionTypeMutability, FunctionTypeVisibility, TypeId,
+    self, CallMode, DataLocation, FunctionTypeMutability, TypeId,
 };
 pub use slang_solidity_v2_semantic::types::{LiteralKind, Number};
 
@@ -353,12 +353,8 @@ impl FunctionType {
         Type::create(self.inner.return_type, &self.semantic)
     }
 
-    pub fn is_externally_visible(&self) -> bool {
-        self.inner.is_externally_visible()
-    }
-
-    pub fn visibility(&self) -> FunctionTypeVisibility {
-        self.inner.visibility
+    pub fn call_mode(&self) -> CallMode {
+        self.inner.call_mode
     }
 
     pub fn mutability(&self) -> FunctionTypeMutability {

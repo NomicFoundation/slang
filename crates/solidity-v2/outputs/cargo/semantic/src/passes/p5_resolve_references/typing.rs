@@ -21,8 +21,8 @@ use crate::context::FileNodeMapper;
 use crate::passes::common::node_location;
 use crate::types::{
     AddressType, ArraySliceType, ArrayType, ContractType, ConversionError, DataLocation, ErrorType,
-    EventType, FixedSizeArrayType, FunctionType, FunctionTypeVisibility, IntegerType, LiteralKind,
-    MetaType, NoMobileType, Number, StringType, Type, TypeId, UserMetaType, literals,
+    EventType, FixedSizeArrayType, FunctionType, IntegerType, LiteralKind, MetaType, NoMobileType,
+    Number, StringType, Type, TypeId, UserMetaType, literals,
 };
 
 impl Pass<'_> {
@@ -799,7 +799,7 @@ impl Pass<'_> {
         // indicate the external access.
         if let Some(type_id) = typing.as_type_id()
             && let Type::Function(function_type) = self.types.get_type_by_id(type_id)
-            && function_type.is_externally_visible()
+            && self.binder.is_externally_visible_function(function_type)
         {
             typing = Typing::Resolved(self.types.externalize_function_type(type_id));
         }
@@ -878,11 +878,9 @@ impl Pass<'_> {
                 return self.types.bind_function_type(function_type.clone());
             }
 
-            if let Some(declaration_type_id) = self.as_foreign_function_declaration_type(
-                receiver_type_id,
-                function_type.definition_id,
-                function_type.visibility,
-            ) {
+            if let Some(declaration_type_id) = self
+                .as_foreign_function_declaration_type(receiver_type_id, function_type.definition_id)
+            {
                 return declaration_type_id;
             }
         }
@@ -899,7 +897,6 @@ impl Pass<'_> {
         &mut self,
         receiver_type_id: TypeId,
         function_definition_id: Option<NodeId>,
-        visibility: FunctionTypeVisibility,
     ) -> Option<TypeId> {
         let Type::UserMetaType(UserMetaType { definition_id }) =
             self.types.get_type_by_id(receiver_type_id)
@@ -913,16 +910,23 @@ impl Pass<'_> {
             return None;
         }
 
-        let is_foreign_and_visible = match visibility {
-            FunctionTypeVisibility::External => true,
-            FunctionTypeVisibility::Public => self.is_foreign_contract(*definition_id),
-            FunctionTypeVisibility::Internal | FunctionTypeVisibility::Private => false,
+        let contract_id = *definition_id;
+
+        let definition_id = function_definition_id?;
+        let Some(Definition::Function(function_definition)) =
+            self.binder.find_definition_by_id(definition_id)
+        else {
+            return None;
+        };
+        let is_foreign_and_visible = match function_definition.ir_node.attributes.visibility {
+            ir::FunctionVisibility::External => true,
+            ir::FunctionVisibility::Public => self.is_foreign_contract(contract_id),
+            ir::FunctionVisibility::Internal | ir::FunctionVisibility::Private => false,
         };
         if !is_foreign_and_visible {
             return None;
         }
 
-        let definition_id = function_definition_id?;
         Some(
             self.types
                 .register_type(Type::UserMetaType(UserMetaType { definition_id })),

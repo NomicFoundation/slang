@@ -5,9 +5,7 @@ use slang_solidity_v2_ir::ir;
 
 use super::support::{Analyse, Analysis, diagnostic_kind};
 use crate::binder::{Binder, Resolution};
-use crate::types::{
-    CallMode, FunctionType, FunctionTypeMutability, FunctionTypeVisibility, Type, TypeRegistry,
-};
+use crate::types::{CallMode, FunctionType, FunctionTypeMutability, Type, TypeRegistry};
 
 /// The resolutions of every reference made through an identifier named `name`.
 fn resolutions_of(binder: &Binder, name: &str) -> Vec<Resolution> {
@@ -147,35 +145,28 @@ contract A {
     );
 }
 
-/// A function value carrying `Public` visibility is a plain reference, which
-/// denotes the internal function: it converts to an internal function type but
-/// not to an external one. Reaching a public function externally externalises
-/// it at the point of access, so it no longer carries `Public` here.
+/// An internal function type only converts to an internal one, and an
+/// external to an external one. A `public` function named without a receiver
+/// is typed as internal; reaching it externally externalises it at the point of
+/// access.
 #[test]
-fn test_public_function_type_does_not_convert_to_external() {
+fn test_internal_function_type_does_not_convert_to_external() {
     let mut types = TypeRegistry::new(LanguageVersion::LATEST);
     let return_type = types.void();
 
-    let mut function_type_with = |visibility| {
+    let mut function_type_with = |call_mode| {
         types.register_type(Type::Function(FunctionType {
             definition_id: None,
             parameter_types: Vec::new(),
             return_type,
-            visibility,
             mutability: FunctionTypeMutability::NonPayable,
             implicit_receiver_type: None,
-            call_mode: CallMode::UNAPPLIED,
+            call_mode,
         }))
     };
-    let public = function_type_with(FunctionTypeVisibility::Public);
-    let internal = function_type_with(FunctionTypeVisibility::Internal);
-    let external = function_type_with(FunctionTypeVisibility::External);
+    let internal = function_type_with(CallMode::Internal { bound: false });
+    let external = function_type_with(CallMode::External);
 
-    assert!(types.implicitly_convertible_to(public, public));
-    assert!(types.implicitly_convertible_to(public, internal));
-    assert!(!types.implicitly_convertible_to(public, external));
-
-    // The other visibilities are unaffected.
     assert!(types.implicitly_convertible_to(internal, internal));
     assert!(!types.implicitly_convertible_to(internal, external));
     assert!(types.implicitly_convertible_to(external, external));
