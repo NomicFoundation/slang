@@ -256,7 +256,7 @@ impl Pass<'_> {
                 self.types.implicitly_convertible_to_for_call(
                     receiver_type_id,
                     *type_id,
-                    function_type.is_externally_visible(),
+                    self.binder.is_externally_visible_function(function_type),
                 )
             })
     }

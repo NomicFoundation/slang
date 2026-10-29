@@ -120,7 +120,9 @@ impl Pass<'_> {
             else {
                 return false;
             };
-            let external_call = function_type.is_externally_visible();
+            // TODO: a `public` function named without a receiver is called
+            // internally, so its arguments convert as in an internal call.
+            let external_call = self.binder.is_externally_visible_function(function_type);
             if let Some(receiver_type_id) = receiver_type_id {
                 // we have a receiver type, so either check for an implicit
                 // receiver type, or the first parameter type
