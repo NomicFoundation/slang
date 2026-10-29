@@ -1,6 +1,5 @@
 use std::sync::Arc;
 
-use slang_solidity_v2_ast::abi::ContractAbi;
 use slang_solidity_v2_ast::ast;
 use slang_solidity_v2_semantic::context::{SemanticContext, SemanticFile};
 
@@ -11,11 +10,7 @@ pub struct Input {
     pub(crate) semantic: Arc<SemanticContext>,
 }
 
-#[allow(unused)]
 pub struct Output {
-    pub(crate) files: Vec<File>,
-    pub(crate) semantic: Arc<SemanticContext>,
-    pub(crate) abi: Vec<ContractAbi>,
     pub(crate) json: Vec<String>,
 }
 
@@ -38,25 +33,19 @@ pub fn run(input: Input) -> Output {
 
 /// Computes the ABI of every contract, interface, and library, and renders it as JSON.
 pub fn test(input: Input) -> Output {
-    let abi: Vec<ContractAbi> = input
+    let json = input
         .files
         .iter()
-        .flat_map(|file| ast::create_source_unit(file.ir_root(), &input.semantic).compute_abi())
+        .map(|file| ast::create_source_unit(file.ir_root(), &input.semantic))
+        .flat_map(|source_unit| source_unit.compute_abi())
+        .map(|abi| serde_json::to_string(&abi).expect("the ABI serializes"))
         .collect();
-    let json = abi
-        .iter()
-        .map(|abi| serde_json::to_string(abi).expect("the ABI serializes"))
-        .collect();
-    Output {
-        files: input.files,
-        semantic: input.semantic,
-        abi,
-        json,
-    }
+
+    Output { json }
 }
 
 // Definitions whose ABI cannot be computed are skipped, so comparing this to the
 // number of contracts, interfaces, and libraries detects any silently dropped.
 pub fn count_abis(output: &Output) -> usize {
-    output.abi.len()
+    output.json.len()
 }
