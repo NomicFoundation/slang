@@ -101,6 +101,24 @@ impl Visitor for Pass<'_> {
         self.leave_scope_for_node_id(node.id());
     }
 
+    fn enter_event_definition(&mut self, node: &ir::EventDefinition) -> bool {
+        self.enter_scope_for_node_id(node.id());
+        true
+    }
+
+    fn leave_event_definition(&mut self, node: &ir::EventDefinition) {
+        self.leave_scope_for_node_id(node.id());
+    }
+
+    fn enter_error_definition(&mut self, node: &ir::ErrorDefinition) -> bool {
+        self.enter_scope_for_node_id(node.id());
+        true
+    }
+
+    fn leave_error_definition(&mut self, node: &ir::ErrorDefinition) {
+        self.leave_scope_for_node_id(node.id());
+    }
+
     fn leave_modifier_invocation(&mut self, node: &ir::ModifierInvocation) {
         // Both a modifier's arguments and, on a constructor, a base
         // constructor's are values.
@@ -154,6 +172,24 @@ impl Visitor for Pass<'_> {
             self.check_typing_of_expression(iterator);
         }
         self.leave_scope_for_node_id(node.id());
+    }
+
+    fn enter_try_statement(&mut self, node: &ir::TryStatement) -> bool {
+        ir::visitor::accept_expression(&node.expression, self);
+
+        // Return types may name the return variables, which are also visible
+        // in the body.
+        self.enter_scope_for_node_id(node.id());
+        if let Some(returns) = &node.returns {
+            ir::visitor::accept_parameters(returns, self);
+        }
+        ir::visitor::accept_block(&node.body, self);
+        self.leave_scope_for_node_id(node.id());
+
+        ir::visitor::accept_catch_clauses(&node.catch_clauses, self);
+
+        // We've driven recursion into the children ourselves.
+        false
     }
 
     fn enter_expression(&mut self, node: &ir::Expression) -> bool {

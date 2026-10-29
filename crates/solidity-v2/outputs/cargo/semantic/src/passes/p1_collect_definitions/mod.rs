@@ -11,6 +11,7 @@ use slang_solidity_v2_ir::ir;
 
 use crate::binder::{Binder, Definition, FileScope, ParametersScope, Scope, ScopeId};
 use crate::context::SemanticFile;
+use crate::passes::common::ScopeStack;
 
 mod conflicts;
 mod structural_checks;
@@ -65,17 +66,9 @@ pub fn run(
     }
 }
 
-struct ScopeFrame {
-    // Scope associated with the node that created the stack frame. This is
-    // solely used for integrity validation when popping the current frame.
-    structural_scope_id: ScopeId,
-    // Scope to use when resolving a symbol.
-    lexical_scope_id: ScopeId,
-}
-
 struct Pass<'a, F: SemanticFile> {
     current_file: &'a F,
-    scope_stack: Vec<ScopeFrame>,
+    scope_stack: ScopeStack,
     // Number of enclosing loops (`for`, `while`, `do-while`) at the current
     // traversal point. Used to flag `break` statements that appear outside any
     // loop.
@@ -107,7 +100,7 @@ impl<'a, F: SemanticFile> Pass<'a, F> {
     ) {
         let mut pass = Self {
             current_file: file,
-            scope_stack: Vec::new(),
+            scope_stack: ScopeStack::default(),
             loop_depth: 0,
             unchecked_depth: 0,
             modifier_placeholder_found: None,
@@ -125,52 +118,23 @@ impl<'a, F: SemanticFile> Pass<'a, F> {
 
     fn enter_scope(&mut self, scope: Scope) -> ScopeId {
         let scope_id = self.binder.insert_scope(scope);
-        self.scope_stack.push(ScopeFrame {
-            structural_scope_id: scope_id,
-            lexical_scope_id: scope_id,
-        });
+        self.scope_stack.push(scope_id);
         scope_id
     }
 
     fn replace_scope(&mut self, scope: Scope) -> ScopeId {
-        let Some(ScopeFrame {
-            structural_scope_id,
-            ..
-        }) = self.scope_stack.pop()
-        else {
-            unreachable!("scope stack cannot be empty");
-        };
-
         let scope_id = self.binder.insert_scope(scope);
-        self.scope_stack.push(ScopeFrame {
-            structural_scope_id,
-            lexical_scope_id: scope_id,
-        });
+        self.scope_stack.replace(scope_id);
         scope_id
     }
 
     fn leave_scope_for_node_id(&mut self, node_id: NodeId) {
-        let Some(ScopeFrame {
-            structural_scope_id,
-            ..
-        }) = self.scope_stack.pop()
-        else {
-            unreachable!("attempt to pop an empty scope stack");
-        };
-        assert_eq!(
-            structural_scope_id,
-            self.binder.scope_id_for_node_id(node_id).unwrap()
-        );
+        let scope_id = self.scope_stack.pop();
+        debug_assert_eq!(Some(scope_id), self.binder.scope_id_for_node_id(node_id));
     }
 
     fn current_scope_id(&self) -> ScopeId {
-        let Some(ScopeFrame {
-            lexical_scope_id, ..
-        }) = self.scope_stack.last()
-        else {
-            unreachable!("empty scope stack");
-        };
-        *lexical_scope_id
+        self.scope_stack.current()
     }
 
     fn current_scope(&self) -> &Scope {

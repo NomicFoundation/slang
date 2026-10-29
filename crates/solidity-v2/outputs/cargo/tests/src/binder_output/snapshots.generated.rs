@@ -1165,6 +1165,31 @@ mod scoping {
     use super::*;
 
     #[test]
+    fn array_length_after_block() -> Result<()> {
+        run("scoping", "array_length_after_block")
+    }
+
+    #[test]
+    fn array_length_after_for_body() -> Result<()> {
+        run("scoping", "array_length_after_for_body")
+    }
+
+    #[test]
+    fn array_length_before_local() -> Result<()> {
+        run("scoping", "array_length_before_local")
+    }
+
+    #[test]
+    fn array_length_own_declaration() -> Result<()> {
+        run("scoping", "array_length_own_declaration")
+    }
+
+    #[test]
+    fn array_length_state_after_function() -> Result<()> {
+        run("scoping", "array_length_state_after_function")
+    }
+
+    #[test]
     fn c99_scopes() -> Result<()> {
         run("scoping", "c99_scopes")
     }
@@ -1202,6 +1227,16 @@ mod scoping {
     #[test]
     fn redeclared_mixed_kinds() -> Result<()> {
         run("scoping", "redeclared_mixed_kinds")
+    }
+
+    #[test]
+    fn self_reference_in_initializer() -> Result<()> {
+        run("scoping", "self_reference_in_initializer")
+    }
+
+    #[test]
+    fn self_reference_in_type() -> Result<()> {
+        run("scoping", "self_reference_in_type")
     }
 
     #[test]

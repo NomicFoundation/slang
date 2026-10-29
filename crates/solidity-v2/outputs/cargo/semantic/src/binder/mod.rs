@@ -750,6 +750,9 @@ impl Binder {
             Scope::Parameters(parameters_scope) => {
                 parameters_scope.lookup_definition(symbol).into()
             }
+            Scope::Signature(signature_scope) => self
+                .resolve_in_scope(signature_scope.parameters_scope_id, symbol)
+                .or_else(|| self.resolve_in_scope(signature_scope.parent_scope_id, symbol)),
             Scope::Struct(struct_scope) => struct_scope.definitions.get(symbol).into(),
             Scope::Using(using_scope) => using_scope
                 .symbols
@@ -955,6 +958,7 @@ impl Binder {
             | Scope::Chained(_)
             | Scope::Function(_)
             | Scope::Modifier(_)
+            | Scope::Signature(_)
             | Scope::YulBlock(_)
             | Scope::YulFunction(_) => Resolution::Unresolved,
         }

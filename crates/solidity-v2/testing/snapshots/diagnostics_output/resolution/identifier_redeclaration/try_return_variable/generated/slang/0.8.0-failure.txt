@@ -1,0 +1,11 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 1
+
+[resolution/identifier-redeclaration] Error: Identifier already declared.
+   ╭─[input.sol:8:44]
+   │
+ 8 │         try this.g() returns (uint a, uint a) {} catch {}
+   │                                            ┬  
+   │                                            ╰── Error occurred here.
+───╯

@@ -11,7 +11,7 @@ use slang_solidity_v2_ir::ir;
 use slang_solidity_v2_ir::ir::visitor::Visitor;
 
 use super::Pass;
-use crate::binder::{AssemblyBlock, Definition, Scope};
+use crate::binder::{AssemblyBlock, Definition, ParametersScope, Scope};
 use crate::context::SemanticFile;
 
 impl<F: SemanticFile> Pass<'_, F> {
@@ -278,6 +278,11 @@ impl<F: SemanticFile> Visitor for Pass<'_, F> {
         let definition = Definition::new_error(node, parameters_scope_id);
         self.insert_definition_in_current_scope(definition);
 
+        // Create signature scope for other passes
+        let signature_scope =
+            Scope::new_signature(node.id(), self.current_scope_id(), parameters_scope_id);
+        self.binder.insert_scope(signature_scope);
+
         false
     }
 
@@ -287,6 +292,11 @@ impl<F: SemanticFile> Visitor for Pass<'_, F> {
         let parameters_scope_id = self.collect_parameters(&node.parameters);
         let definition = Definition::new_event(node, parameters_scope_id);
         self.insert_definition_in_current_scope(definition);
+
+        // Create signature scope for other passes
+        let signature_scope =
+            Scope::new_signature(node.id(), self.current_scope_id(), parameters_scope_id);
+        self.binder.insert_scope(signature_scope);
 
         false
     }
@@ -471,13 +481,30 @@ impl<F: SemanticFile> Visitor for Pass<'_, F> {
         true
     }
 
-    fn leave_try_statement(&mut self, node: &ir::TryStatement) {
+    fn enter_try_statement(&mut self, node: &ir::TryStatement) -> bool {
+        ir::visitor::accept_expression(&node.expression, self);
+
+        // The return variables are visible to the return types and the body,
+        // but not to the called expression or the catch clauses.
+        let parameters_scope_id = match &node.returns {
+            Some(returns) => self.collect_parameters(returns),
+            None => self
+                .binder
+                .insert_scope(Scope::Parameters(ParametersScope::new())),
+        };
+        let signature_scope =
+            Scope::new_signature(node.id(), self.current_scope_id(), parameters_scope_id);
+        self.enter_scope(signature_scope);
         if let Some(returns) = &node.returns {
-            // Collect the parameters in the returns declaration of the try
-            // statement and make them available in the body block.
-            let body_scope_id = self.binder.scope_id_for_node_id(node.body.id()).unwrap();
-            self.collect_named_parameters_into_scope(returns, body_scope_id);
+            ir::visitor::accept_parameters(returns, self);
         }
+        ir::visitor::accept_block(&node.body, self);
+        self.leave_scope_for_node_id(node.id());
+
+        ir::visitor::accept_catch_clauses(&node.catch_clauses, self);
+
+        // We've driven recursion into the children ourselves.
+        false
     }
 
     fn leave_catch_clause(&mut self, node: &ir::CatchClause) {
