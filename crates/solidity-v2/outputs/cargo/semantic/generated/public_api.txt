@@ -472,6 +472,25 @@ pub fn slang_solidity_v2_semantic::types::literals::value_of_hex_string_literals
 pub fn slang_solidity_v2_semantic::types::literals::value_of_string_literals(&[slang_solidity_v2_ir::ir::nodes::StringLiteral]) -> alloc::vec::Vec<u8>
 pub fn slang_solidity_v2_semantic::types::literals::value_of_unicode_string_literals(&[slang_solidity_v2_ir::ir::nodes::UnicodeStringLiteral]) -> alloc::vec::Vec<u8>
 pub fn slang_solidity_v2_semantic::types::literals::yul_literal_value(&slang_solidity_v2_ir::ir::nodes::YulLiteral) -> core::option::Option<ruint::aliases::U256>
+pub enum slang_solidity_v2_semantic::types::CallMode
+pub slang_solidity_v2_semantic::types::CallMode::Plain
+pub slang_solidity_v2_semantic::types::CallMode::Plain::bound: bool
+pub slang_solidity_v2_semantic::types::CallMode::WithCallOptions
+impl slang_solidity_v2_semantic::types::CallMode
+pub const slang_solidity_v2_semantic::types::CallMode::UNAPPLIED: Self
+pub fn slang_solidity_v2_semantic::types::CallMode::is_bound(self) -> bool
+pub fn slang_solidity_v2_semantic::types::CallMode::is_partially_applied(self) -> bool
+impl core::clone::Clone for slang_solidity_v2_semantic::types::CallMode
+pub fn slang_solidity_v2_semantic::types::CallMode::clone(&self) -> slang_solidity_v2_semantic::types::CallMode
+impl core::cmp::Eq for slang_solidity_v2_semantic::types::CallMode
+impl core::cmp::PartialEq for slang_solidity_v2_semantic::types::CallMode
+pub fn slang_solidity_v2_semantic::types::CallMode::eq(&self, &slang_solidity_v2_semantic::types::CallMode) -> bool
+impl core::fmt::Debug for slang_solidity_v2_semantic::types::CallMode
+pub fn slang_solidity_v2_semantic::types::CallMode::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::hash::Hash for slang_solidity_v2_semantic::types::CallMode
+pub fn slang_solidity_v2_semantic::types::CallMode::hash<__H: core::hash::Hasher>(&self, &mut __H)
+impl core::marker::Copy for slang_solidity_v2_semantic::types::CallMode
+impl core::marker::StructuralPartialEq for slang_solidity_v2_semantic::types::CallMode
 pub enum slang_solidity_v2_semantic::types::DataLocation
 pub slang_solidity_v2_semantic::types::DataLocation::Calldata
 pub slang_solidity_v2_semantic::types::DataLocation::Inherited
@@ -757,11 +776,11 @@ impl core::hash::Hash for slang_solidity_v2_semantic::types::FixedSizeArrayType
 pub fn slang_solidity_v2_semantic::types::FixedSizeArrayType::hash<__H: core::hash::Hasher>(&self, &mut __H)
 impl core::marker::StructuralPartialEq for slang_solidity_v2_semantic::types::FixedSizeArrayType
 pub struct slang_solidity_v2_semantic::types::FunctionType
+pub slang_solidity_v2_semantic::types::FunctionType::call_mode: slang_solidity_v2_semantic::types::CallMode
 pub slang_solidity_v2_semantic::types::FunctionType::definition_id: core::option::Option<slang_solidity_v2_common::nodes::NodeId>
 pub slang_solidity_v2_semantic::types::FunctionType::implicit_receiver_type: core::option::Option<slang_solidity_v2_semantic::types::TypeId>
 pub slang_solidity_v2_semantic::types::FunctionType::mutability: slang_solidity_v2_semantic::types::FunctionTypeMutability
 pub slang_solidity_v2_semantic::types::FunctionType::parameter_types: alloc::vec::Vec<slang_solidity_v2_semantic::types::TypeId>
-pub slang_solidity_v2_semantic::types::FunctionType::partially_applied: bool
 pub slang_solidity_v2_semantic::types::FunctionType::return_type: slang_solidity_v2_semantic::types::TypeId
 pub slang_solidity_v2_semantic::types::FunctionType::visibility: slang_solidity_v2_semantic::types::FunctionTypeVisibility
 impl slang_solidity_v2_semantic::types::FunctionType

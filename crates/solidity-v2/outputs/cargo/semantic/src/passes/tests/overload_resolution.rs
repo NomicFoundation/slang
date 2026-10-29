@@ -6,7 +6,7 @@ use slang_solidity_v2_ir::ir;
 use super::support::{Analyse, Analysis, diagnostic_kind};
 use crate::binder::{Binder, Resolution};
 use crate::types::{
-    FunctionType, FunctionTypeMutability, FunctionTypeVisibility, Type, TypeRegistry,
+    CallMode, FunctionType, FunctionTypeMutability, FunctionTypeVisibility, Type, TypeRegistry,
 };
 
 /// The resolutions of every reference made through an identifier named `name`.
@@ -164,7 +164,7 @@ fn test_public_function_type_does_not_convert_to_external() {
             visibility,
             mutability: FunctionTypeMutability::NonPayable,
             implicit_receiver_type: None,
-            partially_applied: false,
+            call_mode: CallMode::UNAPPLIED,
         }))
     };
     let public = function_type_with(FunctionTypeVisibility::Public);

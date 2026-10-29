@@ -5,9 +5,9 @@ use slang_solidity_v2_ir::ir;
 use super::Pass;
 use crate::binder::Definition;
 use crate::types::{
-    AddressType, ArrayType, ContractType, DataLocation, EnumType, FixedSizeArrayType, FunctionType,
-    FunctionTypeMutability, FunctionTypeVisibility, InterfaceType, LibraryType, MappingType,
-    StringType, StructType, TupleType, Type, TypeId, UserDefinedValueType,
+    AddressType, ArrayType, CallMode, ContractType, DataLocation, EnumType, FixedSizeArrayType,
+    FunctionType, FunctionTypeMutability, FunctionTypeVisibility, InterfaceType, LibraryType,
+    MappingType, StringType, StructType, TupleType, Type, TypeId, UserDefinedValueType,
 };
 
 impl Pass<'_> {
@@ -160,7 +160,7 @@ impl Pass<'_> {
             return_type,
             visibility: (&function_definition.attributes.visibility).into(),
             mutability: (&function_definition.attributes.mutability).into(),
-            partially_applied: false,
+            call_mode: CallMode::UNAPPLIED,
         })))
     }
 
@@ -356,7 +356,7 @@ impl Pass<'_> {
             return_type,
             visibility: FunctionTypeVisibility::External,
             mutability: FunctionTypeMutability::View,
-            partially_applied: false,
+            call_mode: CallMode::UNAPPLIED,
         });
         Some((self.types.register_type(getter_type), returned_member_ids))
     }

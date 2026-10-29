@@ -235,11 +235,8 @@ pub struct FunctionType {
     /// The type of the implicit receiver in contract or interface
     /// methods (ie. the type of `this`)
     pub implicit_receiver_type: Option<TypeId>,
-    /// Whether this function has been partially applied.
-    /// This happens when its first argument is bound, eg. `a.foo`
-    /// where `foo` is from a `using` directive on the type of `a`,
-    /// or when call options are pre-applied (eg. `foo{value: 3}`).
-    pub partially_applied: bool,
+    /// How the function is called where it is used.
+    pub call_mode: CallMode,
 }
 
 impl FunctionType {
@@ -248,6 +245,45 @@ impl FunctionType {
             self.visibility,
             FunctionTypeVisibility::External | FunctionTypeVisibility::Public
         )
+    }
+}
+
+/// How a function value is called at its use site, including what was already
+/// applied to it there. This decides how it can be called and whether it can
+/// be used as a value.
+///
+/// TODO: name the call mechanism in every variant, eg. `Internal { bound } |
+/// External | ExternalWithCallOptions | Delegate { bound }`, decided where the
+/// function is used. `Plain` currently defers to the declared visibility, so a
+/// `public` function called by its bare name is treated as an external call
+/// even though it is an internal one. `Delegate` would cover library calls
+/// (`L.f`, or `x.f` bound by `using`), which have no `.address`, do not convert
+/// to external function types and take no call options.
+#[derive(Clone, Copy, Debug, Eq, Hash, PartialEq)]
+pub enum CallMode {
+    /// A function called as declared. When `bound`, its first argument is
+    /// already bound, eg. `a.foo` where `foo` is attached to the type of `a`
+    /// by a `using` directive, so a call passes one argument less than the
+    /// parameters.
+    Plain { bound: bool },
+    /// An external function with pre-applied call options, eg. `foo{value: 3}`.
+    WithCallOptions,
+}
+
+impl CallMode {
+    /// A function as declared, with nothing applied.
+    pub const UNAPPLIED: Self = Self::Plain { bound: false };
+
+    /// Whether something was applied to the function: a bound first argument
+    /// or call options. Such a function can only be called, not used as a
+    /// value.
+    pub fn is_partially_applied(self) -> bool {
+        self != Self::UNAPPLIED
+    }
+
+    /// Whether the function's first argument is bound.
+    pub fn is_bound(self) -> bool {
+        matches!(self, Self::Plain { bound: true })
     }
 }
 

@@ -6,9 +6,9 @@ use slang_solidity_v2_common::versions::LanguageVersion;
 
 use super::literals::numbers;
 use super::{
-    AddressType, ArraySliceType, ArrayType, ByteArrayType, BytesType, ContractType, DataLocation,
-    FixedSizeArrayType, FunctionType, FunctionTypeVisibility, IntegerType, InterfaceType,
-    LiteralKind, Number, StringType, StructType, TupleType, Type, TypeId,
+    AddressType, ArraySliceType, ArrayType, ByteArrayType, BytesType, CallMode, ContractType,
+    DataLocation, FixedSizeArrayType, FunctionType, FunctionTypeVisibility, IntegerType,
+    InterfaceType, LiteralKind, Number, StringType, StructType, TupleType, Type, TypeId,
 };
 use crate::types::{ConversionError, ImplicitlyConvertible};
 
@@ -387,16 +387,17 @@ impl TypeRegistry {
 
             (Type::Function(from_function_type), Type::Function(to_function_type)) => {
                 // This is full equality except for visibility and mutability
-                // which can be converted to, partially_applied which must be `false`,
-                // and definition_id and implicit_receiver_type which can differ.
+                // which can be converted to, the call mode which must have nothing
+                // applied, and definition_id and implicit_receiver_type which can
+                // differ.
                 //
                 // Note: solc checks that the `from` and `to` function types have
                 // the same call options or bound argument applied in the same way,
                 // but that is not observable from Solidity source code.
                 // Therefore we have a stronger check here that has the same effect
                 // for users.
-                !from_function_type.partially_applied
-                    && !to_function_type.partially_applied
+                !from_function_type.call_mode.is_partially_applied()
+                    && !to_function_type.call_mode.is_partially_applied()
                     && from_function_type
                         .visibility
                         .implicitly_convertible_to(to_function_type.visibility)
@@ -638,12 +639,22 @@ impl TypeRegistry {
         type_id
     }
 
-    // Marks a function type as partially applied:
-    // - a function from a `using` directive applied on a value
-    // - call options have been pre-applied in an external call
-    pub(crate) fn partially_apply_function_type(&mut self, function_type: FunctionType) -> TypeId {
+    // Binds the first argument of a function attached by a `using` directive,
+    // eg. `a.foo`.
+    pub(crate) fn bind_function_type(&mut self, function_type: FunctionType) -> TypeId {
         self.register_type(Type::Function(FunctionType {
-            partially_applied: true,
+            call_mode: CallMode::Plain { bound: true },
+            ..function_type
+        }))
+    }
+
+    // Pre-applies call options to an external function, eg. `foo{value: 3}`.
+    pub(crate) fn apply_call_options_to_function_type(
+        &mut self,
+        function_type: FunctionType,
+    ) -> TypeId {
+        self.register_type(Type::Function(FunctionType {
+            call_mode: CallMode::WithCallOptions,
             ..function_type
         }))
     }
@@ -696,7 +707,7 @@ impl TypeRegistry {
                 return_type: *return_type,
                 visibility: *visibility,
                 mutability: *mutability,
-                partially_applied: false,
+                call_mode: CallMode::UNAPPLIED,
             }),
 
             Type::Address(_)
@@ -815,7 +826,7 @@ impl TypeRegistry {
                 Ok(self.register_type(Type::Tuple(TupleType { types: mobile_ids })))
             }
             // Matches solc behaviour
-            Type::Function(function_type) if function_type.partially_applied => {
+            Type::Function(function_type) if function_type.call_mode.is_partially_applied() => {
                 Err(NoMobileType::PartiallyAppliedFunction)
             }
             // Matches solc behaviour, except for module types
