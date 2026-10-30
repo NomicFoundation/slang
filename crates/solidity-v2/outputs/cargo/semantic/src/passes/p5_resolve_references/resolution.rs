@@ -148,27 +148,15 @@ impl Pass<'_> {
                         self.binder
                             .resolve_in_scope_as_expression_member(scope_id, symbol)
                     });
-                // A private member is never reached through a type name, not
-                // even from within its own contract or library.
-                let is_foreign = self.is_foreign_contract_or_interface(definition_id);
-                let is_visible = |id: &NodeId| {
-                    if is_foreign {
-                        self.is_reachable_from_outside_hierarchy(*id)
-                    } else {
-                        self.binder
-                            .find_definition_by_id(*id)
-                            .is_none_or(|definition| !definition.is_private())
-                    }
-                };
-                if resolution.get_definition_ids().iter().all(is_visible) {
-                    resolution
-                } else {
+                if self.is_foreign_contract_or_interface(definition_id) {
                     let visible: DefinitionIds = resolution
                         .get_definition_ids()
                         .into_iter()
-                        .filter(is_visible)
+                        .filter(|id| self.is_reachable_from_outside_hierarchy(*id))
                         .collect();
                     Resolution::from(visible)
+                } else {
+                    resolution
                 }
             }
             _ => Resolution::Unresolved,

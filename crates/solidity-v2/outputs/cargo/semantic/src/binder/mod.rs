@@ -980,18 +980,30 @@ impl Binder {
     /// used when resolving members in an identifier path in a value context
     /// (eg. `emit C.E()`, or `C.f.selector`) as opposed to a typing context
     /// (eg. `C.S var`) where the member is searched in all inherited bases.
+    /// Neither a private member nor a modifier is reachable this way, not even
+    /// from within its own contract or library.
     pub(crate) fn resolve_in_scope_as_expression_member(
         &self,
         scope_id: ScopeId,
         symbol: &str,
     ) -> Resolution {
         match self.get_scope_by_id(scope_id) {
-            Scope::Contract(contract_scope) => contract_scope
-                .definitions
-                .get(symbol)
-                .map_or(Resolution::Unresolved, |definitions| {
+            Scope::Contract(contract_scope) => {
+                let Some(definitions) = contract_scope.definitions.get(symbol) else {
+                    return Resolution::Unresolved;
+                };
+                let is_reachable = |definition_id: &NodeId| {
+                    let definition = &self.definitions[definition_id];
+                    !definition.is_private() && !matches!(definition, Definition::Modifier(_))
+                };
+                if definitions.iter().all(is_reachable) {
                     Resolution::from(definitions.as_slice())
-                }),
+                } else {
+                    let results: DefinitionIds =
+                        definitions.iter().copied().filter(is_reachable).collect();
+                    Resolution::from(results)
+                }
+            }
             _ => self.resolve_in_scope_as_namespace(scope_id, symbol),
         }
     }

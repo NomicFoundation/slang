@@ -2229,6 +2229,22 @@ mod resolution {
         }
 
         #[test]
+        fn modifier_via_base_contract_name() -> Result<()> {
+            run(
+                "resolution/member_not_found",
+                "modifier_via_base_contract_name",
+            )
+        }
+
+        #[test]
+        fn modifier_via_own_contract_name() -> Result<()> {
+            run(
+                "resolution/member_not_found",
+                "modifier_via_own_contract_name",
+            )
+        }
+
+        #[test]
         fn name_on_integer_meta_type() -> Result<()> {
             run("resolution/member_not_found", "name_on_integer_meta_type")
         }
