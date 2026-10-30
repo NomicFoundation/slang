@@ -2302,12 +2302,11 @@ pub fn slang_solidity_v2_ast::ast::FunctionDefinitionStruct::calculate_text_rang
 pub struct slang_solidity_v2_ast::ast::FunctionType
 impl slang_solidity_v2_ast::ast::FunctionType
 pub fn slang_solidity_v2_ast::ast::FunctionType::associated_definition(&self) -> core::option::Option<slang_solidity_v2_ast::ast::Definition>
+pub fn slang_solidity_v2_ast::ast::FunctionType::call_mode(&self) -> slang_solidity_v2_semantic::types::CallMode
 pub fn slang_solidity_v2_ast::ast::FunctionType::implicit_receiver_type(&self) -> core::option::Option<slang_solidity_v2_ast::ast::Type>
-pub fn slang_solidity_v2_ast::ast::FunctionType::is_externally_visible(&self) -> bool
 pub fn slang_solidity_v2_ast::ast::FunctionType::mutability(&self) -> slang_solidity_v2_semantic::types::FunctionTypeMutability
 pub fn slang_solidity_v2_ast::ast::FunctionType::parameter_types(&self) -> alloc::vec::Vec<slang_solidity_v2_ast::ast::Type>
 pub fn slang_solidity_v2_ast::ast::FunctionType::return_type(&self) -> slang_solidity_v2_ast::ast::Type
-pub fn slang_solidity_v2_ast::ast::FunctionType::visibility(&self) -> slang_solidity_v2_semantic::types::FunctionTypeVisibility
 impl core::clone::Clone for slang_solidity_v2_ast::ast::FunctionType
 pub fn slang_solidity_v2_ast::ast::FunctionType::clone(&self) -> slang_solidity_v2_ast::ast::FunctionType
 pub struct slang_solidity_v2_ast::ast::FunctionTypeAttributesStruct

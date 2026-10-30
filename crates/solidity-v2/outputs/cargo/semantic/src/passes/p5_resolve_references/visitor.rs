@@ -5,7 +5,9 @@ use slang_solidity_v2_common::diagnostics::kinds::resolution::{
     IdentifierNotFound, MemberNotFound,
 };
 use slang_solidity_v2_common::diagnostics::kinds::structure::DuplicateNamedArgument;
-use slang_solidity_v2_common::diagnostics::kinds::type_system::EmptyArrayLiteral;
+use slang_solidity_v2_common::diagnostics::kinds::type_system::{
+    CallOptionsNotAllowed, EmptyArrayLiteral,
+};
 use slang_solidity_v2_ir::ir;
 use slang_solidity_v2_ir::ir::NodeIdentity;
 use slang_solidity_v2_ir::ir::visitor::Visitor;
@@ -17,8 +19,8 @@ use crate::passes::common::{
     filter_overridden_definitions, filter_overridden_definitions_by_selector,
 };
 use crate::types::{
-    AddressType, ArraySliceType, ArrayType, BytesType, FixedSizeArrayType, MappingType, MetaType,
-    Number, StringType, TupleType, Type, UserMetaType,
+    AddressType, ArraySliceType, ArrayType, BytesType, CallMode, FixedSizeArrayType, MappingType,
+    MetaType, Number, StringType, TupleType, Type, UserMetaType,
 };
 
 impl Visitor for Pass<'_> {
@@ -680,17 +682,26 @@ impl Visitor for Pass<'_> {
         // overload set has to survive to the enclosing call.
         let operand_typing = self.raw_typing_of_expression(&node.operand).clone();
 
-        // Pre-applying call options (eg. `foo{value: 3}`) partially applies the
-        // function.
-        let typing = match operand_typing.as_type_id() {
-            Some(type_id) => match self.types.get_type_by_id(type_id) {
-                Type::Function(function_type) => {
-                    let function_type = function_type.clone();
-                    Typing::Resolved(self.types.partially_apply_function_type(function_type))
-                }
-                _ => operand_typing,
-            },
-            None => operand_typing,
+        if self.call_options_allowed(&operand_typing) == Some(false) {
+            self.push_diagnostic(node, CallOptionsNotAllowed);
+        }
+
+        // Pre-applying call options to an external function (eg. `c.f{value: 3}`)
+        // partially applies it. Any other operand keeps its typing.
+        let typing = match operand_typing
+            .as_type_id()
+            .map(|type_id| self.types.get_type_by_id(type_id))
+        {
+            Some(Type::Function(function_type))
+                if function_type.call_mode == CallMode::External =>
+            {
+                let function_type = function_type.clone();
+                Typing::Resolved(
+                    self.types
+                        .function_type_with_call_options_applied(function_type),
+                )
+            }
+            _ => operand_typing,
         };
         self.binder.set_node_typing(node.id(), typing);
     }

@@ -9,8 +9,8 @@ use slang_solidity_v2_common::diagnostics::kinds::resolution::{
 use super::support::diagnostic_kinds;
 use super::{Analyse, Analysis, expression, expression_statement_types, expressions};
 use crate::types::{
-    ByteArrayType, BytesType, ContractType, DataLocation, IntegerType, LibraryType, StringType,
-    TupleType, Type,
+    ByteArrayType, BytesType, CallMode, ContractType, DataLocation, IntegerType, LibraryType,
+    StringType, TupleType, Type,
 };
 
 /// The recovered type of each expression statement in the body of `function`,
@@ -571,6 +571,70 @@ fn test_static_library_call_is_not_partially_applied() {
         .expect_no_diagnostics();
     let typings = statement_types(&analysis, "Test", "__test");
     assert_eq!(typings, vec![Some(Type::Boolean)]);
+}
+
+/// The call mode of each function-typed expression statement.
+fn call_modes(typings: Vec<Option<Type>>) -> Vec<Option<CallMode>> {
+    typings
+        .into_iter()
+        .map(|typing| match typing {
+            Some(Type::Function(function_type)) => Some(function_type.call_mode),
+            _ => None,
+        })
+        .collect()
+}
+
+#[test]
+fn test_public_and_external_library_functions_are_delegate_called() {
+    // Reached through the library or bound by `using`, a `public` or `external`
+    // library function is called by a delegate call, even inside the library
+    // itself. An `internal` one, or a bare name inside the library, is called
+    // internally.
+    let source = r#"
+        pragma solidity *;
+        library L {
+            function lp(uint) public pure {}
+            function le(uint) external pure {}
+            function li(uint) internal pure {}
+            function inside() internal pure {
+                lp;
+                L.lp;
+            }
+        }
+        contract Test {
+            using L for uint;
+            function __test(uint x) internal pure {
+                L.lp;
+                L.le;
+                L.li;
+                x.lp;
+                x.le;
+                x.li;
+            }
+        }
+        "#;
+    let analysis = Analysis::of_source(source)
+        .run(Analyse::References)
+        .expect_no_diagnostics();
+
+    assert_eq!(
+        call_modes(statement_types(&analysis, "Test", "__test")),
+        vec![
+            Some(CallMode::Delegate { bound: false }),
+            Some(CallMode::Delegate { bound: false }),
+            Some(CallMode::Internal { bound: false }),
+            Some(CallMode::Delegate { bound: true }),
+            Some(CallMode::Delegate { bound: true }),
+            Some(CallMode::Internal { bound: true }),
+        ]
+    );
+    assert_eq!(
+        call_modes(statement_types(&analysis, "L", "inside")),
+        vec![
+            Some(CallMode::Internal { bound: false }),
+            Some(CallMode::Delegate { bound: false }),
+        ]
+    );
 }
 
 #[test]

@@ -216,9 +216,8 @@ impl Pass<'_> {
                     implicit_receiver_type: None,
                     parameter_types,
                     return_type,
-                    visibility: (&function_type.attributes.visibility).into(),
                     mutability: (&function_type.attributes.mutability).into(),
-                    partially_applied: false,
+                    call_mode: (&function_type.attributes.visibility).into(),
                 })))
             }
             ir::TypeName::MappingType(mapping_type) => {

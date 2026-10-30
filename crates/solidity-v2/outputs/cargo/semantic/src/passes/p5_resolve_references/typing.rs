@@ -20,9 +20,9 @@ use crate::built_ins::{BuiltInCallError, InternalBuiltIn};
 use crate::context::FileNodeMapper;
 use crate::passes::common::node_location;
 use crate::types::{
-    AddressType, ArraySliceType, ArrayType, ContractType, ConversionError, DataLocation, ErrorType,
-    EventType, FixedSizeArrayType, FunctionType, FunctionTypeVisibility, IntegerType, LiteralKind,
-    MetaType, NoMobileType, Number, StringType, Type, TypeId, UserMetaType, literals,
+    AddressType, ArraySliceType, ArrayType, CallMode, ContractType, ConversionError, DataLocation,
+    ErrorType, EventType, FixedSizeArrayType, FunctionType, IntegerType, LiteralKind, MetaType,
+    NoMobileType, Number, StringType, Type, TypeId, UserMetaType, literals,
 };
 
 impl Pass<'_> {
@@ -774,24 +774,41 @@ impl Pass<'_> {
         &mut self,
         resolution: &Resolution,
     ) -> Typing {
+        match resolution {
+            Resolution::Definition(definition_id) => self.typing_of_contract_member(*definition_id),
+            // Each overload is accessed externally, as a single member is.
+            Resolution::Ambiguous(definition_ids) => Typing::Undetermined(
+                definition_ids
+                    .iter()
+                    .filter_map(|definition_id| {
+                        self.typing_of_contract_member(*definition_id).as_type_id()
+                    })
+                    .collect(),
+            ),
+            Resolution::Unresolved | Resolution::BuiltIn(_) => {
+                self.typing_of_resolution(resolution)
+            }
+        }
+    }
+
+    /// The typing of the member `definition_id` reached through `this` or a
+    /// contract reference, which accesses it externally.
+    fn typing_of_contract_member(&mut self, definition_id: NodeId) -> Typing {
         // Check if the target is a state variable with a getter or a function
         // with an externalized type; the member is accessed through that type.
-        if let Resolution::Definition(definition_id) = resolution
-            && let Some(member_type_id) =
-                match self.binder.find_definition_by_id(*definition_id).unwrap() {
-                    Definition::StateVariable(state_var_definition) => {
-                        state_var_definition.getter_type_id
-                    }
-                    Definition::Function(function_definition) => {
-                        function_definition.externalized_type_id
-                    }
-                    _ => None,
-                }
+        if let Some(member_type_id) = match self
+            .binder
+            .find_definition_by_id(definition_id)
+            .unwrap()
         {
+            Definition::StateVariable(state_var_definition) => state_var_definition.getter_type_id,
+            Definition::Function(function_definition) => function_definition.externalized_type_id,
+            _ => None,
+        } {
             return Typing::Resolved(member_type_id);
         }
 
-        let mut typing = self.typing_of_resolution(resolution);
+        let typing = self.binder.node_typing(definition_id).clone();
 
         // If the resolved type is a function and the operand is either
         // `this` or something of an address type, the function is being
@@ -799,12 +816,28 @@ impl Pass<'_> {
         // indicate the external access.
         if let Some(type_id) = typing.as_type_id()
             && let Type::Function(function_type) = self.types.get_type_by_id(type_id)
-            && function_type.is_externally_visible()
+            && self.is_externally_visible_function(function_type)
         {
-            typing = Typing::Resolved(self.types.externalize_function_type(type_id));
+            return Typing::Resolved(self.types.externalize_function_type(type_id));
         }
 
         typing
+    }
+
+    /// Whether a function value refers to an externally visible function: it
+    /// is called externally, or it names a function declared `public` or
+    /// `external` (or a public state variable's getter).
+    fn is_externally_visible_function(&self, function_type: &FunctionType) -> bool {
+        function_type.call_mode.is_external()
+            || function_type
+                .definition_id
+                .and_then(|definition_id| self.binder.find_definition_by_id(definition_id))
+                .is_some_and(|definition| {
+                    matches!(
+                        definition,
+                        Definition::Function(_) | Definition::StateVariable(_)
+                    ) && definition.is_externally_visible()
+                })
     }
 
     /// Whether `contract_id` is accessed from a scope that neither is it nor
@@ -846,6 +879,8 @@ impl Pass<'_> {
     ///   location;
     /// - functions attached via `using for` bind the receiver as their first
     ///   argument, producing a partially applied function;
+    /// - `public` and `external` library functions, reached through the library
+    ///   or bound, are called by a delegate call;
     /// - function declarations that are not callable through the operand's
     ///   contract/interface type name become the user meta type of their
     ///   definition.
@@ -869,26 +904,68 @@ impl Pass<'_> {
         } else if let Type::Function(function_type) = type_
             && let Some(receiver_type_id) = operand_typing.as_type_id()
         {
+            let is_delegate_called = function_type.definition_id.is_some_and(|definition_id| {
+                self.is_delegate_called_library_function(definition_id)
+            });
+
             if function_type.implicit_receiver_type.is_none()
                 && function_type.parameter_types.first().is_some_and(|first| {
                     self.types
                         .implicitly_convertible_to_for_external_call(receiver_type_id, *first)
                 })
             {
+                let call_mode = if is_delegate_called {
+                    CallMode::Delegate { bound: true }
+                } else {
+                    CallMode::Internal { bound: true }
+                };
                 return self
                     .types
-                    .partially_apply_function_type(function_type.clone());
+                    .function_type_with_call_mode(function_type.clone(), call_mode);
             }
 
-            if let Some(declaration_type_id) = self.as_foreign_function_declaration_type(
-                receiver_type_id,
-                function_type.definition_id,
-                function_type.visibility,
-            ) {
+            if is_delegate_called && self.is_library_type_name(receiver_type_id) {
+                return self.types.function_type_with_call_mode(
+                    function_type.clone(),
+                    CallMode::Delegate { bound: false },
+                );
+            }
+
+            if let Some(declaration_type_id) = self
+                .as_foreign_function_declaration_type(receiver_type_id, function_type.definition_id)
+            {
                 return declaration_type_id;
             }
         }
         type_id
+    }
+
+    /// Whether `definition_id` is a library function that is called by a
+    /// delegate call when reached through its library or bound by a `using`
+    /// directive: one declared `public` or `external`.
+    fn is_delegate_called_library_function(&self, definition_id: NodeId) -> bool {
+        matches!(
+            self.binder.find_definition_by_id(definition_id),
+            Some(Definition::Function(function_definition))
+                if function_definition.ir_node.is_externally_visible()
+        ) && matches!(
+            self.binder
+                .enclosing_definition_node_id(definition_id)
+                .and_then(|library_id| self.binder.find_definition_by_id(library_id)),
+            Some(Definition::Library(_))
+        )
+    }
+
+    /// Whether `type_id` is the type of a library's name, eg. `L` in `L.f`.
+    fn is_library_type_name(&self, type_id: TypeId) -> bool {
+        matches!(
+            self.types.get_type_by_id(type_id),
+            Type::UserMetaType(UserMetaType { definition_id })
+                if matches!(
+                    self.binder.find_definition_by_id(*definition_id),
+                    Some(Definition::Library(_))
+                )
+        )
     }
 
     /// Returns the user meta type of a function's definition when reaching the
@@ -901,7 +978,6 @@ impl Pass<'_> {
         &mut self,
         receiver_type_id: TypeId,
         function_definition_id: Option<NodeId>,
-        visibility: FunctionTypeVisibility,
     ) -> Option<TypeId> {
         let Type::UserMetaType(UserMetaType { definition_id }) =
             self.types.get_type_by_id(receiver_type_id)
@@ -915,16 +991,23 @@ impl Pass<'_> {
             return None;
         }
 
-        let is_foreign_and_visible = match visibility {
-            FunctionTypeVisibility::External => true,
-            FunctionTypeVisibility::Public => self.is_foreign_contract(*definition_id),
-            FunctionTypeVisibility::Internal | FunctionTypeVisibility::Private => false,
+        let contract_id = *definition_id;
+
+        let definition_id = function_definition_id?;
+        let Some(Definition::Function(function_definition)) =
+            self.binder.find_definition_by_id(definition_id)
+        else {
+            return None;
+        };
+        let is_foreign_and_visible = match function_definition.ir_node.attributes.visibility {
+            ir::FunctionVisibility::External => true,
+            ir::FunctionVisibility::Public => self.is_foreign_contract(contract_id),
+            ir::FunctionVisibility::Internal | ir::FunctionVisibility::Private => false,
         };
         if !is_foreign_and_visible {
             return None;
         }
 
-        let definition_id = function_definition_id?;
         Some(
             self.types
                 .register_type(Type::UserMetaType(UserMetaType { definition_id })),
@@ -1441,6 +1524,56 @@ impl Pass<'_> {
         definition_id
             .and_then(|definition_id| self.binder.find_definition_by_id(definition_id))
             .is_some_and(|definition| matches!(definition, Definition::Modifier(_)))
+    }
+
+    /// Whether a callee typed as `typing` can take call options: only a
+    /// function called by a message call can, ie. an external function, a
+    /// contract creation, or the low-level `call`, `delegatecall` and
+    /// `staticcall` of an address. Returns `None` when `typing` is not a
+    /// function at all, or did not resolve.
+    pub(super) fn call_options_allowed(&self, typing: &Typing) -> Option<bool> {
+        match typing {
+            Typing::Resolved(type_id) => self.call_options_allowed_for_type(*type_id),
+            Typing::NewExpression(type_id) => Some(matches!(
+                self.types.get_type_by_id(*type_id),
+                Type::Contract(_)
+            )),
+            Typing::BuiltIn(built_in) => match built_in {
+                InternalBuiltIn::AddressCall
+                | InternalBuiltIn::AddressDelegatecall
+                | InternalBuiltIn::AddressStaticcall => Some(true),
+                InternalBuiltIn::Abi
+                | InternalBuiltIn::Block
+                | InternalBuiltIn::Msg
+                | InternalBuiltIn::Tx
+                | InternalBuiltIn::ModifierUnderscore => None,
+                _ => Some(false),
+            },
+            // Overloads of one name are all called the same way, so the set is
+            // rejected only when none of them can take call options.
+            Typing::Undetermined(type_ids) => type_ids
+                .iter()
+                .filter_map(|type_id| self.call_options_allowed_for_type(*type_id))
+                .reduce(|any_allowed, allowed| any_allowed || allowed),
+            Typing::This(_) | Typing::Super(_) | Typing::Unresolved => None,
+        }
+    }
+
+    fn call_options_allowed_for_type(&self, type_id: TypeId) -> Option<bool> {
+        match self.types.get_type_by_id(type_id) {
+            Type::Function(function_type) => Some(function_type.call_mode == CallMode::External),
+            // A function declaration reached through its contract's name, or an
+            // event or error, is called as a function but not externally.
+            Type::UserMetaType(UserMetaType { definition_id }) => {
+                match self.binder.find_definition_by_id(*definition_id) {
+                    Some(Definition::Function(_) | Definition::Event(_) | Definition::Error(_)) => {
+                        Some(false)
+                    }
+                    _ => None,
+                }
+            }
+            _ => None,
+        }
     }
 }
 
