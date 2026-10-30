@@ -1,6 +1,7 @@
 use slang_solidity_v2_common::collections::Set;
 
-use crate::abi::{AbiEntry, ContractAbi};
+use crate::abi::ContractAbi;
+use crate::abi::entries::Entry;
 use crate::ast::{
     ContractMember, FunctionDefinition, FunctionMutability, LibraryDefinitionStruct,
     StorageLocation,
@@ -20,7 +21,8 @@ impl LibraryDefinitionStruct {
                 {
                     Some(function.compute_abi_entry())
                 }
-                // Library state variables are all constant, the p1 structural checks reject the rest.
+                // Library state variables are all constant, the p1 structural checks reject the
+                // rest.
                 ContractMember::StateVariableDefinition(state_variable)
                     if state_variable.is_externally_visible() =>
                 {
@@ -32,7 +34,7 @@ impl LibraryDefinitionStruct {
             })
             .collect::<Option<Vec<_>>>()?;
         // The errors and events its code reaches beyond its own, each once.
-        let mut listed: Set<_> = entries.iter().map(AbiEntry::node_id).collect();
+        let mut listed: Set<_> = entries.iter().map(Entry::node_id).collect();
         for error in &self.used_errors() {
             if listed.insert(error.node_id()) {
                 entries.push(error.compute_abi_entry()?);

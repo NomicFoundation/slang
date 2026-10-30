@@ -1,5 +1,6 @@
 use super::fixtures;
-use crate::abi::{AbiEntry, AbiType, TupleComponent};
+use crate::abi::{AbiEntry, AbiParameter};
+use crate::ast::{Definition, Type};
 
 #[test]
 fn test_get_contracts_abi() {
@@ -11,7 +12,7 @@ fn test_get_contracts_abi() {
     assert_eq!("main.sol", contracts[0].file_id().as_str());
     assert_eq!(7, contracts[0].entries().len());
 
-    let entries = contracts[0].entries();
+    let entries = contracts[0].entries().iter().collect::<Vec<_>>();
 
     assert!(matches!(entries[0], AbiEntry::Constructor(_)));
     assert!(matches!(&entries[1], AbiEntry::Function(f) if f.name() == "click"));
@@ -31,11 +32,11 @@ fn test_full_abi_with_events_and_errors() {
     assert_eq!(contracts_abi[0].name(), "Base");
     assert_eq!(contracts_abi[1].name(), "Test");
 
-    let entries = contracts_abi[0].entries();
+    let entries = contracts_abi[0].entries().iter().collect::<Vec<_>>();
     assert_eq!(entries.len(), 1);
     assert!(matches!(&entries[0], AbiEntry::Function(f) if f.name() == "xs"));
 
-    let entries = contracts_abi[1].entries();
+    let entries = contracts_abi[1].entries().iter().collect::<Vec<_>>();
     assert_eq!(entries.len(), 10);
     assert!(matches!(entries[0], AbiEntry::Constructor(_)));
     assert!(matches!(&entries[1], AbiEntry::Error(e) if e.name() == "InsufficientBalance"));
@@ -57,50 +58,22 @@ fn test_abi_entries_with_tuples() {
     assert_eq!(contracts_abi.len(), 1);
     assert_eq!(contracts_abi[0].name(), "Test");
 
-    let entries = contracts_abi[0].entries();
+    let entries = contracts_abi[0].entries().iter().collect::<Vec<_>>();
     assert_eq!(entries.len(), 5);
 
-    let uint256 = AbiType::Integer {
-        is_signed: false,
-        bits: 256,
-    };
-
-    // The two structs used throughout, expanded to their ABI tuple types:
-    //   struct S { uint a; uint[] b; T[] c; }
-    //   struct T { uint x; uint y; }
-    let t = AbiType::Tuple(vec![
-        TupleComponent::new("x", uint256.clone()),
-        TupleComponent::new("y", uint256.clone()),
-    ]);
-    let s = AbiType::Tuple(vec![
-        TupleComponent::new("a", uint256.clone()),
-        TupleComponent::new(
-            "b",
-            AbiType::Array {
-                element: Box::new(uint256.clone()),
-            },
-        ),
-        TupleComponent::new(
-            "c",
-            AbiType::Array {
-                element: Box::new(t.clone()),
-            },
-        ),
-    ]);
+    // The parameters' types are pinned by `json::tuples_and_getters_serialize`, on the same
+    // fixture.
 
     // f(S memory, T memory, uint x) returns ()
     let AbiEntry::Function(f) = &entries[0] else {
         panic!("expected ABI for function");
     };
     assert_eq!(f.name(), "f");
-    let inputs = f.inputs();
+    let inputs = f.inputs().iter().collect::<Vec<_>>();
     assert_eq!(inputs.len(), 3);
     assert_eq!(inputs[0].name(), None);
-    assert_eq!(inputs[0].abi_type(), s);
     assert_eq!(inputs[1].name(), None);
-    assert_eq!(inputs[1].abi_type(), t);
     assert_eq!(inputs[2].name(), Some("x"));
-    assert_eq!(inputs[2].abi_type(), uint256);
     assert!(f.outputs().is_empty());
 
     // g() returns (S memory s, T memory t, uint)
@@ -109,14 +82,11 @@ fn test_abi_entries_with_tuples() {
     };
     assert_eq!(g.name(), "g");
     assert!(g.inputs().is_empty());
-    let outputs = g.outputs();
+    let outputs = g.outputs().iter().collect::<Vec<_>>();
     assert_eq!(outputs.len(), 3);
     assert_eq!(outputs[0].name(), Some("s"));
-    assert_eq!(outputs[0].abi_type(), s);
     assert_eq!(outputs[1].name(), Some("t"));
-    assert_eq!(outputs[1].abi_type(), t);
     assert_eq!(outputs[2].name(), None);
-    assert_eq!(outputs[2].abi_type(), uint256);
 
     // T public (getter) -> t() returns (uint256 x, uint256 y).
     // The getter flattens the struct into its members; their names aren't tracked.
@@ -125,10 +95,8 @@ fn test_abi_entries_with_tuples() {
     };
     assert_eq!(getter.name(), "t");
     assert!(getter.inputs().is_empty());
-    let outputs = getter.outputs();
+    let outputs = getter.outputs().iter().collect::<Vec<_>>();
     assert_eq!(outputs.len(), 2);
-    assert_eq!(outputs[0].abi_type(), uint256);
-    assert_eq!(outputs[1].abi_type(), uint256);
 
     // t_components() returns (uint, uint)
     let AbiEntry::Function(t_components) = &entries[3] else {
@@ -136,12 +104,10 @@ fn test_abi_entries_with_tuples() {
     };
     assert_eq!(t_components.name(), "t_components");
     assert!(t_components.inputs().is_empty());
-    let outputs = t_components.outputs();
+    let outputs = t_components.outputs().iter().collect::<Vec<_>>();
     assert_eq!(outputs.len(), 2);
     assert_eq!(outputs[0].name(), None);
-    assert_eq!(outputs[0].abi_type(), uint256);
     assert_eq!(outputs[1].name(), None);
-    assert_eq!(outputs[1].abi_type(), uint256);
 
     // t_struct() returns (T memory)
     let AbiEntry::Function(t_struct) = &entries[4] else {
@@ -149,10 +115,104 @@ fn test_abi_entries_with_tuples() {
     };
     assert_eq!(t_struct.name(), "t_struct");
     assert!(t_struct.inputs().is_empty());
-    let outputs = t_struct.outputs();
+    let outputs = t_struct.outputs().iter().collect::<Vec<_>>();
     assert_eq!(outputs.len(), 1);
     assert_eq!(outputs[0].name(), None);
-    assert_eq!(outputs[0].abi_type(), t);
+}
+
+/// A parameter spells its JSON `type`, selector type and `internalType`, and a `tuple` lists its
+/// struct's members as components, through any arrays.
+#[test]
+fn parameters_expose_type_names_and_components() {
+    let unit = super::AbiWithTuples::build_compilation_unit();
+    let contracts_abi = unit.compute_contracts_abi();
+    let Some(AbiEntry::Function(f)) = contracts_abi[0].entries().iter().next() else {
+        panic!("expected ABI for function");
+    };
+    assert_eq!(f.name(), "f");
+
+    let inputs = f.inputs().iter().collect::<Vec<_>>();
+    let types = |parameter: &AbiParameter<'_>| {
+        (
+            parameter.json_type_name(),
+            parameter.selector_type_name(),
+            parameter.internal_type_name(),
+        )
+    };
+    assert_eq!(
+        inputs.iter().map(types).collect::<Vec<_>>(),
+        [
+            (
+                "tuple".to_owned(),
+                "(uint256,uint256[],(uint256,uint256)[])".to_owned(),
+                "struct Test.S".to_owned()
+            ),
+            (
+                "tuple".to_owned(),
+                "(uint256,uint256)".to_owned(),
+                "struct Test.T".to_owned()
+            ),
+            (
+                "uint256".to_owned(),
+                "uint256".to_owned(),
+                "uint256".to_owned()
+            ),
+        ]
+    );
+    assert!(inputs[2].components().is_none());
+
+    // The type behind a `tuple` is its struct.
+    let Type::Struct(s_type) = inputs[0].get_type() else {
+        panic!("expected a struct type");
+    };
+    let Definition::Struct(s_definition) = s_type.definition() else {
+        panic!("expected a struct definition");
+    };
+    assert_eq!(s_definition.name().name(), "S");
+    assert!(matches!(inputs[2].get_type(), Type::Integer(_)));
+
+    let s_members = inputs[0]
+        .components()
+        .expect("a struct has components")
+        .iter()
+        .collect::<Vec<_>>();
+    assert_eq!(
+        s_members
+            .iter()
+            .map(|member| member.name())
+            .collect::<Vec<_>>(),
+        [Some("a"), Some("b"), Some("c")]
+    );
+    assert_eq!(
+        s_members.iter().map(types).collect::<Vec<_>>(),
+        [
+            (
+                "uint256".to_owned(),
+                "uint256".to_owned(),
+                "uint256".to_owned()
+            ),
+            (
+                "uint256[]".to_owned(),
+                "uint256[]".to_owned(),
+                "uint256[]".to_owned()
+            ),
+            (
+                "tuple[]".to_owned(),
+                "(uint256,uint256)[]".to_owned(),
+                "struct Test.T[]".to_owned()
+            ),
+        ]
+    );
+    assert!(s_members[1].components().is_none());
+
+    // The components of `T[] c` are `T`'s members, through the array.
+    let t_members = s_members[2]
+        .components()
+        .expect("an array of structs has components")
+        .iter()
+        .map(|member| member.name())
+        .collect::<Vec<_>>();
+    assert_eq!(t_members, [Some("x"), Some("y")]);
 }
 
 /// An abstract contract cannot run its constructor, so solc leaves it out of the ABI.
@@ -165,7 +225,8 @@ fn abstract_contract_has_no_constructor_entry() {
         .expect("contract AB exists")
         .compute_abi()
         .expect("the ABI is computable");
-    assert!(matches!(abi.entries(), [AbiEntry::Function(f)] if f.name() == "extra"));
+    let entries = abi.entries().iter().collect::<Vec<_>>();
+    assert!(matches!(entries[..], [AbiEntry::Function(f)] if f.name() == "extra"));
 }
 
 /// With the `function` keyword, `receive` and `fallback` are ordinary names: solc lists both
@@ -174,10 +235,59 @@ fn abstract_contract_has_no_constructor_entry() {
 fn functions_named_receive_and_fallback_are_regular_functions() {
     let unit = super::FunctionsNamedReceiveAndFallback::build_compilation_unit();
     let contracts_abi = unit.compute_contracts_abi();
-    let entries = contracts_abi[0].entries();
+    let entries = contracts_abi[0].entries().iter().collect::<Vec<_>>();
     assert_eq!(entries.len(), 4);
     assert!(matches!(entries[0], AbiEntry::Fallback(_)));
     assert!(matches!(&entries[1], AbiEntry::Function(f) if f.name() == "fallback"));
     assert!(matches!(&entries[2], AbiEntry::Function(f) if f.name() == "receive"));
     assert!(matches!(entries[3], AbiEntry::Receive(_)));
+}
+
+/// In a library, the selector type names user-defined types, as the library's selectors do,
+/// while the JSON `type` still expands them.
+#[test]
+fn library_parameters_name_user_types_in_selector_type() {
+    let unit = super::LibraryUserTypes::build_compilation_unit();
+    let abi = fixtures::find_library(&unit, "L")
+        .compute_abi()
+        .expect("the ABI is computable");
+    let Some(AbiEntry::Function(f)) = abi.entries().iter().next() else {
+        panic!("expected ABI for function");
+    };
+
+    let types = |parameter: AbiParameter<'_>| {
+        (
+            parameter.json_type_name(),
+            parameter.selector_type_name(),
+            parameter.internal_type_name(),
+        )
+    };
+    let inputs = f.inputs().iter().collect::<Vec<_>>();
+    assert_eq!(
+        inputs.iter().copied().map(types).collect::<Vec<_>>(),
+        [
+            (
+                "tuple[]".to_owned(),
+                "L.S[]".to_owned(),
+                "struct L.S[]".to_owned()
+            ),
+            ("L.E".to_owned(), "L.E".to_owned(), "enum L.E".to_owned()),
+        ]
+    );
+    assert_eq!(
+        inputs[0]
+            .components()
+            .expect("an array of structs has components")
+            .iter()
+            .map(types)
+            .collect::<Vec<_>>(),
+        [
+            ("L.E".to_owned(), "L.E".to_owned(), "enum L.E".to_owned()),
+            (
+                "uint256[]".to_owned(),
+                "uint256[]".to_owned(),
+                "uint256[]".to_owned()
+            ),
+        ]
+    );
 }

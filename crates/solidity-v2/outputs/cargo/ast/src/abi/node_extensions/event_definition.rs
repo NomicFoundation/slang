@@ -1,4 +1,5 @@
-use crate::abi::{AbiEntry, AbiEvent, hash_from_signature};
+use crate::abi::entries::{Entry, Event};
+use crate::abi::hash_from_signature;
 use crate::ast::EventDefinitionStruct;
 
 impl EventDefinitionStruct {
@@ -14,10 +15,10 @@ impl EventDefinitionStruct {
         Some(format!("{name}({parameters})"))
     }
 
-    pub fn compute_abi_entry(&self) -> Option<AbiEntry> {
+    pub(crate) fn compute_abi_entry(&self) -> Option<Entry> {
         let inputs = self.parameters().compute_abi_parameters()?;
 
-        Some(AbiEntry::Event(AbiEvent {
+        Some(Entry::Event(Event {
             node_id: self.ir_node.id(),
             name: self.ir_node.name.unparse().to_string(),
             inputs,

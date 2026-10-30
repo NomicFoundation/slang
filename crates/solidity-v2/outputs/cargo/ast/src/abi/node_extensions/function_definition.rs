@@ -1,11 +1,10 @@
 use std::fmt;
 
 use slang_solidity_v2_ir::ir;
+use slang_solidity_v2_semantic::context::AbiNameError;
 
-use crate::abi::{
-    AbiConstructor, AbiEntry, AbiFallback, AbiFunction, AbiMutability, AbiReceive, SignatureHasher,
-    TypeSpelling,
-};
+use crate::abi::entries::{Constructor, Entry, Fallback, Function, Receive, SpellingPolicy};
+use crate::abi::{AbiMutability, SignatureHasher};
 use crate::ast::{Definition, FunctionDefinitionStruct, FunctionVisibility};
 
 impl FunctionDefinitionStruct {
@@ -16,7 +15,7 @@ impl FunctionDefinitionStruct {
         )
     }
 
-    pub fn compute_abi_entry(&self) -> Option<AbiEntry> {
+    pub(crate) fn compute_abi_entry(&self) -> Option<Entry> {
         if !self.is_externally_visible() {
             return None;
         }
@@ -36,24 +35,24 @@ impl FunctionDefinitionStruct {
         let state_mutability: AbiMutability = (&self.ir_node.attributes.mutability).into();
 
         match self.ir_node.kind {
-            ir::FunctionKind::Regular => Some(AbiEntry::Function(AbiFunction {
+            ir::FunctionKind::Regular => Some(Entry::Function(Function {
                 node_id,
                 name: name?,
                 inputs,
                 outputs,
                 state_mutability,
-                type_spelling: TypeSpelling::of_function_in(self.enclosing_definition().as_ref()),
+                spelling_policy: SpellingPolicy::of(self.enclosing_definition().as_ref()),
             })),
-            ir::FunctionKind::Constructor => Some(AbiEntry::Constructor(AbiConstructor {
+            ir::FunctionKind::Constructor => Some(Entry::Constructor(Constructor {
                 node_id,
                 inputs,
                 state_mutability,
             })),
-            ir::FunctionKind::Fallback => Some(AbiEntry::Fallback(AbiFallback {
+            ir::FunctionKind::Fallback => Some(Entry::Fallback(Fallback {
                 node_id,
                 state_mutability,
             })),
-            ir::FunctionKind::Receive => Some(AbiEntry::Receive(AbiReceive {
+            ir::FunctionKind::Receive => Some(Entry::Receive(Receive {
                 node_id,
                 state_mutability,
             })),
@@ -68,7 +67,8 @@ impl FunctionDefinitionStruct {
     /// ABI-encoded.
     pub fn compute_canonical_signature(&self) -> Option<String> {
         let mut signature = String::new();
-        self.write_canonical_signature(&mut signature)?;
+        self.write_canonical_signature(self.ir_node.name.as_ref()?.unparse(), &mut signature)
+            .ok()?;
         Some(signature)
     }
 
@@ -98,7 +98,8 @@ impl FunctionDefinitionStruct {
     /// underlying type — none of which the canonical form can spell.
     pub fn compute_library_signature(&self) -> Option<String> {
         let mut signature = String::new();
-        self.write_library_signature(&mut signature)?;
+        self.write_library_signature(self.ir_node.name.as_ref()?.unparse(), &mut signature)
+            .ok()?;
         Some(signature)
     }
 
@@ -106,7 +107,8 @@ impl FunctionDefinitionStruct {
     /// library member, the canonical form otherwise.
     pub fn compute_selector_signature(&self) -> Option<String> {
         let mut signature = String::new();
-        self.write_selector_signature(&mut signature)?;
+        self.write_selector_signature(self.ir_node.name.as_ref()?.unparse(), &mut signature)
+            .ok()?;
         Some(signature)
     }
 
@@ -115,26 +117,39 @@ impl FunctionDefinitionStruct {
             return None;
         }
         let mut hasher = SignatureHasher::default();
-        self.write_selector_signature(&mut hasher)?;
+        self.write_selector_signature(self.ir_node.name.as_ref()?.unparse(), &mut hasher)
+            .ok()?;
         Some(hasher.selector())
     }
 
-    fn write_selector_signature(&self, out: &mut impl fmt::Write) -> Option<()> {
+    fn write_selector_signature(
+        &self,
+        name: &str,
+        out: &mut impl fmt::Write,
+    ) -> Result<(), AbiNameError> {
         match self.enclosing_definition() {
-            Some(Definition::Library(_)) => self.write_library_signature(out),
-            _ => self.write_canonical_signature(out),
+            Some(Definition::Library(_)) => self.write_library_signature(name, out),
+            _ => self.write_canonical_signature(name, out),
         }
     }
 
-    fn write_canonical_signature(&self, out: &mut impl fmt::Write) -> Option<()> {
-        write!(out, "{}(", self.ir_node.name.as_ref()?.unparse()).ok()?;
+    fn write_canonical_signature(
+        &self,
+        name: &str,
+        out: &mut impl fmt::Write,
+    ) -> Result<(), AbiNameError> {
+        write!(out, "{name}(")?;
         self.parameters().write_canonical_signature(out)?;
-        out.write_char(')').ok()
+        Ok(out.write_char(')')?)
     }
 
-    fn write_library_signature(&self, out: &mut impl fmt::Write) -> Option<()> {
-        write!(out, "{}(", self.ir_node.name.as_ref()?.unparse()).ok()?;
+    fn write_library_signature(
+        &self,
+        name: &str,
+        out: &mut impl fmt::Write,
+    ) -> Result<(), AbiNameError> {
+        write!(out, "{name}(")?;
         self.parameters().write_library_signature(out)?;
-        out.write_char(')').ok()
+        Ok(out.write_char(')')?)
     }
 }

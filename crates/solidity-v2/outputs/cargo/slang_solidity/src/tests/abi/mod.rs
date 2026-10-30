@@ -10,7 +10,6 @@ mod library;
 mod selectors;
 mod storage_layout;
 mod storage_layout_json;
-mod type_conversion;
 mod used_errors_and_events;
 
 use super::fixtures;
@@ -93,6 +92,19 @@ library L {
     function k(U[] memory xs) external pure {}
     function q(U[2] memory xs) external pure {}
     function m(mapping(uint256 => U) storage x) external {}
+}
+"#,
+);
+
+define_fixture!(
+    LibraryUserTypes,
+    file: "main.sol", r#"
+pragma solidity *;
+library L {
+    enum E { A, B }
+    struct S { E e; uint256[] xs; }
+
+    function f(S[] memory s, E e) external pure {}
 }
 "#,
 );

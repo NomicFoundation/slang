@@ -1,10 +1,12 @@
+use std::fmt;
+
 use itertools::Either;
 use slang_solidity_v2_ir::ir;
-use slang_solidity_v2_semantic::types::{FunctionType, TupleType, Type};
+use slang_solidity_v2_semantic::context::{AbiNameError, AbiTypeSpelling};
+use slang_solidity_v2_semantic::types::{FunctionType, TupleType, Type, TypeId};
 
-use crate::abi::{
-    AbiEntry, AbiFunction, AbiMutability, AbiParameter, TypeSpelling, selector_from_signature,
-};
+use crate::abi::entries::{Entry, Function, Parameter, SpellingPolicy};
+use crate::abi::{AbiMutability, SignatureHasher};
 use crate::ast::{StateVariableDefinitionStruct, StateVariableVisibility};
 
 impl StateVariableDefinitionStruct {
@@ -15,7 +17,8 @@ impl StateVariableDefinitionStruct {
         )
     }
 
-    /// The type of the variable's generated getter, if it has one.
+    /// The type of the variable's generated getter. Only a public variable has one, so every getter
+    /// computation starts here.
     fn getter_function_type(&self) -> Option<&FunctionType> {
         let Type::Function(function_type) =
             self.semantic.types().get_type_by_id(self.getter_type_id()?)
@@ -26,7 +29,7 @@ impl StateVariableDefinitionStruct {
     }
 
     /// The getter's ABI inputs and outputs.
-    fn extract_getter_type_parameters_abi(&self) -> Option<(Vec<AbiParameter>, Vec<AbiParameter>)> {
+    fn extract_getter_type_parameters_abi(&self) -> Option<(Vec<Parameter>, Vec<Parameter>)> {
         let function_type = self.getter_function_type()?;
         let (input_names, output_names) = self.compute_input_output_parameter_names();
 
@@ -40,7 +43,7 @@ impl StateVariableDefinitionStruct {
             .iter()
             .zip(input_names)
             .map(|(parameter_type_id, name)| {
-                AbiParameter::new(None, name, *parameter_type_id, false, &self.semantic)
+                Parameter::new(name, *parameter_type_id, false, &self.semantic)
             })
             .collect::<Option<Vec<_>>>()?;
 
@@ -62,7 +65,7 @@ impl StateVariableDefinitionStruct {
         let outputs = output_types
             .zip(output_names)
             .map(|(output_type_id, name)| {
-                AbiParameter::new(None, name, *output_type_id, false, &self.semantic)
+                Parameter::new(name, *output_type_id, false, &self.semantic)
             })
             .collect::<Option<Vec<_>>>()?;
         Some((inputs, outputs))
@@ -107,58 +110,69 @@ impl StateVariableDefinitionStruct {
         (input_names, output_names)
     }
 
-    pub fn compute_abi_entry(&self) -> Option<AbiEntry> {
-        if !self.is_externally_visible() {
-            return None;
-        }
+    pub(crate) fn compute_abi_entry(&self) -> Option<Entry> {
         let (inputs, outputs) = self.extract_getter_type_parameters_abi()?;
 
-        Some(AbiEntry::Function(AbiFunction {
+        Some(Entry::Function(Function {
             node_id: self.ir_node.id(),
             name: self.ir_node.name.unparse().to_string(),
             inputs,
             outputs,
             state_mutability: AbiMutability::View,
-            type_spelling: TypeSpelling::of_function_in(self.enclosing_definition().as_ref()),
+            spelling_policy: SpellingPolicy::of(self.enclosing_definition().as_ref()),
         }))
     }
 
     pub fn compute_canonical_signature(&self) -> Option<String> {
-        let (inputs, _) = self.extract_getter_type_parameters_abi()?;
-        let parameters = inputs
-            .into_iter()
-            .map(|parameter| parameter.type_name())
-            .collect::<Vec<_>>()
-            .join(",");
-        Some(format!(
-            "{name}({parameters})",
-            name = self.ir_node.name.unparse(),
-        ))
+        let mut signature = String::new();
+        self.write_canonical_signature(self.getter_function_type()?, &mut signature)
+            .ok()?;
+        Some(signature)
     }
 
     pub fn compute_internal_signature(&self) -> Option<String> {
-        if !self.is_externally_visible() {
-            // There is no getter defined if the variable is not public
-            return None;
-        }
-        let parameters = self
-            .getter_function_type()?
-            .parameter_types
-            .iter()
-            .map(|type_id| self.semantic.type_internal_name(*type_id))
-            .collect::<Vec<_>>()
-            .join(",");
-        Some(format!(
-            "{name}({parameters})",
-            name = self.ir_node.name.unparse(),
-        ))
+        let mut signature = String::new();
+        self.write_signature(
+            self.getter_function_type()?,
+            &mut signature,
+            |out, type_id| Ok(self.semantic.write_type_internal_name(type_id, out)?),
+        )
+        .ok()?;
+        Some(signature)
     }
 
     pub fn compute_selector(&self) -> Option<u32> {
-        if !self.is_externally_visible() {
-            return None;
+        let mut hasher = SignatureHasher::default();
+        self.write_canonical_signature(self.getter_function_type()?, &mut hasher)
+            .ok()?;
+        Some(hasher.selector())
+    }
+
+    fn write_canonical_signature(
+        &self,
+        getter_type: &FunctionType,
+        out: &mut impl fmt::Write,
+    ) -> Result<(), AbiNameError> {
+        self.write_signature(getter_type, out, |out, type_id| {
+            self.semantic
+                .write_type_abi_name(type_id, AbiTypeSpelling::Selector, out)
+        })
+    }
+
+    /// Writes `name(T1,T2)` over the getter's parameter types, each written by `write_type`.
+    fn write_signature<W: fmt::Write>(
+        &self,
+        getter_type: &FunctionType,
+        out: &mut W,
+        write_type: impl Fn(&mut W, TypeId) -> Result<(), AbiNameError>,
+    ) -> Result<(), AbiNameError> {
+        write!(out, "{}(", self.ir_node.name.unparse())?;
+        for (index, type_id) in getter_type.parameter_types.iter().enumerate() {
+            if index > 0 {
+                out.write_char(',')?;
+            }
+            write_type(out, *type_id)?;
         }
-        self.compute_canonical_signature()
-            .map(|sig| selector_from_signature(&sig))
+        Ok(out.write_char(')')?)
     }
 }

@@ -1,6 +1,6 @@
-//! `AbiParameter::internal_type()` spells the type the way solc's JSON-ABI `internalType` field
-//! does. The fixture builds at `LanguageVersion::LATEST`; the expected spellings were taken by
-//! hand from solc 0.8.34 `--abi` on the same source, not from a solc run in the test.
+//! The JSON ABI's `internalType` spells the type the way solc's does. The fixture builds at
+//! `LanguageVersion::LATEST`; the expected spellings were taken by hand from solc 0.8.34 `--abi` on
+//! the same source, not from a solc run in the test.
 // TODO: compare these spellings against a solc run at the fixture's own version instead of
 // pinning them by hand. Until then, a failure after a `LATEST` bump means re-deriving the
 // expectation from solc, not editing it.
@@ -18,7 +18,15 @@ enum E { A }
 contract U {
     enum E { A, B }
     struct S { uint256 x; E e; }
-    function g(address payable p, IFoo i, E e, Wad w, S[] calldata arr, uint256[3] memory xs, string calldata s) external pure returns (uint8) {}
+    function g(
+        address payable p,
+        IFoo i,
+        E e,
+        Wad w,
+        S[] calldata arr,
+        uint256[3] memory xs,
+        string calldata s
+    ) external pure returns (uint8) {}
 }
 contract F {
     function a(function(uint256) external cb) external pure {}
@@ -36,18 +44,18 @@ fn function_input_internal_types(contract: &str, function: &str) -> Vec<String> 
         .expect("contract exists")
         .compute_abi()
         .expect("the ABI is computable");
-    let entry = abi
+    let function = abi
         .entries()
         .iter()
-        .find(|entry| matches!(entry, AbiEntry::Function(f) if f.name() == function))
+        .find_map(|entry| match entry {
+            AbiEntry::Function(f) if f.name() == function => Some(f),
+            _ => None,
+        })
         .expect("function is in the ABI");
-    let AbiEntry::Function(function) = entry else {
-        unreachable!("matched a function above");
-    };
     function
         .inputs()
         .iter()
-        .map(|input| input.internal_type())
+        .map(|input| input.internal_type_name())
         .collect()
 }
 

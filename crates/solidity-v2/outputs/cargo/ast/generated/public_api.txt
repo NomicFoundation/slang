@@ -6,157 +6,132 @@ pub use slang_solidity_v2_ast::abi::StoragePosition
 pub use slang_solidity_v2_ast::abi::StorageSize
 pub use slang_solidity_v2_ast::abi::StorageTypeKind
 pub use slang_solidity_v2_ast::abi::StorageVariable
-pub enum slang_solidity_v2_ast::abi::AbiEntry
-pub slang_solidity_v2_ast::abi::AbiEntry::Constructor(slang_solidity_v2_ast::abi::AbiConstructor)
-pub slang_solidity_v2_ast::abi::AbiEntry::Error(slang_solidity_v2_ast::abi::AbiError)
-pub slang_solidity_v2_ast::abi::AbiEntry::Event(slang_solidity_v2_ast::abi::AbiEvent)
-pub slang_solidity_v2_ast::abi::AbiEntry::Fallback(slang_solidity_v2_ast::abi::AbiFallback)
-pub slang_solidity_v2_ast::abi::AbiEntry::Function(slang_solidity_v2_ast::abi::AbiFunction)
-pub slang_solidity_v2_ast::abi::AbiEntry::Receive(slang_solidity_v2_ast::abi::AbiReceive)
-impl slang_solidity_v2_ast::abi::AbiEntry
-pub fn slang_solidity_v2_ast::abi::AbiEntry::node_id(&self) -> slang_solidity_v2_common::nodes::NodeId
-impl core::clone::Clone for slang_solidity_v2_ast::abi::AbiEntry
-pub fn slang_solidity_v2_ast::abi::AbiEntry::clone(&self) -> slang_solidity_v2_ast::abi::AbiEntry
-impl core::cmp::Eq for slang_solidity_v2_ast::abi::AbiEntry
-impl core::cmp::Ord for slang_solidity_v2_ast::abi::AbiEntry
-pub fn slang_solidity_v2_ast::abi::AbiEntry::cmp(&self, &Self) -> core::cmp::Ordering
-impl core::cmp::PartialEq for slang_solidity_v2_ast::abi::AbiEntry
-pub fn slang_solidity_v2_ast::abi::AbiEntry::eq(&self, &Self) -> bool
-impl core::cmp::PartialOrd for slang_solidity_v2_ast::abi::AbiEntry
-pub fn slang_solidity_v2_ast::abi::AbiEntry::partial_cmp(&self, &Self) -> core::option::Option<core::cmp::Ordering>
-impl core::fmt::Debug for slang_solidity_v2_ast::abi::AbiEntry
-pub fn slang_solidity_v2_ast::abi::AbiEntry::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
-impl serde_core::ser::Serialize for slang_solidity_v2_ast::abi::AbiEntry
-pub fn slang_solidity_v2_ast::abi::AbiEntry::serialize<S: serde_core::ser::Serializer>(&self, S) -> core::result::Result<<S as serde_core::ser::Serializer>::Ok, <S as serde_core::ser::Serializer>::Error>
-pub enum slang_solidity_v2_ast::abi::AbiType
-pub slang_solidity_v2_ast::abi::AbiType::Address
-pub slang_solidity_v2_ast::abi::AbiType::Array
-pub slang_solidity_v2_ast::abi::AbiType::Array::element: alloc::boxed::Box<slang_solidity_v2_ast::abi::AbiType>
-pub slang_solidity_v2_ast::abi::AbiType::Boolean
-pub slang_solidity_v2_ast::abi::AbiType::ByteArray
-pub slang_solidity_v2_ast::abi::AbiType::ByteArray::width: u32
-pub slang_solidity_v2_ast::abi::AbiType::Bytes
-pub slang_solidity_v2_ast::abi::AbiType::FixedPointNumber
-pub slang_solidity_v2_ast::abi::AbiType::FixedPointNumber::bits: u32
-pub slang_solidity_v2_ast::abi::AbiType::FixedPointNumber::decimal_places: u32
-pub slang_solidity_v2_ast::abi::AbiType::FixedPointNumber::is_signed: bool
-pub slang_solidity_v2_ast::abi::AbiType::FixedSizeArray
-pub slang_solidity_v2_ast::abi::AbiType::FixedSizeArray::element: alloc::boxed::Box<slang_solidity_v2_ast::abi::AbiType>
-pub slang_solidity_v2_ast::abi::AbiType::FixedSizeArray::size: ruint::aliases::U256
-pub slang_solidity_v2_ast::abi::AbiType::Function
-pub slang_solidity_v2_ast::abi::AbiType::Integer
-pub slang_solidity_v2_ast::abi::AbiType::Integer::bits: u32
-pub slang_solidity_v2_ast::abi::AbiType::Integer::is_signed: bool
-pub slang_solidity_v2_ast::abi::AbiType::String
-pub slang_solidity_v2_ast::abi::AbiType::Tuple(alloc::vec::Vec<slang_solidity_v2_ast::abi::TupleComponent>)
-impl core::clone::Clone for slang_solidity_v2_ast::abi::AbiType
-pub fn slang_solidity_v2_ast::abi::AbiType::clone(&self) -> slang_solidity_v2_ast::abi::AbiType
-impl core::cmp::Eq for slang_solidity_v2_ast::abi::AbiType
-impl core::cmp::Ord for slang_solidity_v2_ast::abi::AbiType
-pub fn slang_solidity_v2_ast::abi::AbiType::cmp(&self, &slang_solidity_v2_ast::abi::AbiType) -> core::cmp::Ordering
-impl core::cmp::PartialEq for slang_solidity_v2_ast::abi::AbiType
-pub fn slang_solidity_v2_ast::abi::AbiType::eq(&self, &slang_solidity_v2_ast::abi::AbiType) -> bool
-impl core::cmp::PartialOrd for slang_solidity_v2_ast::abi::AbiType
-pub fn slang_solidity_v2_ast::abi::AbiType::partial_cmp(&self, &slang_solidity_v2_ast::abi::AbiType) -> core::option::Option<core::cmp::Ordering>
-impl core::convert::TryFrom<&slang_solidity_v2_ast::ast::Type> for slang_solidity_v2_ast::abi::AbiType
-pub type slang_solidity_v2_ast::abi::AbiType::Error = slang_solidity_v2_ast::abi::NotAnAbiType
-pub fn slang_solidity_v2_ast::abi::AbiType::try_from(&slang_solidity_v2_ast::ast::Type) -> core::result::Result<Self, Self::Error>
-impl core::fmt::Debug for slang_solidity_v2_ast::abi::AbiType
-pub fn slang_solidity_v2_ast::abi::AbiType::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
-impl core::fmt::Display for slang_solidity_v2_ast::abi::AbiType
-pub fn slang_solidity_v2_ast::abi::AbiType::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
-impl core::hash::Hash for slang_solidity_v2_ast::abi::AbiType
-pub fn slang_solidity_v2_ast::abi::AbiType::hash<__H: core::hash::Hasher>(&self, &mut __H)
-impl core::marker::StructuralPartialEq for slang_solidity_v2_ast::abi::AbiType
-pub struct slang_solidity_v2_ast::abi::AbiConstructor
-impl slang_solidity_v2_ast::abi::AbiConstructor
-pub fn slang_solidity_v2_ast::abi::AbiConstructor::inputs(&self) -> &[slang_solidity_v2_ast::abi::AbiParameter]
-pub fn slang_solidity_v2_ast::abi::AbiConstructor::node_id(&self) -> slang_solidity_v2_common::nodes::NodeId
-pub fn slang_solidity_v2_ast::abi::AbiConstructor::state_mutability(&self) -> &slang_solidity_v2_ast::abi::AbiMutability
-impl core::clone::Clone for slang_solidity_v2_ast::abi::AbiConstructor
-pub fn slang_solidity_v2_ast::abi::AbiConstructor::clone(&self) -> slang_solidity_v2_ast::abi::AbiConstructor
-impl core::fmt::Debug for slang_solidity_v2_ast::abi::AbiConstructor
-pub fn slang_solidity_v2_ast::abi::AbiConstructor::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
-pub struct slang_solidity_v2_ast::abi::AbiError
-impl slang_solidity_v2_ast::abi::AbiError
-pub fn slang_solidity_v2_ast::abi::AbiError::inputs(&self) -> &[slang_solidity_v2_ast::abi::AbiParameter]
-pub fn slang_solidity_v2_ast::abi::AbiError::name(&self) -> &str
-pub fn slang_solidity_v2_ast::abi::AbiError::node_id(&self) -> slang_solidity_v2_common::nodes::NodeId
-impl core::clone::Clone for slang_solidity_v2_ast::abi::AbiError
-pub fn slang_solidity_v2_ast::abi::AbiError::clone(&self) -> slang_solidity_v2_ast::abi::AbiError
-impl core::fmt::Debug for slang_solidity_v2_ast::abi::AbiError
-pub fn slang_solidity_v2_ast::abi::AbiError::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
-pub struct slang_solidity_v2_ast::abi::AbiEvent
-impl slang_solidity_v2_ast::abi::AbiEvent
-pub fn slang_solidity_v2_ast::abi::AbiEvent::anonymous(&self) -> bool
-pub fn slang_solidity_v2_ast::abi::AbiEvent::inputs(&self) -> &[slang_solidity_v2_ast::abi::AbiParameter]
-pub fn slang_solidity_v2_ast::abi::AbiEvent::name(&self) -> &str
-pub fn slang_solidity_v2_ast::abi::AbiEvent::node_id(&self) -> slang_solidity_v2_common::nodes::NodeId
-impl core::clone::Clone for slang_solidity_v2_ast::abi::AbiEvent
-pub fn slang_solidity_v2_ast::abi::AbiEvent::clone(&self) -> slang_solidity_v2_ast::abi::AbiEvent
-impl core::fmt::Debug for slang_solidity_v2_ast::abi::AbiEvent
-pub fn slang_solidity_v2_ast::abi::AbiEvent::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
-pub struct slang_solidity_v2_ast::abi::AbiFallback
-impl slang_solidity_v2_ast::abi::AbiFallback
-pub fn slang_solidity_v2_ast::abi::AbiFallback::node_id(&self) -> slang_solidity_v2_common::nodes::NodeId
-pub fn slang_solidity_v2_ast::abi::AbiFallback::state_mutability(&self) -> &slang_solidity_v2_ast::abi::AbiMutability
-impl core::clone::Clone for slang_solidity_v2_ast::abi::AbiFallback
-pub fn slang_solidity_v2_ast::abi::AbiFallback::clone(&self) -> slang_solidity_v2_ast::abi::AbiFallback
-impl core::fmt::Debug for slang_solidity_v2_ast::abi::AbiFallback
-pub fn slang_solidity_v2_ast::abi::AbiFallback::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
-pub struct slang_solidity_v2_ast::abi::AbiFunction
-impl slang_solidity_v2_ast::abi::AbiFunction
-pub fn slang_solidity_v2_ast::abi::AbiFunction::inputs(&self) -> &[slang_solidity_v2_ast::abi::AbiParameter]
-pub fn slang_solidity_v2_ast::abi::AbiFunction::name(&self) -> &str
-pub fn slang_solidity_v2_ast::abi::AbiFunction::node_id(&self) -> slang_solidity_v2_common::nodes::NodeId
-pub fn slang_solidity_v2_ast::abi::AbiFunction::outputs(&self) -> &[slang_solidity_v2_ast::abi::AbiParameter]
-pub fn slang_solidity_v2_ast::abi::AbiFunction::state_mutability(&self) -> &slang_solidity_v2_ast::abi::AbiMutability
-impl core::clone::Clone for slang_solidity_v2_ast::abi::AbiFunction
-pub fn slang_solidity_v2_ast::abi::AbiFunction::clone(&self) -> slang_solidity_v2_ast::abi::AbiFunction
-impl core::fmt::Debug for slang_solidity_v2_ast::abi::AbiFunction
-pub fn slang_solidity_v2_ast::abi::AbiFunction::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
-pub struct slang_solidity_v2_ast::abi::AbiParameter
-impl slang_solidity_v2_ast::abi::AbiParameter
-pub fn slang_solidity_v2_ast::abi::AbiParameter::abi_type(&self) -> slang_solidity_v2_ast::abi::AbiType
-pub fn slang_solidity_v2_ast::abi::AbiParameter::get_type(&self) -> slang_solidity_v2_ast::ast::Type
-pub fn slang_solidity_v2_ast::abi::AbiParameter::indexed(&self) -> bool
-pub fn slang_solidity_v2_ast::abi::AbiParameter::internal_type(&self) -> alloc::string::String
-pub fn slang_solidity_v2_ast::abi::AbiParameter::name(&self) -> core::option::Option<&str>
-pub fn slang_solidity_v2_ast::abi::AbiParameter::node_id(&self) -> core::option::Option<slang_solidity_v2_common::nodes::NodeId>
-pub fn slang_solidity_v2_ast::abi::AbiParameter::type_name(&self) -> alloc::string::String
-impl core::clone::Clone for slang_solidity_v2_ast::abi::AbiParameter
-pub fn slang_solidity_v2_ast::abi::AbiParameter::clone(&self) -> slang_solidity_v2_ast::abi::AbiParameter
-impl core::fmt::Debug for slang_solidity_v2_ast::abi::AbiParameter
-pub fn slang_solidity_v2_ast::abi::AbiParameter::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
-pub struct slang_solidity_v2_ast::abi::AbiReceive
-impl slang_solidity_v2_ast::abi::AbiReceive
-pub fn slang_solidity_v2_ast::abi::AbiReceive::node_id(&self) -> slang_solidity_v2_common::nodes::NodeId
-pub fn slang_solidity_v2_ast::abi::AbiReceive::state_mutability(&self) -> &slang_solidity_v2_ast::abi::AbiMutability
-impl core::clone::Clone for slang_solidity_v2_ast::abi::AbiReceive
-pub fn slang_solidity_v2_ast::abi::AbiReceive::clone(&self) -> slang_solidity_v2_ast::abi::AbiReceive
-impl core::fmt::Debug for slang_solidity_v2_ast::abi::AbiReceive
-pub fn slang_solidity_v2_ast::abi::AbiReceive::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+pub enum slang_solidity_v2_ast::abi::AbiEntry<'a>
+pub slang_solidity_v2_ast::abi::AbiEntry::Constructor(slang_solidity_v2_ast::abi::AbiConstructor<'a>)
+pub slang_solidity_v2_ast::abi::AbiEntry::Error(slang_solidity_v2_ast::abi::AbiError<'a>)
+pub slang_solidity_v2_ast::abi::AbiEntry::Event(slang_solidity_v2_ast::abi::AbiEvent<'a>)
+pub slang_solidity_v2_ast::abi::AbiEntry::Fallback(slang_solidity_v2_ast::abi::AbiFallback<'a>)
+pub slang_solidity_v2_ast::abi::AbiEntry::Function(slang_solidity_v2_ast::abi::AbiFunction<'a>)
+pub slang_solidity_v2_ast::abi::AbiEntry::Receive(slang_solidity_v2_ast::abi::AbiReceive<'a>)
+impl<'a> slang_solidity_v2_ast::abi::AbiEntry<'a>
+pub fn slang_solidity_v2_ast::abi::AbiEntry<'a>::node_id(&self) -> slang_solidity_v2_common::nodes::NodeId
+impl serde_core::ser::Serialize for slang_solidity_v2_ast::abi::AbiEntry<'_>
+pub fn slang_solidity_v2_ast::abi::AbiEntry<'_>::serialize<S: serde_core::ser::Serializer>(&self, S) -> core::result::Result<<S as serde_core::ser::Serializer>::Ok, <S as serde_core::ser::Serializer>::Error>
+impl<'a> core::clone::Clone for slang_solidity_v2_ast::abi::AbiEntry<'a>
+pub fn slang_solidity_v2_ast::abi::AbiEntry<'a>::clone(&self) -> slang_solidity_v2_ast::abi::AbiEntry<'a>
+impl<'a> core::fmt::Debug for slang_solidity_v2_ast::abi::AbiEntry<'a>
+pub fn slang_solidity_v2_ast::abi::AbiEntry<'a>::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl<'a> core::marker::Copy for slang_solidity_v2_ast::abi::AbiEntry<'a>
+pub struct slang_solidity_v2_ast::abi::AbiConstructor<'a>
+impl<'a> slang_solidity_v2_ast::abi::AbiConstructor<'a>
+pub fn slang_solidity_v2_ast::abi::AbiConstructor<'a>::inputs(&self) -> slang_solidity_v2_ast::abi::AbiParameters<'a>
+pub fn slang_solidity_v2_ast::abi::AbiConstructor<'a>::node_id(&self) -> slang_solidity_v2_common::nodes::NodeId
+pub fn slang_solidity_v2_ast::abi::AbiConstructor<'a>::state_mutability(&self) -> &'a slang_solidity_v2_ast::abi::AbiMutability
+impl core::fmt::Debug for slang_solidity_v2_ast::abi::AbiConstructor<'_>
+pub fn slang_solidity_v2_ast::abi::AbiConstructor<'_>::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl<'a> core::clone::Clone for slang_solidity_v2_ast::abi::AbiConstructor<'a>
+pub fn slang_solidity_v2_ast::abi::AbiConstructor<'a>::clone(&self) -> slang_solidity_v2_ast::abi::AbiConstructor<'a>
+impl<'a> core::marker::Copy for slang_solidity_v2_ast::abi::AbiConstructor<'a>
+pub struct slang_solidity_v2_ast::abi::AbiEntries<'a>
+impl<'a> slang_solidity_v2_ast::abi::AbiEntries<'a>
+pub fn slang_solidity_v2_ast::abi::AbiEntries<'a>::is_empty(&self) -> bool
+pub fn slang_solidity_v2_ast::abi::AbiEntries<'a>::iter(&self) -> impl core::iter::traits::iterator::Iterator<Item = slang_solidity_v2_ast::abi::AbiEntry<'a>> + use<'a>
+pub fn slang_solidity_v2_ast::abi::AbiEntries<'a>::len(&self) -> usize
+impl core::fmt::Debug for slang_solidity_v2_ast::abi::AbiEntries<'_>
+pub fn slang_solidity_v2_ast::abi::AbiEntries<'_>::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl serde_core::ser::Serialize for slang_solidity_v2_ast::abi::AbiEntries<'_>
+pub fn slang_solidity_v2_ast::abi::AbiEntries<'_>::serialize<S: serde_core::ser::Serializer>(&self, S) -> core::result::Result<<S as serde_core::ser::Serializer>::Ok, <S as serde_core::ser::Serializer>::Error>
+impl<'a> core::clone::Clone for slang_solidity_v2_ast::abi::AbiEntries<'a>
+pub fn slang_solidity_v2_ast::abi::AbiEntries<'a>::clone(&self) -> slang_solidity_v2_ast::abi::AbiEntries<'a>
+impl<'a> core::marker::Copy for slang_solidity_v2_ast::abi::AbiEntries<'a>
+pub struct slang_solidity_v2_ast::abi::AbiError<'a>
+impl<'a> slang_solidity_v2_ast::abi::AbiError<'a>
+pub fn slang_solidity_v2_ast::abi::AbiError<'a>::inputs(&self) -> slang_solidity_v2_ast::abi::AbiParameters<'a>
+pub fn slang_solidity_v2_ast::abi::AbiError<'a>::name(&self) -> &'a str
+pub fn slang_solidity_v2_ast::abi::AbiError<'a>::node_id(&self) -> slang_solidity_v2_common::nodes::NodeId
+impl core::fmt::Debug for slang_solidity_v2_ast::abi::AbiError<'_>
+pub fn slang_solidity_v2_ast::abi::AbiError<'_>::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl<'a> core::clone::Clone for slang_solidity_v2_ast::abi::AbiError<'a>
+pub fn slang_solidity_v2_ast::abi::AbiError<'a>::clone(&self) -> slang_solidity_v2_ast::abi::AbiError<'a>
+impl<'a> core::marker::Copy for slang_solidity_v2_ast::abi::AbiError<'a>
+pub struct slang_solidity_v2_ast::abi::AbiEvent<'a>
+impl<'a> slang_solidity_v2_ast::abi::AbiEvent<'a>
+pub fn slang_solidity_v2_ast::abi::AbiEvent<'a>::anonymous(&self) -> bool
+pub fn slang_solidity_v2_ast::abi::AbiEvent<'a>::inputs(&self) -> slang_solidity_v2_ast::abi::AbiParameters<'a>
+pub fn slang_solidity_v2_ast::abi::AbiEvent<'a>::name(&self) -> &'a str
+pub fn slang_solidity_v2_ast::abi::AbiEvent<'a>::node_id(&self) -> slang_solidity_v2_common::nodes::NodeId
+impl core::fmt::Debug for slang_solidity_v2_ast::abi::AbiEvent<'_>
+pub fn slang_solidity_v2_ast::abi::AbiEvent<'_>::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl<'a> core::clone::Clone for slang_solidity_v2_ast::abi::AbiEvent<'a>
+pub fn slang_solidity_v2_ast::abi::AbiEvent<'a>::clone(&self) -> slang_solidity_v2_ast::abi::AbiEvent<'a>
+impl<'a> core::marker::Copy for slang_solidity_v2_ast::abi::AbiEvent<'a>
+pub struct slang_solidity_v2_ast::abi::AbiFallback<'a>
+impl<'a> slang_solidity_v2_ast::abi::AbiFallback<'a>
+pub fn slang_solidity_v2_ast::abi::AbiFallback<'a>::node_id(&self) -> slang_solidity_v2_common::nodes::NodeId
+pub fn slang_solidity_v2_ast::abi::AbiFallback<'a>::state_mutability(&self) -> &'a slang_solidity_v2_ast::abi::AbiMutability
+impl core::fmt::Debug for slang_solidity_v2_ast::abi::AbiFallback<'_>
+pub fn slang_solidity_v2_ast::abi::AbiFallback<'_>::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl<'a> core::clone::Clone for slang_solidity_v2_ast::abi::AbiFallback<'a>
+pub fn slang_solidity_v2_ast::abi::AbiFallback<'a>::clone(&self) -> slang_solidity_v2_ast::abi::AbiFallback<'a>
+impl<'a> core::marker::Copy for slang_solidity_v2_ast::abi::AbiFallback<'a>
+pub struct slang_solidity_v2_ast::abi::AbiFunction<'a>
+impl<'a> slang_solidity_v2_ast::abi::AbiFunction<'a>
+pub fn slang_solidity_v2_ast::abi::AbiFunction<'a>::inputs(&self) -> slang_solidity_v2_ast::abi::AbiParameters<'a>
+pub fn slang_solidity_v2_ast::abi::AbiFunction<'a>::name(&self) -> &'a str
+pub fn slang_solidity_v2_ast::abi::AbiFunction<'a>::node_id(&self) -> slang_solidity_v2_common::nodes::NodeId
+pub fn slang_solidity_v2_ast::abi::AbiFunction<'a>::outputs(&self) -> slang_solidity_v2_ast::abi::AbiParameters<'a>
+pub fn slang_solidity_v2_ast::abi::AbiFunction<'a>::state_mutability(&self) -> &'a slang_solidity_v2_ast::abi::AbiMutability
+impl core::fmt::Debug for slang_solidity_v2_ast::abi::AbiFunction<'_>
+pub fn slang_solidity_v2_ast::abi::AbiFunction<'_>::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl<'a> core::clone::Clone for slang_solidity_v2_ast::abi::AbiFunction<'a>
+pub fn slang_solidity_v2_ast::abi::AbiFunction<'a>::clone(&self) -> slang_solidity_v2_ast::abi::AbiFunction<'a>
+impl<'a> core::marker::Copy for slang_solidity_v2_ast::abi::AbiFunction<'a>
+pub struct slang_solidity_v2_ast::abi::AbiParameter<'a>
+impl<'a> slang_solidity_v2_ast::abi::AbiParameter<'a>
+pub fn slang_solidity_v2_ast::abi::AbiParameter<'a>::components(&self) -> core::option::Option<slang_solidity_v2_ast::abi::AbiParameters<'a>>
+pub fn slang_solidity_v2_ast::abi::AbiParameter<'a>::get_type(&self) -> slang_solidity_v2_ast::ast::Type
+pub fn slang_solidity_v2_ast::abi::AbiParameter<'a>::indexed(&self) -> bool
+pub fn slang_solidity_v2_ast::abi::AbiParameter<'a>::internal_type_name(&self) -> alloc::string::String
+pub fn slang_solidity_v2_ast::abi::AbiParameter<'a>::json_type_name(&self) -> alloc::string::String
+pub fn slang_solidity_v2_ast::abi::AbiParameter<'a>::name(&self) -> core::option::Option<&'a str>
+pub fn slang_solidity_v2_ast::abi::AbiParameter<'a>::selector_type_name(&self) -> alloc::string::String
+pub fn slang_solidity_v2_ast::abi::AbiParameter<'a>::type_id(&self) -> slang_solidity_v2_semantic::types::TypeId
+impl core::fmt::Debug for slang_solidity_v2_ast::abi::AbiParameter<'_>
+pub fn slang_solidity_v2_ast::abi::AbiParameter<'_>::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl serde_core::ser::Serialize for slang_solidity_v2_ast::abi::AbiParameter<'_>
+pub fn slang_solidity_v2_ast::abi::AbiParameter<'_>::serialize<S: serde_core::ser::Serializer>(&self, S) -> core::result::Result<<S as serde_core::ser::Serializer>::Ok, <S as serde_core::ser::Serializer>::Error>
+impl<'a> core::clone::Clone for slang_solidity_v2_ast::abi::AbiParameter<'a>
+pub fn slang_solidity_v2_ast::abi::AbiParameter<'a>::clone(&self) -> slang_solidity_v2_ast::abi::AbiParameter<'a>
+impl<'a> core::marker::Copy for slang_solidity_v2_ast::abi::AbiParameter<'a>
+pub struct slang_solidity_v2_ast::abi::AbiParameters<'a>
+impl<'a> slang_solidity_v2_ast::abi::AbiParameters<'a>
+pub fn slang_solidity_v2_ast::abi::AbiParameters<'a>::is_empty(&self) -> bool
+pub fn slang_solidity_v2_ast::abi::AbiParameters<'a>::iter(&self) -> impl core::iter::traits::iterator::Iterator<Item = slang_solidity_v2_ast::abi::AbiParameter<'a>> + use<'a>
+pub fn slang_solidity_v2_ast::abi::AbiParameters<'a>::len(&self) -> usize
+impl core::fmt::Debug for slang_solidity_v2_ast::abi::AbiParameters<'_>
+pub fn slang_solidity_v2_ast::abi::AbiParameters<'_>::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl serde_core::ser::Serialize for slang_solidity_v2_ast::abi::AbiParameters<'_>
+pub fn slang_solidity_v2_ast::abi::AbiParameters<'_>::serialize<S: serde_core::ser::Serializer>(&self, S) -> core::result::Result<<S as serde_core::ser::Serializer>::Ok, <S as serde_core::ser::Serializer>::Error>
+impl<'a> core::clone::Clone for slang_solidity_v2_ast::abi::AbiParameters<'a>
+pub fn slang_solidity_v2_ast::abi::AbiParameters<'a>::clone(&self) -> slang_solidity_v2_ast::abi::AbiParameters<'a>
+impl<'a> core::marker::Copy for slang_solidity_v2_ast::abi::AbiParameters<'a>
+pub struct slang_solidity_v2_ast::abi::AbiReceive<'a>
+impl<'a> slang_solidity_v2_ast::abi::AbiReceive<'a>
+pub fn slang_solidity_v2_ast::abi::AbiReceive<'a>::node_id(&self) -> slang_solidity_v2_common::nodes::NodeId
+pub fn slang_solidity_v2_ast::abi::AbiReceive<'a>::state_mutability(&self) -> &'a slang_solidity_v2_ast::abi::AbiMutability
+impl core::fmt::Debug for slang_solidity_v2_ast::abi::AbiReceive<'_>
+pub fn slang_solidity_v2_ast::abi::AbiReceive<'_>::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl<'a> core::clone::Clone for slang_solidity_v2_ast::abi::AbiReceive<'a>
+pub fn slang_solidity_v2_ast::abi::AbiReceive<'a>::clone(&self) -> slang_solidity_v2_ast::abi::AbiReceive<'a>
+impl<'a> core::marker::Copy for slang_solidity_v2_ast::abi::AbiReceive<'a>
 pub struct slang_solidity_v2_ast::abi::ContractAbi
 impl slang_solidity_v2_ast::abi::ContractAbi
-pub fn slang_solidity_v2_ast::abi::ContractAbi::entries(&self) -> &[slang_solidity_v2_ast::abi::AbiEntry]
+pub fn slang_solidity_v2_ast::abi::ContractAbi::entries(&self) -> slang_solidity_v2_ast::abi::AbiEntries<'_>
 pub fn slang_solidity_v2_ast::abi::ContractAbi::file_id(&self) -> &slang_solidity_v2_common::files::FileId
 pub fn slang_solidity_v2_ast::abi::ContractAbi::name(&self) -> &str
 pub fn slang_solidity_v2_ast::abi::ContractAbi::node_id(&self) -> slang_solidity_v2_common::nodes::NodeId
 impl serde_core::ser::Serialize for slang_solidity_v2_ast::abi::ContractAbi
 pub fn slang_solidity_v2_ast::abi::ContractAbi::serialize<S: serde_core::ser::Serializer>(&self, S) -> core::result::Result<<S as serde_core::ser::Serializer>::Ok, <S as serde_core::ser::Serializer>::Error>
-#[non_exhaustive] pub struct slang_solidity_v2_ast::abi::NotAnAbiType
-impl core::clone::Clone for slang_solidity_v2_ast::abi::NotAnAbiType
-pub fn slang_solidity_v2_ast::abi::NotAnAbiType::clone(&self) -> slang_solidity_v2_ast::abi::NotAnAbiType
-impl core::cmp::Eq for slang_solidity_v2_ast::abi::NotAnAbiType
-impl core::cmp::PartialEq for slang_solidity_v2_ast::abi::NotAnAbiType
-pub fn slang_solidity_v2_ast::abi::NotAnAbiType::eq(&self, &slang_solidity_v2_ast::abi::NotAnAbiType) -> bool
-impl core::error::Error for slang_solidity_v2_ast::abi::NotAnAbiType
-impl core::fmt::Debug for slang_solidity_v2_ast::abi::NotAnAbiType
-pub fn slang_solidity_v2_ast::abi::NotAnAbiType::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
-impl core::fmt::Display for slang_solidity_v2_ast::abi::NotAnAbiType
-pub fn slang_solidity_v2_ast::abi::NotAnAbiType::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
-impl core::marker::Copy for slang_solidity_v2_ast::abi::NotAnAbiType
-impl core::marker::StructuralPartialEq for slang_solidity_v2_ast::abi::NotAnAbiType
 pub struct slang_solidity_v2_ast::abi::StorageLayout
 impl slang_solidity_v2_ast::abi::StorageLayout
 pub fn slang_solidity_v2_ast::abi::StorageLayout::contract(&self) -> &str
@@ -190,25 +165,6 @@ pub fn slang_solidity_v2_ast::abi::StorageType::eq(&self, &slang_solidity_v2_ast
 impl core::fmt::Debug for slang_solidity_v2_ast::abi::StorageType
 pub fn slang_solidity_v2_ast::abi::StorageType::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
 impl core::marker::StructuralPartialEq for slang_solidity_v2_ast::abi::StorageType
-pub struct slang_solidity_v2_ast::abi::TupleComponent
-impl slang_solidity_v2_ast::abi::TupleComponent
-pub fn slang_solidity_v2_ast::abi::TupleComponent::abi_type(&self) -> &slang_solidity_v2_ast::abi::AbiType
-pub fn slang_solidity_v2_ast::abi::TupleComponent::name(&self) -> &str
-pub fn slang_solidity_v2_ast::abi::TupleComponent::new(impl core::convert::Into<alloc::string::String>, slang_solidity_v2_ast::abi::AbiType) -> Self
-impl core::clone::Clone for slang_solidity_v2_ast::abi::TupleComponent
-pub fn slang_solidity_v2_ast::abi::TupleComponent::clone(&self) -> slang_solidity_v2_ast::abi::TupleComponent
-impl core::cmp::Eq for slang_solidity_v2_ast::abi::TupleComponent
-impl core::cmp::Ord for slang_solidity_v2_ast::abi::TupleComponent
-pub fn slang_solidity_v2_ast::abi::TupleComponent::cmp(&self, &slang_solidity_v2_ast::abi::TupleComponent) -> core::cmp::Ordering
-impl core::cmp::PartialEq for slang_solidity_v2_ast::abi::TupleComponent
-pub fn slang_solidity_v2_ast::abi::TupleComponent::eq(&self, &slang_solidity_v2_ast::abi::TupleComponent) -> bool
-impl core::cmp::PartialOrd for slang_solidity_v2_ast::abi::TupleComponent
-pub fn slang_solidity_v2_ast::abi::TupleComponent::partial_cmp(&self, &slang_solidity_v2_ast::abi::TupleComponent) -> core::option::Option<core::cmp::Ordering>
-impl core::fmt::Debug for slang_solidity_v2_ast::abi::TupleComponent
-pub fn slang_solidity_v2_ast::abi::TupleComponent::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
-impl core::hash::Hash for slang_solidity_v2_ast::abi::TupleComponent
-pub fn slang_solidity_v2_ast::abi::TupleComponent::hash<__H: core::hash::Hasher>(&self, &mut __H)
-impl core::marker::StructuralPartialEq for slang_solidity_v2_ast::abi::TupleComponent
 pub fn slang_solidity_v2_ast::abi::hash_from_signature(&str) -> [u8; 32]
 pub fn slang_solidity_v2_ast::abi::selector_from_signature(&str) -> u32
 pub type slang_solidity_v2_ast::abi::AbiMutability = slang_solidity_v2_semantic::types::FunctionTypeMutability
@@ -1171,9 +1127,6 @@ pub fn slang_solidity_v2_ast::ast::Type::is_reference_type(&self) -> bool
 pub fn slang_solidity_v2_ast::ast::Type::try_create_for_node_id(slang_solidity_v2_common::nodes::NodeId, &alloc::sync::Arc<slang_solidity_v2_semantic::context::SemanticContext>) -> core::option::Option<Self>
 impl core::clone::Clone for slang_solidity_v2_ast::ast::Type
 pub fn slang_solidity_v2_ast::ast::Type::clone(&self) -> slang_solidity_v2_ast::ast::Type
-impl core::convert::TryFrom<&slang_solidity_v2_ast::ast::Type> for slang_solidity_v2_ast::abi::AbiType
-pub type slang_solidity_v2_ast::abi::AbiType::Error = slang_solidity_v2_ast::abi::NotAnAbiType
-pub fn slang_solidity_v2_ast::abi::AbiType::try_from(&slang_solidity_v2_ast::ast::Type) -> core::result::Result<Self, Self::Error>
 pub enum slang_solidity_v2_ast::ast::TypeName
 pub slang_solidity_v2_ast::ast::TypeName::ArrayTypeName(slang_solidity_v2_ast::ast::ArrayTypeName)
 pub slang_solidity_v2_ast::ast::TypeName::ElementaryType(slang_solidity_v2_ast::ast::ElementaryType)
@@ -2104,7 +2057,6 @@ impl slang_solidity_v2_ast::ast::ErrorDefinitionStruct
 pub fn slang_solidity_v2_ast::ast::ErrorDefinitionStruct::as_definition(&self) -> core::option::Option<slang_solidity_v2_ast::ast::Definition>
 pub fn slang_solidity_v2_ast::ast::ErrorDefinitionStruct::references(&self) -> alloc::vec::Vec<slang_solidity_v2_ast::ast::Reference>
 impl slang_solidity_v2_ast::ast::ErrorDefinitionStruct
-pub fn slang_solidity_v2_ast::ast::ErrorDefinitionStruct::compute_abi_entry(&self) -> core::option::Option<slang_solidity_v2_ast::abi::AbiEntry>
 pub fn slang_solidity_v2_ast::ast::ErrorDefinitionStruct::compute_canonical_signature(&self) -> core::option::Option<alloc::string::String>
 pub fn slang_solidity_v2_ast::ast::ErrorDefinitionStruct::compute_internal_signature(&self) -> core::option::Option<alloc::string::String>
 pub fn slang_solidity_v2_ast::ast::ErrorDefinitionStruct::compute_selector(&self) -> core::option::Option<u32>
@@ -2148,7 +2100,6 @@ impl slang_solidity_v2_ast::ast::EventDefinitionStruct
 pub fn slang_solidity_v2_ast::ast::EventDefinitionStruct::as_definition(&self) -> core::option::Option<slang_solidity_v2_ast::ast::Definition>
 pub fn slang_solidity_v2_ast::ast::EventDefinitionStruct::references(&self) -> alloc::vec::Vec<slang_solidity_v2_ast::ast::Reference>
 impl slang_solidity_v2_ast::ast::EventDefinitionStruct
-pub fn slang_solidity_v2_ast::ast::EventDefinitionStruct::compute_abi_entry(&self) -> core::option::Option<slang_solidity_v2_ast::abi::AbiEntry>
 pub fn slang_solidity_v2_ast::ast::EventDefinitionStruct::compute_canonical_signature(&self) -> core::option::Option<alloc::string::String>
 pub fn slang_solidity_v2_ast::ast::EventDefinitionStruct::compute_internal_signature(&self) -> core::option::Option<alloc::string::String>
 pub fn slang_solidity_v2_ast::ast::EventDefinitionStruct::compute_topic0(&self) -> core::option::Option<[u8; 32]>
@@ -2331,7 +2282,6 @@ pub fn slang_solidity_v2_ast::ast::FunctionDefinitionStruct::node_id(&self) -> s
 pub fn slang_solidity_v2_ast::ast::FunctionDefinitionStruct::parameters(&self) -> slang_solidity_v2_ast::ast::Parameters
 pub fn slang_solidity_v2_ast::ast::FunctionDefinitionStruct::returns(&self) -> core::option::Option<slang_solidity_v2_ast::ast::Parameters>
 impl slang_solidity_v2_ast::ast::FunctionDefinitionStruct
-pub fn slang_solidity_v2_ast::ast::FunctionDefinitionStruct::compute_abi_entry(&self) -> core::option::Option<slang_solidity_v2_ast::abi::AbiEntry>
 pub fn slang_solidity_v2_ast::ast::FunctionDefinitionStruct::compute_canonical_signature(&self) -> core::option::Option<alloc::string::String>
 pub fn slang_solidity_v2_ast::ast::FunctionDefinitionStruct::compute_internal_signature(&self) -> core::option::Option<alloc::string::String>
 pub fn slang_solidity_v2_ast::ast::FunctionDefinitionStruct::compute_library_signature(&self) -> core::option::Option<alloc::string::String>
@@ -3543,7 +3493,6 @@ pub fn slang_solidity_v2_ast::ast::StateVariableDefinitionStruct::node_id(&self)
 pub fn slang_solidity_v2_ast::ast::StateVariableDefinitionStruct::type_name(&self) -> slang_solidity_v2_ast::ast::TypeName
 pub fn slang_solidity_v2_ast::ast::StateVariableDefinitionStruct::value(&self) -> core::option::Option<slang_solidity_v2_ast::ast::Expression>
 impl slang_solidity_v2_ast::ast::StateVariableDefinitionStruct
-pub fn slang_solidity_v2_ast::ast::StateVariableDefinitionStruct::compute_abi_entry(&self) -> core::option::Option<slang_solidity_v2_ast::abi::AbiEntry>
 pub fn slang_solidity_v2_ast::ast::StateVariableDefinitionStruct::compute_canonical_signature(&self) -> core::option::Option<alloc::string::String>
 pub fn slang_solidity_v2_ast::ast::StateVariableDefinitionStruct::compute_internal_signature(&self) -> core::option::Option<alloc::string::String>
 pub fn slang_solidity_v2_ast::ast::StateVariableDefinitionStruct::compute_selector(&self) -> core::option::Option<u32>
