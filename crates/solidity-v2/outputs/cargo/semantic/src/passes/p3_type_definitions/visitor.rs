@@ -588,7 +588,8 @@ impl Visitor for Pass<'_> {
     }
 
     fn enter_revert_statement(&mut self, node: &ir::RevertStatement) -> bool {
-        self.resolve_and_check_identifier_path_as_expression(&node.error);
+        // Errors cannot be overloaded.
+        self.resolve_and_check_identifier_path_as_expression(&node.error, false);
         true
     }
 
@@ -598,7 +599,8 @@ impl Visitor for Pass<'_> {
     }
 
     fn enter_emit_statement(&mut self, node: &ir::EmitStatement) -> bool {
-        self.resolve_and_check_identifier_path_as_expression(&node.event);
+        // Overloaded events are narrowed down later by the arguments.
+        self.resolve_and_check_identifier_path_as_expression(&node.event, true);
         true
     }
 

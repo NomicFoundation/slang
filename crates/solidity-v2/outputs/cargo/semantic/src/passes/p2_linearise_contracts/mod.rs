@@ -117,7 +117,7 @@ impl<'a> Pass<'a> {
             match path_resolution.resolution.as_definition_id() {
                 None => {
                     if let Some((identifier, kind)) =
-                        path_resolution.unresolved_identifier(&inheritance_type.type_name)
+                        path_resolution.unresolved_identifier(&inheritance_type.type_name, false)
                     {
                         self.diagnostics
                             .push(self.file_id.clone(), identifier.range.clone(), kind);

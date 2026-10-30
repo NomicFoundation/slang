@@ -1,0 +1,11 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 1
+
+[resolution/ambiguous-reference] Error: No unique declaration found for 'm'.
+    ╭─[input.sol:16:34]
+    │
+ 16 │     function g() public override(m) {}
+    │                                  ┬  
+    │                                  ╰── Error occurred here.
+────╯

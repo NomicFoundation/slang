@@ -304,7 +304,20 @@ impl Pass<'_> {
             identifier_path,
             self.current_scope_id(),
         );
-        if let Some((identifier, kind)) = path_resolution.unresolved_identifier(identifier_path) {
+        // The overrides of a virtual modifier are narrowed down below, but
+        // any other set of declarations names no single modifier.
+        let is_modifier_override_set = match &path_resolution.resolution {
+            Resolution::Ambiguous(definition_ids) => definition_ids.iter().all(|definition_id| {
+                matches!(
+                    self.binder.find_definition_by_id(*definition_id),
+                    Some(Definition::Modifier(_))
+                )
+            }),
+            _ => false,
+        };
+        if let Some((identifier, kind)) =
+            path_resolution.unresolved_identifier(identifier_path, is_modifier_override_set)
+        {
             self.push_diagnostic(identifier, kind);
         }
 
@@ -317,7 +330,9 @@ impl Pass<'_> {
         // A virtual modifier resolves to all of its overrides, most derived
         // first. Keep that one: which override runs is decided per compiled
         // contract, see `SemanticContext::resolve_modifier`.
-        if let Resolution::Ambiguous(definition_ids) = &path_resolution.resolution {
+        if is_modifier_override_set
+            && let Resolution::Ambiguous(definition_ids) = &path_resolution.resolution
+        {
             let name = identifier_path
                 .last()
                 .expect("an identifier path has at least one identifier");
