@@ -13,15 +13,15 @@ Diagnostics: 3
 [syntax/incompatible-syntax-version] Error: This syntax was introduced in version '0.8.4'.
     ╭─[input.sol:10:9]
     │
- 10 │         revert I.CustomEror();
-    │         ───────────┬──────────  
-    │                    ╰──────────── Error occurred here.
+ 10 │         revert I.MyError();
+    │         ─────────┬─────────  
+    │                  ╰─────────── Error occurred here.
 ────╯
 
-[resolution/member-not-found] Error: Member 'CustomEror' not found or not visible after argument-dependent lookup.
+[resolution/member-not-found] Error: Member 'MyError' not found or not visible after argument-dependent lookup.
     ╭─[input.sol:10:18]
     │
- 10 │         revert I.CustomEror();
-    │                  ─────┬────  
-    │                       ╰────── Error occurred here.
+ 10 │         revert I.MyError();
+    │                  ───┬───  
+    │                     ╰───── Error occurred here.
 ────╯

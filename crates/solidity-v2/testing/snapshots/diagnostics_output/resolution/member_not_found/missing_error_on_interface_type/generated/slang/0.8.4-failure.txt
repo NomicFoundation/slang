@@ -2,10 +2,10 @@
 
 Diagnostics: 1
 
-[resolution/member-not-found] Error: Member 'CustomEror' not found or not visible after argument-dependent lookup.
+[resolution/member-not-found] Error: Member 'MyError' not found or not visible after argument-dependent lookup.
     ╭─[input.sol:10:18]
     │
- 10 │         revert I.CustomEror();
-    │                  ─────┬────  
-    │                       ╰────── Error occurred here.
+ 10 │         revert I.MyError();
+    │                  ───┬───  
+    │                     ╰───── Error occurred here.
 ────╯

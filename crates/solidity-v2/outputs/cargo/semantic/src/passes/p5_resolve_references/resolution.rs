@@ -386,9 +386,11 @@ impl Pass<'_> {
     pub(super) fn check_identifier_path_resolves(&mut self, identifier_path: &ir::IdentifierPath) {
         let Some((index, identifier)) =
             identifier_path.iter().enumerate().find(|(_, identifier)| {
-                self.binder
+                let reference = self
+                    .binder
                     .find_reference_by_identifier_node_id(identifier.id())
-                    .is_some_and(|reference| matches!(reference.resolution, Resolution::Unresolved))
+                    .expect("a Reference exists for the identifier");
+                matches!(reference.resolution, Resolution::Unresolved)
             })
         else {
             return;

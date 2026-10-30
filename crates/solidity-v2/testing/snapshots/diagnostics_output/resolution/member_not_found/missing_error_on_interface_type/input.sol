@@ -7,6 +7,6 @@ interface I {
 
 contract C {
     function f() public pure {
-        revert I.CustomEror();
+        revert I.MyError();
     }
 }
