@@ -2280,6 +2280,46 @@ mod resolution {
         }
 
         #[test]
+        fn private_constant_via_own_contract_name() -> Result<()> {
+            run(
+                "resolution/member_not_found",
+                "private_constant_via_own_contract_name",
+            )
+        }
+
+        #[test]
+        fn private_function_via_base_contract_name() -> Result<()> {
+            run(
+                "resolution/member_not_found",
+                "private_function_via_base_contract_name",
+            )
+        }
+
+        #[test]
+        fn private_function_via_own_contract_name() -> Result<()> {
+            run(
+                "resolution/member_not_found",
+                "private_function_via_own_contract_name",
+            )
+        }
+
+        #[test]
+        fn private_function_via_own_library_name() -> Result<()> {
+            run(
+                "resolution/member_not_found",
+                "private_function_via_own_library_name",
+            )
+        }
+
+        #[test]
+        fn private_state_variable_via_base_contract_name() -> Result<()> {
+            run(
+                "resolution/member_not_found",
+                "private_state_variable_via_base_contract_name",
+            )
+        }
+
+        #[test]
         fn public_state_variable_of_unrelated_contract() -> Result<()> {
             run(
                 "resolution/member_not_found",
