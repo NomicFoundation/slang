@@ -109,6 +109,10 @@ fn resolve_path_in_scope(
         binder.insert_reference(reference);
 
         resolution = binder.follow_symbol_aliases(resolution);
+
+        // `is_reportable` stays true while the path components are resolved.
+        // Since `unresolved_index` is set above guarded by `is_reportable`,
+        // only the first unresolved component will be reported.
         is_reportable &= matches!(resolution, Resolution::Definition(_));
 
         // Change the resolution scope to be that of the last resolved
