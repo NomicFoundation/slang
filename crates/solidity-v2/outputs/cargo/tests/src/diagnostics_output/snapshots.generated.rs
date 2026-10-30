@@ -2426,6 +2426,16 @@ mod resolution {
         }
 
         #[test]
+        fn string_length() -> Result<()> {
+            run("resolution/member_not_found", "string_length")
+        }
+
+        #[test]
+        fn string_literal_length() -> Result<()> {
+            run("resolution/member_not_found", "string_literal_length")
+        }
+
+        #[test]
         fn unimplemented_function_via_super() -> Result<()> {
             run(
                 "resolution/member_not_found",

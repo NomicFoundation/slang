@@ -362,10 +362,8 @@ impl<'a> BuiltInsResolver<'a> {
                 .binder
                 .find_definition_by_id(*definition_id)
                 .and_then(|definition| Self::lookup_member_of_user_definition(definition, symbol)),
-            Type::String(_) => match symbol {
-                "length" => Some(InternalBuiltIn::Length),
-                _ => None,
-            },
+            // A string has no members: `bytes(s).length` reads its length.
+            Type::String(_) => None,
             Type::Struct(_) => None,
             Type::Tuple(_) => None,
             Type::UserDefinedValue(_) => None,
