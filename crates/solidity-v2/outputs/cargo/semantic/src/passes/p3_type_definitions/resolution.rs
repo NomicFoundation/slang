@@ -41,29 +41,37 @@ impl Pass<'_> {
     }
 
     /// Resolves an `IdentifierPath` in a type context starting at the current
-    /// lexical scope, and reports its first identifier that names nothing.
+    /// lexical scope, and reports its first identifier that does not name a
+    /// single declaration.
     pub(super) fn resolve_and_check_identifier_path_as_type(
         &mut self,
         identifier_path: &ir::IdentifierPath,
     ) {
         let path_resolution = self.resolve_identifier_path_as_type(identifier_path);
-        if let Some((identifier, kind)) = path_resolution.unresolved_identifier(identifier_path) {
+        if let Some((identifier, kind)) =
+            path_resolution.unresolved_identifier(identifier_path, false)
+        {
             self.push_diagnostic(identifier, kind);
         }
     }
 
     /// Resolves an `IdentifierPath` in an expression context starting at the
-    /// current lexical scope, and reports its first identifier that names nothing.
+    /// current lexical scope, and reports its first identifier that does not
+    /// name a single declaration. See [`PathResolution::unresolved_identifier`]
+    /// for `last_may_be_ambiguous`.
     pub(super) fn resolve_and_check_identifier_path_as_expression(
         &mut self,
         identifier_path: &ir::IdentifierPath,
+        last_may_be_ambiguous: bool,
     ) {
         let path_resolution = resolve_identifier_path_as_expression_in_scope(
             self.binder,
             identifier_path,
             self.current_scope_id(),
         );
-        if let Some((identifier, kind)) = path_resolution.unresolved_identifier(identifier_path) {
+        if let Some((identifier, kind)) =
+            path_resolution.unresolved_identifier(identifier_path, last_may_be_ambiguous)
+        {
             self.push_diagnostic(identifier, kind);
         }
     }

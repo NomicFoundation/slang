@@ -1,0 +1,21 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 2
+
+[Warning 8429] Warning: Virtual modifiers are deprecated and scheduled for removal.
+   ╭─[input.sol:5:5]
+   │
+ 5 │ ╭─▶     modifier m() virtual {
+   ┆ ┆   
+ 7 │ ├─▶     }
+   │ │           
+   │ ╰─────────── Warning occurred here.
+───╯
+
+[TypeError 7792] Error: Function has override specified but does not override anything.
+    ╭─[input.sol:16:25]
+    │
+ 16 │     function g() public override(m) {}
+    │                         ─────┬─────  
+    │                              ╰─────── Error occurred here.
+────╯

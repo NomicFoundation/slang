@@ -128,10 +128,114 @@ mod resolution {
         }
 
         #[test]
+        fn overloaded_function_as_base_contract() -> Result<()> {
+            run(
+                "resolution/ambiguous_reference",
+                "overloaded_function_as_base_contract",
+            )
+        }
+
+        #[test]
+        fn overloaded_function_as_modifier() -> Result<()> {
+            run(
+                "resolution/ambiguous_reference",
+                "overloaded_function_as_modifier",
+            )
+        }
+
+        #[test]
+        fn overloaded_function_as_revert_error() -> Result<()> {
+            run(
+                "resolution/ambiguous_reference",
+                "overloaded_function_as_revert_error",
+            )
+        }
+
+        #[test]
+        fn overloaded_function_as_type_name() -> Result<()> {
+            run(
+                "resolution/ambiguous_reference",
+                "overloaded_function_as_type_name",
+            )
+        }
+
+        #[test]
+        fn overloaded_function_as_type_qualifier() -> Result<()> {
+            run(
+                "resolution/ambiguous_reference",
+                "overloaded_function_as_type_qualifier",
+            )
+        }
+
+        #[test]
         fn overloaded_function_as_value() -> Result<()> {
             run(
                 "resolution/ambiguous_reference",
                 "overloaded_function_as_value",
+            )
+        }
+
+        #[test]
+        fn overloaded_function_in_emit_path() -> Result<()> {
+            run(
+                "resolution/ambiguous_reference",
+                "overloaded_function_in_emit_path",
+            )
+        }
+
+        #[test]
+        fn overloaded_function_in_modifier_path() -> Result<()> {
+            run(
+                "resolution/ambiguous_reference",
+                "overloaded_function_in_modifier_path",
+            )
+        }
+
+        #[test]
+        fn overloaded_function_in_override_path() -> Result<()> {
+            run(
+                "resolution/ambiguous_reference",
+                "overloaded_function_in_override_path",
+            )
+        }
+
+        #[test]
+        fn overloaded_function_in_revert_path() -> Result<()> {
+            run(
+                "resolution/ambiguous_reference",
+                "overloaded_function_in_revert_path",
+            )
+        }
+
+        #[test]
+        fn overridden_modifier_as_type_name() -> Result<()> {
+            run(
+                "resolution/ambiguous_reference",
+                "overridden_modifier_as_type_name",
+            )
+        }
+
+        #[test]
+        fn overridden_modifier_as_type_qualifier() -> Result<()> {
+            run(
+                "resolution/ambiguous_reference",
+                "overridden_modifier_as_type_qualifier",
+            )
+        }
+
+        #[test]
+        fn overridden_modifier_in_emit_path() -> Result<()> {
+            run(
+                "resolution/ambiguous_reference",
+                "overridden_modifier_in_emit_path",
+            )
+        }
+
+        #[test]
+        fn overridden_modifier_in_override_path() -> Result<()> {
+            run(
+                "resolution/ambiguous_reference",
+                "overridden_modifier_in_override_path",
             )
         }
 

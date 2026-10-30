@@ -3,7 +3,7 @@ use std::sync::Arc;
 
 use slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind;
 use slang_solidity_v2_common::diagnostics::kinds::resolution::{
-    IdentifierNotFound, MemberNotFound,
+    AmbiguousReference, IdentifierNotFound, MemberNotFound,
 };
 use slang_solidity_v2_common::diagnostics::kinds::semantic::OverridableKind;
 use slang_solidity_v2_common::nodes::NodeId;
@@ -12,37 +12,66 @@ use slang_solidity_v2_ir::ir;
 use crate::binder::{Binder, Definition, DefinitionIds, Reference, Resolution, ScopeId, Typing};
 use crate::types::{FunctionType, Type, TypeRegistry};
 
+/// The first identifier of an `IdentifierPath` that fails to resolve to a
+/// single declaration. The identifiers after it cannot resolve and are not
+/// considered.
+pub(crate) enum PathResolutionFailure {
+    /// Every identifier resolves to a single declaration (or a built-in).
+    None,
+    /// The identifier at this index resolves to nothing, or is reached
+    /// through an alias that leads nowhere.
+    Unresolved(usize),
+    /// The identifier at this index names an overload set, or the overrides
+    /// of a virtual modifier. A redeclaration also names several
+    /// declarations, but is reported on its own.
+    Ambiguous(usize),
+}
+
 /// The outcome of resolving an `IdentifierPath`.
 pub(crate) struct PathResolution {
     /// The resolution of the last identifier, with symbol aliases followed.
     pub(crate) resolution: Resolution,
-    /// The index of the first identifier that resolves to nothing, if any.
-    /// Once an identifier names several declarations (a redeclaration, which
-    /// is reported on its own, or an overload set), or an alias that does
-    /// not lead to a single declaration, the identifiers after it cannot
-    /// resolve and are not considered.
-    pub(crate) unresolved_index: Option<usize>,
+    pub(crate) failure: PathResolutionFailure,
 }
 
 impl PathResolution {
     /// The identifier that failed to resolve, with the diagnostic to report
-    /// for it: the head of the path is undeclared, and any later identifier
-    /// is a member that the preceding one does not provide.
+    /// for it: the head of the path is undeclared, any later identifier is a
+    /// member that the preceding one does not provide, and an identifier
+    /// naming several declarations is ambiguous. An ambiguous last identifier
+    /// is not reported when `last_may_be_ambiguous`, for the callers that
+    /// narrow it down later.
     pub(crate) fn unresolved_identifier<'a>(
         &self,
         identifier_path: &'a ir::IdentifierPath,
+        last_may_be_ambiguous: bool,
     ) -> Option<(&'a ir::Identifier, DiagnosticKind)> {
-        let index = self.unresolved_index?;
-        let identifier = &identifier_path[index];
-        let kind = if index == 0 {
-            IdentifierNotFound.into()
-        } else {
-            MemberNotFound {
-                name: identifier.unparse().to_owned(),
+        match self.failure {
+            PathResolutionFailure::None => None,
+            PathResolutionFailure::Unresolved(index) => {
+                let identifier = &identifier_path[index];
+                let kind = if index == 0 {
+                    IdentifierNotFound.into()
+                } else {
+                    MemberNotFound {
+                        name: identifier.unparse().to_owned(),
+                    }
+                    .into()
+                };
+                Some((identifier, kind))
             }
-            .into()
-        };
-        Some((identifier, kind))
+            PathResolutionFailure::Ambiguous(index) => {
+                if last_may_be_ambiguous && index == identifier_path.len() - 1 {
+                    return None;
+                }
+                let identifier = &identifier_path[index];
+                let kind = AmbiguousReference {
+                    name: identifier.unparse().to_owned(),
+                }
+                .into();
+                Some((identifier, kind))
+            }
+        }
     }
 }
 
@@ -86,7 +115,7 @@ fn resolve_path_in_scope(
 ) -> PathResolution {
     let mut scope_id = Some(starting_scope_id);
     let mut resolution = Resolution::Unresolved;
-    let mut unresolved_index = None;
+    let mut failure = PathResolutionFailure::None;
     let mut is_reportable = true;
 
     for (index, identifier) in identifier_path.iter().enumerate() {
@@ -101,19 +130,27 @@ fn resolve_path_in_scope(
         } else {
             Resolution::Unresolved
         };
-        if is_reportable && matches!(resolution, Resolution::Unresolved) {
-            unresolved_index = Some(index);
-        }
+        let is_unresolved = matches!(resolution, Resolution::Unresolved);
 
         let reference = Reference::new(Arc::clone(identifier), resolution.clone());
         binder.insert_reference(reference);
 
         resolution = binder.follow_symbol_aliases(resolution);
 
-        // `is_reportable` stays true while the path components are resolved.
-        // Since `unresolved_index` is set above guarded by `is_reportable`,
-        // only the first unresolved component will be reported.
-        is_reportable &= matches!(resolution, Resolution::Definition(_));
+        // Only the first identifier not resolving to a single declaration is
+        // reported. An alias leading nowhere is reported where it is
+        // imported, so ambiguity is judged after following aliases but
+        // unresolution before.
+        if is_reportable {
+            if is_unresolved {
+                failure = PathResolutionFailure::Unresolved(index);
+            } else if let Resolution::Ambiguous(definition_ids) = &resolution
+                && is_overload_or_override_set(binder, definition_ids)
+            {
+                failure = PathResolutionFailure::Ambiguous(index);
+            }
+            is_reportable &= matches!(resolution, Resolution::Definition(_));
+        }
 
         // Change the resolution scope to be that of the last resolved
         // definition, so we can resolve the next identifier in the path.
@@ -123,8 +160,20 @@ fn resolve_path_in_scope(
     }
     PathResolution {
         resolution,
-        unresolved_index,
+        failure,
     }
+}
+
+/// Whether the declarations sharing a name are overloads or overrides of each
+/// other, rather than a redeclaration. Only functions and events can be
+/// overloaded, and modifiers resolve to all of their overrides.
+fn is_overload_or_override_set(binder: &Binder, definition_ids: &[NodeId]) -> bool {
+    definition_ids.iter().all(|definition_id| {
+        matches!(
+            binder.find_definition_by_id(*definition_id),
+            Some(Definition::Function(_) | Definition::Event(_) | Definition::Modifier(_))
+        )
+    })
 }
 
 /// When a symbol resolves to an ambiguous set of Solidity functions
