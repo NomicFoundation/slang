@@ -1,0 +1,8 @@
+{
+  "expected_solc_divergence": [
+    {
+      "specifier": { "type": "Till", "till": "0.8.1" },
+      "reason": "The pragma lexer splits 'solidity0' into the 'solidity' keyword and a version component, so slang reads the directive as 'pragma solidity 0.8.0;', which only matches 0.8.0. solc reports it as an unknown pragma."
+    }
+  ]
+}
