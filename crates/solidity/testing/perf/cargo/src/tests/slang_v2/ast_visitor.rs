@@ -1,52 +1,35 @@
-use std::sync::Arc;
+use slang_solidity_v2::ast::Identifier;
+use slang_solidity_v2::ast::visitor::{Visitor, accept_source_unit};
+use slang_solidity_v2::compilation::CompilationUnit;
 
-use slang_solidity_v2_ast::ast::visitor::{Visitor, accept_source_unit};
-use slang_solidity_v2_ast::ast::{self, Identifier};
-use slang_solidity_v2_semantic::context::{SemanticContext, SemanticFile};
-
-use super::semantic::File;
-
-pub struct Input {
-    pub(crate) files: Vec<File>,
-    pub(crate) semantic: Arc<SemanticContext>,
-}
+pub type Input = CompilationUnit;
 
 #[allow(unused)]
 pub struct Output {
-    pub(crate) files: Vec<File>,
-    pub(crate) semantic: Arc<SemanticContext>,
+    pub(crate) unit: CompilationUnit,
     pub(crate) identifier_count: usize,
 }
 
 pub fn setup(project: &str) -> Input {
-    let semantic_input = super::semantic::setup(project);
-    let files = semantic_input.files.clone();
-    let semantic_output = super::semantic::test(semantic_input);
-
-    Input {
-        files,
-        semantic: Arc::new(semantic_output),
-    }
+    super::full_compilation::test(super::full_compilation::setup(project))
 }
 
 // Kept out of line: if inlined into the gungraun wrapper, Callgrind mistakes returns into
 // the wrapper for fresh entries, and toggles collection off mid-run.
 #[inline(never)]
-pub fn run(input: Input) -> Output {
-    test(input)
+pub fn run(unit: Input) -> Output {
+    test(unit)
 }
 
-pub fn test(input: Input) -> Output {
+pub fn test(unit: Input) -> Output {
     let mut walk = NodeWalk::default();
 
-    for file in &input.files {
-        let source_unit = ast::create_source_unit(file.ir_root(), &input.semantic);
-        accept_source_unit(&source_unit, &mut walk);
+    for file in unit.files() {
+        accept_source_unit(&file.ast(), &mut walk);
     }
 
     Output {
-        files: input.files,
-        semantic: input.semantic,
+        unit,
         identifier_count: walk.identifier_count,
     }
 }

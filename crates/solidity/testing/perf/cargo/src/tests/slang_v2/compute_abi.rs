@@ -1,51 +1,37 @@
-use std::sync::Arc;
+use slang_solidity_v2::compilation::CompilationUnit;
 
-use slang_solidity_v2_ast::ast;
-use slang_solidity_v2_semantic::context::{SemanticContext, SemanticFile};
+pub type Input = CompilationUnit;
 
-use super::semantic::File;
-
-pub struct Input {
-    pub(crate) files: Vec<File>,
-    pub(crate) semantic: Arc<SemanticContext>,
-}
-
+#[allow(unused)]
 pub struct Output {
-    pub(crate) json: Vec<String>,
+    pub(crate) unit: CompilationUnit,
+    pub(crate) abi_json: Vec<String>,
 }
 
 pub fn setup(project: &str) -> Input {
-    let semantic_input = super::semantic::setup(project);
-    let files = semantic_input.files.clone();
-    let semantic_output = super::semantic::test(semantic_input);
-    Input {
-        files,
-        semantic: Arc::new(semantic_output),
-    }
+    super::full_compilation::test(super::full_compilation::setup(project))
 }
 
 // Kept out of line: if inlined into the gungraun wrapper, Callgrind mistakes returns into
 // the wrapper for fresh entries, and toggles collection off mid-run.
 #[inline(never)]
-pub fn run(input: Input) -> Output {
-    test(input)
+pub fn run(unit: Input) -> Output {
+    test(unit)
 }
 
 /// Computes the ABI of every contract, interface, and library, and renders it as JSON.
-pub fn test(input: Input) -> Output {
-    let json = input
-        .files
+pub fn test(unit: Input) -> Output {
+    let abi_json = unit
+        .compute_abi()
         .iter()
-        .map(|file| ast::create_source_unit(file.ir_root(), &input.semantic))
-        .flat_map(|source_unit| source_unit.compute_abi())
-        .map(|abi| serde_json::to_string(&abi).expect("the ABI serializes"))
+        .map(|abi| serde_json::to_string(abi).expect("the ABI serializes"))
         .collect();
 
-    Output { json }
+    Output { unit, abi_json }
 }
 
 // Definitions whose ABI cannot be computed are skipped, so comparing this to the
 // number of contracts, interfaces, and libraries detects any silently dropped.
 pub fn count_abis(output: &Output) -> usize {
-    output.json.len()
+    output.abi_json.len()
 }
