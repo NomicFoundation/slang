@@ -71,6 +71,10 @@ fn render_message(
     let source = sources.get(&source_id).unwrap();
 
     let range = {
+        // `solc` reports byte offset by pointing only at the first byte of multi-byte characters, this
+        // widens the range to include the whole character.
+        let start = source.floor_char_boundary(start);
+        let end = source.ceil_char_boundary(end);
         let start_chars = source[..start].chars().count();
         let end_chars = start_chars + source[start..end].chars().count();
 
