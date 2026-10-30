@@ -1,8 +1,0 @@
-{
-  "expected_solc_divergence": [
-    {
-      "specifier": { "type": "From", "from": "0.8.0" },
-      "reason": "The pragma lexer splits 'abicoderv2' into the 'abicoder' and 'v2' keywords, so slang accepts the directive as 'pragma abicoder v2;'. solc reports it as an unknown pragma."
-    }
-  ]
-}

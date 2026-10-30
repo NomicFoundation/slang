@@ -5676,6 +5676,7 @@ pub slang_solidity_v2_common::terminals::TerminalKind::PragmaCaret
 pub slang_solidity_v2_common::terminals::TerminalKind::PragmaEqual
 pub slang_solidity_v2_common::terminals::TerminalKind::PragmaGreaterThan
 pub slang_solidity_v2_common::terminals::TerminalKind::PragmaGreaterThanEqual
+pub slang_solidity_v2_common::terminals::TerminalKind::PragmaIdentifier
 pub slang_solidity_v2_common::terminals::TerminalKind::PragmaKeyword
 pub slang_solidity_v2_common::terminals::TerminalKind::PragmaLessThan
 pub slang_solidity_v2_common::terminals::TerminalKind::PragmaLessThanEqual

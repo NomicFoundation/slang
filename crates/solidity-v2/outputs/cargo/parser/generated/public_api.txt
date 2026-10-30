@@ -135,6 +135,7 @@ pub slang_solidity_v2_parser::LexemeKind::PragmaEndOfLine
 pub slang_solidity_v2_parser::LexemeKind::PragmaEqual
 pub slang_solidity_v2_parser::LexemeKind::PragmaGreaterThan
 pub slang_solidity_v2_parser::LexemeKind::PragmaGreaterThanEqual
+pub slang_solidity_v2_parser::LexemeKind::PragmaIdentifier
 pub slang_solidity_v2_parser::LexemeKind::PragmaKeyword_Reserved
 pub slang_solidity_v2_parser::LexemeKind::PragmaLessThan
 pub slang_solidity_v2_parser::LexemeKind::PragmaLessThanEqual

@@ -5881,6 +5881,15 @@ pub fn new_pragma_greater_than_equal(range: Range<usize>, _source: &str) -> Prag
 }
 
 #[derive(Debug, PartialEq)]
+pub struct PragmaIdentifier {
+    pub range: Range<usize>,
+}
+
+pub fn new_pragma_identifier(range: Range<usize>, _source: &str) -> PragmaIdentifier {
+    PragmaIdentifier { range }
+}
+
+#[derive(Debug, PartialEq)]
 pub struct PragmaKeyword {
     pub range: Range<usize>,
 }
