@@ -19,8 +19,9 @@ mod unit_tests {
     // Sum of the contracts, interfaces, and libraries in all of the files of the project.
     const CONTRACT_COUNT: usize = 25;
     // Subset of `CONTRACT_COUNT` made up of `contract` definitions that have a storage layout.
+    // This includes both regular and transient storage layouts.
     // Interfaces and libraries are excluded.
-    const STORAGE_LAYOUT_COUNT: usize = 2;
+    const STORAGE_LAYOUT_COUNT: usize = 4;
     // Sum of the identifiers in the project.
     const IDENTIFIER_COUNT: usize = 2829;
     // Sum of the references resolved by the binder.

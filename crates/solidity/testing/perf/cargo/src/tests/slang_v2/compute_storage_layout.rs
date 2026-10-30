@@ -6,6 +6,7 @@ pub type Input = CompilationUnit;
 pub struct Output {
     pub(crate) unit: CompilationUnit,
     pub(crate) storage_layout_json: Vec<String>,
+    pub(crate) transient_storage_layout_json: Vec<String>,
 }
 
 pub fn setup(project: &str) -> Input {
@@ -27,14 +28,21 @@ pub fn test(unit: Input) -> Output {
         .map(|layout| serde_json::to_string(&layout).expect("the storage layout serializes"))
         .collect();
 
+    let transient_storage_layout_json = unit
+        .all_contracts()
+        .filter_map(|contract| contract.compute_transient_storage_layout())
+        .map(|layout| serde_json::to_string(&layout).expect("the storage layout serializes"))
+        .collect();
+
     Output {
         unit,
         storage_layout_json,
+        transient_storage_layout_json,
     }
 }
 
 // Contracts whose storage layout cannot be computed are skipped, so comparing this to the
 // number of contracts detects any silently dropped.
 pub fn count_storage_layouts(output: &Output) -> usize {
-    output.storage_layout_json.len()
+    output.storage_layout_json.len() + output.transient_storage_layout_json.len()
 }
