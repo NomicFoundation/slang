@@ -4862,6 +4862,21 @@ mod syntax {
         }
 
         #[test]
+        fn glued_abicoder_keyword() -> Result<()> {
+            run("syntax/unexpected_terminal", "glued_abicoder_keyword")
+        }
+
+        #[test]
+        fn glued_experimental_keyword() -> Result<()> {
+            run("syntax/unexpected_terminal", "glued_experimental_keyword")
+        }
+
+        #[test]
+        fn glued_solidity_keyword() -> Result<()> {
+            run("syntax/unexpected_terminal", "glued_solidity_keyword")
+        }
+
+        #[test]
         fn in_expression() -> Result<()> {
             run("syntax/unexpected_terminal", "in_expression")
         }
@@ -4977,6 +4992,11 @@ mod syntax {
         #[test]
         fn escaped_string_literal() -> Result<()> {
             run("syntax/version_pragma", "escaped_string_literal")
+        }
+
+        #[test]
+        fn keyword_without_whitespace() -> Result<()> {
+            run("syntax/version_pragma", "keyword_without_whitespace")
         }
 
         #[test]
