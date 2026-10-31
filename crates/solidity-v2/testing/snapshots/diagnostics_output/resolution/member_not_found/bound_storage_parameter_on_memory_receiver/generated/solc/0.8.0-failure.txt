@@ -1,0 +1,11 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 1
+
+[TypeError 4994] Error: Member "f" is not available in uint256[] memory outside of storage.
+    ╭─[input.sol:14:9]
+    │
+ 14 │         x.f();
+    │         ─┬─  
+    │          ╰─── Error occurred here.
+────╯
