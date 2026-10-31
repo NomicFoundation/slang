@@ -38,6 +38,12 @@ testbeds_uuid=$(get_testbeds)
 benchmarks_uuid=$(get_benchmarks)
 measure_uuid=$(get_measure)
 
+# `bencher plot create` requires at least one benchmark.
+if [[ -z "${benchmarks_uuid}" ]]; then
+  echo "No benchmarks matching '${benchmarks}' in ${project}. Skipping."
+  exit 0
+fi
+
 set -xe
 
 # benchmarks_uuid is a list of options, so it shouldn't be quoted.
