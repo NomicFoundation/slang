@@ -1,51 +1,55 @@
 #!/bin/bash
 
-# plot-npm.sh: creates a plot in the given bencher project for comparing with npm libraries.
+# plot-npm.sh: creates one plot per project/file in projects.json, in the given bencher project, for comparing with
+# npm libraries.
 #
 # In essence, it helps to pick the right benchmarks, and solves the internal uuids use by bencher from the slug name
-# of every part of it.
+# of every part of it. Plots use the `main` branch and the `ci` testbed.
 #
-# usage: plot-npm.sh project branches testbeds benchmarks title
+# usage: plot-npm.sh project
 #
-# Example of usage to build plots in batch using the projects.json file:
-# $  jq "[.projects,.files] | add | map(.name) | .[]" crates/solidity/testing/perf/projects.json | xargs -L1 -I{} bash ./scripts/bencher/plot-npm.sh slang-dashboard-npm main ci {} "{}"
+# Example:
+# $  ./scripts/bencher/plot-npm.sh slang-dashboard-npm
 
 set -e
 shopt -s inherit_errexit
 
-project=$1
-branches=$2
-testbeds=$3
-benchmarks=$4
-title=$5
-measure="Duration"
-
-if [[ $# -ne 5 ]]; then
-  echo "Usage: plot-npm.sh project branches testbed benchmarks title"
+if [[ $# -ne 1 ]]; then
+  echo "Usage: plot-npm.sh project"
   exit 1
 fi
+
+project=$1
 
 source "$(dirname "$0")/_common.sh"
 
 function get_benchmarks() {
-  details=$(bencher benchmark list --search "${benchmarks}" --per-page 255 "${project}")
+  local search=$1
+  details=$(bencher benchmark list --search "${search}" --per-page 255 "${project}")
   # filter to let only the relevant benchmarks, leaving slang's parse_all_files and total
   echo "${details}" | jq -r '. - map(select(.name | contains("resolve_all_bindings"))) - map(select(.name | contains("init_bindings"))) | map("--benchmarks " + .uuid) | join(" ")'
 }
 
-branches_uuid=$(get_branches)
-testbeds_uuid=$(get_testbeds)
-benchmarks_uuid=$(get_benchmarks)
-measure_uuid=$(get_measure)
+branch_uuid=$(get_uuid branch main)
+testbed_uuid=$(get_uuid testbed ci)
+measure_uuid=$(get_uuid measure Duration)
 
-# `bencher plot create` requires at least one benchmark.
-if [[ -z "${benchmarks_uuid}" ]]; then
-  echo "No benchmarks matching '${benchmarks}' in ${project}. Skipping."
-  exit 0
-fi
+project_names=$(get_project_names)
+mapfile -t names <<< "${project_names}"
 
-set -xe
+for name in "${names[@]}"; do
+  benchmarks_uuid=$(get_benchmarks "${name}")
 
-# benchmarks_uuid is a list of options, so it shouldn't be quoted.
-# shellcheck disable=SC2086,SC2250
-bencher plot create ${branches_uuid} --measures "${measure_uuid}" ${testbeds_uuid} --x-axis date_time --window 2419200 $benchmarks_uuid --title "${title}" "${project}"
+  # `bencher plot create` requires at least one benchmark.
+  if [[ -z "${benchmarks_uuid}" ]]; then
+    echo "No benchmarks matching '${name}' in ${project}. Skipping."
+    continue
+  fi
+
+  # benchmarks_uuid is a list of options, so it shouldn't be quoted.
+  # shellcheck disable=SC2086,SC2250
+  (
+    set -x
+    bencher plot create --branches "${branch_uuid}" --measures "${measure_uuid}" --testbeds "${testbed_uuid}" --x-axis date_time --window 2419200 $benchmarks_uuid --title "${name}" "${project}"
+  )
+done

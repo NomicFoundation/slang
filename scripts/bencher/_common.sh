@@ -3,41 +3,16 @@
 # Common functions to obtain uuids from names in Bencher
 # They expect the $project variable to be set with the name of the bencher project
 
-# Returns the uuids of a given a list of git branches listed in the $branches variable
-function get_branches() {
-  local uuid_list=()
-  IFS=',' read -ra branches <<< "${branches}"
-  for branch in "${branches[@]}"; do
-    # shellcheck disable=SC2154
-    details=$(bencher branch list "${project}" --name "${branch}")
-    uuid=$(echo "${details}" | jq -r ".[].uuid")
-    uuid_list+=("--branches ${uuid}")
-  done
-  (
-    IFS=' '
-    echo "${uuid_list[*]}"
-  )
-}
-
-# Returns the uuids of a given a list of testbeds listed in the $testbeds variable
-function get_testbeds() {
-  local uuid_list=()
-  IFS=',' read -ra testbeds <<< "${testbeds}"
-  for testbed in "${testbeds[@]}"; do
-    # shellcheck disable=SC2154
-    details=$(bencher testbed list "${project}" --name "${testbed}")
-    uuid=$(echo "${details}" | jq -r ".[].uuid")
-    uuid_list+=("--testbeds ${uuid}")
-  done
-  (
-    IFS=' '
-    echo "${uuid_list[*]}"
-  )
-}
-
-# Returns the uuid of a given $measure
-function get_measure() {
+# Returns the uuid of the given branch/testbed/measure: get_uuid kind name
+function get_uuid() {
+  local kind=$1
+  local name=$2
   # shellcheck disable=SC2154
-  details=$(bencher measure list "${project}" --name "${measure}")
+  details=$(bencher "${kind}" list "${project}" --name "${name}")
   echo "${details}" | jq -r ".[].uuid"
+}
+
+# Returns the names of all projects and files benchmarked in projects.json
+function get_project_names() {
+  jq -r "[.projects, .files] | add | map(.name) | .[]" "$(dirname "${BASH_SOURCE[0]}")/../../crates/solidity/testing/perf/projects.json"
 }
