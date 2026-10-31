@@ -14,18 +14,18 @@ use crate::tests::support::{compile, file_with_empty_contract};
 fn parallel_access_via_arc_consistent_with_serial_baseline() {
     const EXPECTED_DEFINITIONS: usize = 22;
     const EXPECTED_REFERENCES: usize = 48;
-    const EXPECTED_CONTRACT_ABIS: usize = 1;
+    const EXPECTED_ABIS: usize = 3;
 
     let unit = fixtures::Counter::build_compilation_unit();
 
     let serial_definitions = unit.all_definitions().count();
     let serial_references = unit.all_references().count();
-    let serial_contract_abis = unit.compute_contracts_abi().len();
+    let serial_abis = unit.compute_abi().len();
     let serial_file_ids: Vec<_> = unit.files().map(|f| f.id().clone()).collect();
 
     assert_eq!(serial_definitions, EXPECTED_DEFINITIONS);
     assert_eq!(serial_references, EXPECTED_REFERENCES);
-    assert_eq!(serial_contract_abis, EXPECTED_CONTRACT_ABIS);
+    assert_eq!(serial_abis, EXPECTED_ABIS);
 
     let worker_count = 8;
     let handles: Vec<_> = (0..worker_count)
@@ -37,7 +37,7 @@ fn parallel_access_via_arc_consistent_with_serial_baseline() {
                 // Exercise iterator-returning methods.
                 let definitions = unit.all_definitions().count();
                 let references = unit.all_references().count();
-                let contract_abis = unit.compute_contracts_abi();
+                let abis = unit.compute_abi();
 
                 assert_eq!(
                     definitions, EXPECTED_DEFINITIONS,
@@ -48,9 +48,9 @@ fn parallel_access_via_arc_consistent_with_serial_baseline() {
                     "worker {worker_id} reference count diverged"
                 );
                 assert_eq!(
-                    contract_abis.len(),
-                    EXPECTED_CONTRACT_ABIS,
-                    "worker {worker_id} contract ABI count diverged"
+                    abis.len(),
+                    EXPECTED_ABIS,
+                    "worker {worker_id} ABI count diverged"
                 );
 
                 // Walk the AST root for every file and exercise some accessors

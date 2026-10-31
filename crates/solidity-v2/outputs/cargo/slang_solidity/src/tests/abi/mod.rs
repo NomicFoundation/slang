@@ -48,7 +48,7 @@ interface ITest {
     event BaseEvent(uint a, string m) anonymous;
 }
 
-contract Base {
+abstract contract Base {
     uint[] public xs;
     bool a;
 }
@@ -61,6 +61,10 @@ contract Test is ITest, Base {
     function foo(uint a) public { emit Event(a, b); }
     receive() external payable { }
     fallback() external { }
+}
+
+library Lib {
+    function version() external pure returns (uint) { return 1; }
 }
 "#,
 );

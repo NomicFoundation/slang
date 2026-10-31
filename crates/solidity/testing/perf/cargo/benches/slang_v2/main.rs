@@ -9,7 +9,7 @@ use solidity_testing_perf_cargo::tests;
 // `parser_setup("uniswap")` instead of `tests :: slang_v2 :: parser :: setup("uniswap")`.
 use tests::slang_v2::ast_analysis::setup as ast_analysis_setup;
 use tests::slang_v2::ast_visitor::setup as ast_visitor_setup;
-use tests::slang_v2::compute_contracts_abi::setup as compute_contracts_abi_setup;
+use tests::slang_v2::compute_abi::setup as compute_abi_setup;
 use tests::slang_v2::infer_language_versions::setup as infer_language_versions_setup;
 use tests::slang_v2::ir_builder::setup as ir_builder_setup;
 use tests::slang_v2::parser::setup as parser_setup;
@@ -27,7 +27,6 @@ mod __dependencies_used_in_lib__ {
     use serde_json as _;
     use slang_solidity as _;
     use slang_solidity_v2 as _;
-    use slang_solidity_v2_ast as _;
     use slang_solidity_v2_common as _;
     use slang_solidity_v2_cst as _;
     use slang_solidity_v2_ir as _;
@@ -118,11 +117,11 @@ bench_projects! {
 }
 
 bench_projects! {
-    #[library_benchmark(setup = compute_contracts_abi_setup)]
-    fn compute_contracts_abi(
-        input: tests::slang_v2::compute_contracts_abi::Input,
-    ) -> tests::slang_v2::compute_contracts_abi::Output {
-        black_box(tests::slang_v2::compute_contracts_abi::run(
+    #[library_benchmark(setup = compute_abi_setup)]
+    fn compute_abi(
+        input: tests::slang_v2::compute_abi::Input,
+    ) -> tests::slang_v2::compute_abi::Output {
+        black_box(tests::slang_v2::compute_abi::run(
             black_box(input),
         ))
     }
@@ -153,7 +152,7 @@ bench_projects! {
 library_benchmark_group!(
     name = pipeline;
     // __SLANG_V2_INFRA_BENCHMARKS_LIST__ (keep in sync)
-    benchmarks = parser, ir_builder, semantic, compute_contracts_abi, ast_visitor, ast_analysis, infer_language_versions,
+    benchmarks = parser, ir_builder, semantic, compute_abi, ast_visitor, ast_analysis, infer_language_versions,
 );
 
 main!(
