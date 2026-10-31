@@ -128,10 +128,114 @@ mod resolution {
         }
 
         #[test]
+        fn overloaded_function_as_base_contract() -> Result<()> {
+            run(
+                "resolution/ambiguous_reference",
+                "overloaded_function_as_base_contract",
+            )
+        }
+
+        #[test]
+        fn overloaded_function_as_modifier() -> Result<()> {
+            run(
+                "resolution/ambiguous_reference",
+                "overloaded_function_as_modifier",
+            )
+        }
+
+        #[test]
+        fn overloaded_function_as_revert_error() -> Result<()> {
+            run(
+                "resolution/ambiguous_reference",
+                "overloaded_function_as_revert_error",
+            )
+        }
+
+        #[test]
+        fn overloaded_function_as_type_name() -> Result<()> {
+            run(
+                "resolution/ambiguous_reference",
+                "overloaded_function_as_type_name",
+            )
+        }
+
+        #[test]
+        fn overloaded_function_as_type_qualifier() -> Result<()> {
+            run(
+                "resolution/ambiguous_reference",
+                "overloaded_function_as_type_qualifier",
+            )
+        }
+
+        #[test]
         fn overloaded_function_as_value() -> Result<()> {
             run(
                 "resolution/ambiguous_reference",
                 "overloaded_function_as_value",
+            )
+        }
+
+        #[test]
+        fn overloaded_function_in_emit_path() -> Result<()> {
+            run(
+                "resolution/ambiguous_reference",
+                "overloaded_function_in_emit_path",
+            )
+        }
+
+        #[test]
+        fn overloaded_function_in_modifier_path() -> Result<()> {
+            run(
+                "resolution/ambiguous_reference",
+                "overloaded_function_in_modifier_path",
+            )
+        }
+
+        #[test]
+        fn overloaded_function_in_override_path() -> Result<()> {
+            run(
+                "resolution/ambiguous_reference",
+                "overloaded_function_in_override_path",
+            )
+        }
+
+        #[test]
+        fn overloaded_function_in_revert_path() -> Result<()> {
+            run(
+                "resolution/ambiguous_reference",
+                "overloaded_function_in_revert_path",
+            )
+        }
+
+        #[test]
+        fn overridden_modifier_as_type_name() -> Result<()> {
+            run(
+                "resolution/ambiguous_reference",
+                "overridden_modifier_as_type_name",
+            )
+        }
+
+        #[test]
+        fn overridden_modifier_as_type_qualifier() -> Result<()> {
+            run(
+                "resolution/ambiguous_reference",
+                "overridden_modifier_as_type_qualifier",
+            )
+        }
+
+        #[test]
+        fn overridden_modifier_in_emit_path() -> Result<()> {
+            run(
+                "resolution/ambiguous_reference",
+                "overridden_modifier_in_emit_path",
+            )
+        }
+
+        #[test]
+        fn overridden_modifier_in_override_path() -> Result<()> {
+            run(
+                "resolution/ambiguous_reference",
+                "overridden_modifier_in_override_path",
             )
         }
 
@@ -712,8 +816,50 @@ mod resolution {
         }
 
         #[test]
+        fn qualified_type_missing_head() -> Result<()> {
+            run(
+                "resolution/identifier_not_found",
+                "qualified_type_missing_head",
+            )
+        }
+
+        #[test]
+        fn redeclared_member_type() -> Result<()> {
+            run("resolution/identifier_not_found", "redeclared_member_type")
+        }
+
+        #[test]
+        fn redeclared_type() -> Result<()> {
+            run("resolution/identifier_not_found", "redeclared_type")
+        }
+
+        #[test]
+        fn redeclared_type_as_qualifier() -> Result<()> {
+            run(
+                "resolution/identifier_not_found",
+                "redeclared_type_as_qualifier",
+            )
+        }
+
+        #[test]
+        fn redeclared_type_in_emit_path() -> Result<()> {
+            run(
+                "resolution/identifier_not_found",
+                "redeclared_type_in_emit_path",
+            )
+        }
+
+        #[test]
         fn removed_log_built_in() -> Result<()> {
             run("resolution/identifier_not_found", "removed_log_built_in")
+        }
+
+        #[test]
+        fn struct_of_another_contract_without_qualifier() -> Result<()> {
+            run(
+                "resolution/identifier_not_found",
+                "struct_of_another_contract_without_qualifier",
+            )
         }
 
         #[test]
@@ -741,6 +887,14 @@ mod resolution {
             run(
                 "resolution/identifier_not_found",
                 "undeclared_abi_decode_type",
+            )
+        }
+
+        #[test]
+        fn undeclared_array_base_type() -> Result<()> {
+            run(
+                "resolution/identifier_not_found",
+                "undeclared_array_base_type",
             )
         }
 
@@ -782,6 +936,22 @@ mod resolution {
         }
 
         #[test]
+        fn undeclared_base_in_constructor() -> Result<()> {
+            run(
+                "resolution/identifier_not_found",
+                "undeclared_base_in_constructor",
+            )
+        }
+
+        #[test]
+        fn undeclared_catch_parameter_type() -> Result<()> {
+            run(
+                "resolution/identifier_not_found",
+                "undeclared_catch_parameter_type",
+            )
+        }
+
+        #[test]
         fn undeclared_constant_value() -> Result<()> {
             run(
                 "resolution/identifier_not_found",
@@ -795,8 +965,24 @@ mod resolution {
         }
 
         #[test]
+        fn undeclared_error_parameter_type() -> Result<()> {
+            run(
+                "resolution/identifier_not_found",
+                "undeclared_error_parameter_type",
+            )
+        }
+
+        #[test]
         fn undeclared_event() -> Result<()> {
             run("resolution/identifier_not_found", "undeclared_event")
+        }
+
+        #[test]
+        fn undeclared_event_parameter_type() -> Result<()> {
+            run(
+                "resolution/identifier_not_found",
+                "undeclared_event_parameter_type",
+            )
         }
 
         #[test]
@@ -816,10 +1002,42 @@ mod resolution {
         }
 
         #[test]
+        fn undeclared_function_type_parameter() -> Result<()> {
+            run(
+                "resolution/identifier_not_found",
+                "undeclared_function_type_parameter",
+            )
+        }
+
+        #[test]
         fn undeclared_in_free_function() -> Result<()> {
             run(
                 "resolution/identifier_not_found",
                 "undeclared_in_free_function",
+            )
+        }
+
+        #[test]
+        fn undeclared_local_variable_type() -> Result<()> {
+            run(
+                "resolution/identifier_not_found",
+                "undeclared_local_variable_type",
+            )
+        }
+
+        #[test]
+        fn undeclared_mapping_key_type() -> Result<()> {
+            run(
+                "resolution/identifier_not_found",
+                "undeclared_mapping_key_type",
+            )
+        }
+
+        #[test]
+        fn undeclared_mapping_value_type() -> Result<()> {
+            run(
+                "resolution/identifier_not_found",
+                "undeclared_mapping_value_type",
             )
         }
 
@@ -829,6 +1047,11 @@ mod resolution {
                 "resolution/identifier_not_found",
                 "undeclared_member_access_operand",
             )
+        }
+
+        #[test]
+        fn undeclared_modifier() -> Result<()> {
+            run("resolution/identifier_not_found", "undeclared_modifier")
         }
 
         #[test]
@@ -856,6 +1079,59 @@ mod resolution {
         }
 
         #[test]
+        fn undeclared_new_array_type() -> Result<()> {
+            run(
+                "resolution/identifier_not_found",
+                "undeclared_new_array_type",
+            )
+        }
+
+        #[test]
+        fn undeclared_new_expression_type() -> Result<()> {
+            run(
+                "resolution/identifier_not_found",
+                "undeclared_new_expression_type",
+            )
+        }
+
+        #[test]
+        fn undeclared_override_base() -> Result<()> {
+            run(
+                "resolution/identifier_not_found",
+                "undeclared_override_base",
+            )
+        }
+
+        #[test]
+        fn undeclared_override_base_among_others() -> Result<()> {
+            run(
+                "resolution/identifier_not_found",
+                "undeclared_override_base_among_others",
+            )
+        }
+
+        #[test]
+        fn undeclared_parameter_type() -> Result<()> {
+            run(
+                "resolution/identifier_not_found",
+                "undeclared_parameter_type",
+            )
+        }
+
+        #[test]
+        fn undeclared_return_type() -> Result<()> {
+            run("resolution/identifier_not_found", "undeclared_return_type")
+        }
+
+        #[test]
+        fn undeclared_state_variable_type() -> Result<()> {
+            run(
+                "resolution/identifier_not_found",
+                "undeclared_state_variable_type",
+            )
+        }
+
+        #[test]
         fn undeclared_storage_layout_base() -> Result<()> {
             run(
                 "resolution/identifier_not_found",
@@ -864,10 +1140,34 @@ mod resolution {
         }
 
         #[test]
+        fn undeclared_struct_member_type() -> Result<()> {
+            run(
+                "resolution/identifier_not_found",
+                "undeclared_struct_member_type",
+            )
+        }
+
+        #[test]
         fn undeclared_try_call_target() -> Result<()> {
             run(
                 "resolution/identifier_not_found",
                 "undeclared_try_call_target",
+            )
+        }
+
+        #[test]
+        fn undeclared_type_expression_type() -> Result<()> {
+            run(
+                "resolution/identifier_not_found",
+                "undeclared_type_expression_type",
+            )
+        }
+
+        #[test]
+        fn undeclared_using_target_type() -> Result<()> {
+            run(
+                "resolution/identifier_not_found",
+                "undeclared_using_target_type",
             )
         }
 
@@ -1905,6 +2205,30 @@ mod resolution {
         #[test]
         fn push_on_memory_array() -> Result<()> {
             run("resolution/member_not_found", "push_on_memory_array")
+        }
+
+        #[test]
+        fn qualified_modifier_missing_member() -> Result<()> {
+            run(
+                "resolution/member_not_found",
+                "qualified_modifier_missing_member",
+            )
+        }
+
+        #[test]
+        fn qualified_type_missing_member() -> Result<()> {
+            run(
+                "resolution/member_not_found",
+                "qualified_type_missing_member",
+            )
+        }
+
+        #[test]
+        fn qualified_type_missing_nested_member() -> Result<()> {
+            run(
+                "resolution/member_not_found",
+                "qualified_type_missing_nested_member",
+            )
         }
 
         #[test]

@@ -1,0 +1,11 @@
+// SPDX-License-Identifier: MIT
+pragma solidity *;
+
+function f() pure {}
+
+function f(uint256) pure {}
+
+contract C {
+    // An overload set has no members, and is reported rather than `S`.
+    f.S x;
+}

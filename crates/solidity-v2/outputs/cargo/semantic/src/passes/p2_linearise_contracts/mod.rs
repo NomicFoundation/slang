@@ -1,6 +1,5 @@
 use slang_solidity_v2_common::collections::Map;
 use slang_solidity_v2_common::diagnostics::DiagnosticCollection;
-use slang_solidity_v2_common::diagnostics::kinds::resolution::IdentifierNotFound;
 use slang_solidity_v2_common::diagnostics::kinds::semantic::{
     CyclicInheritance, LinearisationImpossible,
 };
@@ -110,18 +109,19 @@ impl<'a> Pass<'a> {
     ) -> Vec<NodeId> {
         let mut resolved_bases = Vec::new();
         for inheritance_type in types.iter() {
-            let resolution = resolve_identifier_path_as_type_in_scope(
+            let path_resolution = resolve_identifier_path_as_type_in_scope(
                 self.binder,
                 &inheritance_type.type_name,
                 scope_id,
             );
-            match resolution.as_definition_id() {
+            match path_resolution.resolution.as_definition_id() {
                 None => {
-                    self.diagnostics.push(
-                        self.file_id.clone(),
-                        inheritance_type.range.clone(),
-                        IdentifierNotFound,
-                    );
+                    if let Some((identifier, kind)) =
+                        path_resolution.unresolved_identifier(&inheritance_type.type_name, false)
+                    {
+                        self.diagnostics
+                            .push(self.file_id.clone(), identifier.range.clone(), kind);
+                    }
                 }
                 Some(definition_id) => {
                     match self.binder.find_definition_by_id(definition_id).unwrap() {

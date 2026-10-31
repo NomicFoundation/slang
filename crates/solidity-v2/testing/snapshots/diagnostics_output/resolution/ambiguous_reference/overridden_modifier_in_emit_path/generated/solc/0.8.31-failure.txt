@@ -1,0 +1,21 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 2
+
+[Warning 8429] Warning: Virtual modifiers are deprecated and scheduled for removal.
+   ╭─[input.sol:5:5]
+   │
+ 5 │ ╭─▶     modifier m() virtual {
+   ┆ ┆   
+ 7 │ ├─▶     }
+   │ │           
+   │ ╰─────────── Warning occurred here.
+───╯
+
+[TypeError 9582] Error: Member "E" not found or not visible after argument-dependent lookup in modifier ().
+    ╭─[input.sol:18:14]
+    │
+ 18 │         emit m.E();
+    │              ─┬─  
+    │               ╰─── Error occurred here.
+────╯

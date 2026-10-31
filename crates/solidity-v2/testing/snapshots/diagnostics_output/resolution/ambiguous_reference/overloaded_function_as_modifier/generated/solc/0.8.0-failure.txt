@@ -1,0 +1,11 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 1
+
+[DeclarationError 7920] Error: Identifier not found or not unique.
+    ╭─[input.sol:10:25]
+    │
+ 10 │     function g() public f {}
+    │                         ┬  
+    │                         ╰── Error occurred here.
+────╯
