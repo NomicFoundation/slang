@@ -1,0 +1,19 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 2
+
+[Warning 2519] Warning: This declaration shadows an existing declaration.
+    ╭─[input.sol:10:16]
+    │
+ 10 │     function f(uint256 I) public pure {
+    │                ────┬────  
+    │                    ╰────── Warning occurred here.
+────╯
+
+[TypeError 9582] Error: Member "Err" not found or not visible after argument-dependent lookup in uint256.
+    ╭─[input.sol:11:16]
+    │
+ 11 │         revert I.Err();
+    │                ──┬──  
+    │                  ╰──── Error occurred here.
+────╯

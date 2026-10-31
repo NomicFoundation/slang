@@ -1,0 +1,27 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 3
+
+[syntax/incompatible-syntax-version] Error: This syntax was introduced in version '0.8.4'.
+   ╭─[input.sol:5:5]
+   │
+ 5 │     error CustomError();
+   │     ──────────┬─────────  
+   │               ╰─────────── Error occurred here.
+───╯
+
+[syntax/incompatible-syntax-version] Error: This syntax was introduced in version '0.8.4'.
+    ╭─[input.sol:10:9]
+    │
+ 10 │         revert I.MyError();
+    │         ─────────┬─────────  
+    │                  ╰─────────── Error occurred here.
+────╯
+
+[resolution/member-not-found] Error: Member 'MyError' not found or not visible after argument-dependent lookup.
+    ╭─[input.sol:10:18]
+    │
+ 10 │         revert I.MyError();
+    │                  ───┬───  
+    │                     ╰───── Error occurred here.
+────╯
