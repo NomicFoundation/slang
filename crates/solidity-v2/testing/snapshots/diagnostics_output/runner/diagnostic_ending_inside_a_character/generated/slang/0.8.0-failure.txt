@@ -1,0 +1,11 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 1
+
+[syntax/unexpected-terminal] Error: Unexpected UNRECOGNIZED. One of AtKeyword, ConstantKeyword, ErrorKeyword, FromKeyword, GlobalKeyword, Identifier, ImmutableKeyword, InternalKeyword, LayoutKeyword, OpenBracket, OverrideKeyword, PrivateKeyword, PublicKeyword, RevertKeyword, TransientKeyword was expected
+   ╭─[input.sol:8:10]
+   │
+ 8 │     uint é;
+   │          ┬  
+   │          ╰── Error occurred here.
+───╯

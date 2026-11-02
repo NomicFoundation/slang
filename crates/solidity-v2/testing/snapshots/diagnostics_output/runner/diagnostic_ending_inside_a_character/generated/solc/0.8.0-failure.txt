@@ -1,0 +1,11 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 1
+
+[ParserError 2314] Error: Expected identifier but got 'ILLEGAL'
+   ╭─[input.sol:8:10]
+   │
+ 8 │     uint é;
+   │          ┬  
+   │          ╰── Error occurred here.
+───╯
