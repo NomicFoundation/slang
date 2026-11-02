@@ -1,0 +1,11 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 1
+
+[resolution/namespace-member-not-found] Error: 'Nope' not found or not visible in 'other'.
+   ╭─[input.sol:8:20]
+   │
+ 8 │         emit other.Nope();
+   │                    ──┬─  
+   │                      ╰─── Error occurred here.
+───╯

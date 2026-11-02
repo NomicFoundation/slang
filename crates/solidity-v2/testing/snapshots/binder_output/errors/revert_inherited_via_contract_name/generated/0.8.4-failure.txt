@@ -1,7 +1,7 @@
 # This file is generated automatically by infrastructure scripts. Please don't edit by hand.
 
 Diagnostics:
-[resolution/member-not-found] Error: Member 'E' not found or not visible after argument-dependent lookup.
+[resolution/namespace-member-not-found] Error: 'E' not found or not visible in 'B'.
     ╭─[input.sol:12:18]
     │
  12 │         revert B.E();

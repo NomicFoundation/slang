@@ -3,7 +3,7 @@ use std::sync::Arc;
 
 use slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind;
 use slang_solidity_v2_common::diagnostics::kinds::resolution::{
-    AmbiguousReference, IdentifierNotFound, IdentifierNotNamespace, MemberNotFound,
+    AmbiguousReference, IdentifierNotFound, IdentifierNotNamespace, NamespaceMemberNotFound,
 };
 use slang_solidity_v2_common::diagnostics::kinds::semantic::OverridableKind;
 use slang_solidity_v2_common::nodes::NodeId;
@@ -57,8 +57,13 @@ impl PathResolution {
                 let kind = if index == 0 {
                     IdentifierNotFound.into()
                 } else {
-                    MemberNotFound {
+                    NamespaceMemberNotFound {
                         name: identifier.unparse().to_owned(),
+                        namespace: identifier_path[..index]
+                            .iter()
+                            .map(|qualifier| qualifier.unparse())
+                            .collect::<Vec<_>>()
+                            .join("."),
                     }
                     .into()
                 };

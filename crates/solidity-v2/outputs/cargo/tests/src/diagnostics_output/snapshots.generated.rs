@@ -2155,40 +2155,6 @@ mod resolution {
         }
 
         #[test]
-        fn missing_error_in_nested_path() -> Result<()> {
-            run(
-                "resolution/member_not_found",
-                "missing_error_in_nested_path",
-            )
-        }
-
-        #[test]
-        fn missing_error_on_interface_type() -> Result<()> {
-            run(
-                "resolution/member_not_found",
-                "missing_error_on_interface_type",
-            )
-        }
-
-        #[test]
-        fn missing_event_in_module() -> Result<()> {
-            run("resolution/member_not_found", "missing_event_in_module")
-        }
-
-        #[test]
-        fn missing_event_on_contract_type() -> Result<()> {
-            run(
-                "resolution/member_not_found",
-                "missing_event_on_contract_type",
-            )
-        }
-
-        #[test]
-        fn missing_event_on_library() -> Result<()> {
-            run("resolution/member_not_found", "missing_event_on_library")
-        }
-
-        #[test]
         fn missing_function_in_library() -> Result<()> {
             run("resolution/member_not_found", "missing_function_in_library")
         }
@@ -2260,30 +2226,6 @@ mod resolution {
         }
 
         #[test]
-        fn qualified_modifier_missing_member() -> Result<()> {
-            run(
-                "resolution/member_not_found",
-                "qualified_modifier_missing_member",
-            )
-        }
-
-        #[test]
-        fn qualified_type_missing_member() -> Result<()> {
-            run(
-                "resolution/member_not_found",
-                "qualified_type_missing_member",
-            )
-        }
-
-        #[test]
-        fn qualified_type_missing_nested_member() -> Result<()> {
-            run(
-                "resolution/member_not_found",
-                "qualified_type_missing_nested_member",
-            )
-        }
-
-        #[test]
         fn runtime_code_on_abstract_contract() -> Result<()> {
             run(
                 "resolution/member_not_found",
@@ -2351,6 +2293,82 @@ mod resolution {
             run(
                 "resolution/member_not_found",
                 "value_on_non_payable_function",
+            )
+        }
+    }
+
+    mod namespace_member_not_found {
+        use super::*;
+
+        #[test]
+        fn missing_error_in_nested_path() -> Result<()> {
+            run(
+                "resolution/namespace_member_not_found",
+                "missing_error_in_nested_path",
+            )
+        }
+
+        #[test]
+        fn missing_error_on_interface_type() -> Result<()> {
+            run(
+                "resolution/namespace_member_not_found",
+                "missing_error_on_interface_type",
+            )
+        }
+
+        #[test]
+        fn missing_event_in_module() -> Result<()> {
+            run(
+                "resolution/namespace_member_not_found",
+                "missing_event_in_module",
+            )
+        }
+
+        #[test]
+        fn missing_event_on_contract_type() -> Result<()> {
+            run(
+                "resolution/namespace_member_not_found",
+                "missing_event_on_contract_type",
+            )
+        }
+
+        #[test]
+        fn missing_event_on_library() -> Result<()> {
+            run(
+                "resolution/namespace_member_not_found",
+                "missing_event_on_library",
+            )
+        }
+
+        #[test]
+        fn qualified_modifier_missing_member() -> Result<()> {
+            run(
+                "resolution/namespace_member_not_found",
+                "qualified_modifier_missing_member",
+            )
+        }
+
+        #[test]
+        fn qualified_type_missing_member() -> Result<()> {
+            run(
+                "resolution/namespace_member_not_found",
+                "qualified_type_missing_member",
+            )
+        }
+
+        #[test]
+        fn qualified_type_missing_member_through_alias() -> Result<()> {
+            run(
+                "resolution/namespace_member_not_found",
+                "qualified_type_missing_member_through_alias",
+            )
+        }
+
+        #[test]
+        fn qualified_type_missing_nested_member() -> Result<()> {
+            run(
+                "resolution/namespace_member_not_found",
+                "qualified_type_missing_nested_member",
             )
         }
     }

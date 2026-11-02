@@ -1,0 +1,11 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 1
+
+[resolution/namespace-member-not-found] Error: 'S' not found or not visible in 'M.A'.
+   ╭─[main.sol:7:9]
+   │
+ 7 │     M.A.S s;
+   │         ┬  
+   │         ╰── Error occurred here.
+───╯
