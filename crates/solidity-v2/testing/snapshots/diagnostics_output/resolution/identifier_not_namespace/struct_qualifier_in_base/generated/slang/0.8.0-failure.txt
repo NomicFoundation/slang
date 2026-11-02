@@ -1,0 +1,11 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 1
+
+[resolution/identifier-not-namespace] Error: 'S' is not a contract, interface, library, enum or import alias.
+   ╭─[input.sol:8:15]
+   │
+ 8 │ contract C is S.x {}
+   │               ┬  
+   │               ╰── Error occurred here.
+───╯

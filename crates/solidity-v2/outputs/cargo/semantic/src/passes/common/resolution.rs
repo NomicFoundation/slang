@@ -3,7 +3,7 @@ use std::sync::Arc;
 
 use slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind;
 use slang_solidity_v2_common::diagnostics::kinds::resolution::{
-    AmbiguousReference, IdentifierNotFound, MemberNotFound,
+    AmbiguousReference, IdentifierNotFound, IdentifierNotNamespace, MemberNotFound,
 };
 use slang_solidity_v2_common::diagnostics::kinds::semantic::OverridableKind;
 use slang_solidity_v2_common::nodes::NodeId;
@@ -25,6 +25,9 @@ pub(crate) enum PathResolutionFailure {
     /// of a virtual modifier. A redeclaration also names several
     /// declarations, but is reported on its own.
     Ambiguous(usize),
+    /// The identifier at this index is a qualifier naming a declaration that
+    /// has no members, like a variable or a struct.
+    NotANamespace(usize),
 }
 
 /// The outcome of resolving an `IdentifierPath`.
@@ -37,8 +40,9 @@ pub(crate) struct PathResolution {
 impl PathResolution {
     /// The identifier that failed to resolve, with the diagnostic to report
     /// for it: the head of the path is undeclared, any later identifier is a
-    /// member that the preceding one does not provide, and an identifier
-    /// naming several declarations is ambiguous. An ambiguous last identifier
+    /// member that the preceding one does not provide, a qualifier without
+    /// members is not a namespace, and an identifier naming several
+    /// declarations is ambiguous. An ambiguous last identifier
     /// is not reported when `last_may_be_ambiguous`, for the callers that
     /// narrow it down later.
     pub(crate) fn unresolved_identifier<'a>(
@@ -66,6 +70,14 @@ impl PathResolution {
                 }
                 let identifier = &identifier_path[index];
                 let kind = AmbiguousReference {
+                    name: identifier.unparse().to_owned(),
+                }
+                .into();
+                Some((identifier, kind))
+            }
+            PathResolutionFailure::NotANamespace(index) => {
+                let identifier = &identifier_path[index];
+                let kind = IdentifierNotNamespace {
                     name: identifier.unparse().to_owned(),
                 }
                 .into();
@@ -157,6 +169,21 @@ fn resolve_path_in_scope(
         scope_id = resolution
             .as_definition_id()
             .and_then(|definition_id| find_definition_namespace_scope_id(binder, definition_id));
+
+        // A qualifier with no scope to look its member up in. An import of a
+        // file that could not be resolved is reported where it is imported.
+        if is_reportable && scope_id.is_none() && index + 1 < identifier_path.len() {
+            let is_unresolved_import = resolution.as_definition_id().is_some_and(|definition_id| {
+                matches!(
+                    binder.find_definition_by_id(definition_id),
+                    Some(Definition::Import(_))
+                )
+            });
+            if !is_unresolved_import {
+                failure = PathResolutionFailure::NotANamespace(index);
+            }
+            is_reportable = false;
+        }
     }
     PathResolution {
         resolution,

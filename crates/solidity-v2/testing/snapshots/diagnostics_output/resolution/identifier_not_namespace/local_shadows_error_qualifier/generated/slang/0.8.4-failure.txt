@@ -2,10 +2,10 @@
 
 Diagnostics: 1
 
-[resolution/member-not-found] Error: Member 'E' not found or not visible after argument-dependent lookup.
-    ╭─[input.sol:12:16]
+[resolution/identifier-not-namespace] Error: 'I' is not a contract, interface, library, enum or import alias.
+    ╭─[input.sol:11:16]
     │
- 12 │         emit A.E();
+ 11 │         revert I.Err();
     │                ┬  
     │                ╰── Error occurred here.
 ────╯

@@ -21,6 +21,14 @@ mod compilation {
         }
 
         #[test]
+        fn qualified_through_alias() -> Result<()> {
+            run(
+                "compilation/missing_imported_file",
+                "qualified_through_alias",
+            )
+        }
+
+        #[test]
         fn simple() -> Result<()> {
             run("compilation/missing_imported_file", "simple")
         }
@@ -1200,6 +1208,66 @@ mod resolution {
         }
     }
 
+    mod identifier_not_namespace {
+        use super::*;
+
+        #[test]
+        fn constant_qualifier_in_type_name() -> Result<()> {
+            run(
+                "resolution/identifier_not_namespace",
+                "constant_qualifier_in_type_name",
+            )
+        }
+
+        #[test]
+        fn enum_member_qualifier_in_type_name() -> Result<()> {
+            run(
+                "resolution/identifier_not_namespace",
+                "enum_member_qualifier_in_type_name",
+            )
+        }
+
+        #[test]
+        fn local_shadows_error_qualifier() -> Result<()> {
+            run(
+                "resolution/identifier_not_namespace",
+                "local_shadows_error_qualifier",
+            )
+        }
+
+        #[test]
+        fn local_shadows_event_qualifier() -> Result<()> {
+            run(
+                "resolution/identifier_not_namespace",
+                "local_shadows_event_qualifier",
+            )
+        }
+
+        #[test]
+        fn state_variable_qualifier_in_modifier_invocation() -> Result<()> {
+            run(
+                "resolution/identifier_not_namespace",
+                "state_variable_qualifier_in_modifier_invocation",
+            )
+        }
+
+        #[test]
+        fn struct_qualifier_in_base() -> Result<()> {
+            run(
+                "resolution/identifier_not_namespace",
+                "struct_qualifier_in_base",
+            )
+        }
+
+        #[test]
+        fn struct_qualifier_in_type_name() -> Result<()> {
+            run(
+                "resolution/identifier_not_namespace",
+                "struct_qualifier_in_type_name",
+            )
+        }
+    }
+
     mod identifier_redeclaration {
         use super::*;
 
@@ -2051,22 +2119,6 @@ mod resolution {
         #[test]
         fn length_on_calldata_slice() -> Result<()> {
             run("resolution/member_not_found", "length_on_calldata_slice")
-        }
-
-        #[test]
-        fn local_shadows_error_qualifier() -> Result<()> {
-            run(
-                "resolution/member_not_found",
-                "local_shadows_error_qualifier",
-            )
-        }
-
-        #[test]
-        fn local_shadows_event_qualifier() -> Result<()> {
-            run(
-                "resolution/member_not_found",
-                "local_shadows_event_qualifier",
-            )
         }
 
         #[test]

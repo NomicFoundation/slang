@@ -7,6 +7,7 @@ mod external_declaration_shadowing;
 mod identifier_not_found;
 mod identifier_not_function_or_not_unique;
 mod identifier_not_library_name;
+mod identifier_not_namespace;
 mod identifier_redeclaration;
 mod imported_declaration_not_found;
 mod incompatible_built_in_target;
@@ -24,6 +25,7 @@ pub use external_declaration_shadowing::ExternalDeclarationShadowing;
 pub use identifier_not_found::IdentifierNotFound;
 pub use identifier_not_function_or_not_unique::IdentifierNotFunctionOrNotUnique;
 pub use identifier_not_library_name::IdentifierNotLibraryName;
+pub use identifier_not_namespace::IdentifierNotNamespace;
 pub use identifier_redeclaration::IdentifierRedeclaration;
 pub use imported_declaration_not_found::ImportedDeclarationNotFound;
 pub use incompatible_built_in_target::IncompatibleBuiltInTarget;
@@ -73,6 +75,9 @@ define_diagnostic_kind! {
         /// A member access named something its operand's type does not
         /// provide.
         MemberNotFound(MemberNotFound),
+        /// A qualifier in an identifier path names a declaration that has no
+        /// members.
+        IdentifierNotNamespace(IdentifierNotNamespace),
 
         /// A symbol in a `using {...} for` directive did not resolve to a
         /// unique function.

@@ -1,0 +1,11 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 1
+
+[resolution/identifier-not-namespace] Error: 'A' is not a contract, interface, library, enum or import alias.
+    ╭─[input.sol:12:14]
+    │
+ 12 │         emit A.E();
+    │              ┬  
+    │              ╰── Error occurred here.
+────╯
