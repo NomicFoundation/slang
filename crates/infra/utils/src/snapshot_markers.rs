@@ -24,6 +24,10 @@ pub const CURRENT_SLANG_EVM_TARGET: &str = "__CURRENT_SLANG_EVM_TARGET__";
 /// platform, so it churns between versions, and differs between dev machines.
 pub const CURRENT_SOLC_BUILD_VERSION: &str = "__CURRENT_SOLC_BUILD_VERSION__";
 
+/// Replaces the bare version of the `solc` binary being run, outside of its
+/// full build description: `0.8.19`.
+pub const CURRENT_SOLC_VERSION: &str = "__CURRENT_SOLC_VERSION__";
+
 /// Replaces the EVM version `solc` is compiling for, as `solc` spells it, in
 /// camel case: `spuriousDragon`.
 pub const CURRENT_SOLC_EVM_VERSION: &str = "__CURRENT_SOLC_EVM_VERSION__";
