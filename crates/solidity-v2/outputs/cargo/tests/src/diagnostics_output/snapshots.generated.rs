@@ -5444,6 +5444,11 @@ mod type_system {
         }
 
         #[test]
+        fn overloaded_function() -> Result<()> {
+            run("type_system/array_length", "overloaded_function")
+        }
+
+        #[test]
         fn parameter_length() -> Result<()> {
             run("type_system/array_length", "parameter_length")
         }

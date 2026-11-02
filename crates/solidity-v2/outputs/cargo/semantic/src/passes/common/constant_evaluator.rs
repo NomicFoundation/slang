@@ -672,8 +672,8 @@ impl ConstantIdentifierResolver<ScopeId> for ConstantResolver<'_> {
                 }
             }
             Resolution::Ambiguous(_) => {
-                // If we resolved to multiple definitions, it's an error which
-                // should be already diagnosed.
+                // Either overloaded functions or events, which are never
+                // constants, or a redeclaration, which is already diagnosed.
                 ComptimeResolution::NotConstant
             }
             Resolution::BuiltIn(_) => unreachable!("the binder doesn't resolve to built-ins"),
