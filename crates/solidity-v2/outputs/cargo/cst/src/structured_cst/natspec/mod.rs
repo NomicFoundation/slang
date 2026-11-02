@@ -9,6 +9,6 @@ use std::ops::Range;
 pub struct NatSpec {
     /// Range of the comment in the source.
     ///
-    /// A `///` comment includes the line break after its last line, unless it ends the source.
+    /// A `///` comment ends with its last line, without the line break after it.
     pub range: Range<usize>,
 }

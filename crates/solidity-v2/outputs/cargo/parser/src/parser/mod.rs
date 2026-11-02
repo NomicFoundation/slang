@@ -11,10 +11,10 @@ use slang_solidity_v2_cst::structured_cst::nodes::{
 };
 
 use crate::lexer::{LexemeKind, Lexer};
-use crate::parser::natspec_stack::NatSpecStack;
+use crate::parser::natspec::{NatSpecStack, NonTriviaTokens};
 use crate::parser::validation::validate_syntax_version;
 
-mod natspec_stack;
+mod natspec;
 mod parser_helpers;
 #[cfg(test)]
 mod tests;
@@ -82,10 +82,8 @@ pub struct Parser;
 impl Parser {
     pub fn parse(file_id: &FileId, source: &str, language_version: LanguageVersion) -> ParseOutput {
         let natspec_stack = NatSpecStack::default();
-        let tokens = TokenStream {
-            lexer: Lexer::new(source, language_version),
-            natspec_stack: &natspec_stack,
-        };
+        // TODO(v2): Include the trivia in future versions
+        let tokens = NonTriviaTokens::new(Lexer::new(source, language_version), &natspec_stack);
         let parser = grammar::SourceUnitParser::new();
 
         let mut ctx = GrammarCtx {
@@ -175,41 +173,5 @@ fn convert_parse_error(
         lalrpop_util::ParseError::InvalidToken { .. } => unreachable!(
             "The parser should never return an invalid token error, since it's not using the default lexer"
         ),
-    }
-}
-
-/// The lexemes fed to the parser, with their offsets.
-///
-/// Trivia is skipped, but `NatSpec` comments are pushed with the token they document.
-///
-/// TODO(v2): Include the trivia in future versions
-struct TokenStream<'source, 'natspec> {
-    lexer: Lexer<'source>,
-    natspec_stack: &'natspec NatSpecStack,
-}
-
-impl Iterator for TokenStream<'_, '_> {
-    type Item = Result<(usize, LexemeKind, usize), ()>;
-
-    fn next(&mut self) -> Option<Self::Item> {
-        let mut natspec_comment = None;
-        while let Some(lexeme) = self.lexer.next_lexeme() {
-            if lexeme.kind.is_natspec_comment() {
-                // Replaces the previous comment, if any: it's dropped without documenting anything.
-                natspec_comment = Some(lexeme.range.clone());
-                continue;
-            }
-            if lexeme.kind.is_trivia() {
-                continue;
-            }
-            if let Some(range) = natspec_comment.take() {
-                self.natspec_stack
-                    .attach_natspec_to(NatSpec { range }, lexeme.range.start);
-            }
-            return Some(Ok((lexeme.range.start, lexeme.kind, lexeme.range.end)));
-        }
-        // If `natspec_comment` is still `Some`, it means there was a trailing comment not documenting
-        // anything, it is dropped.
-        None
     }
 }
