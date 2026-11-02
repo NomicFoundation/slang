@@ -386,6 +386,17 @@ fn an_unterminated_string_does_not_hide_a_later_pragma() {
 }
 
 #[test]
+fn an_unterminated_pragma_does_not_hide_the_next_one() {
+    let source = "
+        pragma abicoder v2
+        pragma solidity 0.8.1;
+        contract A {}
+    ";
+
+    assert_eq!(infer(source), vec![LanguageVersion::V0_8_1]);
+}
+
+#[test]
 fn assembly_blocks_do_not_hide_later_pragmas() {
     let source = "
         contract A { function f() public { assembly { let x := 1 } } }
@@ -502,19 +513,6 @@ fn an_unterminated_pragma_is_ignored() {
     // the contract after it.
     let source = "
         pragma solidity 0.8.12
-        contract A {}
-    ";
-
-    assert_eq!(infer(source), all_versions());
-}
-
-#[test]
-fn an_unterminated_pragma_hides_the_next_one() {
-    // Without its `;`, the directive runs up to the next directive's `;`, and
-    // the two of them together do not parse, so neither counts.
-    let source = "
-        pragma abicoder v2
-        pragma solidity 0.8.1;
         contract A {}
     ";
 
