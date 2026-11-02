@@ -183,7 +183,7 @@ impl Pass<'_> {
     /// Whether a member of a contract or interface can be reached through its
     /// name from outside the contract's hierarchy: types, errors and
     /// externally visible functions can, events only from 0.8.21, and
-    /// variables and internal functions never.
+    /// variables, modifiers and internal functions never.
     fn is_reachable_from_outside_hierarchy(&self, definition_id: NodeId) -> bool {
         match self.binder.find_definition_by_id(definition_id) {
             Some(definition @ Definition::Function(_)) => definition.is_externally_visible(),

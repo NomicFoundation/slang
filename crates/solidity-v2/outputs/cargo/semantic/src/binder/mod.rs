@@ -705,6 +705,8 @@ impl Binder {
             // A qualified lookup sees all of a scope's own members.
             let can_see =
                 |definition_id: &NodeId| options.can_see(&self.definitions[definition_id], true);
+            // NOTE(perf): the double check if we need to filter is cheaper than
+            // always copying and collecting the results.
             if matches!(options, ResolveOptions::Qualified) || definitions.iter().all(can_see) {
                 Resolution::from(definitions.as_slice())
             } else {

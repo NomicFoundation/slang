@@ -1038,6 +1038,11 @@ mod libraries {
     }
 
     #[test]
+    fn external_function_shadows_free_function() -> Result<()> {
+        run("libraries", "external_function_shadows_free_function")
+    }
+
+    #[test]
     fn modifiers() -> Result<()> {
         run("libraries", "modifiers")
     }

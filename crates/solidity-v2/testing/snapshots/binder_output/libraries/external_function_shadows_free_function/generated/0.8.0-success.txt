@@ -1,0 +1,41 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Definitions (4):
+- Def: #1 ["f" @ input.sol:4:10] (function, type: function () returns ())
+- Def: #2 ["L" @ input.sol:6:9] (library)
+- Def: #3 ["f" @ input.sol:7:14] (function, type: function () returns ())
+- Def: #4 ["g" @ input.sol:9:14] (function, type: function () returns ())
+
+------------------------------------------------------------------------
+
+References (1):
+- Ref: ["f" @ input.sol:11:9] -> #1
+
+------------------------------------------------------------------------
+
+Unbound identifiers (0):
+
+------------------------------------------------------------------------
+
+Bindings: 
+    ╭─[input.sol:1:1]
+    │
+  4 │ function f() {}
+    │          ┬  
+    │          ╰── name: 1
+    │ 
+  6 │ library L {
+    │         ┬  
+    │         ╰── name: 2
+  7 │     function f() external pure {}
+    │              ┬  
+    │              ╰── name: 3
+    │ 
+  9 │     function g() public {
+    │              ┬  
+    │              ╰── name: 4
+    │ 
+ 11 │         f();
+    │         ┬  
+    │         ╰── ref: 1
+────╯
