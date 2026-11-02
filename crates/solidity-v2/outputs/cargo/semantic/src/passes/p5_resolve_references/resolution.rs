@@ -1,7 +1,6 @@
 use std::sync::Arc;
 
 use slang_solidity_v2_common::collections::Set;
-use slang_solidity_v2_common::diagnostics::kinds::resolution::MemberNotFound;
 use slang_solidity_v2_common::nodes::NodeId;
 use slang_solidity_v2_common::versions::LanguageVersion;
 use slang_solidity_v2_ir::ir;
@@ -13,7 +12,7 @@ use crate::binder::{
 };
 use crate::built_ins::BuiltInsResolver;
 use crate::passes::common::{
-    IdentifierPathTarget, find_definition_namespace_scope_id,
+    IdentifierPathTarget, find_definition_namespace_scope_id, namespace_member_not_found,
     resolve_identifier_path_as_expression_in_scope, resolve_identifier_path_as_type_in_scope,
 };
 use crate::types::{ContractType, InterfaceType, StructType, Type, TypeId, UserMetaType};
@@ -386,8 +385,8 @@ impl Pass<'_> {
         } else if let Some(member) = self.unreachable_qualified_member(identifier_path) {
             self.binder
                 .fixup_reference(member.id(), Resolution::Unresolved);
-            let name = member.unparse().to_owned();
-            self.push_diagnostic(member, MemberNotFound { name });
+            let kind = namespace_member_not_found(identifier_path, identifier_path.len() - 1);
+            self.push_diagnostic(member, kind);
         }
     }
 

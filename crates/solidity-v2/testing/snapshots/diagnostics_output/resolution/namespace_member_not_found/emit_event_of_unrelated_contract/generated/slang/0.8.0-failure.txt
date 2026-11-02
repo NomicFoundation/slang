@@ -2,7 +2,7 @@
 
 Diagnostics: 1
 
-[resolution/member-not-found] Error: Member 'E' not found or not visible after argument-dependent lookup.
+[resolution/namespace-member-not-found] Error: 'E' not found or not visible in 'D'.
     ╭─[input.sol:10:16]
     │
  10 │         emit D.E();

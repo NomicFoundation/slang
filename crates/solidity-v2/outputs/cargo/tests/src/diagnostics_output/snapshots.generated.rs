@@ -2115,22 +2115,6 @@ mod resolution {
         }
 
         #[test]
-        fn emit_event_of_contract_in_free_function() -> Result<()> {
-            run(
-                "resolution/member_not_found",
-                "emit_event_of_contract_in_free_function",
-            )
-        }
-
-        #[test]
-        fn emit_event_of_unrelated_contract() -> Result<()> {
-            run(
-                "resolution/member_not_found",
-                "emit_event_of_unrelated_contract",
-            )
-        }
-
-        #[test]
         fn event_of_unrelated_contract() -> Result<()> {
             run("resolution/member_not_found", "event_of_unrelated_contract")
         }
@@ -2490,6 +2474,22 @@ mod resolution {
 
     mod namespace_member_not_found {
         use super::*;
+
+        #[test]
+        fn emit_event_of_contract_in_free_function() -> Result<()> {
+            run(
+                "resolution/namespace_member_not_found",
+                "emit_event_of_contract_in_free_function",
+            )
+        }
+
+        #[test]
+        fn emit_event_of_unrelated_contract() -> Result<()> {
+            run(
+                "resolution/namespace_member_not_found",
+                "emit_event_of_unrelated_contract",
+            )
+        }
 
         #[test]
         fn missing_error_in_nested_path() -> Result<()> {

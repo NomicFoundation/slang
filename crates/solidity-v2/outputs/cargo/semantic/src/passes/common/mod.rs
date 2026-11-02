@@ -22,6 +22,7 @@ pub(crate) use node_extensions::node_location;
 pub(crate) use resolution::{
     IdentifierPathTarget, Overridable, PathResolution, filter_overridden_definitions,
     filter_overridden_definitions_by_selector, find_definition_namespace_scope_id,
-    resolve_identifier_path_as_expression_in_scope, resolve_identifier_path_as_type_in_scope,
+    namespace_member_not_found, resolve_identifier_path_as_expression_in_scope,
+    resolve_identifier_path_as_type_in_scope,
 };
 pub(crate) use scope_stack::ScopeStack;
