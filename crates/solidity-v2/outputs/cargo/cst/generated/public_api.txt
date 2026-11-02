@@ -2910,6 +2910,15 @@ pub fn slang_solidity_v2_cst::structured_cst::nodes::PragmaGreaterThanEqual::fmt
 impl core::marker::StructuralPartialEq for slang_solidity_v2_cst::structured_cst::nodes::PragmaGreaterThanEqual
 impl slang_solidity_v2_cst::structured_cst::TextRange for slang_solidity_v2_cst::structured_cst::nodes::PragmaGreaterThanEqual
 pub fn slang_solidity_v2_cst::structured_cst::nodes::PragmaGreaterThanEqual::calculate_text_range(&self) -> core::option::Option<core::ops::range::Range<usize>>
+pub struct slang_solidity_v2_cst::structured_cst::nodes::PragmaIdentifier
+pub slang_solidity_v2_cst::structured_cst::nodes::PragmaIdentifier::range: core::ops::range::Range<usize>
+impl core::cmp::PartialEq for slang_solidity_v2_cst::structured_cst::nodes::PragmaIdentifier
+pub fn slang_solidity_v2_cst::structured_cst::nodes::PragmaIdentifier::eq(&self, &slang_solidity_v2_cst::structured_cst::nodes::PragmaIdentifier) -> bool
+impl core::fmt::Debug for slang_solidity_v2_cst::structured_cst::nodes::PragmaIdentifier
+pub fn slang_solidity_v2_cst::structured_cst::nodes::PragmaIdentifier::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::StructuralPartialEq for slang_solidity_v2_cst::structured_cst::nodes::PragmaIdentifier
+impl slang_solidity_v2_cst::structured_cst::TextRange for slang_solidity_v2_cst::structured_cst::nodes::PragmaIdentifier
+pub fn slang_solidity_v2_cst::structured_cst::nodes::PragmaIdentifier::calculate_text_range(&self) -> core::option::Option<core::ops::range::Range<usize>>
 pub struct slang_solidity_v2_cst::structured_cst::nodes::PragmaKeyword
 pub slang_solidity_v2_cst::structured_cst::nodes::PragmaKeyword::range: core::ops::range::Range<usize>
 impl core::cmp::PartialEq for slang_solidity_v2_cst::structured_cst::nodes::PragmaKeyword
@@ -4756,6 +4765,7 @@ pub fn slang_solidity_v2_cst::structured_cst::nodes::new_pragma_equal(core::ops:
 pub fn slang_solidity_v2_cst::structured_cst::nodes::new_pragma_experimental_pragma(slang_solidity_v2_cst::structured_cst::nodes::ExperimentalPragma) -> slang_solidity_v2_cst::structured_cst::nodes::Pragma
 pub fn slang_solidity_v2_cst::structured_cst::nodes::new_pragma_greater_than(core::ops::range::Range<usize>, &str) -> slang_solidity_v2_cst::structured_cst::nodes::PragmaGreaterThan
 pub fn slang_solidity_v2_cst::structured_cst::nodes::new_pragma_greater_than_equal(core::ops::range::Range<usize>, &str) -> slang_solidity_v2_cst::structured_cst::nodes::PragmaGreaterThanEqual
+pub fn slang_solidity_v2_cst::structured_cst::nodes::new_pragma_identifier(core::ops::range::Range<usize>, &str) -> slang_solidity_v2_cst::structured_cst::nodes::PragmaIdentifier
 pub fn slang_solidity_v2_cst::structured_cst::nodes::new_pragma_keyword(core::ops::range::Range<usize>, &str) -> slang_solidity_v2_cst::structured_cst::nodes::PragmaKeyword
 pub fn slang_solidity_v2_cst::structured_cst::nodes::new_pragma_less_than(core::ops::range::Range<usize>, &str) -> slang_solidity_v2_cst::structured_cst::nodes::PragmaLessThan
 pub fn slang_solidity_v2_cst::structured_cst::nodes::new_pragma_less_than_equal(core::ops::range::Range<usize>, &str) -> slang_solidity_v2_cst::structured_cst::nodes::PragmaLessThanEqual
@@ -5659,6 +5669,8 @@ impl slang_solidity_v2_cst::structured_cst::TextRange for slang_solidity_v2_cst:
 pub fn slang_solidity_v2_cst::structured_cst::nodes::PragmaGreaterThan::calculate_text_range(&self) -> core::option::Option<core::ops::range::Range<usize>>
 impl slang_solidity_v2_cst::structured_cst::TextRange for slang_solidity_v2_cst::structured_cst::nodes::PragmaGreaterThanEqual
 pub fn slang_solidity_v2_cst::structured_cst::nodes::PragmaGreaterThanEqual::calculate_text_range(&self) -> core::option::Option<core::ops::range::Range<usize>>
+impl slang_solidity_v2_cst::structured_cst::TextRange for slang_solidity_v2_cst::structured_cst::nodes::PragmaIdentifier
+pub fn slang_solidity_v2_cst::structured_cst::nodes::PragmaIdentifier::calculate_text_range(&self) -> core::option::Option<core::ops::range::Range<usize>>
 impl slang_solidity_v2_cst::structured_cst::TextRange for slang_solidity_v2_cst::structured_cst::nodes::PragmaKeyword
 pub fn slang_solidity_v2_cst::structured_cst::nodes::PragmaKeyword::calculate_text_range(&self) -> core::option::Option<core::ops::range::Range<usize>>
 impl slang_solidity_v2_cst::structured_cst::TextRange for slang_solidity_v2_cst::structured_cst::nodes::PragmaLessThan
@@ -6523,6 +6535,8 @@ impl slang_solidity_v2_cst::structured_cst::TextRange for slang_solidity_v2_cst:
 pub fn slang_solidity_v2_cst::structured_cst::nodes::PragmaGreaterThan::calculate_text_range(&self) -> core::option::Option<core::ops::range::Range<usize>>
 impl slang_solidity_v2_cst::structured_cst::TextRange for slang_solidity_v2_cst::structured_cst::nodes::PragmaGreaterThanEqual
 pub fn slang_solidity_v2_cst::structured_cst::nodes::PragmaGreaterThanEqual::calculate_text_range(&self) -> core::option::Option<core::ops::range::Range<usize>>
+impl slang_solidity_v2_cst::structured_cst::TextRange for slang_solidity_v2_cst::structured_cst::nodes::PragmaIdentifier
+pub fn slang_solidity_v2_cst::structured_cst::nodes::PragmaIdentifier::calculate_text_range(&self) -> core::option::Option<core::ops::range::Range<usize>>
 impl slang_solidity_v2_cst::structured_cst::TextRange for slang_solidity_v2_cst::structured_cst::nodes::PragmaKeyword
 pub fn slang_solidity_v2_cst::structured_cst::nodes::PragmaKeyword::calculate_text_range(&self) -> core::option::Option<core::ops::range::Range<usize>>
 impl slang_solidity_v2_cst::structured_cst::TextRange for slang_solidity_v2_cst::structured_cst::nodes::PragmaLessThan

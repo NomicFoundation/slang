@@ -2505,6 +2505,12 @@ PragmaGreaterThanEqual: PragmaGreaterThanEqual = {
 
 };
 #[inline]
+PragmaIdentifier: PragmaIdentifier = {
+
+        <l:@L> L_PragmaIdentifier <r:@L> => new_pragma_identifier(l..r, ctx.source),
+
+};
+#[inline]
 PragmaKeyword: PragmaKeyword = {
 
         <l:@L> L_PragmaKeyword_Reserved <r:@L> => new_pragma_keyword(l..r, ctx.source),
@@ -3156,6 +3162,7 @@ extern {
         L_PragmaEqual => LexemeKind::PragmaEqual,
         L_PragmaGreaterThan => LexemeKind::PragmaGreaterThan,
         L_PragmaGreaterThanEqual => LexemeKind::PragmaGreaterThanEqual,
+        L_PragmaIdentifier => LexemeKind::PragmaIdentifier,
         L_PragmaKeyword_Reserved => LexemeKind::PragmaKeyword_Reserved,
         L_PragmaLessThan => LexemeKind::PragmaLessThan,
         L_PragmaLessThanEqual => LexemeKind::PragmaLessThanEqual,

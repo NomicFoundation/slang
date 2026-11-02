@@ -1,0 +1,17 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Source: >
+  1  │ pragma solidity0.8.1;                                                            │ 0..21
+
+Diagnostics: # 1 total
+  - >
+    [syntax/unexpected-terminal] Error: Unexpected PragmaIdentifier. One of AbicoderKeyword, ExperimentalKeyword, SolidityKeyword was expected
+       ╭─[crates/solidity-v2/testing/snapshots/cst_output/PragmaDirective/glued_solidity_version/input.sol:1:8]
+       │
+     1 │ pragma solidity0.8.1;
+       │        ────┬────  
+       │            ╰────── Error occurred here.
+    ───╯
+Tree:
+  - (root꞉ SourceUnit):
+      - (members꞉ SourceUnitMembers): []

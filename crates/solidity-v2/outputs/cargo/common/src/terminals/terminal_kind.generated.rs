@@ -137,6 +137,7 @@ pub enum TerminalKind {
     PragmaEqual,
     PragmaGreaterThan,
     PragmaGreaterThanEqual,
+    PragmaIdentifier,
     PragmaKeyword,
     PragmaLessThan,
     PragmaLessThanEqual,

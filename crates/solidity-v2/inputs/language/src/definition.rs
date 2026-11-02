@@ -16,6 +16,7 @@ language_v2_macros::compile!(Language(
     contexts = [
         LexicalContext(
             name = Pragma,
+            identifier_token = PragmaIdentifier,
             sections = [Section(
                 title = "Pragma",
                 topics = [
@@ -121,6 +122,32 @@ language_v2_macros::compile!(Language(
                                 name = VersionPragmaComponents,
                                 reference = VersionPragmaComponent,
                                 separator = PragmaPeriod
+                            ),
+                            // Matches a whole word, so that a keyword can't match the start of a longer word, like
+                            // `solidity0` in `pragma solidity0.8.0;`.
+                            // It is never enabled: the lexer matches it, but no rule accepts it.
+                            Token(
+                                name = PragmaIdentifier,
+                                enabled = Never,
+                                definitions = [TokenDefinition(
+                                        scanner = Sequence([
+                                        Fragment(PragmaIdentifierStart),
+                                        ZeroOrMore(Choice([
+                                            Fragment(PragmaIdentifierStart),
+                                            Range(inclusive_start = '0', inclusive_end = '9')
+                                        ]))
+                                    ])
+                                )]
+                            ),
+                            Fragment(
+                                name = PragmaIdentifierStart,
+                                enabled = Never,
+                                scanner = Choice([
+                                    Atom("_"),
+                                    Atom("$"),
+                                    Range(inclusive_start = 'a', inclusive_end = 'z'),
+                                    Range(inclusive_start = 'A', inclusive_end = 'Z')
+                                ])
                             ),
                             Token(
                                 name = VersionPragmaComponent,

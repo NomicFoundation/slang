@@ -2863,6 +2863,12 @@ impl TextEnd for PragmaGreaterThanEqual {
     }
 }
 
+impl TextEnd for PragmaIdentifier {
+    fn calculate_text_end(&self) -> Option<usize> {
+        Some(self.range.end)
+    }
+}
+
 impl TextEnd for PragmaKeyword {
     fn calculate_text_end(&self) -> Option<usize> {
         Some(self.range.end)

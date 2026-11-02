@@ -6,12 +6,12 @@ Source: >
 
 Diagnostics: # 1 total
   - >
-    [syntax/unexpected-terminal] Error: Unexpected UNRECOGNIZED. One of PragmaSemicolon was expected
+    [syntax/unexpected-terminal] Error: Unexpected PragmaIdentifier. One of PragmaSemicolon was expected
        ╭─[crates/solidity-v2/testing/snapshots/cst_output/PragmaDirective/experimental_stray_argument/input.sol:2:34]
        │
      2 │ pragma experimental ABIEncoderV2 unsupportedName;
-       │                                  ┬  
-       │                                  ╰── Error occurred here.
+       │                                  ───────┬───────  
+       │                                         ╰───────── Error occurred here.
     ───╯
 Tree:
   - (root꞉ SourceUnit):

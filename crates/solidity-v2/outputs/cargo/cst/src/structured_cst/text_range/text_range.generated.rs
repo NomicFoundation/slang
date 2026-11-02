@@ -2090,6 +2090,12 @@ impl TextRange for PragmaGreaterThanEqual {
     }
 }
 
+impl TextRange for PragmaIdentifier {
+    fn calculate_text_range(&self) -> Option<Range<usize>> {
+        Some(self.calculate_text_start()?..self.calculate_text_end()?)
+    }
+}
+
 impl TextRange for PragmaKeyword {
     fn calculate_text_range(&self) -> Option<Range<usize>> {
         Some(self.calculate_text_start()?..self.calculate_text_end()?)

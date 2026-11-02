@@ -1641,6 +1641,26 @@ mod pragma_directive {
     }
 
     #[test]
+    fn glued_abicoder_version() -> Result<()> {
+        run("PragmaDirective", "glued_abicoder_version")
+    }
+
+    #[test]
+    fn glued_experimental_feature() -> Result<()> {
+        run("PragmaDirective", "glued_experimental_feature")
+    }
+
+    #[test]
+    fn glued_solidity_version() -> Result<()> {
+        run("PragmaDirective", "glued_solidity_version")
+    }
+
+    #[test]
+    fn glued_solidity_wildcard() -> Result<()> {
+        run("PragmaDirective", "glued_solidity_wildcard")
+    }
+
+    #[test]
     fn invalid_number_pragma() -> Result<()> {
         run("PragmaDirective", "invalid_number_pragma")
     }
@@ -1658,6 +1678,11 @@ mod pragma_directive {
     #[test]
     fn version_string() -> Result<()> {
         run("PragmaDirective", "version_string")
+    }
+
+    #[test]
+    fn version_without_whitespace() -> Result<()> {
+        run("PragmaDirective", "version_without_whitespace")
     }
 }
 

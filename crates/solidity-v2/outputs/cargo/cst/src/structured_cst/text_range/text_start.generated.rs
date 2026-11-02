@@ -2831,6 +2831,12 @@ impl TextStart for PragmaGreaterThanEqual {
     }
 }
 
+impl TextStart for PragmaIdentifier {
+    fn calculate_text_start(&self) -> Option<usize> {
+        Some(self.range.start)
+    }
+}
+
 impl TextStart for PragmaKeyword {
     fn calculate_text_start(&self) -> Option<usize> {
         Some(self.range.start)
