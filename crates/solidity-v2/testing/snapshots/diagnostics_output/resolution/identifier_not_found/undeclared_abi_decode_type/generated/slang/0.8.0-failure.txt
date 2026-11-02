@@ -1,0 +1,11 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 1
+
+[resolution/identifier-not-found] Error: Identifier not found.
+   ╭─[input.sol:6:27]
+   │
+ 6 │         abi.decode(data, (X));
+   │                           ┬  
+   │                           ╰── Error occurred here.
+───╯

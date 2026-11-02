@@ -1,0 +1,11 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 1
+
+[TypeError 9582] Error: Member "Nope" not found or not visible after argument-dependent lookup in type(contract A).
+    ╭─[input.sol:10:14]
+    │
+ 10 │         emit A.Nope();
+    │              ───┬──  
+    │                 ╰──── Error occurred here.
+────╯

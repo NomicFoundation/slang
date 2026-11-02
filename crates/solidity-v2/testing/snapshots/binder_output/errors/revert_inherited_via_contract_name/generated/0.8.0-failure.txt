@@ -15,6 +15,13 @@ Diagnostics:
     │         ──────┬──────  
     │               ╰──────── Error occurred here.
 ────╯
+[resolution/member-not-found] Error: Member 'E' not found or not visible after argument-dependent lookup.
+    ╭─[input.sol:12:18]
+    │
+ 12 │         revert B.E();
+    │                  ┬  
+    │                  ╰── Error occurred here.
+────╯
 [syntax/incompatible-syntax-version] Error: This syntax was introduced in version '0.8.4'.
     ╭─[input.sol:16:9]
     │

@@ -1,5 +1,16 @@
 # This file is generated automatically by infrastructure scripts. Please don't edit by hand.
 
+Diagnostics:
+[resolution/member-not-found] Error: Member 'E' not found or not visible after argument-dependent lookup.
+    ╭─[input.sol:12:16]
+    │
+ 12 │         emit B.E();
+    │                ┬  
+    │                ╰── Error occurred here.
+────╯
+
+------------------------------------------------------------------------
+
 Definitions (5):
 - Def: #1 ["A" @ input.sol:3:10] (contract)
 - Def: #2 ["E" @ input.sol:4:11] (event)

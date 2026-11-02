@@ -1,0 +1,11 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 1
+
+[DeclarationError 7576] Error: Undeclared identifier.
+   ╭─[input.sol:6:10]
+   │
+ 6 │         [x, 1];
+   │          ┬  
+   │          ╰── Error occurred here.
+───╯

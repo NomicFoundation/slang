@@ -1,0 +1,11 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 1
+
+[DeclarationError 7576] Error: Undeclared identifier.
+   ╭─[input.sol:6:17]
+   │
+ 6 │         uint256[N] memory arr;
+   │                 ┬  
+   │                 ╰── Error occurred here.
+───╯

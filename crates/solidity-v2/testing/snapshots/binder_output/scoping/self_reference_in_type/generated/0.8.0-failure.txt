@@ -1,7 +1,7 @@
 # This file is generated automatically by infrastructure scripts. Please don't edit by hand.
 
 Diagnostics:
-[type-system/array-length-not-constant] Error: Invalid array length, expected integer literal or constant expression.
+[resolution/identifier-not-found] Error: Identifier not found.
    ╭─[input.sol:6:14]
    │
  6 │         uint[N] memory N;
