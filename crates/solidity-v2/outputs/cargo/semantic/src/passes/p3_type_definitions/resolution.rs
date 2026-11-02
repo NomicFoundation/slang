@@ -19,8 +19,8 @@ use crate::passes::common::constant_evaluator::{
     ConstantResolver, EvaluationError, evaluate_compile_time_constant,
 };
 use crate::passes::common::{
-    PathResolution, node_location, resolve_identifier_path_as_expression_in_scope,
-    resolve_identifier_path_as_type_in_scope,
+    IdentifierPathTarget, PathResolution, node_location,
+    resolve_identifier_path_as_expression_in_scope, resolve_identifier_path_as_type_in_scope,
 };
 use crate::types::{
     ArrayType, DataLocation, FixedSizeArrayType, FunctionType, MappingType, TupleType, Type, TypeId,
@@ -42,14 +42,15 @@ impl Pass<'_> {
 
     /// Resolves an `IdentifierPath` in a type context starting at the current
     /// lexical scope, and reports its first identifier that does not name a
-    /// single declaration.
+    /// single declaration, expecting it to name a `target`.
     pub(super) fn resolve_and_check_identifier_path_as_type(
         &mut self,
         identifier_path: &ir::IdentifierPath,
+        target: IdentifierPathTarget,
     ) {
         let path_resolution = self.resolve_identifier_path_as_type(identifier_path);
         if let Some((identifier, kind)) =
-            path_resolution.unresolved_identifier(identifier_path, false)
+            path_resolution.unresolved_identifier(identifier_path, target)
         {
             self.push_diagnostic(identifier, kind);
         }
@@ -58,11 +59,11 @@ impl Pass<'_> {
     /// Resolves an `IdentifierPath` in an expression context starting at the
     /// current lexical scope, and reports its first identifier that does not
     /// name a single declaration. See [`PathResolution::unresolved_identifier`]
-    /// for `last_may_be_ambiguous`.
+    /// for `target`.
     pub(super) fn resolve_and_check_identifier_path_as_expression(
         &mut self,
         identifier_path: &ir::IdentifierPath,
-        last_may_be_ambiguous: bool,
+        target: IdentifierPathTarget,
     ) {
         let path_resolution = resolve_identifier_path_as_expression_in_scope(
             self.binder,
@@ -70,7 +71,7 @@ impl Pass<'_> {
             self.current_scope_id(),
         );
         if let Some((identifier, kind)) =
-            path_resolution.unresolved_identifier(identifier_path, last_may_be_ambiguous)
+            path_resolution.unresolved_identifier(identifier_path, target)
         {
             self.push_diagnostic(identifier, kind);
         }

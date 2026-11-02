@@ -8,7 +8,7 @@ use slang_solidity_v2_common::files::FileId;
 use slang_solidity_v2_common::nodes::NodeId;
 use slang_solidity_v2_ir::ir;
 
-use super::common::resolve_identifier_path_as_type_in_scope;
+use super::common::{IdentifierPathTarget, resolve_identifier_path_as_type_in_scope};
 use crate::binder::{Binder, ContractDefinition, Definition, InterfaceDefinition, ScopeId};
 use crate::context::SemanticFile;
 
@@ -116,9 +116,10 @@ impl<'a> Pass<'a> {
             );
             match path_resolution.resolution.as_definition_id() {
                 None => {
-                    if let Some((identifier, kind)) =
-                        path_resolution.unresolved_identifier(&inheritance_type.type_name, false)
-                    {
+                    if let Some((identifier, kind)) = path_resolution.unresolved_identifier(
+                        &inheritance_type.type_name,
+                        IdentifierPathTarget::Contract,
+                    ) {
                         self.diagnostics
                             .push(self.file_id.clone(), identifier.range.clone(), kind);
                     }

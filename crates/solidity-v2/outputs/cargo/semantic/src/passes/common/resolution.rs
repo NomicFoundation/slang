@@ -12,6 +12,21 @@ use slang_solidity_v2_ir::ir;
 use crate::binder::{Binder, Definition, DefinitionIds, Reference, Resolution, ScopeId, Typing};
 use crate::types::{FunctionType, Type, TypeRegistry};
 
+/// The kind of declaration an `IdentifierPath` is expected to name. Mostly
+/// declarative for now with only some variants having semantic impact when
+/// reporting errors.
+#[derive(Clone, Copy)]
+pub(crate) enum IdentifierPathTarget {
+    /// A user-defined type, like a struct, an enum or a contract.
+    Type,
+    /// A contract or interface, as a base or in an `override` list.
+    Contract,
+    Error,
+    Event,
+    /// A modifier, or a base contract whose constructor is invoked.
+    Modifier,
+}
+
 /// The first identifier of an `IdentifierPath` that fails to resolve to a
 /// single declaration. The identifiers after it cannot resolve and are not
 /// considered.
@@ -24,7 +39,10 @@ pub(crate) enum PathResolutionFailure {
     /// The identifier at this index names an overload set, or the overrides
     /// of a virtual modifier. A redeclaration also names several
     /// declarations, but is reported on its own.
-    Ambiguous(usize),
+    Ambiguous {
+        index: usize,
+        is_modifier_override_set: bool,
+    },
     /// The identifier at this index is a qualifier naming a declaration that
     /// has no members, like a variable or a struct.
     NotANamespace(usize),
@@ -42,14 +60,15 @@ impl PathResolution {
     /// for it: the head of the path is undeclared, any later identifier is a
     /// member that the preceding one does not provide, a qualifier without
     /// members is not a namespace, and an identifier naming several
-    /// declarations is ambiguous. An ambiguous last identifier
-    /// is not reported when `last_may_be_ambiguous`, for the callers that
-    /// narrow it down later.
+    /// declarations is ambiguous. The last identifier is expected to name a
+    /// `target`: an event, or the overrides of a modifier, may be ambiguous,
+    /// as they are narrowed down later.
     pub(crate) fn unresolved_identifier<'a>(
         &self,
         identifier_path: &'a ir::IdentifierPath,
-        last_may_be_ambiguous: bool,
+        target: IdentifierPathTarget,
     ) -> Option<(&'a ir::Identifier, DiagnosticKind)> {
+        let is_last = |index: usize| index == identifier_path.len() - 1;
         match self.failure {
             PathResolutionFailure::None => None,
             PathResolutionFailure::Unresolved(index) => {
@@ -69,8 +88,16 @@ impl PathResolution {
                 };
                 Some((identifier, kind))
             }
-            PathResolutionFailure::Ambiguous(index) => {
-                if last_may_be_ambiguous && index == identifier_path.len() - 1 {
+            PathResolutionFailure::Ambiguous {
+                index,
+                is_modifier_override_set,
+            } => {
+                let may_be_ambiguous = match target {
+                    IdentifierPathTarget::Event => true,
+                    IdentifierPathTarget::Modifier => is_modifier_override_set,
+                    _ => false,
+                };
+                if may_be_ambiguous && is_last(index) {
                     return None;
                 }
                 let identifier = &identifier_path[index];
@@ -89,6 +116,17 @@ impl PathResolution {
                 Some((identifier, kind))
             }
         }
+    }
+
+    /// Whether the last identifier names the overrides of a virtual modifier.
+    pub(crate) fn is_modifier_override_set(&self) -> bool {
+        matches!(
+            self.failure,
+            PathResolutionFailure::Ambiguous {
+                is_modifier_override_set: true,
+                ..
+            }
+        ) && matches!(self.resolution, Resolution::Ambiguous(_))
     }
 }
 
@@ -164,7 +202,15 @@ fn resolve_path_in_scope(
             } else if let Resolution::Ambiguous(definition_ids) = &resolution
                 && is_overload_or_override_set(binder, definition_ids)
             {
-                failure = PathResolutionFailure::Ambiguous(index);
+                failure = PathResolutionFailure::Ambiguous {
+                    index,
+                    is_modifier_override_set: definition_ids.iter().all(|definition_id| {
+                        matches!(
+                            binder.find_definition_by_id(*definition_id),
+                            Some(Definition::Modifier(_))
+                        )
+                    }),
+                };
             }
             is_reportable &= matches!(resolution, Resolution::Definition(_));
         }
