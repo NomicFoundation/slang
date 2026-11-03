@@ -25,7 +25,7 @@ pub use expected_array_length_expression::ExpectedArrayLengthExpression;
 pub use incompatible_syntax_version::IncompatibleSyntaxVersion;
 pub use incompatible_version_pragma::IncompatibleVersionPragma;
 pub use invalid_assembly_dialect::InvalidAssemblyDialect;
-pub use invalid_character_in_string::{InvalidCharacterInString, StringLiteralKind};
+pub use invalid_character_in_string::InvalidCharacterInString;
 pub use invalid_mutability::InvalidMutability;
 pub use invalid_version_specifier::InvalidVersionSpecifier;
 pub use invalid_visibility::InvalidVisibility;

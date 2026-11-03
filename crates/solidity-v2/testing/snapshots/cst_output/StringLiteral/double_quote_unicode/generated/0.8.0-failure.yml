@@ -13,7 +13,7 @@ Source: >
 
 Diagnostics: # 1 total
   - >
-    [syntax/invalid-character-in-string] Error: Invalid character in string. Use a 'unicode"..."' string literal if you're trying to use Unicode characters.
+    [syntax/invalid-character-in-string] Error: Invalid character in string. Only printable ASCII is allowed.
        ╭─[crates/solidity-v2/testing/snapshots/cst_output/StringLiteral/double_quote_unicode/input.sol:4:2]
        │
      4 │ "दिल"

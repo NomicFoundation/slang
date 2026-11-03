@@ -2993,7 +2993,7 @@ YulPeriod: YulPeriod = {
 #[inline]
 YulStringLiteral: YulStringLiteral = {
 
-        <l:@L> L_YulStringLiteral <r:@L> => { ctx.check_yul_string_literal(l..r); new_yul_string_literal(l..r, ctx.source) },
+        <l:@L> L_YulStringLiteral <r:@L> => { ctx.check_string_literal(l..r); new_yul_string_literal(l..r, ctx.source) },
 
 };
 #[inline]

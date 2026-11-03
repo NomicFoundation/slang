@@ -10,7 +10,7 @@ Diagnostics: 2
    │             ╰────── Error occurred here.
 ───╯
 
-[syntax/invalid-character-in-string] Error: Invalid character in string. Use a 'unicode"..."' string literal if you're trying to use Unicode characters.
+[syntax/invalid-character-in-string] Error: Invalid character in string. Only printable ASCII is allowed.
    ╭─[input.sol:5:12]
    │
  5 │ import "café.sol";

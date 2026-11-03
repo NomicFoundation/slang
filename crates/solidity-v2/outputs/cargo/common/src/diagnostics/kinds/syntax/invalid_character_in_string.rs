@@ -3,20 +3,10 @@ use serde::Serialize;
 use crate::diagnostics::extensions::DiagnosticExtensions;
 use crate::diagnostics::severity::DiagnosticSeverity;
 
-/// Which language a string literal belongs to: Solidity and Yul report the same mistakes
-/// differently, as Yul has no `unicode` string literals.
-#[derive(Clone, Copy, Debug, Eq, PartialEq, Serialize)]
-pub enum StringLiteralKind {
-    Solidity,
-    Yul,
-}
-
 /// Diagnostic emitted when a plain (non-`unicode`) or Yul string literal holds a character
 /// outside of printable ASCII, which only versions before 0.7.0 allowed.
 #[derive(Clone, Debug, Eq, PartialEq, Serialize)]
-pub struct InvalidCharacterInString {
-    pub kind: StringLiteralKind,
-}
+pub struct InvalidCharacterInString;
 
 impl DiagnosticExtensions for InvalidCharacterInString {
     fn severity(&self) -> DiagnosticSeverity {
@@ -28,10 +18,7 @@ impl DiagnosticExtensions for InvalidCharacterInString {
     }
 
     fn message(&self) -> String {
-        match self.kind {
-            StringLiteralKind::Solidity => "Invalid character in string. Use a 'unicode\"...\"' string literal if you're trying to use Unicode characters.",
-            StringLiteralKind::Yul => "Invalid character in string. Only printable ASCII is allowed.",
-        }
-        .to_string()
+        // No advice to use a `unicode` string literal instead: import paths can't be one.
+        "Invalid character in string. Only printable ASCII is allowed.".to_string()
     }
 }

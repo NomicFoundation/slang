@@ -2,7 +2,7 @@
 
 Diagnostics: 1
 
-[syntax/invalid-character-in-string] Error: Invalid character in string. Use a 'unicode"..."' string literal if you're trying to use Unicode characters.
+[syntax/invalid-character-in-string] Error: Invalid character in string. Only printable ASCII is allowed.
    ╭─[input.sol:7:4]
    │
  7 │ café";
