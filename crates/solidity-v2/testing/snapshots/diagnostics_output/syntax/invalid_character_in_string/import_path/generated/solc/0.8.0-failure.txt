@@ -1,0 +1,11 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 1
+
+[ParserError 9478] Error: Expected string literal (path), "*" or alias list.
+   ╭─[input.sol:5:8]
+   │
+ 5 │ import "café.sol";
+   │        ──┬──  
+   │          ╰──── Error occurred here.
+───╯

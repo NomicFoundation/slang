@@ -1,3 +1,5 @@
+use std::ops::Range;
+
 /// Strips a prefix and removes quotes from a parsed string literal. Prefix can
 /// be the empty string. Panics if the string is not quoted or the prefix
 /// doesn't match.
@@ -20,6 +22,27 @@ pub fn strip_string_literal_prefix_and_quotes<'a>(text: &'a str, prefix: &str) -
 /// quoted.
 pub fn strip_string_literal_quotes(text: &str) -> &str {
     strip_string_literal_prefix_and_quotes(text, "")
+}
+
+/// The range, within a string literal's `text`, of its first character outside of printable
+/// ASCII, leaving escape sequences aside: a line continuation holds a line break.
+pub fn first_non_printable_ascii(text: &str) -> Option<Range<usize>> {
+    // Fast path for valid strings
+    if text.bytes().all(|byte| (b' '..=b'~').contains(&byte)) {
+        return None;
+    }
+
+    let mut chars = text.char_indices().peekable();
+    while let Some((offset, char)) = chars.next() {
+        if char == '\\' {
+            if let Some((_, '\r')) = chars.next() {
+                chars.next_if(|&(_, next)| next == '\n');
+            }
+        } else if !(' '..='~').contains(&char) {
+            return Some(offset..offset + char.len_utf8());
+        }
+    }
+    None
 }
 
 pub fn decode_escape_sequences(content: &str) -> Vec<u8> {

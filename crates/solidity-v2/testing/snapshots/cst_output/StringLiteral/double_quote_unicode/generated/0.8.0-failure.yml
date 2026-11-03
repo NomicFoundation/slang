@@ -1,0 +1,48 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Source: >
+  1  │ contract C {                                                                                                 │ 0..12
+  2  │     function f() {                                                                                           │ 13..31
+  3  │ // >>> Copied from crates/solidity/testing/snapshots/cst_output/StringLiteral/double_quote_unicode/input.sol │ 32..140
+  4  │ "दिल"                                                                                                        │ 141..152
+  5  │                                                                                                              │ 153..153
+  6  │ // <<<                                                                                                       │ 154..160
+  7  │ ;                                                                                                            │ 161..162
+  8  │     }                                                                                                        │ 163..168
+  9  │ }                                                                                                            │ 169..170
+
+Diagnostics: # 1 total
+  - >
+    [syntax/invalid-character-in-string] Error: Invalid character in string. Use a 'unicode"..."' string literal if you're trying to use Unicode characters.
+       ╭─[crates/solidity-v2/testing/snapshots/cst_output/StringLiteral/double_quote_unicode/input.sol:4:2]
+       │
+     4 │ "दिल"
+       │  ┬  
+       │  ╰── Error occurred here.
+    ───╯
+Tree:
+  - (root꞉ SourceUnit): # "contract C {\n    function f() {\n// >>> Copied from..." (0..170)
+      - (members꞉ SourceUnitMembers): # "contract C {\n    function f() {\n// >>> Copied from..." (0..170)
+          - (item꞉ SourceUnitMember) ► (contract_definition꞉ ContractDefinition): # "contract C {\n    function f() {\n// >>> Copied from..." (0..170)
+              - (contract_keyword꞉ ContractKeyword): "contract" # (0..8)
+              - (name꞉ Identifier): "C" # (9..10)
+              - (specifiers꞉ ContractSpecifiers): []
+              - (open_brace꞉ OpenBrace): "{" # (11..12)
+              - (members꞉ ContractMembers): # "function f() {\n// >>> Copied from crates/solidity/..." (17..168)
+                  - (item꞉ ContractMember) ► (function_definition꞉ FunctionDefinition): # "function f() {\n// >>> Copied from crates/solidity/..." (17..168)
+                      - (function_keyword꞉ FunctionKeyword): "function" # (17..25)
+                      - (name꞉ FunctionName) ► (identifier꞉ Identifier): "f" # (26..27)
+                      - (parameters꞉ ParametersDeclaration): # "()" (27..29)
+                          - (open_paren꞉ OpenParen): "(" # (27..28)
+                          - (parameters꞉ Parameters): []
+                          - (close_paren꞉ CloseParen): ")" # (28..29)
+                      - (attributes꞉ FunctionAttributes): []
+                      - (body꞉ FunctionBody) ► (block꞉ Block): # "{\n// >>> Copied from crates/solidity/testing/snaps..." (30..168)
+                          - (open_brace꞉ OpenBrace): "{" # (30..31)
+                          - (statements꞉ Statements): # '"दिल"\n\n// <<<\n;' (141..162)
+                              - (item꞉ Statement) ► (expression_statement꞉ ExpressionStatement): # '"दिल"\n\n// <<<\n;' (141..162)
+                                  - (expression꞉ Expression) ► (string_expression꞉ StringExpression) ► (string_literals꞉ StringLiterals): # '"दिल"' (141..152)
+                                      - (item꞉ StringLiteral): '"दिल"' # (141..152)
+                                  - (semicolon꞉ Semicolon): ";" # (161..162)
+                          - (close_brace꞉ CloseBrace): "}" # (167..168)
+              - (close_brace꞉ CloseBrace): "}" # (169..170)

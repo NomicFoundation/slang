@@ -84,7 +84,11 @@ Repeated<T>: Vec<T> = {
 #[inline]
 {{ id }}: {{ id }} = {
 {% for lexeme in lexemes %}
+{%- if id == "StringLiteral" or id == "YulStringLiteral" %}
+        <l:@L> L_{{ lexeme }} <r:@L> => { ctx.check_{{id | snake_case}}(l..r); new_{{id | snake_case}}(l..r, ctx.source) },
+{%- else %}
         <l:@L> L_{{ lexeme }} <r:@L> => new_{{id | snake_case}}(l..r, ctx.source),
+{%- endif %}
 {% endfor %}
 };
 {%- else -%}

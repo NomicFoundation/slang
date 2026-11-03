@@ -1,9 +1,14 @@
+use std::ops::Range;
+
 use lalrpop_util::lalrpop_mod;
 use slang_solidity_v2_common::collections::SortedSet;
 use slang_solidity_v2_common::diagnostics::DiagnosticCollection;
-use slang_solidity_v2_common::diagnostics::kinds::syntax::{UnexpectedEof, UnexpectedTerminal};
+use slang_solidity_v2_common::diagnostics::kinds::syntax::{
+    InvalidCharacterInString, StringLiteralKind, UnexpectedEof, UnexpectedTerminal,
+};
 use slang_solidity_v2_common::files::FileId;
 use slang_solidity_v2_common::terminals::TerminalKind;
+use slang_solidity_v2_common::utils::strings::first_non_printable_ascii;
 use slang_solidity_v2_common::versions::LanguageVersion;
 use slang_solidity_v2_cst::structured_cst::natspec::NatSpec;
 use slang_solidity_v2_cst::structured_cst::nodes::{
@@ -62,6 +67,28 @@ impl GrammarCtx<'_> {
     /// See [`NatSpecStack::pop_for_token_at_range`].
     pub(crate) fn pop_natspec(&self, start: usize, end: usize) -> Option<NatSpec> {
         self.natspec_stack.pop_for_token_at_range(start, end)
+    }
+
+    /// Reports a Solidity string literal holding a character outside of printable ASCII.
+    pub(crate) fn check_string_literal(&mut self, range: Range<usize>) {
+        self.check_string_characters(range, StringLiteralKind::Solidity);
+    }
+
+    /// Reports a Yul string literal holding a character outside of printable ASCII.
+    pub(crate) fn check_yul_string_literal(&mut self, range: Range<usize>) {
+        self.check_string_characters(range, StringLiteralKind::Yul);
+    }
+
+    // The lexer takes any character in a string literal, so that older code keeps its strings
+    // where they are: the ones only older versions allowed are reported as they are parsed.
+    fn check_string_characters(&mut self, range: Range<usize>, kind: StringLiteralKind) {
+        if let Some(offsets) = first_non_printable_ascii(&self.source[range.clone()]) {
+            self.diagnostics.push(
+                self.file_id.to_owned(),
+                range.start + offsets.start..range.start + offsets.end,
+                InvalidCharacterInString { kind },
+            );
+        }
     }
 }
 

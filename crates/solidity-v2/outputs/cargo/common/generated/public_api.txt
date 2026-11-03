@@ -3084,11 +3084,26 @@ pub fn slang_solidity_v2_common::diagnostics::kinds::structure::YulLeaveOutsideF
 pub fn slang_solidity_v2_common::diagnostics::kinds::structure::YulLeaveOutsideFunction::message(&self) -> alloc::string::String
 pub fn slang_solidity_v2_common::diagnostics::kinds::structure::YulLeaveOutsideFunction::severity(&self) -> slang_solidity_v2_common::diagnostics::DiagnosticSeverity
 pub mod slang_solidity_v2_common::diagnostics::kinds::syntax
+pub enum slang_solidity_v2_common::diagnostics::kinds::syntax::StringLiteralKind
+pub slang_solidity_v2_common::diagnostics::kinds::syntax::StringLiteralKind::Solidity
+pub slang_solidity_v2_common::diagnostics::kinds::syntax::StringLiteralKind::Yul
+impl core::clone::Clone for slang_solidity_v2_common::diagnostics::kinds::syntax::StringLiteralKind
+pub fn slang_solidity_v2_common::diagnostics::kinds::syntax::StringLiteralKind::clone(&self) -> slang_solidity_v2_common::diagnostics::kinds::syntax::StringLiteralKind
+impl core::cmp::Eq for slang_solidity_v2_common::diagnostics::kinds::syntax::StringLiteralKind
+impl core::cmp::PartialEq for slang_solidity_v2_common::diagnostics::kinds::syntax::StringLiteralKind
+pub fn slang_solidity_v2_common::diagnostics::kinds::syntax::StringLiteralKind::eq(&self, &slang_solidity_v2_common::diagnostics::kinds::syntax::StringLiteralKind) -> bool
+impl core::fmt::Debug for slang_solidity_v2_common::diagnostics::kinds::syntax::StringLiteralKind
+pub fn slang_solidity_v2_common::diagnostics::kinds::syntax::StringLiteralKind::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::Copy for slang_solidity_v2_common::diagnostics::kinds::syntax::StringLiteralKind
+impl core::marker::StructuralPartialEq for slang_solidity_v2_common::diagnostics::kinds::syntax::StringLiteralKind
+impl serde_core::ser::Serialize for slang_solidity_v2_common::diagnostics::kinds::syntax::StringLiteralKind
+pub fn slang_solidity_v2_common::diagnostics::kinds::syntax::StringLiteralKind::serialize<__S>(&self, __S) -> core::result::Result<<__S as serde_core::ser::Serializer>::Ok, <__S as serde_core::ser::Serializer>::Error> where __S: serde_core::ser::Serializer
 pub enum slang_solidity_v2_common::diagnostics::kinds::syntax::SyntaxDiagnosticKind
 pub slang_solidity_v2_common::diagnostics::kinds::syntax::SyntaxDiagnosticKind::ExpectedArrayLengthExpression(slang_solidity_v2_common::diagnostics::kinds::syntax::ExpectedArrayLengthExpression)
 pub slang_solidity_v2_common::diagnostics::kinds::syntax::SyntaxDiagnosticKind::IncompatibleSyntaxVersion(slang_solidity_v2_common::diagnostics::kinds::syntax::IncompatibleSyntaxVersion)
 pub slang_solidity_v2_common::diagnostics::kinds::syntax::SyntaxDiagnosticKind::IncompatibleVersionPragma(slang_solidity_v2_common::diagnostics::kinds::syntax::IncompatibleVersionPragma)
 pub slang_solidity_v2_common::diagnostics::kinds::syntax::SyntaxDiagnosticKind::InvalidAssemblyDialect(slang_solidity_v2_common::diagnostics::kinds::syntax::InvalidAssemblyDialect)
+pub slang_solidity_v2_common::diagnostics::kinds::syntax::SyntaxDiagnosticKind::InvalidCharacterInString(slang_solidity_v2_common::diagnostics::kinds::syntax::InvalidCharacterInString)
 pub slang_solidity_v2_common::diagnostics::kinds::syntax::SyntaxDiagnosticKind::InvalidMutability(slang_solidity_v2_common::diagnostics::kinds::syntax::InvalidMutability)
 pub slang_solidity_v2_common::diagnostics::kinds::syntax::SyntaxDiagnosticKind::InvalidVersionSpecifier(slang_solidity_v2_common::diagnostics::kinds::syntax::InvalidVersionSpecifier)
 pub slang_solidity_v2_common::diagnostics::kinds::syntax::SyntaxDiagnosticKind::InvalidVisibility(slang_solidity_v2_common::diagnostics::kinds::syntax::InvalidVisibility)
@@ -3119,6 +3134,8 @@ impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::syntax::I
 pub fn slang_solidity_v2_common::diagnostics::kinds::syntax::SyntaxDiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::syntax::IncompatibleVersionPragma) -> Self
 impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::syntax::InvalidAssemblyDialect> for slang_solidity_v2_common::diagnostics::kinds::syntax::SyntaxDiagnosticKind
 pub fn slang_solidity_v2_common::diagnostics::kinds::syntax::SyntaxDiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::syntax::InvalidAssemblyDialect) -> Self
+impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::syntax::InvalidCharacterInString> for slang_solidity_v2_common::diagnostics::kinds::syntax::SyntaxDiagnosticKind
+pub fn slang_solidity_v2_common::diagnostics::kinds::syntax::SyntaxDiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::syntax::InvalidCharacterInString) -> Self
 impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::syntax::InvalidMutability> for slang_solidity_v2_common::diagnostics::kinds::syntax::SyntaxDiagnosticKind
 pub fn slang_solidity_v2_common::diagnostics::kinds::syntax::SyntaxDiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::syntax::InvalidMutability) -> Self
 impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::syntax::InvalidVersionSpecifier> for slang_solidity_v2_common::diagnostics::kinds::syntax::SyntaxDiagnosticKind
@@ -3242,6 +3259,26 @@ impl slang_solidity_v2_common::diagnostics::DiagnosticExtensions for slang_solid
 pub fn slang_solidity_v2_common::diagnostics::kinds::syntax::InvalidAssemblyDialect::code(&self) -> &'static str
 pub fn slang_solidity_v2_common::diagnostics::kinds::syntax::InvalidAssemblyDialect::message(&self) -> alloc::string::String
 pub fn slang_solidity_v2_common::diagnostics::kinds::syntax::InvalidAssemblyDialect::severity(&self) -> slang_solidity_v2_common::diagnostics::DiagnosticSeverity
+pub struct slang_solidity_v2_common::diagnostics::kinds::syntax::InvalidCharacterInString
+pub slang_solidity_v2_common::diagnostics::kinds::syntax::InvalidCharacterInString::kind: slang_solidity_v2_common::diagnostics::kinds::syntax::StringLiteralKind
+impl core::clone::Clone for slang_solidity_v2_common::diagnostics::kinds::syntax::InvalidCharacterInString
+pub fn slang_solidity_v2_common::diagnostics::kinds::syntax::InvalidCharacterInString::clone(&self) -> slang_solidity_v2_common::diagnostics::kinds::syntax::InvalidCharacterInString
+impl core::cmp::Eq for slang_solidity_v2_common::diagnostics::kinds::syntax::InvalidCharacterInString
+impl core::cmp::PartialEq for slang_solidity_v2_common::diagnostics::kinds::syntax::InvalidCharacterInString
+pub fn slang_solidity_v2_common::diagnostics::kinds::syntax::InvalidCharacterInString::eq(&self, &slang_solidity_v2_common::diagnostics::kinds::syntax::InvalidCharacterInString) -> bool
+impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::syntax::InvalidCharacterInString> for slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind
+pub fn slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::syntax::InvalidCharacterInString) -> Self
+impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::syntax::InvalidCharacterInString> for slang_solidity_v2_common::diagnostics::kinds::syntax::SyntaxDiagnosticKind
+pub fn slang_solidity_v2_common::diagnostics::kinds::syntax::SyntaxDiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::syntax::InvalidCharacterInString) -> Self
+impl core::fmt::Debug for slang_solidity_v2_common::diagnostics::kinds::syntax::InvalidCharacterInString
+pub fn slang_solidity_v2_common::diagnostics::kinds::syntax::InvalidCharacterInString::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::StructuralPartialEq for slang_solidity_v2_common::diagnostics::kinds::syntax::InvalidCharacterInString
+impl serde_core::ser::Serialize for slang_solidity_v2_common::diagnostics::kinds::syntax::InvalidCharacterInString
+pub fn slang_solidity_v2_common::diagnostics::kinds::syntax::InvalidCharacterInString::serialize<__S>(&self, __S) -> core::result::Result<<__S as serde_core::ser::Serializer>::Ok, <__S as serde_core::ser::Serializer>::Error> where __S: serde_core::ser::Serializer
+impl slang_solidity_v2_common::diagnostics::DiagnosticExtensions for slang_solidity_v2_common::diagnostics::kinds::syntax::InvalidCharacterInString
+pub fn slang_solidity_v2_common::diagnostics::kinds::syntax::InvalidCharacterInString::code(&self) -> &'static str
+pub fn slang_solidity_v2_common::diagnostics::kinds::syntax::InvalidCharacterInString::message(&self) -> alloc::string::String
+pub fn slang_solidity_v2_common::diagnostics::kinds::syntax::InvalidCharacterInString::severity(&self) -> slang_solidity_v2_common::diagnostics::DiagnosticSeverity
 pub struct slang_solidity_v2_common::diagnostics::kinds::syntax::InvalidMutability
 pub slang_solidity_v2_common::diagnostics::kinds::syntax::InvalidMutability::valid: alloc::vec::Vec<slang_solidity_v2_common::terminals::TerminalKind>
 impl core::clone::Clone for slang_solidity_v2_common::diagnostics::kinds::syntax::InvalidMutability
@@ -4508,6 +4545,8 @@ impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::syntax::I
 pub fn slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::syntax::IncompatibleVersionPragma) -> Self
 impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::syntax::InvalidAssemblyDialect> for slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind
 pub fn slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::syntax::InvalidAssemblyDialect) -> Self
+impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::syntax::InvalidCharacterInString> for slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind
+pub fn slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::syntax::InvalidCharacterInString) -> Self
 impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::syntax::InvalidMutability> for slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind
 pub fn slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::syntax::InvalidMutability) -> Self
 impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::syntax::InvalidVersionSpecifier> for slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind
@@ -5220,6 +5259,10 @@ impl slang_solidity_v2_common::diagnostics::DiagnosticExtensions for slang_solid
 pub fn slang_solidity_v2_common::diagnostics::kinds::syntax::InvalidAssemblyDialect::code(&self) -> &'static str
 pub fn slang_solidity_v2_common::diagnostics::kinds::syntax::InvalidAssemblyDialect::message(&self) -> alloc::string::String
 pub fn slang_solidity_v2_common::diagnostics::kinds::syntax::InvalidAssemblyDialect::severity(&self) -> slang_solidity_v2_common::diagnostics::DiagnosticSeverity
+impl slang_solidity_v2_common::diagnostics::DiagnosticExtensions for slang_solidity_v2_common::diagnostics::kinds::syntax::InvalidCharacterInString
+pub fn slang_solidity_v2_common::diagnostics::kinds::syntax::InvalidCharacterInString::code(&self) -> &'static str
+pub fn slang_solidity_v2_common::diagnostics::kinds::syntax::InvalidCharacterInString::message(&self) -> alloc::string::String
+pub fn slang_solidity_v2_common::diagnostics::kinds::syntax::InvalidCharacterInString::severity(&self) -> slang_solidity_v2_common::diagnostics::DiagnosticSeverity
 impl slang_solidity_v2_common::diagnostics::DiagnosticExtensions for slang_solidity_v2_common::diagnostics::kinds::syntax::InvalidMutability
 pub fn slang_solidity_v2_common::diagnostics::kinds::syntax::InvalidMutability::code(&self) -> &'static str
 pub fn slang_solidity_v2_common::diagnostics::kinds::syntax::InvalidMutability::message(&self) -> alloc::string::String
@@ -5786,6 +5829,7 @@ pub mod slang_solidity_v2_common::utils
 pub mod slang_solidity_v2_common::utils::strings
 pub fn slang_solidity_v2_common::utils::strings::decode_escape_sequences(&str) -> alloc::vec::Vec<u8>
 pub fn slang_solidity_v2_common::utils::strings::decode_hex_string(&str) -> alloc::vec::Vec<u8>
+pub fn slang_solidity_v2_common::utils::strings::first_non_printable_ascii(&str) -> core::option::Option<core::ops::range::Range<usize>>
 pub fn slang_solidity_v2_common::utils::strings::strip_string_literal_prefix_and_quotes<'a>(&'a str, &str) -> &'a str
 pub fn slang_solidity_v2_common::utils::strings::strip_string_literal_quotes(&str) -> &str
 pub mod slang_solidity_v2_common::versions

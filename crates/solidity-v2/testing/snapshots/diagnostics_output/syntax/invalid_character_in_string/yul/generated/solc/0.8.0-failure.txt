@@ -1,0 +1,11 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 1
+
+[ParserError 1465] Error: Illegal token: Invalid character in string.
+   ╭─[input.sol:7:22]
+   │
+ 7 │             let s := 'naïve'
+   │                      ──┬─  
+   │                        ╰─── Error occurred here.
+───╯

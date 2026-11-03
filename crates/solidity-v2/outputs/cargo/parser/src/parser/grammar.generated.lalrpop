@@ -2693,7 +2693,7 @@ StringKeyword: StringKeyword = {
 #[inline]
 StringLiteral: StringLiteral = {
 
-        <l:@L> L_StringLiteral <r:@L> => new_string_literal(l..r, ctx.source),
+        <l:@L> L_StringLiteral <r:@L> => { ctx.check_string_literal(l..r); new_string_literal(l..r, ctx.source) },
 
 };
 #[inline]
@@ -2993,7 +2993,7 @@ YulPeriod: YulPeriod = {
 #[inline]
 YulStringLiteral: YulStringLiteral = {
 
-        <l:@L> L_YulStringLiteral <r:@L> => new_yul_string_literal(l..r, ctx.source),
+        <l:@L> L_YulStringLiteral <r:@L> => { ctx.check_yul_string_literal(l..r); new_yul_string_literal(l..r, ctx.source) },
 
 };
 #[inline]

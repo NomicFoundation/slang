@@ -1,0 +1,48 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Source: >
+  1  │ contract C {                                                                                              │ 0..12
+  2  │     function f() {                                                                                        │ 13..31
+  3  │ // >>> Copied from crates/solidity/testing/snapshots/cst_output/StringLiteral/tabs_double_quote/input.sol │ 32..137
+  4  │ "tab:	"                                                                                                   │ 138..145
+  5  │                                                                                                           │ 146..146
+  6  │ // <<<                                                                                                    │ 147..153
+  7  │ ;                                                                                                         │ 154..155
+  8  │     }                                                                                                     │ 156..161
+  9  │ }                                                                                                         │ 162..163
+
+Diagnostics: # 1 total
+  - >
+    [syntax/invalid-character-in-string] Error: Invalid character in string. Use a 'unicode"..."' string literal if you're trying to use Unicode characters.
+       ╭─[crates/solidity-v2/testing/snapshots/cst_output/StringLiteral/tabs_double_quote/input.sol:4:6]
+       │
+     4 │ "tab:   "
+       │      ┬──  
+       │      ╰──── Error occurred here.
+    ───╯
+Tree:
+  - (root꞉ SourceUnit): # "contract C {\n    function f() {\n// >>> Copied from..." (0..163)
+      - (members꞉ SourceUnitMembers): # "contract C {\n    function f() {\n// >>> Copied from..." (0..163)
+          - (item꞉ SourceUnitMember) ► (contract_definition꞉ ContractDefinition): # "contract C {\n    function f() {\n// >>> Copied from..." (0..163)
+              - (contract_keyword꞉ ContractKeyword): "contract" # (0..8)
+              - (name꞉ Identifier): "C" # (9..10)
+              - (specifiers꞉ ContractSpecifiers): []
+              - (open_brace꞉ OpenBrace): "{" # (11..12)
+              - (members꞉ ContractMembers): # "function f() {\n// >>> Copied from crates/solidity/..." (17..161)
+                  - (item꞉ ContractMember) ► (function_definition꞉ FunctionDefinition): # "function f() {\n// >>> Copied from crates/solidity/..." (17..161)
+                      - (function_keyword꞉ FunctionKeyword): "function" # (17..25)
+                      - (name꞉ FunctionName) ► (identifier꞉ Identifier): "f" # (26..27)
+                      - (parameters꞉ ParametersDeclaration): # "()" (27..29)
+                          - (open_paren꞉ OpenParen): "(" # (27..28)
+                          - (parameters꞉ Parameters): []
+                          - (close_paren꞉ CloseParen): ")" # (28..29)
+                      - (attributes꞉ FunctionAttributes): []
+                      - (body꞉ FunctionBody) ► (block꞉ Block): # "{\n// >>> Copied from crates/solidity/testing/snaps..." (30..161)
+                          - (open_brace꞉ OpenBrace): "{" # (30..31)
+                          - (statements꞉ Statements): # '"tab:\t"\n\n// <<<\n;' (138..155)
+                              - (item꞉ Statement) ► (expression_statement꞉ ExpressionStatement): # '"tab:\t"\n\n// <<<\n;' (138..155)
+                                  - (expression꞉ Expression) ► (string_expression꞉ StringExpression) ► (string_literals꞉ StringLiterals): # '"tab:\t"' (138..145)
+                                      - (item꞉ StringLiteral): '"tab:\t"' # (138..145)
+                                  - (semicolon꞉ Semicolon): ";" # (154..155)
+                          - (close_brace꞉ CloseBrace): "}" # (160..161)
+              - (close_brace꞉ CloseBrace): "}" # (162..163)

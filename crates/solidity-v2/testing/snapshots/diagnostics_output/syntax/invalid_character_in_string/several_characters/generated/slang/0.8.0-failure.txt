@@ -1,0 +1,11 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 1
+
+[syntax/invalid-character-in-string] Error: Invalid character in string. Use a 'unicode"..."' string literal if you're trying to use Unicode characters.
+   ╭─[input.sol:6:19]
+   │
+ 6 │     string s = 'naïve façade';
+   │                   ┬  
+   │                   ╰── Error occurred here.
+───╯
