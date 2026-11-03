@@ -312,6 +312,11 @@ impl LexicalContextBuilder {
                 )
             }
 
+            TokenScanner::AnyChar => {
+                // `.` by default doesn't include `\n`, the `?s:` flag enables it
+                "(?s:.)".to_string()
+            }
+
             TokenScanner::Range {
                 inclusive_start,
                 inclusive_end,
@@ -361,6 +366,7 @@ impl LexicalContextBuilder {
             | TokenScanner::OneOrMore { .. } => 2,
             // Primary:
             TokenScanner::Not { .. }
+            | TokenScanner::AnyChar
             | TokenScanner::Range { .. }
             | TokenScanner::Atom { .. }
             | TokenScanner::Fragment { .. } => 3,

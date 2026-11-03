@@ -441,6 +441,7 @@ fn check_token_scanner(
             check_token_scanner(analysis, source, scanner, enablement, lexical_context);
         }
         SpannedTokenScanner::Not { chars: _ }
+        | SpannedTokenScanner::AnyChar
         | SpannedTokenScanner::Range {
             inclusive_start: _,
             inclusive_end: _,
