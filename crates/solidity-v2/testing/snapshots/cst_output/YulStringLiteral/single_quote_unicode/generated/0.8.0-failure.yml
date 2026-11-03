@@ -1,0 +1,23 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Source: >
+  1  │ contract C {                                                                     │ 0..12
+  2  │     function f() {                                                               │ 13..31
+  3  │         assembly {                                                               │ 32..50
+  4  │             let x := 'दिल'                                                       │ 51..83
+  5  │         }                                                                        │ 84..93
+  6  │     }                                                                            │ 94..99
+  7  │ }                                                                                │ 100..101
+
+Diagnostics: # 1 total
+  - >
+    [syntax/unexpected-terminal] Error: Unexpected UNRECOGNIZED. One of YulDecimalLiteral, YulFalseKeyword, YulHexLiteral, YulHexStringLiteral, YulIdentifier, YulStringLiteral, YulTrueKeyword was expected
+       ╭─[crates/solidity-v2/testing/snapshots/cst_output/YulStringLiteral/single_quote_unicode/input.sol:4:22]
+       │
+     4 │             let x := 'दिल'
+       │                      ┬  
+       │                      ╰── Error occurred here.
+    ───╯
+Tree:
+  - (root꞉ SourceUnit):
+      - (members꞉ SourceUnitMembers): []
