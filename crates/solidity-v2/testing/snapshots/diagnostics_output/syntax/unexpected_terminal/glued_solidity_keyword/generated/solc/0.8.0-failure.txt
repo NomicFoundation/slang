@@ -10,5 +10,5 @@ Diagnostics: 2
    │           ╰──────────── Error occurred here.
 ───╯
 
-[Warning 3420] Warning: Source file does not specify required compiler version! Consider adding "pragma solidity ^0.8.0;"
+[Warning 3420] Warning: Source file does not specify required compiler version! Consider adding "pragma solidity ^__CURRENT_SOLC_VERSION__;"
 --> input.sol
