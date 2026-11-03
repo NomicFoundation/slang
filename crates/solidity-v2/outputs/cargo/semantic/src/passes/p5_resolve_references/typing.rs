@@ -78,9 +78,7 @@ impl Pass<'_> {
     /// The type of `node` in a position that requires a value. On top of
     /// [`Self::check_type_of_value_or_type_name_expression`], an expression
     /// that denotes a type or a module is not a value either, and neither is a
-    /// tuple with a component that does.
-    // __SLANG_VALUE_TYPING__ keep the typings that denote a value in sync with
-    // the guard in `Self::check_lvalues_under`
+    /// tuple with a component that does, or with an omitted component.
     #[inline]
     pub(super) fn check_type_of_value_expression(
         &mut self,
@@ -89,12 +87,37 @@ impl Pass<'_> {
         // A tuple is typed even when its components name types, as the second
         // argument of `abi.decode` needs, so those are only rejected here. They
         // are looked for first, since a tuple with another component that
-        // failed has no type at all.
+        // failed has no type at all. An omitted component is already reported
+        // where it is written, so it is rejected silently.
+        if let ir::Expression::TupleExpression(tuple) = node
+            && (self.report_type_names_in_tuple(tuple) || has_omitted_component(tuple))
+        {
+            return None;
+        }
+        self.check_type_of_value_typing(node)
+    }
+
+    /// The type of the target of an assignment, which is a value position
+    /// where a tuple may omit components, eg. `(x, ) = f()`.
+    pub(super) fn check_type_of_assignment_target(
+        &mut self,
+        node: &ir::Expression,
+    ) -> Option<TypeId> {
         if let ir::Expression::TupleExpression(tuple) = node
             && self.report_type_names_in_tuple(tuple)
         {
             return None;
         }
+        self.check_type_of_value_typing(node)
+    }
+
+    /// The shared tail of [`Self::check_type_of_value_expression`] and
+    /// [`Self::check_type_of_assignment_target`], once a tuple's components
+    /// have been checked.
+    // __SLANG_VALUE_TYPING__ keep the typings that denote a value in sync with
+    // the guard in `Self::check_lvalues_under`
+    #[inline]
+    fn check_type_of_value_typing(&mut self, node: &ir::Expression) -> Option<TypeId> {
         let type_id = self.check_type_of_value_or_type_name_expression(node)?;
         if self.types.get_type_by_id(type_id).is_meta_type() {
             self.report_expression_not_a_value(node, NotAValueKind::TypeOrModule);
@@ -187,7 +210,7 @@ impl Pass<'_> {
         // Only an expression that typed as a value is judged: one that did not
         // is either unresolved or already reported as not a value.
         // __SLANG_VALUE_TYPING__ keep in sync with the typings
-        // `Self::check_type_of_value_expression` accepts. The two cannot share
+        // `Self::check_type_of_value_typing` accepts. The two cannot share
         // an accessor on `Typing`: this one only asks whether there is a value,
         // while that one also tells an unresolved typing, which reports
         // nothing, from one naming something that is not a value, which does.
@@ -1590,6 +1613,15 @@ fn reference_identifier_for_expression(node: &ir::Expression) -> Option<&ir::Ide
         ir::Expression::CallOptionsExpression(f) => reference_identifier_for_expression(&f.operand),
         _ => None,
     }
+}
+
+/// Whether `tuple` omits a component, however deeply nested, eg. `(1, )`.
+fn has_omitted_component(tuple: &ir::TupleExpression) -> bool {
+    tuple.items.iter().any(|item| match &item.expression {
+        None => true,
+        Some(ir::Expression::TupleExpression(inner)) => has_omitted_component(inner),
+        Some(_) => false,
+    })
 }
 
 /// Typing functions for literals
