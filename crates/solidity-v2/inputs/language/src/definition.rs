@@ -4084,17 +4084,6 @@ TupleValues: TupleValues = {
                                         ])
                                     )]
                                 ),
-                                Fragment(
-                                    name = EscapeSequence,
-                                    scanner = Sequence([
-                                        Atom("\\"),
-                                        Choice([
-                                            Fragment(AsciiEscape),
-                                            Fragment(HexByteEscape),
-                                            Fragment(UnicodeEscape)
-                                        ])
-                                    ])
-                                ),
                                 Repeated(
                                     name = HexStringLiterals,
                                     reference = HexStringLiteral
@@ -4139,7 +4128,7 @@ TupleValues: TupleValues = {
                                             Sequence([
                                                 Atom("unicode'"),
                                                 ZeroOrMore(Choice([
-                                                    Fragment(UnicodeEscapeSequence),
+                                                    Fragment(EscapeSequence),
                                                     Not(['\'', '\\', '\r', '\n'])
                                                 ])),
                                                 Atom("'")
@@ -4147,7 +4136,7 @@ TupleValues: TupleValues = {
                                             Sequence([
                                                 Atom("unicode\""),
                                                 ZeroOrMore(Choice([
-                                                    Fragment(UnicodeEscapeSequence),
+                                                    Fragment(EscapeSequence),
                                                     Not(['"', '\\', '\r', '\n'])
                                                 ])),
                                                 Atom("\"")
@@ -4156,7 +4145,7 @@ TupleValues: TupleValues = {
                                     )]
                                 ),
                                 Fragment(
-                                    name = UnicodeEscapeSequence,
+                                    name = EscapeSequence,
                                     scanner = Sequence([
                                         Atom("\\"),
                                         Choice([
