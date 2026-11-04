@@ -7601,6 +7601,35 @@ mod type_system {
         fn revert_error() -> Result<()> {
             run("type_system/invalid_argument_type", "revert_error")
         }
+
+        #[test]
+        fn struct_construction() -> Result<()> {
+            run("type_system/invalid_argument_type", "struct_construction")
+        }
+
+        #[test]
+        fn struct_construction_named() -> Result<()> {
+            run(
+                "type_system/invalid_argument_type",
+                "struct_construction_named",
+            )
+        }
+
+        #[test]
+        fn struct_construction_other_struct() -> Result<()> {
+            run(
+                "type_system/invalid_argument_type",
+                "struct_construction_other_struct",
+            )
+        }
+
+        #[test]
+        fn struct_construction_qualified() -> Result<()> {
+            run(
+                "type_system/invalid_argument_type",
+                "struct_construction_qualified",
+            )
+        }
     }
 
     mod invalid_base {
@@ -7960,6 +7989,11 @@ mod type_system {
         }
 
         #[test]
+        fn struct_construction() -> Result<()> {
+            run("type_system/unknown_named_argument", "struct_construction")
+        }
+
+        #[test]
         fn unnamed_parameter() -> Result<()> {
             run("type_system/unknown_named_argument", "unnamed_parameter")
         }
@@ -8084,6 +8118,19 @@ mod type_system {
         #[test]
         fn revert_error() -> Result<()> {
             run("type_system/wrong_argument_count", "revert_error")
+        }
+
+        #[test]
+        fn struct_construction() -> Result<()> {
+            run("type_system/wrong_argument_count", "struct_construction")
+        }
+
+        #[test]
+        fn struct_construction_named() -> Result<()> {
+            run(
+                "type_system/wrong_argument_count",
+                "struct_construction_named",
+            )
         }
 
         #[test]
