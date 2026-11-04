@@ -10,6 +10,7 @@ use slang_solidity_v2_ir::ir::{NodeIdentity, TextRange};
 
 use super::Pass;
 use crate::binder::{Binder, Definition, ParameterDefinition, Resolution, Scope};
+use crate::built_ins::InternalBuiltIn;
 use crate::context::FileNodeMapper;
 use crate::passes::common::node_location;
 use crate::types::{ContractType, FunctionType, Type, TypeId, TypeRegistry};
@@ -289,6 +290,22 @@ impl Pass<'_> {
         let (binder, mut checker) = self.arguments_checker();
         let members = struct_members(binder, checker.types, definition_id);
         checker.check_named(node, &members, false, arguments, argument_types);
+    }
+
+    /// Checks the positional `arguments` of a call to `built_in` against its
+    /// parameters, if it has a fixed signature.
+    pub(super) fn check_positional_arguments_of_built_in_call(
+        &mut self,
+        node: &ir::FunctionCallExpression,
+        built_in: &InternalBuiltIn,
+        arguments: &[ir::Expression],
+        argument_types: Option<&[TypeId]>,
+    ) {
+        let Some(parameter_types) = self.built_ins_resolver().parameter_types_of(built_in) else {
+            return;
+        };
+        let (_, mut checker) = self.arguments_checker();
+        checker.check_positional(node, &parameter_types[..], false, arguments, argument_types);
     }
 
     /// Checks the `arguments` of the modifier invocation `node` against the

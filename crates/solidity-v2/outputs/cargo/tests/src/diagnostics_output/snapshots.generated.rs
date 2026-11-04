@@ -7550,6 +7550,39 @@ mod type_system {
         }
 
         #[test]
+        fn built_in_address_transfer() -> Result<()> {
+            run(
+                "type_system/invalid_argument_type",
+                "built_in_address_transfer",
+            )
+        }
+
+        #[test]
+        fn built_in_assert() -> Result<()> {
+            run("type_system/invalid_argument_type", "built_in_assert")
+        }
+
+        #[test]
+        fn built_in_erc7201() -> Result<()> {
+            run("type_system/invalid_argument_type", "built_in_erc7201")
+        }
+
+        #[test]
+        fn built_in_keccak256() -> Result<()> {
+            run("type_system/invalid_argument_type", "built_in_keccak256")
+        }
+
+        #[test]
+        fn built_in_selfdestruct() -> Result<()> {
+            run("type_system/invalid_argument_type", "built_in_selfdestruct")
+        }
+
+        #[test]
+        fn built_in_unwrap() -> Result<()> {
+            run("type_system/invalid_argument_type", "built_in_unwrap")
+        }
+
+        #[test]
         fn emit_event() -> Result<()> {
             run("type_system/invalid_argument_type", "emit_event")
         }
@@ -8187,6 +8220,36 @@ mod type_system {
         #[test]
         fn bound_function() -> Result<()> {
             run("type_system/wrong_argument_count", "bound_function")
+        }
+
+        #[test]
+        fn built_in_addmod() -> Result<()> {
+            run("type_system/wrong_argument_count", "built_in_addmod")
+        }
+
+        #[test]
+        fn built_in_address_call() -> Result<()> {
+            run("type_system/wrong_argument_count", "built_in_address_call")
+        }
+
+        #[test]
+        fn built_in_array_pop() -> Result<()> {
+            run("type_system/wrong_argument_count", "built_in_array_pop")
+        }
+
+        #[test]
+        fn built_in_gasleft() -> Result<()> {
+            run("type_system/wrong_argument_count", "built_in_gasleft")
+        }
+
+        #[test]
+        fn built_in_keccak256() -> Result<()> {
+            run("type_system/wrong_argument_count", "built_in_keccak256")
+        }
+
+        #[test]
+        fn built_in_wrap() -> Result<()> {
+            run("type_system/wrong_argument_count", "built_in_wrap")
         }
 
         #[test]

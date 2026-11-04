@@ -1159,6 +1159,12 @@ impl Pass<'_> {
                 }
             }
             Typing::BuiltIn(built_in) => {
+                self.check_positional_arguments_of_built_in_call(
+                    node,
+                    &built_in,
+                    arguments,
+                    argument_types.as_deref(),
+                );
                 match self
                     .built_ins_resolver()
                     .type_of_function_call(&built_in, argument_types.as_deref())
