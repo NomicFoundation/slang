@@ -1,0 +1,11 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 1
+
+[TypeError 2973] Error: Wrong argument count for modifier invocation: 1 arguments given but expected 0.
+   ╭─[input.sol:7:19]
+   │
+ 7 │     constructor() I(1) {}
+   │                   ──┬─  
+   │                     ╰─── Error occurred here.
+───╯
