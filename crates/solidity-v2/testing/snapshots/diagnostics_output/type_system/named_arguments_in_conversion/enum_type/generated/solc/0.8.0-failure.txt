@@ -1,0 +1,11 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 1
+
+[TypeError 5153] Error: Type conversion cannot allow named arguments.
+    ╭─[input.sol:10:9]
+    │
+ 10 │         E({x: 0});
+    │         ────┬────  
+    │             ╰────── Error occurred here.
+────╯

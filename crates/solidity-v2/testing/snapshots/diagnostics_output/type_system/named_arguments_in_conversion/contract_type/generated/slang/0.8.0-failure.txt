@@ -1,0 +1,11 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 1
+
+[type-system/named-arguments-in-conversion] Error: A type conversion cannot take named arguments.
+   ╭─[input.sol:6:9]
+   │
+ 6 │         C({x: address(0)});
+   │         ─────────┬────────  
+   │                  ╰────────── Error occurred here.
+───╯
