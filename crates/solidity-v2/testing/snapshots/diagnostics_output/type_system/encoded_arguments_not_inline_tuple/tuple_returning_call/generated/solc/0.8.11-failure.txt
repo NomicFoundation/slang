@@ -1,0 +1,7 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 1
+
+[Exception <no-code>] Error: Unknown exception during compilation: Dynamic exception type: std::bad_cast
+std::exception::what: std::bad_cast
+
