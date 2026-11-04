@@ -1,0 +1,6 @@
+{
+  "override_language_versions": {
+    "specifier": { "type": "From", "from": "0.8.12" },
+    "reason": "abi.encodeCall accepts a function named through an interface from 0.8.12."
+  }
+}

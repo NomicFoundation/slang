@@ -10,6 +10,7 @@ mod compound_assignment_to_tuple;
 mod constant_arithmetic_error;
 mod contract_too_large_for_storage;
 mod empty_array_literal;
+mod encoded_arguments_not_inline_tuple;
 mod explicit_conversion_not_allowed;
 mod expression_not_a_value;
 mod expression_not_an_lvalue;
@@ -23,6 +24,8 @@ mod incompatible_constant_operator;
 mod invalid_argument_type;
 mod invalid_base;
 mod invalid_decoded_types;
+mod invalid_encoded_argument_type;
+mod invalid_encoded_function;
 mod invalid_utf8_string_literal;
 mod literal_too_large;
 mod missing_index;
@@ -44,6 +47,7 @@ mod write_to_calldata;
 mod write_to_constant;
 mod wrong_argument_count;
 mod wrong_argument_count_in_conversion;
+mod wrong_encoded_argument_count;
 
 pub use array_length_fractional::ArrayLengthFractional;
 pub use array_length_negative::ArrayLengthNegative;
@@ -57,6 +61,7 @@ pub use compound_assignment_to_tuple::CompoundAssignmentToTuple;
 pub use constant_arithmetic_error::ConstantArithmeticError;
 pub use contract_too_large_for_storage::ContractTooLargeForStorage;
 pub use empty_array_literal::EmptyArrayLiteral;
+pub use encoded_arguments_not_inline_tuple::EncodedArgumentsNotInlineTuple;
 pub use explicit_conversion_not_allowed::ExplicitConversionNotAllowed;
 pub use expression_not_a_value::{ExpressionNotAValue, NotAValueKind};
 pub use expression_not_an_lvalue::ExpressionNotAnLValue;
@@ -70,6 +75,8 @@ pub use incompatible_constant_operator::IncompatibleConstantOperator;
 pub use invalid_argument_type::InvalidArgumentType;
 pub use invalid_base::InvalidBase;
 pub use invalid_decoded_types::InvalidDecodedTypes;
+pub use invalid_encoded_argument_type::InvalidEncodedArgumentType;
+pub use invalid_encoded_function::InvalidEncodedFunction;
 pub use invalid_utf8_string_literal::InvalidUtf8StringLiteral;
 pub use literal_too_large::LiteralTooLarge;
 pub use missing_index::MissingIndex;
@@ -92,6 +99,7 @@ pub use write_to_calldata::{CalldataWriteKind, WriteToCalldata};
 pub use write_to_constant::WriteToConstant;
 pub use wrong_argument_count::WrongArgumentCount;
 pub use wrong_argument_count_in_conversion::WrongArgumentCountInConversion;
+pub use wrong_encoded_argument_count::WrongEncodedArgumentCount;
 
 use crate::diagnostics::kinds::DiagnosticKind;
 use crate::diagnostics::kinds::utils::define_diagnostic_kind;
@@ -180,6 +188,17 @@ define_diagnostic_kind! {
         NamedArgumentsToBuiltInFunction(NamedArgumentsToBuiltInFunction),
         /// The second argument of `abi.decode` is not a tuple of type names.
         InvalidDecodedTypes(InvalidDecodedTypes),
+        /// The first argument of `abi.encodeCall` is not an external function.
+        InvalidEncodedFunction(InvalidEncodedFunction),
+        /// The second argument of `abi.encodeCall` has a tuple type without
+        /// being a tuple expression.
+        EncodedArgumentsNotInlineTuple(EncodedArgumentsNotInlineTuple),
+        /// The arguments `abi.encodeCall` encodes a call with are a different
+        /// number than the encoded function declares parameters.
+        WrongEncodedArgumentCount(WrongEncodedArgumentCount),
+        /// An argument `abi.encodeCall` encodes a call with does not implicitly
+        /// convert to the type of its parameter in the encoded function.
+        InvalidEncodedArgumentType(InvalidEncodedArgumentType),
         /// A struct containing a mapping is constructed.
         StructWithMappingConstructed(StructWithMappingConstructed),
         /// An expression in a position that requires a value names a built-in,

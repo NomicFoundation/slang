@@ -1,0 +1,11 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 1
+
+[type-system/invalid-encoded-function] Error: The first argument to 'abi.encodeCall' must be an external function.
+    ╭─[input.sol:10:31]
+    │
+ 10 │         return abi.encodeCall(I.f, (1));
+    │                               ─┬─  
+    │                                ╰─── Error occurred here.
+────╯
