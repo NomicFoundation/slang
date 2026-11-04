@@ -1,6 +1,7 @@
 use crate::lexer::LexemeKind;
 use slang_solidity_v2_cst::structured_cst::nodes::*;
 use crate::parser::parser_helpers;
+use crate::parser::validation;
 
 grammar<'source>(ctx: &mut crate::parser::GrammarCtx<'source>);
 
@@ -85,7 +86,7 @@ Repeated<T>: Vec<T> = {
 {{ id }}: {{ id }} = {
 {% for lexeme in lexemes %}
 {%- if id == "StringLiteral" or id == "YulStringLiteral" %}
-        <l:@L> L_{{ lexeme }} <r:@L> => { ctx.check_string_literal(l..r); new_{{id | snake_case}}(l..r, ctx.source) },
+        <l:@L> L_{{ lexeme }} <r:@L> => { validation::validate_string_literal(ctx, l..r); new_{{id | snake_case}}(l..r, ctx.source) },
 {%- else %}
         <l:@L> L_{{ lexeme }} <r:@L> => new_{{id | snake_case}}(l..r, ctx.source),
 {%- endif %}

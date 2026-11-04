@@ -5814,7 +5814,6 @@ pub mod slang_solidity_v2_common::utils
 pub mod slang_solidity_v2_common::utils::strings
 pub fn slang_solidity_v2_common::utils::strings::decode_escape_sequences(&str) -> alloc::vec::Vec<u8>
 pub fn slang_solidity_v2_common::utils::strings::decode_hex_string(&str) -> alloc::vec::Vec<u8>
-pub fn slang_solidity_v2_common::utils::strings::first_non_printable_ascii(&str) -> core::option::Option<core::ops::range::Range<usize>>
 pub fn slang_solidity_v2_common::utils::strings::strip_string_literal_prefix_and_quotes<'a>(&'a str, &str) -> &'a str
 pub fn slang_solidity_v2_common::utils::strings::strip_string_literal_quotes(&str) -> &str
 pub mod slang_solidity_v2_common::versions
