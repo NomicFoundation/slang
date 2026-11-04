@@ -7748,6 +7748,22 @@ mod type_system {
         }
 
         #[test]
+        fn built_in_abi_encode_with_selector() -> Result<()> {
+            run(
+                "type_system/invalid_argument_type",
+                "built_in_abi_encode_with_selector",
+            )
+        }
+
+        #[test]
+        fn built_in_abi_encode_with_signature() -> Result<()> {
+            run(
+                "type_system/invalid_argument_type",
+                "built_in_abi_encode_with_signature",
+            )
+        }
+
+        #[test]
         fn built_in_address_transfer() -> Result<()> {
             run(
                 "type_system/invalid_argument_type",
@@ -8390,6 +8406,20 @@ mod type_system {
                 "type_system/struct_with_mapping_constructed",
                 "through_fixed_size_array",
             )
+        }
+    }
+
+    mod too_few_arguments {
+        use super::*;
+
+        #[test]
+        fn abi_encode_with_selector() -> Result<()> {
+            run("type_system/too_few_arguments", "abi_encode_with_selector")
+        }
+
+        #[test]
+        fn abi_encode_with_signature() -> Result<()> {
+            run("type_system/too_few_arguments", "abi_encode_with_signature")
         }
     }
 

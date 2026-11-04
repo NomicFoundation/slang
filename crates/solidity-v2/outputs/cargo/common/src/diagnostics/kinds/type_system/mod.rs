@@ -30,6 +30,7 @@ mod storage_layout_base_not_constant;
 mod storage_layout_base_out_of_range;
 mod storage_layout_base_past_end;
 mod struct_with_mapping_constructed;
+mod too_few_arguments;
 mod type_too_large_for_storage;
 mod unknown_named_argument;
 mod write_to_constant;
@@ -69,6 +70,7 @@ pub use storage_layout_base_not_constant::StorageLayoutBaseNotConstant;
 pub use storage_layout_base_out_of_range::StorageLayoutBaseOutOfRange;
 pub use storage_layout_base_past_end::StorageLayoutBasePastEnd;
 pub use struct_with_mapping_constructed::StructWithMappingConstructed;
+pub use too_few_arguments::TooFewArguments;
 pub use type_too_large_for_storage::TypeTooLargeForStorage;
 pub use unknown_named_argument::UnknownNamedArgument;
 pub use write_to_constant::WriteToConstant;
@@ -143,6 +145,9 @@ define_diagnostic_kind! {
         /// A call passes a different number of arguments than the callee
         /// declares parameters.
         WrongArgumentCount(WrongArgumentCount),
+        /// A call passes fewer arguments than the leading parameters of a
+        /// callee that takes any number of arguments after them.
+        TooFewArguments(TooFewArguments),
         /// An argument of a call does not implicitly convert to the type of its
         /// parameter.
         InvalidArgumentType(InvalidArgumentType),

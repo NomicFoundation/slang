@@ -5,7 +5,8 @@ use slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind;
 use slang_solidity_v2_common::diagnostics::kinds::resolution::NoMatchingCallableDeclaration;
 use slang_solidity_v2_common::diagnostics::kinds::semantic::BaseConstructorCallWithoutParentheses;
 use slang_solidity_v2_common::diagnostics::kinds::type_system::{
-    InvalidArgumentType, StructWithMappingConstructed, UnknownNamedArgument, WrongArgumentCount,
+    InvalidArgumentType, StructWithMappingConstructed, TooFewArguments, UnknownNamedArgument,
+    WrongArgumentCount,
 };
 use slang_solidity_v2_common::nodes::NodeId;
 use slang_solidity_v2_ir::ir;
@@ -271,7 +272,8 @@ impl Pass<'_> {
     }
 
     /// Checks the positional `arguments` of a call to `built_in` against its
-    /// parameters, if it has a fixed signature, or against its overloads.
+    /// parameters, if it has a fixed signature or leading parameters, or
+    /// against its overloads.
     pub(super) fn check_positional_arguments_of_built_in_call(
         &mut self,
         node: &ir::FunctionCallExpression,
@@ -282,6 +284,14 @@ impl Pass<'_> {
         if let Some(parameter_types) = self.built_ins_resolver().parameter_types_of(built_in) {
             let (_, mut checker) = self.arguments_checker();
             checker.check_positional(node, &parameter_types[..], false, arguments, argument_types);
+            return;
+        }
+        if let Some(parameter_types) = self
+            .built_ins_resolver()
+            .leading_parameter_types_of(built_in)
+        {
+            let (_, mut checker) = self.arguments_checker();
+            checker.check_leading_positional(node, &parameter_types[..], arguments, argument_types);
             return;
         }
         // An argument without a type, which is already reported, cannot match
@@ -444,6 +454,42 @@ impl ArgumentsChecker<'_> {
                 parameters.type_id(index),
                 argument_types[index],
                 external_call,
+            ) {
+                self.report(argument, InvalidArgumentType);
+            }
+        }
+    }
+
+    /// Checks the leading positional `arguments` against `parameters`, for a
+    /// callee that takes any number of arguments after them: their count, and
+    /// that each converts to the type of the parameter in its position.
+    fn check_leading_positional(
+        &mut self,
+        node: &(impl NodeIdentity + TextRange),
+        parameters: &(impl ParameterList + ?Sized),
+        arguments: &[ir::Expression],
+        argument_types: Option<&[TypeId]>,
+    ) {
+        // 1. There is at least one argument per parameter.
+        if arguments.len() < parameters.count() {
+            let kind = TooFewArguments {
+                given: arguments.len(),
+                minimum: parameters.count(),
+            };
+            self.report(node, kind);
+            return;
+        }
+
+        // 2. Each leading argument converts to the type of the parameter in
+        // its position.
+        let Some(argument_types) = argument_types else {
+            return;
+        };
+        for (index, argument) in arguments.iter().take(parameters.count()).enumerate() {
+            if !self.parameter_accepts_argument(
+                parameters.type_id(index),
+                argument_types[index],
+                false,
             ) {
                 self.report(argument, InvalidArgumentType);
             }

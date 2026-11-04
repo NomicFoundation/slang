@@ -84,6 +84,19 @@ impl BuiltInsResolver<'_> {
         Some(parameter_types)
     }
 
+    /// The types of the leading parameters of `built_in`, for the built-in
+    /// functions that take any number of arguments after them.
+    pub(crate) fn leading_parameter_types_of(
+        &self,
+        built_in: &InternalBuiltIn,
+    ) -> Option<SmallVec<[TypeId; 4]>> {
+        match built_in {
+            InternalBuiltIn::AbiEncodeWithSelector => Some(smallvec![self.types.bytes4()]),
+            InternalBuiltIn::AbiEncodeWithSignature => Some(smallvec![self.types.string_memory()]),
+            _ => None,
+        }
+    }
+
     /// Matches `argument_types` against the overloads of `built_in`.
     pub(crate) fn match_overload(
         &mut self,
