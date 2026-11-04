@@ -1,0 +1,11 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 1
+
+[ParserError 2314] Error: Expected 'StringLiteral' but got 'ILLEGAL'
+   ╭─[input.sol:7:19]
+   │
+ 7 │         assembly ("café") {}
+   │                   ──┬──  
+   │                     ╰──── Error occurred here.
+───╯

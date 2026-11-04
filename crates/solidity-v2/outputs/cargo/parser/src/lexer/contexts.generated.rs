@@ -146,7 +146,6 @@ enum RejectSuffixDecimalLiteral2 {
 #[logos(subpattern UnicodeEscape = r#"u(?&HexCharacter)(?&HexCharacter)(?&HexCharacter)(?&HexCharacter)"#)]
 #[logos(subpattern EscapeSequence = r#"\\((?&AsciiEscape)|(?&HexByteEscape)|(?&UnicodeEscape))"#)]
 #[logos(subpattern HexStringContents = r#"(?&HexCharacter)(?&HexCharacter)(_?(?&HexCharacter)(?&HexCharacter))*"#)]
-#[logos(subpattern UnicodeEscapeSequence = r#"\\((?&AsciiEscape)|(?&HexByteEscape)|(?&UnicodeEscape))"#)]
 #[logos(subpattern IdentifierStart = r#"_|\$|[a-z]|[A-Z]"#)]
 #[logos(subpattern IdentifierPart = r#"(?&IdentifierStart)|[0-9]"#)]
 #[logos(subpattern IdentifierScanner = r#"(?&IdentifierStart)(?&IdentifierPart)*"#)]
@@ -320,9 +319,9 @@ pub enum SolidityContext {
     #[regex(r#"0x(?&HexCharacter)+(_(?&HexCharacter)+)*"#, |lexer| { reject_suffix::<RejectSuffixHexLiteral1, _>(lexer, LexemeKind::HexLiteral) }, priority = 2000167)]
     #[regex(r#"(?&DecimalInteger)"#, |lexer| { reject_suffix::<RejectSuffixDecimalLiteral1, _>(lexer, LexemeKind::DecimalLiteral) }, priority = 2000168)]
     #[regex(r#"((?&DecimalInteger)((\.(?&DecimalDigits)(?&DecimalExponent)?)|(?&DecimalExponent)))|(\.(?&DecimalDigits)(?&DecimalExponent)?)"#, |lexer| { reject_suffix::<RejectSuffixDecimalLiteral2, _>(lexer, LexemeKind::DecimalLiteral) }, priority = 2000168)]
-    #[regex(r#"('((?&EscapeSequence)|[ -&]|[\(-\[]|[\]-~])*')|("((?&EscapeSequence)|[ -!]|[#-\[]|[\]-~])*")"#, |_| { LexemeKind::StringLiteral }, priority = 2000169)]
+    #[regex(r#"('((?&EscapeSequence)|[^'\\\r\n])*')|("((?&EscapeSequence)|[^"\\\r\n])*")"#, |_| { LexemeKind::StringLiteral }, priority = 2000169)]
     #[regex(r#"(hex'(?&HexStringContents)?')|(hex"(?&HexStringContents)?")"#, |_| { LexemeKind::HexStringLiteral }, priority = 2000170)]
-    #[regex(r#"(unicode'((?&UnicodeEscapeSequence)|[^'\\\r\n])*')|(unicode"((?&UnicodeEscapeSequence)|[^"\\\r\n])*")"#, |_| { LexemeKind::UnicodeStringLiteral }, priority = 2000171)]
+    #[regex(r#"(unicode'((?&EscapeSequence)|[^'\\\r\n])*')|(unicode"((?&EscapeSequence)|[^"\\\r\n])*")"#, |_| { LexemeKind::UnicodeStringLiteral }, priority = 2000171)]
     #[regex(r#"(?&IdentifierScanner)"#, |_| { LexemeKind::Identifier }, priority = 2000172)]
     Lexeme(LexemeKind),
 }
@@ -357,7 +356,7 @@ pub enum YulContext {
     #[regex(r#"0|([1-9][0-9]*)"#, |lexer| { reject_suffix::<RejectSuffixYulDecimalLiteral1, _>(lexer, LexemeKind::YulDecimalLiteral) }, priority = 2000002)]
     #[regex(r#"0x(?&YulHexCharacter)+"#, |lexer| { reject_suffix::<RejectSuffixYulHexLiteral1, _>(lexer, LexemeKind::YulHexLiteral) }, priority = 2000003)]
     #[regex(r#"(hex'(?&YulHexStringContents)?')|(hex"(?&YulHexStringContents)?")"#, |_| { LexemeKind::YulHexStringLiteral }, priority = 2000004)]
-    #[regex(r#"('((?&YulEscapeSequence)|[ -&]|[\(-\[]|[\]-~])*')|("((?&YulEscapeSequence)|[ -!]|[#-\[]|[\]-~])*")"#, |_| { LexemeKind::YulStringLiteral }, priority = 2000005)]
+    #[regex(r#"('((?&YulEscapeSequence)|[^'\\\r\n])*')|("((?&YulEscapeSequence)|[^"\\\r\n])*")"#, |_| { LexemeKind::YulStringLiteral }, priority = 2000005)]
     #[regex(r#"break"#, |_| { LexemeKind::YulBreakKeyword_Reserved }, priority = 3000006)]
     #[regex(r#"case"#, |_| { LexemeKind::YulCaseKeyword_Reserved }, priority = 3000007)]
     #[regex(r#"continue"#, |_| { LexemeKind::YulContinueKeyword_Reserved }, priority = 3000008)]

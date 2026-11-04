@@ -1,0 +1,11 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 1
+
+[ParserError 8936] Error: Invalid character in string. If you are trying to use Unicode characters, use a unicode"..." string literal.
+   ╭─[input.sol:5:16]
+   │
+ 5 │     string s = "café";
+   │                ──┬──  
+   │                  ╰──── Error occurred here.
+───╯

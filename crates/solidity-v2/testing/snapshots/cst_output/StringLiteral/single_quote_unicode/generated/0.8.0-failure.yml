@@ -13,13 +13,36 @@ Source: >
 
 Diagnostics: # 1 total
   - >
-    [syntax/unexpected-terminal] Error: Unexpected UNRECOGNIZED. One of AddressKeyword, AssemblyKeyword, AtKeyword, Bang, BoolKeyword, BreakKeyword, BytesKeyword, CloseBrace, ContinueKeyword, DecimalLiteral, DeleteKeyword, DoKeyword, EmitKeyword, ErrorKeyword, FalseKeyword, FixedKeyword, ForKeyword, FromKeyword, FunctionKeyword, GlobalKeyword, HexLiteral, HexStringLiteral, Identifier, IfKeyword, IntKeyword, LayoutKeyword, MappingKeyword, Minus, MinusMinus, NewKeyword, OpenBrace, OpenBracket, OpenParen, PayableKeyword, PlusPlus, ReturnKeyword, RevertKeyword, StringKeyword, StringLiteral, SuperKeyword, ThisKeyword, Tilde, TransientKeyword, TrueKeyword, TryKeyword, TypeKeyword, UfixedKeyword, UintKeyword, UncheckedKeyword, UnicodeStringLiteral, WhileKeyword was expected
-       ╭─[crates/solidity-v2/testing/snapshots/cst_output/StringLiteral/single_quote_unicode/input.sol:4:1]
+    [syntax/invalid-character-in-string] Error: Invalid character in string. Only printable ASCII is allowed.
+       ╭─[crates/solidity-v2/testing/snapshots/cst_output/StringLiteral/single_quote_unicode/input.sol:4:2]
        │
      4 │ 'दिल'
-       │ ┬  
-       │ ╰── Error occurred here.
+       │  ┬  
+       │  ╰── Error occurred here.
     ───╯
 Tree:
-  - (root꞉ SourceUnit):
-      - (members꞉ SourceUnitMembers): []
+  - (root꞉ SourceUnit): # "contract C {\n    function f() {\n// >>> Copied from..." (0..170)
+      - (members꞉ SourceUnitMembers): # "contract C {\n    function f() {\n// >>> Copied from..." (0..170)
+          - (item꞉ SourceUnitMember) ► (contract_definition꞉ ContractDefinition): # "contract C {\n    function f() {\n// >>> Copied from..." (0..170)
+              - (contract_keyword꞉ ContractKeyword): "contract" # (0..8)
+              - (name꞉ Identifier): "C" # (9..10)
+              - (specifiers꞉ ContractSpecifiers): []
+              - (open_brace꞉ OpenBrace): "{" # (11..12)
+              - (members꞉ ContractMembers): # "function f() {\n// >>> Copied from crates/solidity/..." (17..168)
+                  - (item꞉ ContractMember) ► (function_definition꞉ FunctionDefinition): # "function f() {\n// >>> Copied from crates/solidity/..." (17..168)
+                      - (function_keyword꞉ FunctionKeyword): "function" # (17..25)
+                      - (name꞉ FunctionName) ► (identifier꞉ Identifier): "f" # (26..27)
+                      - (parameters꞉ ParametersDeclaration): # "()" (27..29)
+                          - (open_paren꞉ OpenParen): "(" # (27..28)
+                          - (parameters꞉ Parameters): []
+                          - (close_paren꞉ CloseParen): ")" # (28..29)
+                      - (attributes꞉ FunctionAttributes): []
+                      - (body꞉ FunctionBody) ► (block꞉ Block): # "{\n// >>> Copied from crates/solidity/testing/snaps..." (30..168)
+                          - (open_brace꞉ OpenBrace): "{" # (30..31)
+                          - (statements꞉ Statements): # "'दिल'\n\n// <<<\n;" (141..162)
+                              - (item꞉ Statement) ► (expression_statement꞉ ExpressionStatement): # "'दिल'\n\n// <<<\n;" (141..162)
+                                  - (expression꞉ Expression) ► (string_expression꞉ StringExpression) ► (string_literals꞉ StringLiterals): # "'दिल'" (141..152)
+                                      - (item꞉ StringLiteral): "'दिल'" # (141..152)
+                                  - (semicolon꞉ Semicolon): ";" # (161..162)
+                          - (close_brace꞉ CloseBrace): "}" # (167..168)
+              - (close_brace꞉ CloseBrace): "}" # (169..170)

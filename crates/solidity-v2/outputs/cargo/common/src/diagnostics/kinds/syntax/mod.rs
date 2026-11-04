@@ -2,6 +2,7 @@ mod expected_array_length_expression;
 mod incompatible_syntax_version;
 mod incompatible_version_pragma;
 mod invalid_assembly_dialect;
+mod invalid_character_in_string;
 mod invalid_mutability;
 mod invalid_version_specifier;
 mod invalid_visibility;
@@ -24,6 +25,7 @@ pub use expected_array_length_expression::ExpectedArrayLengthExpression;
 pub use incompatible_syntax_version::IncompatibleSyntaxVersion;
 pub use incompatible_version_pragma::IncompatibleVersionPragma;
 pub use invalid_assembly_dialect::InvalidAssemblyDialect;
+pub use invalid_character_in_string::InvalidCharacterInString;
 pub use invalid_mutability::InvalidMutability;
 pub use invalid_version_specifier::InvalidVersionSpecifier;
 pub use invalid_visibility::InvalidVisibility;
@@ -56,6 +58,8 @@ define_diagnostic_kind! {
         UnexpectedEof(UnexpectedEof),
         /// The parser encountered a terminal not valid at the current position.
         UnexpectedTerminal(UnexpectedTerminal),
+        /// A string literal holds a character outside of printable ASCII.
+        InvalidCharacterInString(InvalidCharacterInString),
 
         /// A piece of syntax is not compatible with the currently selected language version.
         IncompatibleSyntaxVersion(IncompatibleSyntaxVersion),

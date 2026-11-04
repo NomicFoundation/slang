@@ -362,6 +362,38 @@ fn old_syntax_does_not_get_in_the_way() {
 }
 
 #[test]
+fn old_non_ascii_strings_keep_their_boundaries() {
+    // Before 0.7.0, plain string literals could hold non-ASCII characters. The
+    // lexer takes them, so the second string still ends where its quotes say,
+    // and the text in it is not a directive.
+    let source = r#"
+        pragma solidity ^0.6.0;
+        contract A {
+            string a = "é"; string b = "pragma solidity 0.4.0;";
+        }
+    "#;
+
+    assert_eq!(matches(source, &["0.4.0", "0.6.12"]), [false, true]);
+}
+
+#[test]
+fn old_yul_strings_keep_their_boundaries() {
+    // The same holds in Yul. Were the quotes to pair up wrongly, the `}` in the
+    // second string would close the assembly block, and the text after it would
+    // read as a directive.
+    let source = r#"
+        pragma solidity ^0.6.0;
+        contract A {
+            function f() public {
+                assembly { let a := "é" let b := "} pragma solidity 0.4.0; {" }
+            }
+        }
+    "#;
+
+    assert_eq!(matches(source, &["0.4.0", "0.6.12"]), [false, true]);
+}
+
+#[test]
 fn syntax_errors_around_the_pragma_do_not_hide_it() {
     let source = "
         contract { function ((( }
@@ -543,23 +575,4 @@ fn an_unterminated_comment_can_expose_pragma_text() {
     ";
 
     assert_eq!(infer(source), vec![]);
-}
-
-#[test]
-fn old_non_ascii_strings_can_expose_pragma_text() {
-    // Before 0.7.0, plain string literals could hold non-ASCII characters, but
-    // the source is lexed as the latest version, where they cannot. The quotes
-    // then pair up wrongly until the end of the line, and the text inside the
-    // next string on it reads as a directive.
-    //
-    // This is the only unexpected case that is a valid source file in old Solidity, we
-    // may want to revisit it.
-    let source = r#"
-        pragma solidity ^0.6.0;
-        contract A {
-            string a = "é"; string b = "pragma solidity 0.4.0;";
-        }
-    "#;
-
-    assert_eq!(matches(source, &["0.4.0", "0.6.12"]), [false, false]);
 }

@@ -4062,14 +4062,14 @@ TupleValues: TupleValues = {
                                 Token(
                                     name = StringLiteral,
                                     definitions = [TokenDefinition(
+                                        // This scanner is quite lenient, we lex and parse non-ASCII characters
+                                        // and validate later, this lets parse older Solidity versions
                                         scanner = Choice([
                                             Sequence([
                                                 Atom("'"),
                                                 ZeroOrMore(Choice([
                                                     Fragment(EscapeSequence),
-                                                    Range(inclusive_start = ' ', inclusive_end = '&'),
-                                                    Range(inclusive_start = '(', inclusive_end = '['),
-                                                    Range(inclusive_start = ']', inclusive_end = '~')
+                                                    Not(['\'', '\\', '\r', '\n'])
                                                 ])),
                                                 Atom("'")
                                             ]),
@@ -4077,25 +4077,12 @@ TupleValues: TupleValues = {
                                                 Atom("\""),
                                                 ZeroOrMore(Choice([
                                                     Fragment(EscapeSequence),
-                                                    Range(inclusive_start = ' ', inclusive_end = '!'),
-                                                    Range(inclusive_start = '#', inclusive_end = '['),
-                                                    Range(inclusive_start = ']', inclusive_end = '~')
+                                                    Not(['"', '\\', '\r', '\n'])
                                                 ])),
                                                 Atom("\"")
                                             ])
                                         ])
                                     )]
-                                ),
-                                Fragment(
-                                    name = EscapeSequence,
-                                    scanner = Sequence([
-                                        Atom("\\"),
-                                        Choice([
-                                            Fragment(AsciiEscape),
-                                            Fragment(HexByteEscape),
-                                            Fragment(UnicodeEscape)
-                                        ])
-                                    ])
                                 ),
                                 Repeated(
                                     name = HexStringLiterals,
@@ -4141,7 +4128,7 @@ TupleValues: TupleValues = {
                                             Sequence([
                                                 Atom("unicode'"),
                                                 ZeroOrMore(Choice([
-                                                    Fragment(UnicodeEscapeSequence),
+                                                    Fragment(EscapeSequence),
                                                     Not(['\'', '\\', '\r', '\n'])
                                                 ])),
                                                 Atom("'")
@@ -4149,7 +4136,7 @@ TupleValues: TupleValues = {
                                             Sequence([
                                                 Atom("unicode\""),
                                                 ZeroOrMore(Choice([
-                                                    Fragment(UnicodeEscapeSequence),
+                                                    Fragment(EscapeSequence),
                                                     Not(['"', '\\', '\r', '\n'])
                                                 ])),
                                                 Atom("\"")
@@ -4158,7 +4145,7 @@ TupleValues: TupleValues = {
                                     )]
                                 ),
                                 Fragment(
-                                    name = UnicodeEscapeSequence,
+                                    name = EscapeSequence,
                                     scanner = Sequence([
                                         Atom("\\"),
                                         Choice([
@@ -4594,14 +4581,14 @@ IdentifierPathTailElement: (Period, IdentifierPathElement) = {
                             Token(
                                 name = YulStringLiteral,
                                 definitions = [TokenDefinition(
+                                    // This scanner is quite lenient, we lex and parse non-ASCII characters
+                                    // and validate later, this lets parse older Solidity versions
                                     scanner = Choice([
                                         Sequence([
                                             Atom("'"),
                                             ZeroOrMore(Choice([
                                                 Fragment(YulEscapeSequence),
-                                                Range(inclusive_start = ' ', inclusive_end = '&'),
-                                                Range(inclusive_start = '(', inclusive_end = '['),
-                                                Range(inclusive_start = ']', inclusive_end = '~')
+                                                Not(['\'', '\\', '\r', '\n'])
                                             ])),
                                             Atom("'")
                                         ]),
@@ -4609,9 +4596,7 @@ IdentifierPathTailElement: (Period, IdentifierPathElement) = {
                                             Atom("\""),
                                             ZeroOrMore(Choice([
                                                 Fragment(YulEscapeSequence),
-                                                Range(inclusive_start = ' ', inclusive_end = '!'),
-                                                Range(inclusive_start = '#', inclusive_end = '['),
-                                                Range(inclusive_start = ']', inclusive_end = '~')
+                                                Not(['"', '\\', '\r', '\n'])
                                             ])),
                                             Atom("\"")
                                         ])

@@ -2881,6 +2881,30 @@ mod yul_statements {
     }
 }
 
+mod yul_string_literal {
+    use super::*;
+
+    #[test]
+    fn double_quote_unicode() -> Result<()> {
+        run("YulStringLiteral", "double_quote_unicode")
+    }
+
+    #[test]
+    fn single_quote_unicode() -> Result<()> {
+        run("YulStringLiteral", "single_quote_unicode")
+    }
+
+    #[test]
+    fn tabs_double_quote() -> Result<()> {
+        run("YulStringLiteral", "tabs_double_quote")
+    }
+
+    #[test]
+    fn tabs_single_quote() -> Result<()> {
+        run("YulStringLiteral", "tabs_single_quote")
+    }
+}
+
 mod yul_variable_assignment_statement {
     use super::*;
 

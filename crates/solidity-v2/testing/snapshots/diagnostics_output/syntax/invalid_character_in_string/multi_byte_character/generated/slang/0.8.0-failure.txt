@@ -1,0 +1,11 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 1
+
+[syntax/invalid-character-in-string] Error: Invalid character in string. Only printable ASCII is allowed.
+   ╭─[input.sol:6:17]
+   │
+ 6 │     string s = "🦀";
+   │                 ┬─  
+   │                 ╰─── Error occurred here.
+───╯

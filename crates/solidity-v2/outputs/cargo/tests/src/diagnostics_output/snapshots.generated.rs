@@ -4750,6 +4750,81 @@ mod syntax {
         }
     }
 
+    mod invalid_character_in_string {
+        use super::*;
+
+        #[test]
+        fn after_line_continuation() -> Result<()> {
+            run(
+                "syntax/invalid_character_in_string",
+                "after_line_continuation",
+            )
+        }
+
+        #[test]
+        fn after_line_continuation_crlf() -> Result<()> {
+            run(
+                "syntax/invalid_character_in_string",
+                "after_line_continuation_crlf",
+            )
+        }
+
+        #[test]
+        fn assembly_dialect() -> Result<()> {
+            run("syntax/invalid_character_in_string", "assembly_dialect")
+        }
+
+        #[test]
+        fn assembly_flag() -> Result<()> {
+            run("syntax/invalid_character_in_string", "assembly_flag")
+        }
+
+        #[test]
+        fn control_character() -> Result<()> {
+            run("syntax/invalid_character_in_string", "control_character")
+        }
+
+        #[test]
+        fn delete_character() -> Result<()> {
+            run("syntax/invalid_character_in_string", "delete_character")
+        }
+
+        #[test]
+        fn import_path() -> Result<()> {
+            run("syntax/invalid_character_in_string", "import_path")
+        }
+
+        #[test]
+        fn multi_byte_character() -> Result<()> {
+            run("syntax/invalid_character_in_string", "multi_byte_character")
+        }
+
+        #[test]
+        fn non_ascii() -> Result<()> {
+            run("syntax/invalid_character_in_string", "non_ascii")
+        }
+
+        #[test]
+        fn several_characters() -> Result<()> {
+            run("syntax/invalid_character_in_string", "several_characters")
+        }
+
+        #[test]
+        fn valid() -> Result<()> {
+            run("syntax/invalid_character_in_string", "valid")
+        }
+
+        #[test]
+        fn valid_crlf() -> Result<()> {
+            run("syntax/invalid_character_in_string", "valid_crlf")
+        }
+
+        #[test]
+        fn yul() -> Result<()> {
+            run("syntax/invalid_character_in_string", "yul")
+        }
+    }
+
     mod invalid_mutability {
         use super::*;
 

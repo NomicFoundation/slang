@@ -1,0 +1,12 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 1
+
+[ParserError 8936] Error: Invalid character in string.
+   ╭─[input.sol:6:16]
+   │
+ 6 │ ╭─▶     string s = "line \
+ 7 │ ├─▶ café";
+   │ │             
+   │ ╰───────────── Error occurred here.
+───╯
