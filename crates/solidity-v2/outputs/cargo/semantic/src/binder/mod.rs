@@ -1046,14 +1046,24 @@ impl Binder {
         definition_id: NodeId,
         parameters: &ir::Parameters,
     ) {
-        let parameter_types: Vec<_> = parameters
-            .iter()
-            .map(|parameter| self.node_typing(parameter.id()).as_type_id())
-            .collect();
         let Some(parameters_scope_id) = self.get_parameters_scope_for_definition(definition_id)
         else {
             unreachable!("definition does not have an associated parameters scope");
         };
+        self.set_parameter_types(parameters_scope_id, parameters);
+    }
+
+    /// Records the types already computed for `parameters` in the parameters
+    /// scope `parameters_scope_id`.
+    pub(crate) fn set_parameter_types(
+        &mut self,
+        parameters_scope_id: ScopeId,
+        parameters: &ir::Parameters,
+    ) {
+        let parameter_types: Vec<_> = parameters
+            .iter()
+            .map(|parameter| self.node_typing(parameter.id()).as_type_id())
+            .collect();
         let Scope::Parameters(parameters_scope) = self.get_scope_mut(parameters_scope_id) else {
             unreachable!("scope is not a ParametersScope");
         };

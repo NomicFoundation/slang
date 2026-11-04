@@ -7660,6 +7660,34 @@ mod type_system {
         }
 
         #[test]
+        fn new_array_length() -> Result<()> {
+            run("type_system/invalid_argument_type", "new_array_length")
+        }
+
+        #[test]
+        fn new_bytes_length() -> Result<()> {
+            run("type_system/invalid_argument_type", "new_bytes_length")
+        }
+
+        #[test]
+        fn new_contract() -> Result<()> {
+            run("type_system/invalid_argument_type", "new_contract")
+        }
+
+        #[test]
+        fn new_contract_named() -> Result<()> {
+            run("type_system/invalid_argument_type", "new_contract_named")
+        }
+
+        #[test]
+        fn new_contract_with_call_options() -> Result<()> {
+            run(
+                "type_system/invalid_argument_type",
+                "new_contract_with_call_options",
+            )
+        }
+
+        #[test]
         fn no_return_value() -> Result<()> {
             run("type_system/invalid_argument_type", "no_return_value")
         }
@@ -8125,6 +8153,16 @@ mod type_system {
         }
 
         #[test]
+        fn new_array() -> Result<()> {
+            run("type_system/unknown_named_argument", "new_array")
+        }
+
+        #[test]
+        fn new_contract() -> Result<()> {
+            run("type_system/unknown_named_argument", "new_contract")
+        }
+
+        #[test]
         fn unnamed_parameter() -> Result<()> {
             run("type_system/unknown_named_argument", "unnamed_parameter")
         }
@@ -8216,6 +8254,32 @@ mod type_system {
         #[test]
         fn named_arguments() -> Result<()> {
             run("type_system/wrong_argument_count", "named_arguments")
+        }
+
+        #[test]
+        fn new_array() -> Result<()> {
+            run("type_system/wrong_argument_count", "new_array")
+        }
+
+        #[test]
+        fn new_contract() -> Result<()> {
+            run("type_system/wrong_argument_count", "new_contract")
+        }
+
+        #[test]
+        fn new_contract_with_inherited_constructor() -> Result<()> {
+            run(
+                "type_system/wrong_argument_count",
+                "new_contract_with_inherited_constructor",
+            )
+        }
+
+        #[test]
+        fn new_contract_without_constructor() -> Result<()> {
+            run(
+                "type_system/wrong_argument_count",
+                "new_contract_without_constructor",
+            )
         }
 
         #[test]

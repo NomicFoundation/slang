@@ -184,12 +184,20 @@ impl Visitor for Pass<'_> {
             definition.externalized_type_id = Some(externalized_type_id);
         }
 
-        if node.name.is_some() {
-            // for *named* functions, fill-in parameter types in
-            // parameters scope for overload disambiguation in p5
-            self.binder
-                .set_parameter_types_of_definition(node.id(), &node.parameters);
-        }
+        // Fill-in parameter types in parameters scope for overload
+        // disambiguation and argument checks in p5. A constructor is not a
+        // definition, so its parameters scope is reached through the function
+        // scope.
+        let Some(Scope::Function(function_scope)) = self
+            .binder
+            .scope_id_for_node_id(node.id())
+            .map(|scope_id| self.binder.get_scope_by_id(scope_id))
+        else {
+            unreachable!("FunctionDefinition does not have an associated function scope");
+        };
+        let parameters_scope_id = function_scope.parameters_scope_id;
+        self.binder
+            .set_parameter_types(parameters_scope_id, &node.parameters);
     }
 
     fn enter_modifier_definition(&mut self, node: &ir::ModifierDefinition) -> bool {

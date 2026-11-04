@@ -8,10 +8,10 @@ use slang_solidity_v2_ir::ir;
 use slang_solidity_v2_ir::ir::{NodeIdentity, TextRange};
 
 use super::Pass;
-use crate::binder::{Binder, ParameterDefinition, Scope, ScopeId};
+use crate::binder::{Binder, Definition, ParameterDefinition, Scope};
 use crate::context::FileNodeMapper;
 use crate::passes::common::node_location;
-use crate::types::{CallMode, Type, TypeId, TypeRegistry};
+use crate::types::{CallMode, ContractType, Type, TypeId, TypeRegistry};
 
 /// The ordered parameters that the arguments of a call are checked against,
 /// with the name and type of each one where known.
@@ -30,7 +30,7 @@ pub(super) trait ParameterList {
     }
 }
 
-/// The parameters of a declaration, eg. a function.
+/// The parameters of a declaration, eg. a function or a constructor.
 impl ParameterList for [ParameterDefinition] {
     fn count(&self) -> usize {
         self.len()
@@ -132,6 +132,48 @@ impl Pass<'_> {
                 arguments,
                 argument_types,
             ),
+        }
+    }
+
+    /// Checks the positional `arguments` of creating a value of
+    /// `created_type_id` with `new` against the parameters of the creation.
+    pub(super) fn check_positional_arguments_of_creation(
+        &mut self,
+        node: &ir::FunctionCallExpression,
+        created_type_id: TypeId,
+        arguments: &[ir::Expression],
+        argument_types: Option<&[TypeId]>,
+    ) {
+        let (binder, mut checker) = self.arguments_checker();
+        match creation_parameters(binder, checker.types, created_type_id) {
+            Some(CreationParameters::Constructor(parameters)) => {
+                checker.check_positional(node, parameters, false, arguments, argument_types);
+            }
+            Some(CreationParameters::Length(length)) => {
+                checker.check_positional(node, &[length][..], false, arguments, argument_types);
+            }
+            None => {}
+        }
+    }
+
+    /// Checks the named `arguments` of creating a value of `created_type_id`
+    /// with `new` against the parameters of the creation.
+    pub(super) fn check_named_arguments_of_creation(
+        &mut self,
+        node: &ir::FunctionCallExpression,
+        created_type_id: TypeId,
+        arguments: &[ir::NamedArgument],
+        argument_types: Option<&[(&str, TypeId)]>,
+    ) {
+        let (binder, mut checker) = self.arguments_checker();
+        match creation_parameters(binder, checker.types, created_type_id) {
+            Some(CreationParameters::Constructor(parameters)) => {
+                checker.check_named(node, parameters, false, arguments, argument_types);
+            }
+            Some(CreationParameters::Length(length)) => {
+                checker.check_named(node, &[length][..], false, arguments, argument_types);
+            }
+            None => {}
         }
     }
 
@@ -290,22 +332,19 @@ pub(super) fn parameter_type_matches_argument_type(
 }
 
 /// The parameters declared by `definition_id`, if it declares any, eg. a
-/// function. A getter declares none.
-// TODO: replace this and `parameters_of_scope` with
-// `Binder::get_parameters_for_definition` once #2370 is merged.
+/// function. A getter declares none, and neither does a struct, whose scope
+/// holds its members.
+// TODO: replace this with `Binder::get_parameters_for_definition` once #2370
+// is merged.
 pub(super) fn declared_parameters(
     binder: &Binder,
     definition_id: Option<NodeId>,
 ) -> Option<&[ParameterDefinition]> {
     let parameters_scope_id = binder.get_parameters_scope_for_definition(definition_id?)?;
-    Some(parameters_of_scope(binder, parameters_scope_id))
-}
-
-fn parameters_of_scope(binder: &Binder, parameters_scope_id: ScopeId) -> &[ParameterDefinition] {
-    let Scope::Parameters(parameters_scope) = binder.get_scope_by_id(parameters_scope_id) else {
-        unreachable!("incorrect scope kind, expected parameters");
-    };
-    &parameters_scope.parameters
+    match binder.get_scope_by_id(parameters_scope_id) {
+        Scope::Parameters(parameters_scope) => Some(&parameters_scope.parameters),
+        _ => None,
+    }
 }
 
 /// The `parameters` a call passes arguments for. A bound call, eg. `x.f(..)`,
@@ -313,4 +352,36 @@ fn parameters_of_scope(binder: &Binder, parameters_scope_id: ScopeId) -> &[Param
 fn without_bound_receiver<T>(parameters: &[T], call_mode: CallMode) -> &[T] {
     let skip = usize::from(call_mode.is_bound());
     parameters.get(skip..).unwrap_or_default()
+}
+
+/// What creating a value with `new` takes.
+enum CreationParameters<'a> {
+    /// The parameters of a contract's constructor, or none if it declares no
+    /// constructor.
+    Constructor(&'a [ParameterDefinition]),
+    /// The length of a dynamic array, `bytes` or `string`.
+    Length(TypeId),
+}
+
+/// What creating a value of `created_type_id` with `new` takes, if it can be
+/// created at all.
+fn creation_parameters<'a>(
+    binder: &'a Binder,
+    types: &TypeRegistry,
+    created_type_id: TypeId,
+) -> Option<CreationParameters<'a>> {
+    match types.get_type_by_id(created_type_id) {
+        Type::Contract(ContractType { definition_id }) => {
+            // Interfaces and libraries cannot be created.
+            let Some(Definition::Contract(_)) = binder.find_definition_by_id(*definition_id) else {
+                return None;
+            };
+            let parameters = declared_parameters(binder, Some(*definition_id)).unwrap_or_default();
+            Some(CreationParameters::Constructor(parameters))
+        }
+        Type::Array(_) | Type::Bytes(_) | Type::String(_) => {
+            Some(CreationParameters::Length(types.uint256()))
+        }
+        _ => None,
+    }
 }
