@@ -295,6 +295,10 @@ impl Pass<'_> {
                 self.check_arguments_of_abi_encode_call(node, arguments, argument_types);
                 return;
             }
+            InternalBuiltIn::BytesConcat | InternalBuiltIn::StringConcat => {
+                self.check_arguments_of_concat(built_in, arguments, argument_types);
+                return;
+            }
             _ => {}
         }
         if let Some(parameter_types) = self.built_ins_resolver().parameter_types_of(built_in) {
@@ -424,6 +428,52 @@ impl Pass<'_> {
             &components,
             Some(&component_types),
         );
+    }
+
+    /// Checks the `arguments` of `bytes.concat(...)` and `string.concat(...)`,
+    /// which take any number of them. Each argument to `bytes.concat` converts
+    /// to `bytes memory` or a fixed bytes type, and is not a number literal
+    /// from 0.8.7. Each argument to `string.concat` converts to `string memory`.
+    fn check_arguments_of_concat(
+        &mut self,
+        built_in: &InternalBuiltIn,
+        arguments: &[ir::Expression],
+        argument_types: Option<&[TypeId]>,
+    ) {
+        let Some(argument_types) = argument_types else {
+            return;
+        };
+        let (_, mut checker) = self.arguments_checker();
+        for (argument, argument_type) in arguments.iter().zip(argument_types) {
+            let accepted = if matches!(built_in, InternalBuiltIn::BytesConcat) {
+                let is_number_literal = checker.types.language_version() >= LanguageVersion::V0_8_7
+                    && checker
+                        .types
+                        .get_type_by_id(*argument_type)
+                        .is_literal_number();
+                // `bytes32` is the widest fixed bytes type, so any fixed bytes
+                // value converts to it.
+                let converts = checker.parameter_accepts_argument(
+                    Some(checker.types.bytes32()),
+                    *argument_type,
+                    false,
+                ) || checker.parameter_accepts_argument(
+                    Some(checker.types.bytes_memory()),
+                    *argument_type,
+                    false,
+                );
+                converts && !is_number_literal
+            } else {
+                checker.parameter_accepts_argument(
+                    Some(checker.types.string_memory()),
+                    *argument_type,
+                    false,
+                )
+            };
+            if !accepted {
+                checker.report(argument, InvalidArgumentType);
+            }
+        }
     }
 
     /// Checks the named `arguments` of a call to `built_in`. The parameters of
