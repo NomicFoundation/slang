@@ -796,7 +796,10 @@ impl Visitor for Pass<'_> {
     }
 
     fn leave_emit_statement(&mut self, node: &ir::EmitStatement) {
-        let event_reference_id = node.event.last().unwrap().id();
+        // TODO(validation) SDR[1657]: an `emit` has to name an event. The
+        // arguments of anything else are not checked.
+        let event_name = node.event.last().unwrap();
+        let event_reference_id = event_name.id();
         let event_resolution = self.followed_resolution_of_reference(event_reference_id);
         match &node.arguments {
             ir::ArgumentsDeclaration::PositionalArguments(positional_arguments) => {
@@ -805,18 +808,34 @@ impl Visitor for Pass<'_> {
                 // type cannot select an overload, so disambiguation is skipped
                 // rather than reported on top of the argument's own failure.
                 let argument_types = self.collect_positional_argument_types(positional_arguments);
-                if let (Some(Resolution::Ambiguous(definition_ids)), Some(argument_types)) =
-                    (&event_resolution, &argument_types)
-                {
-                    let overload_match = self
-                        .lookup_event_matching_positional_arguments(definition_ids, argument_types);
-                    let candidate =
-                        self.select_event_overload(node.event.last().unwrap(), overload_match);
-                    if let Some(candidate) = candidate {
-                        // update resolved definition
-                        self.binder
-                            .fixup_reference(event_reference_id, Resolution::Definition(candidate));
+                match (&event_resolution, &argument_types) {
+                    (Some(Resolution::Ambiguous(definition_ids)), Some(argument_types)) => {
+                        // An overload is only selected if it accepts the
+                        // arguments, so they need no further checks.
+                        let overload_match = self.lookup_event_matching_positional_arguments(
+                            definition_ids,
+                            argument_types,
+                        );
+                        let candidate = self.select_event_overload(event_name, overload_match);
+                        if let Some(candidate) = candidate {
+                            // update resolved definition
+                            self.binder.fixup_reference(
+                                event_reference_id,
+                                Resolution::Definition(candidate),
+                            );
+                        }
                     }
+                    (Some(Resolution::Definition(definition_id)), _)
+                        if self.is_event_definition(*definition_id) =>
+                    {
+                        self.check_positional_arguments_of_event_or_error(
+                            event_name,
+                            *definition_id,
+                            positional_arguments,
+                            argument_types.as_deref(),
+                        );
+                    }
+                    _ => {}
                 }
             }
             ir::ArgumentsDeclaration::NamedArguments(named_arguments) => {
@@ -824,10 +843,11 @@ impl Visitor for Pass<'_> {
                 let argument_types = self.collect_named_argument_types(named_arguments);
                 let definition_id = match (&event_resolution, &argument_types) {
                     (Some(Resolution::Ambiguous(definition_ids)), Some(argument_types)) => {
+                        // An overload is only selected if it accepts the
+                        // arguments, so they need no further checks.
                         let overload_match = self
                             .lookup_event_matching_named_arguments(definition_ids, argument_types);
-                        let candidate =
-                            self.select_event_overload(node.event.last().unwrap(), overload_match);
+                        let candidate = self.select_event_overload(event_name, overload_match);
                         if let Some(candidate) = candidate {
                             // update resolved definition
                             self.binder.fixup_reference(
@@ -837,7 +857,17 @@ impl Visitor for Pass<'_> {
                         }
                         candidate
                     }
-                    (Some(Resolution::Definition(definition_id)), _) => Some(*definition_id),
+                    (Some(Resolution::Definition(definition_id)), _) => {
+                        if self.is_event_definition(*definition_id) {
+                            self.check_named_arguments_of_event_or_error(
+                                event_name,
+                                *definition_id,
+                                named_arguments,
+                                argument_types.as_deref(),
+                            );
+                        }
+                        Some(*definition_id)
+                    }
                     _ => None,
                 };
                 // resolve names in named arguments
@@ -853,20 +883,36 @@ impl Visitor for Pass<'_> {
     }
 
     fn leave_revert_statement(&mut self, node: &ir::RevertStatement) {
+        let error_name = node.error.last().unwrap();
+        let definition_id = self
+            .followed_resolution_of_reference(error_name.id())
+            .and_then(|resolution| resolution.as_definition_id());
+        // TODO(validation) SDR[802]: a `revert` has to name an error. The
+        // arguments of anything else are not checked.
+        let error_id = definition_id.filter(|&id| self.is_error_definition(id));
         match &node.arguments {
             ir::ArgumentsDeclaration::PositionalArguments(positional_arguments) => {
-                // Collect the argument types to ensure all of them type to a value
-                // TODO(validation): check that the types match the error definition
-                self.collect_positional_argument_types(positional_arguments);
+                let argument_types = self.collect_positional_argument_types(positional_arguments);
+                if let Some(error_id) = error_id {
+                    self.check_positional_arguments_of_event_or_error(
+                        error_name,
+                        error_id,
+                        positional_arguments,
+                        argument_types.as_deref(),
+                    );
+                }
             }
             ir::ArgumentsDeclaration::NamedArguments(named_arguments) => {
-                // Collect the argument types to ensure all of them type to a value
-                // TODO(validation): check that the types match the error definition
-                self.collect_named_argument_types(named_arguments);
-                let definition_id = self
-                    .followed_resolution_of_reference(node.error.last().unwrap().id())
-                    .and_then(|resolution| resolution.as_definition_id());
+                let argument_types = self.collect_named_argument_types(named_arguments);
                 self.resolve_named_arguments(named_arguments, definition_id);
+                if let Some(error_id) = error_id {
+                    self.check_named_arguments_of_event_or_error(
+                        error_name,
+                        error_id,
+                        named_arguments,
+                        argument_types.as_deref(),
+                    );
+                }
             }
         }
     }

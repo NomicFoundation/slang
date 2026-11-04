@@ -2,7 +2,7 @@ use slang_solidity_v2_common::nodes::NodeId;
 
 use super::Pass;
 use super::arguments::{declared_parameters, parameter_type_matches_argument_type};
-use crate::binder::{Definition, ParameterDefinition, Scope};
+use crate::binder::{Definition, ParameterDefinition};
 use crate::types::{FunctionType, Type, TypeId, UserMetaType};
 
 /// The outcome of selecting one overload out of a set of candidates.
@@ -239,32 +239,18 @@ impl Pass<'_> {
         })
     }
 
-    fn get_event_definition_parameters(
-        &self,
-        definition_id: NodeId,
-    ) -> Option<&[ParameterDefinition]> {
-        let Some(Definition::Event(event_definition)) =
-            self.binder.find_definition_by_id(definition_id)
-        else {
-            return None;
-        };
-
-        let Scope::Parameters(parameters_scope) = self
-            .binder
-            .get_scope_by_id(event_definition.parameters_scope_id)
-        else {
-            unreachable!("incorrect scope kind, expected parameters");
-        };
-        Some(&parameters_scope.parameters)
-    }
-
     pub(super) fn lookup_event_matching_positional_arguments(
         &self,
         definition_ids: &[NodeId],
         argument_types: &[TypeId],
     ) -> OverloadMatch<NodeId> {
         OverloadMatch::from_matches(definition_ids.iter().copied().filter(|definition_id| {
-            let Some(parameters) = self.get_event_definition_parameters(*definition_id) else {
+            // Only an event can be emitted. Any other candidate of the same
+            // name is a redeclaration, which is already reported.
+            if !self.is_event_definition(*definition_id) {
+                return false;
+            }
+            let Some(parameters) = declared_parameters(self.binder, Some(*definition_id)) else {
                 return false;
             };
             // argument count matches, check that all types are implicitly convertible
@@ -279,7 +265,12 @@ impl Pass<'_> {
         argument_types: &[(&str, TypeId)],
     ) -> OverloadMatch<NodeId> {
         OverloadMatch::from_matches(definition_ids.iter().copied().filter(|definition_id| {
-            let Some(parameters) = self.get_event_definition_parameters(*definition_id) else {
+            // Only an event can be emitted. Any other candidate of the same
+            // name is a redeclaration, which is already reported.
+            if !self.is_event_definition(*definition_id) {
+                return false;
+            }
+            let Some(parameters) = declared_parameters(self.binder, Some(*definition_id)) else {
                 return false;
             };
             // cannot match if any parameter is unnamed

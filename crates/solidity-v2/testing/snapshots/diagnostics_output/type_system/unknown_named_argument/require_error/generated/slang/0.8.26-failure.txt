@@ -1,0 +1,11 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 1
+
+[type-system/unknown-named-argument] Error: Named argument 'b' does not match any parameter of the callee.
+   ╭─[input.sol:8:25]
+   │
+ 8 │         require(c, Err({b: 1}));
+   │                         ┬  
+   │                         ╰── Error occurred here.
+───╯
