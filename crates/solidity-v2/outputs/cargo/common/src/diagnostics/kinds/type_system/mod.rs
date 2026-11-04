@@ -16,6 +16,7 @@ mod fallback_function_mutability;
 mod fallback_function_signature;
 mod incompatible_conditional_branches;
 mod incompatible_constant_operator;
+mod invalid_argument_type;
 mod invalid_base;
 mod invalid_utf8_string_literal;
 mod literal_too_large;
@@ -27,6 +28,7 @@ mod storage_layout_base_out_of_range;
 mod storage_layout_base_past_end;
 mod type_too_large_for_storage;
 mod write_to_constant;
+mod wrong_argument_count;
 
 pub use array_length_fractional::ArrayLengthFractional;
 pub use array_length_negative::ArrayLengthNegative;
@@ -46,6 +48,7 @@ pub use fallback_function_mutability::FallbackFunctionMutability;
 pub use fallback_function_signature::FallbackFunctionSignature;
 pub use incompatible_conditional_branches::IncompatibleConditionalBranches;
 pub use incompatible_constant_operator::IncompatibleConstantOperator;
+pub use invalid_argument_type::InvalidArgumentType;
 pub use invalid_base::InvalidBase;
 pub use invalid_utf8_string_literal::InvalidUtf8StringLiteral;
 pub use literal_too_large::LiteralTooLarge;
@@ -58,6 +61,7 @@ pub use storage_layout_base_out_of_range::StorageLayoutBaseOutOfRange;
 pub use storage_layout_base_past_end::StorageLayoutBasePastEnd;
 pub use type_too_large_for_storage::TypeTooLargeForStorage;
 pub use write_to_constant::WriteToConstant;
+pub use wrong_argument_count::WrongArgumentCount;
 
 use crate::diagnostics::kinds::DiagnosticKind;
 use crate::diagnostics::kinds::utils::define_diagnostic_kind;
@@ -119,6 +123,12 @@ define_diagnostic_kind! {
         /// Call options are set on a function that is not called by a message
         /// call (eg. an internal or library function).
         CallOptionsNotAllowed(CallOptionsNotAllowed),
+        /// A call passes a different number of arguments than the callee
+        /// declares parameters.
+        WrongArgumentCount(WrongArgumentCount),
+        /// An argument of a call does not implicitly convert to the type of its
+        /// parameter.
+        InvalidArgumentType(InvalidArgumentType),
         /// An expression in a position that requires a value names a built-in,
         /// `super`, or an uncalled `new` instead. Its `kind` says which.
         ExpressionNotAValue(ExpressionNotAValue),

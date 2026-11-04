@@ -1,0 +1,11 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 1
+
+[TypeError 9553] Error: Invalid type for argument in function call. Invalid implicit conversion from int_const 300 to uint8 requested. Literal is too large to fit in uint8.
+   ╭─[input.sol:8:11]
+   │
+ 8 │         f(300);
+   │           ─┬─  
+   │            ╰─── Error occurred here.
+───╯

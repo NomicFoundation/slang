@@ -3676,6 +3676,7 @@ pub slang_solidity_v2_common::diagnostics::kinds::type_system::TypeSystemDiagnos
 pub slang_solidity_v2_common::diagnostics::kinds::type_system::TypeSystemDiagnosticKind::FallbackFunctionSignature(slang_solidity_v2_common::diagnostics::kinds::type_system::FallbackFunctionSignature)
 pub slang_solidity_v2_common::diagnostics::kinds::type_system::TypeSystemDiagnosticKind::IncompatibleConditionalBranches(slang_solidity_v2_common::diagnostics::kinds::type_system::IncompatibleConditionalBranches)
 pub slang_solidity_v2_common::diagnostics::kinds::type_system::TypeSystemDiagnosticKind::IncompatibleConstantOperator(slang_solidity_v2_common::diagnostics::kinds::type_system::IncompatibleConstantOperator)
+pub slang_solidity_v2_common::diagnostics::kinds::type_system::TypeSystemDiagnosticKind::InvalidArgumentType(slang_solidity_v2_common::diagnostics::kinds::type_system::InvalidArgumentType)
 pub slang_solidity_v2_common::diagnostics::kinds::type_system::TypeSystemDiagnosticKind::InvalidBase(slang_solidity_v2_common::diagnostics::kinds::type_system::InvalidBase)
 pub slang_solidity_v2_common::diagnostics::kinds::type_system::TypeSystemDiagnosticKind::InvalidUtf8StringLiteral(slang_solidity_v2_common::diagnostics::kinds::type_system::InvalidUtf8StringLiteral)
 pub slang_solidity_v2_common::diagnostics::kinds::type_system::TypeSystemDiagnosticKind::LiteralTooLarge(slang_solidity_v2_common::diagnostics::kinds::type_system::LiteralTooLarge)
@@ -3687,6 +3688,7 @@ pub slang_solidity_v2_common::diagnostics::kinds::type_system::TypeSystemDiagnos
 pub slang_solidity_v2_common::diagnostics::kinds::type_system::TypeSystemDiagnosticKind::StorageLayoutBasePastEnd(slang_solidity_v2_common::diagnostics::kinds::type_system::StorageLayoutBasePastEnd)
 pub slang_solidity_v2_common::diagnostics::kinds::type_system::TypeSystemDiagnosticKind::TypeTooLargeForStorage(slang_solidity_v2_common::diagnostics::kinds::type_system::TypeTooLargeForStorage)
 pub slang_solidity_v2_common::diagnostics::kinds::type_system::TypeSystemDiagnosticKind::WriteToConstant(slang_solidity_v2_common::diagnostics::kinds::type_system::WriteToConstant)
+pub slang_solidity_v2_common::diagnostics::kinds::type_system::TypeSystemDiagnosticKind::WrongArgumentCount(slang_solidity_v2_common::diagnostics::kinds::type_system::WrongArgumentCount)
 impl core::clone::Clone for slang_solidity_v2_common::diagnostics::kinds::type_system::TypeSystemDiagnosticKind
 pub fn slang_solidity_v2_common::diagnostics::kinds::type_system::TypeSystemDiagnosticKind::clone(&self) -> slang_solidity_v2_common::diagnostics::kinds::type_system::TypeSystemDiagnosticKind
 impl core::cmp::Eq for slang_solidity_v2_common::diagnostics::kinds::type_system::TypeSystemDiagnosticKind
@@ -3728,6 +3730,8 @@ impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::type_syst
 pub fn slang_solidity_v2_common::diagnostics::kinds::type_system::TypeSystemDiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::type_system::IncompatibleConditionalBranches) -> Self
 impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::type_system::IncompatibleConstantOperator> for slang_solidity_v2_common::diagnostics::kinds::type_system::TypeSystemDiagnosticKind
 pub fn slang_solidity_v2_common::diagnostics::kinds::type_system::TypeSystemDiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::type_system::IncompatibleConstantOperator) -> Self
+impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::type_system::InvalidArgumentType> for slang_solidity_v2_common::diagnostics::kinds::type_system::TypeSystemDiagnosticKind
+pub fn slang_solidity_v2_common::diagnostics::kinds::type_system::TypeSystemDiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::type_system::InvalidArgumentType) -> Self
 impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::type_system::InvalidBase> for slang_solidity_v2_common::diagnostics::kinds::type_system::TypeSystemDiagnosticKind
 pub fn slang_solidity_v2_common::diagnostics::kinds::type_system::TypeSystemDiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::type_system::InvalidBase) -> Self
 impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::type_system::InvalidUtf8StringLiteral> for slang_solidity_v2_common::diagnostics::kinds::type_system::TypeSystemDiagnosticKind
@@ -3752,6 +3756,8 @@ impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::type_syst
 pub fn slang_solidity_v2_common::diagnostics::kinds::type_system::TypeSystemDiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::type_system::TypeTooLargeForStorage) -> Self
 impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::type_system::WriteToConstant> for slang_solidity_v2_common::diagnostics::kinds::type_system::TypeSystemDiagnosticKind
 pub fn slang_solidity_v2_common::diagnostics::kinds::type_system::TypeSystemDiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::type_system::WriteToConstant) -> Self
+impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::type_system::WrongArgumentCount> for slang_solidity_v2_common::diagnostics::kinds::type_system::TypeSystemDiagnosticKind
+pub fn slang_solidity_v2_common::diagnostics::kinds::type_system::TypeSystemDiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::type_system::WrongArgumentCount) -> Self
 impl core::fmt::Debug for slang_solidity_v2_common::diagnostics::kinds::type_system::TypeSystemDiagnosticKind
 pub fn slang_solidity_v2_common::diagnostics::kinds::type_system::TypeSystemDiagnosticKind::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
 impl core::marker::StructuralPartialEq for slang_solidity_v2_common::diagnostics::kinds::type_system::TypeSystemDiagnosticKind
@@ -4108,6 +4114,25 @@ impl slang_solidity_v2_common::diagnostics::DiagnosticExtensions for slang_solid
 pub fn slang_solidity_v2_common::diagnostics::kinds::type_system::IncompatibleConstantOperator::code(&self) -> &'static str
 pub fn slang_solidity_v2_common::diagnostics::kinds::type_system::IncompatibleConstantOperator::message(&self) -> alloc::string::String
 pub fn slang_solidity_v2_common::diagnostics::kinds::type_system::IncompatibleConstantOperator::severity(&self) -> slang_solidity_v2_common::diagnostics::DiagnosticSeverity
+pub struct slang_solidity_v2_common::diagnostics::kinds::type_system::InvalidArgumentType
+impl core::clone::Clone for slang_solidity_v2_common::diagnostics::kinds::type_system::InvalidArgumentType
+pub fn slang_solidity_v2_common::diagnostics::kinds::type_system::InvalidArgumentType::clone(&self) -> slang_solidity_v2_common::diagnostics::kinds::type_system::InvalidArgumentType
+impl core::cmp::Eq for slang_solidity_v2_common::diagnostics::kinds::type_system::InvalidArgumentType
+impl core::cmp::PartialEq for slang_solidity_v2_common::diagnostics::kinds::type_system::InvalidArgumentType
+pub fn slang_solidity_v2_common::diagnostics::kinds::type_system::InvalidArgumentType::eq(&self, &slang_solidity_v2_common::diagnostics::kinds::type_system::InvalidArgumentType) -> bool
+impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::type_system::InvalidArgumentType> for slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind
+pub fn slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::type_system::InvalidArgumentType) -> Self
+impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::type_system::InvalidArgumentType> for slang_solidity_v2_common::diagnostics::kinds::type_system::TypeSystemDiagnosticKind
+pub fn slang_solidity_v2_common::diagnostics::kinds::type_system::TypeSystemDiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::type_system::InvalidArgumentType) -> Self
+impl core::fmt::Debug for slang_solidity_v2_common::diagnostics::kinds::type_system::InvalidArgumentType
+pub fn slang_solidity_v2_common::diagnostics::kinds::type_system::InvalidArgumentType::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::StructuralPartialEq for slang_solidity_v2_common::diagnostics::kinds::type_system::InvalidArgumentType
+impl serde_core::ser::Serialize for slang_solidity_v2_common::diagnostics::kinds::type_system::InvalidArgumentType
+pub fn slang_solidity_v2_common::diagnostics::kinds::type_system::InvalidArgumentType::serialize<__S>(&self, __S) -> core::result::Result<<__S as serde_core::ser::Serializer>::Ok, <__S as serde_core::ser::Serializer>::Error> where __S: serde_core::ser::Serializer
+impl slang_solidity_v2_common::diagnostics::DiagnosticExtensions for slang_solidity_v2_common::diagnostics::kinds::type_system::InvalidArgumentType
+pub fn slang_solidity_v2_common::diagnostics::kinds::type_system::InvalidArgumentType::code(&self) -> &'static str
+pub fn slang_solidity_v2_common::diagnostics::kinds::type_system::InvalidArgumentType::message(&self) -> alloc::string::String
+pub fn slang_solidity_v2_common::diagnostics::kinds::type_system::InvalidArgumentType::severity(&self) -> slang_solidity_v2_common::diagnostics::DiagnosticSeverity
 pub struct slang_solidity_v2_common::diagnostics::kinds::type_system::InvalidBase
 impl core::clone::Clone for slang_solidity_v2_common::diagnostics::kinds::type_system::InvalidBase
 pub fn slang_solidity_v2_common::diagnostics::kinds::type_system::InvalidBase::clone(&self) -> slang_solidity_v2_common::diagnostics::kinds::type_system::InvalidBase
@@ -4319,6 +4344,27 @@ impl slang_solidity_v2_common::diagnostics::DiagnosticExtensions for slang_solid
 pub fn slang_solidity_v2_common::diagnostics::kinds::type_system::WriteToConstant::code(&self) -> &'static str
 pub fn slang_solidity_v2_common::diagnostics::kinds::type_system::WriteToConstant::message(&self) -> alloc::string::String
 pub fn slang_solidity_v2_common::diagnostics::kinds::type_system::WriteToConstant::severity(&self) -> slang_solidity_v2_common::diagnostics::DiagnosticSeverity
+pub struct slang_solidity_v2_common::diagnostics::kinds::type_system::WrongArgumentCount
+pub slang_solidity_v2_common::diagnostics::kinds::type_system::WrongArgumentCount::expected: usize
+pub slang_solidity_v2_common::diagnostics::kinds::type_system::WrongArgumentCount::given: usize
+impl core::clone::Clone for slang_solidity_v2_common::diagnostics::kinds::type_system::WrongArgumentCount
+pub fn slang_solidity_v2_common::diagnostics::kinds::type_system::WrongArgumentCount::clone(&self) -> slang_solidity_v2_common::diagnostics::kinds::type_system::WrongArgumentCount
+impl core::cmp::Eq for slang_solidity_v2_common::diagnostics::kinds::type_system::WrongArgumentCount
+impl core::cmp::PartialEq for slang_solidity_v2_common::diagnostics::kinds::type_system::WrongArgumentCount
+pub fn slang_solidity_v2_common::diagnostics::kinds::type_system::WrongArgumentCount::eq(&self, &slang_solidity_v2_common::diagnostics::kinds::type_system::WrongArgumentCount) -> bool
+impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::type_system::WrongArgumentCount> for slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind
+pub fn slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::type_system::WrongArgumentCount) -> Self
+impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::type_system::WrongArgumentCount> for slang_solidity_v2_common::diagnostics::kinds::type_system::TypeSystemDiagnosticKind
+pub fn slang_solidity_v2_common::diagnostics::kinds::type_system::TypeSystemDiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::type_system::WrongArgumentCount) -> Self
+impl core::fmt::Debug for slang_solidity_v2_common::diagnostics::kinds::type_system::WrongArgumentCount
+pub fn slang_solidity_v2_common::diagnostics::kinds::type_system::WrongArgumentCount::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::StructuralPartialEq for slang_solidity_v2_common::diagnostics::kinds::type_system::WrongArgumentCount
+impl serde_core::ser::Serialize for slang_solidity_v2_common::diagnostics::kinds::type_system::WrongArgumentCount
+pub fn slang_solidity_v2_common::diagnostics::kinds::type_system::WrongArgumentCount::serialize<__S>(&self, __S) -> core::result::Result<<__S as serde_core::ser::Serializer>::Ok, <__S as serde_core::ser::Serializer>::Error> where __S: serde_core::ser::Serializer
+impl slang_solidity_v2_common::diagnostics::DiagnosticExtensions for slang_solidity_v2_common::diagnostics::kinds::type_system::WrongArgumentCount
+pub fn slang_solidity_v2_common::diagnostics::kinds::type_system::WrongArgumentCount::code(&self) -> &'static str
+pub fn slang_solidity_v2_common::diagnostics::kinds::type_system::WrongArgumentCount::message(&self) -> alloc::string::String
+pub fn slang_solidity_v2_common::diagnostics::kinds::type_system::WrongArgumentCount::severity(&self) -> slang_solidity_v2_common::diagnostics::DiagnosticSeverity
 pub enum slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind
 pub slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind::Compilation(slang_solidity_v2_common::diagnostics::kinds::compilation::CompilationDiagnosticKind)
 pub slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind::Resolution(slang_solidity_v2_common::diagnostics::kinds::resolution::ResolutionDiagnosticKind)
@@ -4677,6 +4723,8 @@ impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::type_syst
 pub fn slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::type_system::IncompatibleConditionalBranches) -> Self
 impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::type_system::IncompatibleConstantOperator> for slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind
 pub fn slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::type_system::IncompatibleConstantOperator) -> Self
+impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::type_system::InvalidArgumentType> for slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind
+pub fn slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::type_system::InvalidArgumentType) -> Self
 impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::type_system::InvalidBase> for slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind
 pub fn slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::type_system::InvalidBase) -> Self
 impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::type_system::InvalidUtf8StringLiteral> for slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind
@@ -4701,6 +4749,8 @@ impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::type_syst
 pub fn slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::type_system::TypeTooLargeForStorage) -> Self
 impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::type_system::WriteToConstant> for slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind
 pub fn slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::type_system::WriteToConstant) -> Self
+impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::type_system::WrongArgumentCount> for slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind
+pub fn slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::type_system::WrongArgumentCount) -> Self
 impl core::fmt::Debug for slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind
 pub fn slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
 impl core::marker::StructuralPartialEq for slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind
@@ -5475,6 +5525,10 @@ impl slang_solidity_v2_common::diagnostics::DiagnosticExtensions for slang_solid
 pub fn slang_solidity_v2_common::diagnostics::kinds::type_system::IncompatibleConstantOperator::code(&self) -> &'static str
 pub fn slang_solidity_v2_common::diagnostics::kinds::type_system::IncompatibleConstantOperator::message(&self) -> alloc::string::String
 pub fn slang_solidity_v2_common::diagnostics::kinds::type_system::IncompatibleConstantOperator::severity(&self) -> slang_solidity_v2_common::diagnostics::DiagnosticSeverity
+impl slang_solidity_v2_common::diagnostics::DiagnosticExtensions for slang_solidity_v2_common::diagnostics::kinds::type_system::InvalidArgumentType
+pub fn slang_solidity_v2_common::diagnostics::kinds::type_system::InvalidArgumentType::code(&self) -> &'static str
+pub fn slang_solidity_v2_common::diagnostics::kinds::type_system::InvalidArgumentType::message(&self) -> alloc::string::String
+pub fn slang_solidity_v2_common::diagnostics::kinds::type_system::InvalidArgumentType::severity(&self) -> slang_solidity_v2_common::diagnostics::DiagnosticSeverity
 impl slang_solidity_v2_common::diagnostics::DiagnosticExtensions for slang_solidity_v2_common::diagnostics::kinds::type_system::InvalidBase
 pub fn slang_solidity_v2_common::diagnostics::kinds::type_system::InvalidBase::code(&self) -> &'static str
 pub fn slang_solidity_v2_common::diagnostics::kinds::type_system::InvalidBase::message(&self) -> alloc::string::String
@@ -5523,6 +5577,10 @@ impl slang_solidity_v2_common::diagnostics::DiagnosticExtensions for slang_solid
 pub fn slang_solidity_v2_common::diagnostics::kinds::type_system::WriteToConstant::code(&self) -> &'static str
 pub fn slang_solidity_v2_common::diagnostics::kinds::type_system::WriteToConstant::message(&self) -> alloc::string::String
 pub fn slang_solidity_v2_common::diagnostics::kinds::type_system::WriteToConstant::severity(&self) -> slang_solidity_v2_common::diagnostics::DiagnosticSeverity
+impl slang_solidity_v2_common::diagnostics::DiagnosticExtensions for slang_solidity_v2_common::diagnostics::kinds::type_system::WrongArgumentCount
+pub fn slang_solidity_v2_common::diagnostics::kinds::type_system::WrongArgumentCount::code(&self) -> &'static str
+pub fn slang_solidity_v2_common::diagnostics::kinds::type_system::WrongArgumentCount::message(&self) -> alloc::string::String
+pub fn slang_solidity_v2_common::diagnostics::kinds::type_system::WrongArgumentCount::severity(&self) -> slang_solidity_v2_common::diagnostics::DiagnosticSeverity
 pub mod slang_solidity_v2_common::evm_targets
 pub enum slang_solidity_v2_common::evm_targets::EvmTarget
 pub slang_solidity_v2_common::evm_targets::EvmTarget::Amsterdam = 15
