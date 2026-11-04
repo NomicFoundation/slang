@@ -3387,6 +3387,42 @@ mod semantic {
         }
     }
 
+    mod base_constructor_call_without_parentheses {
+        use super::*;
+
+        #[test]
+        fn constructor_with_parameters() -> Result<()> {
+            run(
+                "semantic/base_constructor_call_without_parentheses",
+                "constructor_with_parameters",
+            )
+        }
+
+        #[test]
+        fn constructor_without_parameters() -> Result<()> {
+            run(
+                "semantic/base_constructor_call_without_parentheses",
+                "constructor_without_parameters",
+            )
+        }
+
+        #[test]
+        fn interface() -> Result<()> {
+            run(
+                "semantic/base_constructor_call_without_parentheses",
+                "interface",
+            )
+        }
+
+        #[test]
+        fn without_constructor() -> Result<()> {
+            run(
+                "semantic/base_constructor_call_without_parentheses",
+                "without_constructor",
+            )
+        }
+    }
+
     mod bytecode_cycles {
         use super::*;
 
