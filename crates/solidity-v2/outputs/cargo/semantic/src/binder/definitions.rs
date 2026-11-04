@@ -163,6 +163,10 @@ pub struct StructDefinition {
     /// The structs held by value (directly or through fixed-size arrays), in
     /// member declaration order. Empty until p3.
     pub(crate) by_value_dependencies: Box<[NodeId]>,
+    /// Whether the struct holds a mapping, in a member or nested in a member's
+    /// struct or array type, which makes it usable only in storage. False until
+    /// p3.
+    pub(crate) contains_mapping: bool,
 }
 
 #[derive(Debug)]
@@ -565,6 +569,7 @@ impl Definition {
             ir_node: Arc::clone(ir_node),
             recursive: None,
             by_value_dependencies: Box::default(),
+            contains_mapping: false,
         })
     }
 
