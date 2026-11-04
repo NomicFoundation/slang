@@ -1,3 +1,5 @@
+use std::sync::Arc;
+
 use slang_solidity_v2_common::diagnostics::DiagnosticCollection;
 use slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind;
 use slang_solidity_v2_common::diagnostics::kinds::type_system::{
@@ -11,7 +13,7 @@ use super::Pass;
 use crate::binder::{Binder, Definition, ParameterDefinition, Scope};
 use crate::context::FileNodeMapper;
 use crate::passes::common::node_location;
-use crate::types::{CallMode, ContractType, Type, TypeId, TypeRegistry};
+use crate::types::{CallMode, ContractType, DataLocation, Type, TypeId, TypeRegistry};
 
 /// The ordered parameters that the arguments of a call are checked against,
 /// with the name and type of each one where known.
@@ -58,6 +60,27 @@ impl ParameterList for [TypeId] {
 
     fn type_id(&self, index: usize) -> Option<TypeId> {
         Some(self[index])
+    }
+}
+
+/// The members of a struct, as the parameters of its construction. Each one has
+/// its type in memory, where the struct is constructed.
+struct StructMembers {
+    members: ir::StructMembers,
+    type_ids: Vec<Option<TypeId>>,
+}
+
+impl ParameterList for StructMembers {
+    fn count(&self) -> usize {
+        self.members.len()
+    }
+
+    fn name(&self, index: usize) -> Option<&str> {
+        Some(self.members[index].name.unparse())
+    }
+
+    fn type_id(&self, index: usize) -> Option<TypeId> {
+        self.type_ids[index]
     }
 }
 
@@ -210,6 +233,71 @@ impl Pass<'_> {
         if let Some(parameters) = declared_parameters(binder, Some(definition_id)) {
             checker.check_named(node, parameters, false, arguments, argument_types);
         }
+    }
+
+    /// Checks the positional `arguments` of constructing the struct
+    /// `definition_id`, eg. `S(1, 2)`, against its members.
+    pub(super) fn check_positional_arguments_of_struct_construction(
+        &mut self,
+        node: &ir::FunctionCallExpression,
+        definition_id: NodeId,
+        arguments: &[ir::Expression],
+        argument_types: Option<&[TypeId]>,
+    ) {
+        let Some(members) = self.constructed_struct_members(definition_id) else {
+            return;
+        };
+        let (_, mut checker) = self.arguments_checker();
+        checker.check_positional(node, &members, false, arguments, argument_types);
+    }
+
+    /// Checks the named `arguments` of constructing the struct
+    /// `definition_id`, eg. `S({a: 1, b: 2})`, against its members.
+    pub(super) fn check_named_arguments_of_struct_construction(
+        &mut self,
+        node: &ir::FunctionCallExpression,
+        definition_id: NodeId,
+        arguments: &[ir::NamedArgument],
+        argument_types: Option<&[(&str, TypeId)]>,
+    ) {
+        let Some(members) = self.constructed_struct_members(definition_id) else {
+            return;
+        };
+        let (_, mut checker) = self.arguments_checker();
+        checker.check_named(node, &members, false, arguments, argument_types);
+    }
+
+    /// The members of the struct `definition_id`, with their types in memory,
+    /// where the struct is constructed. Returns `None` when the struct cannot
+    /// be constructed at all.
+    fn constructed_struct_members(&mut self, definition_id: NodeId) -> Option<StructMembers> {
+        let Some(Definition::Struct(struct_definition)) =
+            self.binder.find_definition_by_id(definition_id)
+        else {
+            unreachable!("a struct construction names a struct");
+        };
+        // TODO(validation) SDR[1677]: a struct containing a mapping cannot be
+        // constructed. Its arguments are not checked.
+        if struct_definition.contains_mapping {
+            return None;
+        }
+        let members = Arc::clone(&struct_definition.ir_node.members);
+        let type_ids = members
+            .iter()
+            .map(|member| {
+                let type_id = self.binder.node_typing(member.id()).as_type_id()?;
+                let type_ = self.types.get_type_by_id(type_id);
+                if !type_.is_inherited_location() {
+                    return Some(type_id);
+                }
+                let type_ = type_.clone();
+                Some(
+                    self.types
+                        .register_type_with_data_location(type_, DataLocation::Memory),
+                )
+            })
+            .collect();
+        Some(StructMembers { members, type_ids })
     }
 
     /// Splits the pass into the binder, which parameters are read from, and a
