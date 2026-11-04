@@ -3,8 +3,8 @@ use slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind;
 use slang_solidity_v2_common::diagnostics::kinds::resolution::NoMatchingCallableDeclaration;
 use slang_solidity_v2_common::diagnostics::kinds::semantic::BaseConstructorCallWithoutParentheses;
 use slang_solidity_v2_common::diagnostics::kinds::type_system::{
-    InvalidArgumentType, NamedArgumentsToBuiltInFunction, StructWithMappingConstructed,
-    TooFewArguments, UnknownNamedArgument, WrongArgumentCount,
+    InvalidArgumentType, InvalidDecodedTypes, NamedArgumentsToBuiltInFunction,
+    StructWithMappingConstructed, TooFewArguments, UnknownNamedArgument, WrongArgumentCount,
 };
 use slang_solidity_v2_common::nodes::NodeId;
 use slang_solidity_v2_ir::ir;
@@ -304,6 +304,10 @@ impl Pass<'_> {
         arguments: &[ir::Expression],
         argument_types: Option<&[TypeId]>,
     ) {
+        if matches!(built_in, InternalBuiltIn::AbiDecode) {
+            self.check_arguments_of_abi_decode(node, arguments, argument_types);
+            return;
+        }
         if let Some(parameter_types) = self.built_ins_resolver().parameter_types_of(built_in) {
             let (_, mut checker) = self.arguments_checker();
             checker.check_positional(node, &parameter_types[..], false, arguments, argument_types);
@@ -327,6 +331,41 @@ impl Pass<'_> {
             .match_overload(built_in, argument_types);
         if overload_match == BuiltInOverloadMatch::Rejected {
             self.push_diagnostic(node, NoMatchingCallableDeclaration);
+        }
+    }
+
+    /// Checks the `arguments` of `abi.decode(data, (T1, T2, ...))`: there are
+    /// two, the first is the bytes to decode, and the second is a
+    /// parenthesized type name or tuple of type names to decode them to.
+    fn check_arguments_of_abi_decode(
+        &mut self,
+        node: &ir::FunctionCallExpression,
+        arguments: &[ir::Expression],
+        argument_types: Option<&[TypeId]>,
+    ) {
+        let [data, types] = arguments else {
+            let (_, mut checker) = self.arguments_checker();
+            let kind = WrongArgumentCount {
+                given: arguments.len(),
+                expected: 2,
+            };
+            checker.report(node, kind);
+            return;
+        };
+        let Some([data_type, types_type]) = argument_types else {
+            return;
+        };
+        let decodes = matches!(types, ir::Expression::TupleExpression(_))
+            && self
+                .built_ins_resolver()
+                .decoded_type_of(*types_type)
+                .is_some();
+        let (_, mut checker) = self.arguments_checker();
+        if !checker.converts(*data_type, Some(checker.types.bytes_memory()), false) {
+            checker.report(data, InvalidArgumentType);
+        }
+        if !decodes {
+            checker.report(types, InvalidDecodedTypes);
         }
     }
 

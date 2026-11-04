@@ -18,6 +18,7 @@ mod incompatible_conditional_branches;
 mod incompatible_constant_operator;
 mod invalid_argument_type;
 mod invalid_base;
+mod invalid_decoded_types;
 mod invalid_utf8_string_literal;
 mod literal_too_large;
 mod named_arguments_in_conversion;
@@ -56,6 +57,7 @@ pub use incompatible_conditional_branches::IncompatibleConditionalBranches;
 pub use incompatible_constant_operator::IncompatibleConstantOperator;
 pub use invalid_argument_type::InvalidArgumentType;
 pub use invalid_base::InvalidBase;
+pub use invalid_decoded_types::InvalidDecodedTypes;
 pub use invalid_utf8_string_literal::InvalidUtf8StringLiteral;
 pub use literal_too_large::LiteralTooLarge;
 pub use named_arguments_in_conversion::NamedArgumentsInConversion;
@@ -152,6 +154,8 @@ define_diagnostic_kind! {
         NamedArgumentsInConversion(NamedArgumentsInConversion),
         /// A built-in function is given named arguments.
         NamedArgumentsToBuiltInFunction(NamedArgumentsToBuiltInFunction),
+        /// The second argument of `abi.decode` is not a tuple of type names.
+        InvalidDecodedTypes(InvalidDecodedTypes),
         /// A struct containing a mapping is constructed.
         StructWithMappingConstructed(StructWithMappingConstructed),
         /// An expression in a position that requires a value names a built-in,

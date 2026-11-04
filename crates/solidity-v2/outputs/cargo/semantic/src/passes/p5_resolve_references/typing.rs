@@ -1642,9 +1642,9 @@ impl Pass<'_> {
     }
 
     /// Reports a built-in call that produced no result type, at the call site.
-    /// The failures that carry no diagnostic are silent by design: either the
-    /// check is not implemented yet, or what the call depends on already
-    /// reported its own failure.
+    /// The failures that carry no diagnostic are silent by design: the
+    /// arguments, or what the call depends on, already reported their own
+    /// failure.
     fn report_built_in_call_error(
         &mut self,
         node: &ir::FunctionCallExpression,
@@ -1652,7 +1652,7 @@ impl Pass<'_> {
     ) {
         match error {
             BuiltInCallError::Diagnostic(kind) => self.push_diagnostic(node, kind),
-            BuiltInCallError::NotReportedYet | BuiltInCallError::UnresolvedDependency => {}
+            BuiltInCallError::InvalidArguments | BuiltInCallError::UnresolvedDependency => {}
         }
     }
 

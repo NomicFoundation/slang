@@ -1,0 +1,14 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 2
+
+[Warning 1878] Warning: SPDX license identifier not provided in source file. Before publishing, consider adding a comment containing "SPDX-License-Identifier: <SPDX-License>" to each source file. Use "SPDX-License-Identifier: UNLICENSED" for non-open-source code. Please see https://spdx.org for more information.
+--> input.sol
+
+[TypeError 1039] Error: Argument has to be a type name.
+   ╭─[input.sol:4:32]
+   │
+ 4 │     abi.decode(data, (uint256, (bool, bool)));
+   │                                ──────┬─────  
+   │                                      ╰─────── Error occurred here.
+───╯

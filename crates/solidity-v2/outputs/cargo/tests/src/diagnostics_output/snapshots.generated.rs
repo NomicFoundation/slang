@@ -7614,6 +7614,11 @@ mod type_system {
         use super::*;
 
         #[test]
+        fn abi_decode_data() -> Result<()> {
+            run("type_system/invalid_argument_type", "abi_decode_data")
+        }
+
+        #[test]
         fn base_constructor_invocation() -> Result<()> {
             run(
                 "type_system/invalid_argument_type",
@@ -7826,6 +7831,33 @@ mod type_system {
         #[test]
         fn library() -> Result<()> {
             run("type_system/invalid_base", "library")
+        }
+    }
+
+    mod invalid_decoded_types {
+        use super::*;
+
+        #[test]
+        fn nested_tuple() -> Result<()> {
+            run("type_system/invalid_decoded_types", "nested_tuple")
+        }
+
+        #[test]
+        fn tuple_component_value() -> Result<()> {
+            run("type_system/invalid_decoded_types", "tuple_component_value")
+        }
+
+        #[test]
+        fn type_name_without_parentheses() -> Result<()> {
+            run(
+                "type_system/invalid_decoded_types",
+                "type_name_without_parentheses",
+            )
+        }
+
+        #[test]
+        fn value() -> Result<()> {
+            run("type_system/invalid_decoded_types", "value")
         }
     }
 
@@ -8351,6 +8383,11 @@ mod type_system {
 
     mod wrong_argument_count {
         use super::*;
+
+        #[test]
+        fn abi_decode() -> Result<()> {
+            run("type_system/wrong_argument_count", "abi_decode")
+        }
 
         #[test]
         fn bare_modifier_invocation() -> Result<()> {
