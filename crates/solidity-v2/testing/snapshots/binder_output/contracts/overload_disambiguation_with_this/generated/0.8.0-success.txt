@@ -19,7 +19,7 @@ References (6):
 - Ref: ["Token" @ input.sol:17:5] -> #5
 - Ref: ["token" @ input.sol:20:9] -> #8
 - Ref: ["balanceOf" @ input.sol:20:15] -> #6
-- Ref: ["add" @ input.sol:20:31] -> #2
+- Ref: ["add" @ input.sol:20:40] -> #2
 
 ------------------------------------------------------------------------
 
@@ -68,11 +68,11 @@ Bindings:
  19 │     function test() public {
     │              ──┬─  
     │                ╰─── name: 9
- 20 │         token.balanceOf(this).add(1);
-    │         ──┬── ────┬────       ─┬─  
-    │           ╰──────────────────────── ref: 8
-    │                   │            │   
-    │                   ╰──────────────── ref: 6
-    │                                │   
-    │                                ╰─── ref: 2
+ 20 │         token.balanceOf(address(this)).add(1);
+    │         ──┬── ────┬────                ─┬─  
+    │           ╰───────────────────────────────── ref: 8
+    │                   │                     │   
+    │                   ╰───────────────────────── ref: 6
+    │                                         │   
+    │                                         ╰─── ref: 2
 ────╯

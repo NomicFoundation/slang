@@ -7583,6 +7583,46 @@ mod type_system {
         }
     }
 
+    mod invalid_argument_type {
+        use super::*;
+
+        #[test]
+        fn function_value() -> Result<()> {
+            run("type_system/invalid_argument_type", "function_value")
+        }
+
+        #[test]
+        fn internal_function() -> Result<()> {
+            run("type_system/invalid_argument_type", "internal_function")
+        }
+
+        #[test]
+        fn literal_out_of_range() -> Result<()> {
+            run("type_system/invalid_argument_type", "literal_out_of_range")
+        }
+
+        #[test]
+        fn memory_to_calldata_external_function_value() -> Result<()> {
+            run(
+                "type_system/invalid_argument_type",
+                "memory_to_calldata_external_function_value",
+            )
+        }
+
+        #[test]
+        fn memory_to_calldata_internal() -> Result<()> {
+            run(
+                "type_system/invalid_argument_type",
+                "memory_to_calldata_internal",
+            )
+        }
+
+        #[test]
+        fn no_return_value() -> Result<()> {
+            run("type_system/invalid_argument_type", "no_return_value")
+        }
+    }
+
     mod invalid_base {
         use super::*;
 
@@ -7999,6 +8039,40 @@ mod type_system {
         #[test]
         fn qualified_constant() -> Result<()> {
             run("type_system/write_to_constant", "qualified_constant")
+        }
+    }
+
+    mod wrong_argument_count {
+        use super::*;
+
+        #[test]
+        fn bound_function() -> Result<()> {
+            run("type_system/wrong_argument_count", "bound_function")
+        }
+
+        #[test]
+        fn function_value() -> Result<()> {
+            run("type_system/wrong_argument_count", "function_value")
+        }
+
+        #[test]
+        fn getter() -> Result<()> {
+            run("type_system/wrong_argument_count", "getter")
+        }
+
+        #[test]
+        fn invalid_argument_types() -> Result<()> {
+            run("type_system/wrong_argument_count", "invalid_argument_types")
+        }
+
+        #[test]
+        fn too_few_arguments() -> Result<()> {
+            run("type_system/wrong_argument_count", "too_few_arguments")
+        }
+
+        #[test]
+        fn too_many_arguments() -> Result<()> {
+            run("type_system/wrong_argument_count", "too_many_arguments")
         }
     }
 }
