@@ -17,6 +17,6 @@ contract Test {
     Token token;
 
     function test() public {
-        token.balanceOf(this).add(1);
+        token.balanceOf(address(this)).add(1);
     }
 }
