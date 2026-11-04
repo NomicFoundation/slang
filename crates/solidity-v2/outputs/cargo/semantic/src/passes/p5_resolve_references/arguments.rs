@@ -308,31 +308,45 @@ impl Pass<'_> {
             return;
         };
         let (binder, mut checker) = self.arguments_checker();
-        match binder.find_definition_by_id(definition_id) {
-            Some(Definition::Modifier(modifier_definition)) => {
-                let parameters = ModifierParameters {
-                    binder,
-                    parameters: &modifier_definition.ir_node.parameters,
-                };
-                checker.check_positional(node, &parameters, false, arguments, argument_types);
-            }
-            // Look up the parameters of the contract's own constructor. Without
-            // one, the contract takes no arguments, even if it inherits a
-            // constructor that does. Surprisingly, an interface can also be
-            // invoked as a base constructor, and like a contract without a
-            // constructor, it takes no arguments.
-            Some(Definition::Contract(_) | Definition::Interface(_)) => {
-                // Even without arguments, a base constructor call needs
-                // parentheses. The missing arguments are not checked.
-                if node.arguments.is_none() {
-                    checker.report(node, BaseConstructorCallWithoutParentheses);
-                    return;
-                }
-                let parameters =
-                    declared_parameters(binder, Some(definition_id)).unwrap_or_default();
+        if let Some(Definition::Modifier(modifier_definition)) =
+            binder.find_definition_by_id(definition_id)
+        {
+            let parameters = ModifierParameters {
+                binder,
+                parameters: &modifier_definition.ir_node.parameters,
+            };
+            checker.check_positional(node, &parameters, false, arguments, argument_types);
+        } else if let Some(parameters) = base_constructor_parameters(binder, definition_id) {
+            // Even without arguments, a base constructor call needs
+            // parentheses. The missing arguments are not checked.
+            if node.arguments.is_none() {
+                checker.report(node, BaseConstructorCallWithoutParentheses);
+            } else {
                 checker.check_positional(node, parameters, false, arguments, argument_types);
             }
-            _ => {}
+        }
+    }
+
+    /// Checks the `arguments` of the base `node` in an inheritance list, eg.
+    /// `is B(1)`, against the parameters of its constructor.
+    pub(super) fn check_arguments_of_inheritance_type(
+        &mut self,
+        node: &ir::InheritanceType,
+        arguments: &[ir::Expression],
+        argument_types: Option<&[TypeId]>,
+    ) {
+        let identifier = node
+            .type_name
+            .last()
+            .expect("an identifier path is not empty");
+        let Some(Resolution::Definition(definition_id)) =
+            self.followed_resolution_of_reference(identifier.id())
+        else {
+            return;
+        };
+        let (binder, mut checker) = self.arguments_checker();
+        if let Some(parameters) = base_constructor_parameters(binder, definition_id) {
+            checker.check_positional(node, parameters, false, arguments, argument_types);
         }
     }
 
@@ -529,6 +543,23 @@ pub(super) fn declared_parameters(
     let parameters_scope_id = binder.get_parameters_scope_for_definition(definition_id?)?;
     match binder.get_scope_by_id(parameters_scope_id) {
         Scope::Parameters(parameters_scope) => Some(&parameters_scope.parameters),
+        _ => None,
+    }
+}
+
+/// The parameters of the constructor of the base `definition_id`, if it is a
+/// contract or an interface. Only the base's own constructor counts: without
+/// one, the base takes no arguments, even if it inherits a constructor that
+/// does. Surprisingly, an interface can also be invoked as a base constructor,
+/// and like a contract without a constructor, it takes no arguments.
+fn base_constructor_parameters(
+    binder: &Binder,
+    definition_id: NodeId,
+) -> Option<&[ParameterDefinition]> {
+    match binder.find_definition_by_id(definition_id)? {
+        Definition::Contract(_) | Definition::Interface(_) => {
+            Some(declared_parameters(binder, Some(definition_id)).unwrap_or_default())
+        }
         _ => None,
     }
 }

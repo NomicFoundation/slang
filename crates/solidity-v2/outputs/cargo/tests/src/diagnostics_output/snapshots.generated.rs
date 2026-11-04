@@ -7565,6 +7565,11 @@ mod type_system {
         }
 
         #[test]
+        fn inheritance_type() -> Result<()> {
+            run("type_system/invalid_argument_type", "inheritance_type")
+        }
+
+        #[test]
         fn internal_function() -> Result<()> {
             run("type_system/invalid_argument_type", "internal_function")
         }
@@ -8188,6 +8193,35 @@ mod type_system {
         #[test]
         fn getter() -> Result<()> {
             run("type_system/wrong_argument_count", "getter")
+        }
+
+        #[test]
+        fn inheritance_type() -> Result<()> {
+            run("type_system/wrong_argument_count", "inheritance_type")
+        }
+
+        #[test]
+        fn inheritance_type_empty_parentheses() -> Result<()> {
+            run(
+                "type_system/wrong_argument_count",
+                "inheritance_type_empty_parentheses",
+            )
+        }
+
+        #[test]
+        fn inheritance_type_of_interface() -> Result<()> {
+            run(
+                "type_system/wrong_argument_count",
+                "inheritance_type_of_interface",
+            )
+        }
+
+        #[test]
+        fn inheritance_type_without_constructor() -> Result<()> {
+            run(
+                "type_system/wrong_argument_count",
+                "inheritance_type_without_constructor",
+            )
         }
 
         #[test]
