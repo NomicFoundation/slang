@@ -1,0 +1,11 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 1
+
+[type-system/wrong-argument-count] Error: Wrong argument count: 1 argument given but expected 2.
+   ╭─[input.sol:5:5]
+   │
+ 5 │     abi.decode(data);
+   │     ────────┬───────  
+   │             ╰───────── Error occurred here.
+───╯

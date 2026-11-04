@@ -1,0 +1,11 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 1
+
+[TypeError 1039] Error: Argument has to be a type name.
+   ╭─[input.sol:5:32]
+   │
+ 5 │     abi.decode(data, (uint256, 1));
+   │                                ┬  
+   │                                ╰── Error occurred here.
+───╯

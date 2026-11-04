@@ -1,0 +1,11 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 1
+
+[TypeError 5782] Error: This function takes two arguments, but 1 were provided.
+   ╭─[input.sol:5:5]
+   │
+ 5 │     abi.decode(data);
+   │     ────────┬───────  
+   │             ╰───────── Error occurred here.
+───╯
