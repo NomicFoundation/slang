@@ -27,6 +27,7 @@ mod literal_too_large;
 mod missing_index;
 mod modifier_outside_function_header;
 mod named_arguments_in_conversion;
+mod named_arguments_to_built_in_function;
 mod partially_applied_function_used_as_value;
 mod receive_function_parameters;
 mod storage_layout_base_non_integer;
@@ -72,6 +73,7 @@ pub use literal_too_large::LiteralTooLarge;
 pub use missing_index::MissingIndex;
 pub use modifier_outside_function_header::ModifierOutsideFunctionHeader;
 pub use named_arguments_in_conversion::NamedArgumentsInConversion;
+pub use named_arguments_to_built_in_function::NamedArgumentsToBuiltInFunction;
 pub use partially_applied_function_used_as_value::PartiallyAppliedFunctionUsedAsValue;
 pub use receive_function_parameters::ReceiveFunctionParameters;
 use serde::Serialize;
@@ -172,6 +174,8 @@ define_diagnostic_kind! {
         WrongArgumentCountInConversion(WrongArgumentCountInConversion),
         /// An explicit type conversion is given named arguments.
         NamedArgumentsInConversion(NamedArgumentsInConversion),
+        /// A built-in function is given named arguments.
+        NamedArgumentsToBuiltInFunction(NamedArgumentsToBuiltInFunction),
         /// A struct containing a mapping is constructed.
         StructWithMappingConstructed(StructWithMappingConstructed),
         /// An expression in a position that requires a value names a built-in,
