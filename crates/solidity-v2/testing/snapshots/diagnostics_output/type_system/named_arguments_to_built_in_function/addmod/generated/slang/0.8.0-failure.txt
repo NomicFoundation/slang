@@ -1,0 +1,11 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 1
+
+[type-system/named-arguments-to-built-in-function] Error: Built-in functions cannot take named arguments.
+   ╭─[input.sol:6:9]
+   │
+ 6 │         addmod({x: 1});
+   │         ───────┬──────  
+   │                ╰──────── Error occurred here.
+───╯
