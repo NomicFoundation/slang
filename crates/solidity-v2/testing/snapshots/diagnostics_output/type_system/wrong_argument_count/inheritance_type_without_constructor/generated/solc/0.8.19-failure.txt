@@ -1,0 +1,11 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 1
+
+[TypeError 7927] Error: Wrong argument count for constructor call: 1 arguments given but expected 0
+   ╭─[input.sol:6:15]
+   │
+ 6 │ contract C is B(1) {}
+   │               ──┬─  
+   │                 ╰─── Error occurred here.
+───╯
