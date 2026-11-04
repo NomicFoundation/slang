@@ -68,8 +68,10 @@ impl Visitor for Pass<'_> {
     fn leave_inheritance_type(&mut self, node: &ir::InheritanceType) {
         // The arguments of a base contract (eg. `is Base(1)`) are its
         // constructor's, so they are values.
+        // Without parentheses, the arguments are given elsewhere.
         if let Some(arguments) = &node.arguments {
-            self.check_positional_argument_values(arguments);
+            let argument_types = self.collect_positional_argument_types(arguments);
+            self.check_arguments_of_inheritance_type(node, arguments, argument_types.as_deref());
         }
     }
 
