@@ -8,6 +8,13 @@ Diagnostics:
     │                     ─────┬────  
     │                          ╰────── Error occurred here.
 ────╯
+[type-system/invalid-encoded-function] Error: The first argument to 'abi.encodeCall' must be an external function.
+    ╭─[input.sol:13:32]
+    │
+ 13 │     return f(1, abi.encodeCall(I.m, ()));
+    │                                ─┬─  
+    │                                 ╰─── Error occurred here.
+────╯
 
 ------------------------------------------------------------------------
 

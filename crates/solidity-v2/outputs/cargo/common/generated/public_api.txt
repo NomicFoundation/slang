@@ -3691,6 +3691,7 @@ pub slang_solidity_v2_common::diagnostics::kinds::type_system::TypeSystemDiagnos
 pub slang_solidity_v2_common::diagnostics::kinds::type_system::TypeSystemDiagnosticKind::ConstantArithmeticError(slang_solidity_v2_common::diagnostics::kinds::type_system::ConstantArithmeticError)
 pub slang_solidity_v2_common::diagnostics::kinds::type_system::TypeSystemDiagnosticKind::ContractTooLargeForStorage(slang_solidity_v2_common::diagnostics::kinds::type_system::ContractTooLargeForStorage)
 pub slang_solidity_v2_common::diagnostics::kinds::type_system::TypeSystemDiagnosticKind::EmptyArrayLiteral(slang_solidity_v2_common::diagnostics::kinds::type_system::EmptyArrayLiteral)
+pub slang_solidity_v2_common::diagnostics::kinds::type_system::TypeSystemDiagnosticKind::EncodedArgumentsNotInlineTuple(slang_solidity_v2_common::diagnostics::kinds::type_system::EncodedArgumentsNotInlineTuple)
 pub slang_solidity_v2_common::diagnostics::kinds::type_system::TypeSystemDiagnosticKind::ExplicitConversionNotAllowed(slang_solidity_v2_common::diagnostics::kinds::type_system::ExplicitConversionNotAllowed)
 pub slang_solidity_v2_common::diagnostics::kinds::type_system::TypeSystemDiagnosticKind::ExpressionNotAValue(slang_solidity_v2_common::diagnostics::kinds::type_system::ExpressionNotAValue)
 pub slang_solidity_v2_common::diagnostics::kinds::type_system::TypeSystemDiagnosticKind::ExpressionNotAnLValue(slang_solidity_v2_common::diagnostics::kinds::type_system::ExpressionNotAnLValue)
@@ -3702,6 +3703,7 @@ pub slang_solidity_v2_common::diagnostics::kinds::type_system::TypeSystemDiagnos
 pub slang_solidity_v2_common::diagnostics::kinds::type_system::TypeSystemDiagnosticKind::InvalidArgumentType(slang_solidity_v2_common::diagnostics::kinds::type_system::InvalidArgumentType)
 pub slang_solidity_v2_common::diagnostics::kinds::type_system::TypeSystemDiagnosticKind::InvalidBase(slang_solidity_v2_common::diagnostics::kinds::type_system::InvalidBase)
 pub slang_solidity_v2_common::diagnostics::kinds::type_system::TypeSystemDiagnosticKind::InvalidDecodedTypes(slang_solidity_v2_common::diagnostics::kinds::type_system::InvalidDecodedTypes)
+pub slang_solidity_v2_common::diagnostics::kinds::type_system::TypeSystemDiagnosticKind::InvalidEncodedFunction(slang_solidity_v2_common::diagnostics::kinds::type_system::InvalidEncodedFunction)
 pub slang_solidity_v2_common::diagnostics::kinds::type_system::TypeSystemDiagnosticKind::InvalidUtf8StringLiteral(slang_solidity_v2_common::diagnostics::kinds::type_system::InvalidUtf8StringLiteral)
 pub slang_solidity_v2_common::diagnostics::kinds::type_system::TypeSystemDiagnosticKind::LiteralTooLarge(slang_solidity_v2_common::diagnostics::kinds::type_system::LiteralTooLarge)
 pub slang_solidity_v2_common::diagnostics::kinds::type_system::TypeSystemDiagnosticKind::ModifierOutsideFunctionHeader(slang_solidity_v2_common::diagnostics::kinds::type_system::ModifierOutsideFunctionHeader)
@@ -3747,6 +3749,8 @@ impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::type_syst
 pub fn slang_solidity_v2_common::diagnostics::kinds::type_system::TypeSystemDiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::type_system::ContractTooLargeForStorage) -> Self
 impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::type_system::EmptyArrayLiteral> for slang_solidity_v2_common::diagnostics::kinds::type_system::TypeSystemDiagnosticKind
 pub fn slang_solidity_v2_common::diagnostics::kinds::type_system::TypeSystemDiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::type_system::EmptyArrayLiteral) -> Self
+impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::type_system::EncodedArgumentsNotInlineTuple> for slang_solidity_v2_common::diagnostics::kinds::type_system::TypeSystemDiagnosticKind
+pub fn slang_solidity_v2_common::diagnostics::kinds::type_system::TypeSystemDiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::type_system::EncodedArgumentsNotInlineTuple) -> Self
 impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::type_system::ExplicitConversionNotAllowed> for slang_solidity_v2_common::diagnostics::kinds::type_system::TypeSystemDiagnosticKind
 pub fn slang_solidity_v2_common::diagnostics::kinds::type_system::TypeSystemDiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::type_system::ExplicitConversionNotAllowed) -> Self
 impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::type_system::ExpressionNotAValue> for slang_solidity_v2_common::diagnostics::kinds::type_system::TypeSystemDiagnosticKind
@@ -3769,6 +3773,8 @@ impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::type_syst
 pub fn slang_solidity_v2_common::diagnostics::kinds::type_system::TypeSystemDiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::type_system::InvalidBase) -> Self
 impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::type_system::InvalidDecodedTypes> for slang_solidity_v2_common::diagnostics::kinds::type_system::TypeSystemDiagnosticKind
 pub fn slang_solidity_v2_common::diagnostics::kinds::type_system::TypeSystemDiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::type_system::InvalidDecodedTypes) -> Self
+impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::type_system::InvalidEncodedFunction> for slang_solidity_v2_common::diagnostics::kinds::type_system::TypeSystemDiagnosticKind
+pub fn slang_solidity_v2_common::diagnostics::kinds::type_system::TypeSystemDiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::type_system::InvalidEncodedFunction) -> Self
 impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::type_system::InvalidUtf8StringLiteral> for slang_solidity_v2_common::diagnostics::kinds::type_system::TypeSystemDiagnosticKind
 pub fn slang_solidity_v2_common::diagnostics::kinds::type_system::TypeSystemDiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::type_system::InvalidUtf8StringLiteral) -> Self
 impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::type_system::LiteralTooLarge> for slang_solidity_v2_common::diagnostics::kinds::type_system::TypeSystemDiagnosticKind
@@ -4025,6 +4031,25 @@ impl slang_solidity_v2_common::diagnostics::DiagnosticExtensions for slang_solid
 pub fn slang_solidity_v2_common::diagnostics::kinds::type_system::EmptyArrayLiteral::code(&self) -> &'static str
 pub fn slang_solidity_v2_common::diagnostics::kinds::type_system::EmptyArrayLiteral::message(&self) -> alloc::string::String
 pub fn slang_solidity_v2_common::diagnostics::kinds::type_system::EmptyArrayLiteral::severity(&self) -> slang_solidity_v2_common::diagnostics::DiagnosticSeverity
+pub struct slang_solidity_v2_common::diagnostics::kinds::type_system::EncodedArgumentsNotInlineTuple
+impl core::clone::Clone for slang_solidity_v2_common::diagnostics::kinds::type_system::EncodedArgumentsNotInlineTuple
+pub fn slang_solidity_v2_common::diagnostics::kinds::type_system::EncodedArgumentsNotInlineTuple::clone(&self) -> slang_solidity_v2_common::diagnostics::kinds::type_system::EncodedArgumentsNotInlineTuple
+impl core::cmp::Eq for slang_solidity_v2_common::diagnostics::kinds::type_system::EncodedArgumentsNotInlineTuple
+impl core::cmp::PartialEq for slang_solidity_v2_common::diagnostics::kinds::type_system::EncodedArgumentsNotInlineTuple
+pub fn slang_solidity_v2_common::diagnostics::kinds::type_system::EncodedArgumentsNotInlineTuple::eq(&self, &slang_solidity_v2_common::diagnostics::kinds::type_system::EncodedArgumentsNotInlineTuple) -> bool
+impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::type_system::EncodedArgumentsNotInlineTuple> for slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind
+pub fn slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::type_system::EncodedArgumentsNotInlineTuple) -> Self
+impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::type_system::EncodedArgumentsNotInlineTuple> for slang_solidity_v2_common::diagnostics::kinds::type_system::TypeSystemDiagnosticKind
+pub fn slang_solidity_v2_common::diagnostics::kinds::type_system::TypeSystemDiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::type_system::EncodedArgumentsNotInlineTuple) -> Self
+impl core::fmt::Debug for slang_solidity_v2_common::diagnostics::kinds::type_system::EncodedArgumentsNotInlineTuple
+pub fn slang_solidity_v2_common::diagnostics::kinds::type_system::EncodedArgumentsNotInlineTuple::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::StructuralPartialEq for slang_solidity_v2_common::diagnostics::kinds::type_system::EncodedArgumentsNotInlineTuple
+impl serde_core::ser::Serialize for slang_solidity_v2_common::diagnostics::kinds::type_system::EncodedArgumentsNotInlineTuple
+pub fn slang_solidity_v2_common::diagnostics::kinds::type_system::EncodedArgumentsNotInlineTuple::serialize<__S>(&self, __S) -> core::result::Result<<__S as serde_core::ser::Serializer>::Ok, <__S as serde_core::ser::Serializer>::Error> where __S: serde_core::ser::Serializer
+impl slang_solidity_v2_common::diagnostics::DiagnosticExtensions for slang_solidity_v2_common::diagnostics::kinds::type_system::EncodedArgumentsNotInlineTuple
+pub fn slang_solidity_v2_common::diagnostics::kinds::type_system::EncodedArgumentsNotInlineTuple::code(&self) -> &'static str
+pub fn slang_solidity_v2_common::diagnostics::kinds::type_system::EncodedArgumentsNotInlineTuple::message(&self) -> alloc::string::String
+pub fn slang_solidity_v2_common::diagnostics::kinds::type_system::EncodedArgumentsNotInlineTuple::severity(&self) -> slang_solidity_v2_common::diagnostics::DiagnosticSeverity
 pub struct slang_solidity_v2_common::diagnostics::kinds::type_system::ExplicitConversionNotAllowed
 impl core::clone::Clone for slang_solidity_v2_common::diagnostics::kinds::type_system::ExplicitConversionNotAllowed
 pub fn slang_solidity_v2_common::diagnostics::kinds::type_system::ExplicitConversionNotAllowed::clone(&self) -> slang_solidity_v2_common::diagnostics::kinds::type_system::ExplicitConversionNotAllowed
@@ -4239,6 +4264,25 @@ impl slang_solidity_v2_common::diagnostics::DiagnosticExtensions for slang_solid
 pub fn slang_solidity_v2_common::diagnostics::kinds::type_system::InvalidDecodedTypes::code(&self) -> &'static str
 pub fn slang_solidity_v2_common::diagnostics::kinds::type_system::InvalidDecodedTypes::message(&self) -> alloc::string::String
 pub fn slang_solidity_v2_common::diagnostics::kinds::type_system::InvalidDecodedTypes::severity(&self) -> slang_solidity_v2_common::diagnostics::DiagnosticSeverity
+pub struct slang_solidity_v2_common::diagnostics::kinds::type_system::InvalidEncodedFunction
+impl core::clone::Clone for slang_solidity_v2_common::diagnostics::kinds::type_system::InvalidEncodedFunction
+pub fn slang_solidity_v2_common::diagnostics::kinds::type_system::InvalidEncodedFunction::clone(&self) -> slang_solidity_v2_common::diagnostics::kinds::type_system::InvalidEncodedFunction
+impl core::cmp::Eq for slang_solidity_v2_common::diagnostics::kinds::type_system::InvalidEncodedFunction
+impl core::cmp::PartialEq for slang_solidity_v2_common::diagnostics::kinds::type_system::InvalidEncodedFunction
+pub fn slang_solidity_v2_common::diagnostics::kinds::type_system::InvalidEncodedFunction::eq(&self, &slang_solidity_v2_common::diagnostics::kinds::type_system::InvalidEncodedFunction) -> bool
+impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::type_system::InvalidEncodedFunction> for slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind
+pub fn slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::type_system::InvalidEncodedFunction) -> Self
+impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::type_system::InvalidEncodedFunction> for slang_solidity_v2_common::diagnostics::kinds::type_system::TypeSystemDiagnosticKind
+pub fn slang_solidity_v2_common::diagnostics::kinds::type_system::TypeSystemDiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::type_system::InvalidEncodedFunction) -> Self
+impl core::fmt::Debug for slang_solidity_v2_common::diagnostics::kinds::type_system::InvalidEncodedFunction
+pub fn slang_solidity_v2_common::diagnostics::kinds::type_system::InvalidEncodedFunction::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::StructuralPartialEq for slang_solidity_v2_common::diagnostics::kinds::type_system::InvalidEncodedFunction
+impl serde_core::ser::Serialize for slang_solidity_v2_common::diagnostics::kinds::type_system::InvalidEncodedFunction
+pub fn slang_solidity_v2_common::diagnostics::kinds::type_system::InvalidEncodedFunction::serialize<__S>(&self, __S) -> core::result::Result<<__S as serde_core::ser::Serializer>::Ok, <__S as serde_core::ser::Serializer>::Error> where __S: serde_core::ser::Serializer
+impl slang_solidity_v2_common::diagnostics::DiagnosticExtensions for slang_solidity_v2_common::diagnostics::kinds::type_system::InvalidEncodedFunction
+pub fn slang_solidity_v2_common::diagnostics::kinds::type_system::InvalidEncodedFunction::code(&self) -> &'static str
+pub fn slang_solidity_v2_common::diagnostics::kinds::type_system::InvalidEncodedFunction::message(&self) -> alloc::string::String
+pub fn slang_solidity_v2_common::diagnostics::kinds::type_system::InvalidEncodedFunction::severity(&self) -> slang_solidity_v2_common::diagnostics::DiagnosticSeverity
 pub struct slang_solidity_v2_common::diagnostics::kinds::type_system::InvalidUtf8StringLiteral
 pub slang_solidity_v2_common::diagnostics::kinds::type_system::InvalidUtf8StringLiteral::position: usize
 impl core::clone::Clone for slang_solidity_v2_common::diagnostics::kinds::type_system::InvalidUtf8StringLiteral
@@ -4934,6 +4978,8 @@ impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::type_syst
 pub fn slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::type_system::ContractTooLargeForStorage) -> Self
 impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::type_system::EmptyArrayLiteral> for slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind
 pub fn slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::type_system::EmptyArrayLiteral) -> Self
+impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::type_system::EncodedArgumentsNotInlineTuple> for slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind
+pub fn slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::type_system::EncodedArgumentsNotInlineTuple) -> Self
 impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::type_system::ExplicitConversionNotAllowed> for slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind
 pub fn slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::type_system::ExplicitConversionNotAllowed) -> Self
 impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::type_system::ExpressionNotAValue> for slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind
@@ -4956,6 +5002,8 @@ impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::type_syst
 pub fn slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::type_system::InvalidBase) -> Self
 impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::type_system::InvalidDecodedTypes> for slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind
 pub fn slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::type_system::InvalidDecodedTypes) -> Self
+impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::type_system::InvalidEncodedFunction> for slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind
+pub fn slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::type_system::InvalidEncodedFunction) -> Self
 impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::type_system::InvalidUtf8StringLiteral> for slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind
 pub fn slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::type_system::InvalidUtf8StringLiteral) -> Self
 impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::type_system::LiteralTooLarge> for slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind
@@ -5744,6 +5792,10 @@ impl slang_solidity_v2_common::diagnostics::DiagnosticExtensions for slang_solid
 pub fn slang_solidity_v2_common::diagnostics::kinds::type_system::EmptyArrayLiteral::code(&self) -> &'static str
 pub fn slang_solidity_v2_common::diagnostics::kinds::type_system::EmptyArrayLiteral::message(&self) -> alloc::string::String
 pub fn slang_solidity_v2_common::diagnostics::kinds::type_system::EmptyArrayLiteral::severity(&self) -> slang_solidity_v2_common::diagnostics::DiagnosticSeverity
+impl slang_solidity_v2_common::diagnostics::DiagnosticExtensions for slang_solidity_v2_common::diagnostics::kinds::type_system::EncodedArgumentsNotInlineTuple
+pub fn slang_solidity_v2_common::diagnostics::kinds::type_system::EncodedArgumentsNotInlineTuple::code(&self) -> &'static str
+pub fn slang_solidity_v2_common::diagnostics::kinds::type_system::EncodedArgumentsNotInlineTuple::message(&self) -> alloc::string::String
+pub fn slang_solidity_v2_common::diagnostics::kinds::type_system::EncodedArgumentsNotInlineTuple::severity(&self) -> slang_solidity_v2_common::diagnostics::DiagnosticSeverity
 impl slang_solidity_v2_common::diagnostics::DiagnosticExtensions for slang_solidity_v2_common::diagnostics::kinds::type_system::ExplicitConversionNotAllowed
 pub fn slang_solidity_v2_common::diagnostics::kinds::type_system::ExplicitConversionNotAllowed::code(&self) -> &'static str
 pub fn slang_solidity_v2_common::diagnostics::kinds::type_system::ExplicitConversionNotAllowed::message(&self) -> alloc::string::String
@@ -5788,6 +5840,10 @@ impl slang_solidity_v2_common::diagnostics::DiagnosticExtensions for slang_solid
 pub fn slang_solidity_v2_common::diagnostics::kinds::type_system::InvalidDecodedTypes::code(&self) -> &'static str
 pub fn slang_solidity_v2_common::diagnostics::kinds::type_system::InvalidDecodedTypes::message(&self) -> alloc::string::String
 pub fn slang_solidity_v2_common::diagnostics::kinds::type_system::InvalidDecodedTypes::severity(&self) -> slang_solidity_v2_common::diagnostics::DiagnosticSeverity
+impl slang_solidity_v2_common::diagnostics::DiagnosticExtensions for slang_solidity_v2_common::diagnostics::kinds::type_system::InvalidEncodedFunction
+pub fn slang_solidity_v2_common::diagnostics::kinds::type_system::InvalidEncodedFunction::code(&self) -> &'static str
+pub fn slang_solidity_v2_common::diagnostics::kinds::type_system::InvalidEncodedFunction::message(&self) -> alloc::string::String
+pub fn slang_solidity_v2_common::diagnostics::kinds::type_system::InvalidEncodedFunction::severity(&self) -> slang_solidity_v2_common::diagnostics::DiagnosticSeverity
 impl slang_solidity_v2_common::diagnostics::DiagnosticExtensions for slang_solidity_v2_common::diagnostics::kinds::type_system::InvalidUtf8StringLiteral
 pub fn slang_solidity_v2_common::diagnostics::kinds::type_system::InvalidUtf8StringLiteral::code(&self) -> &'static str
 pub fn slang_solidity_v2_common::diagnostics::kinds::type_system::InvalidUtf8StringLiteral::message(&self) -> alloc::string::String
