@@ -1,3 +1,4 @@
+mod base_constructor_call_without_parentheses;
 mod bytecode_dependency_validator_exhausted;
 mod cyclic_bytecode_dependency;
 mod cyclic_constant_definition;
@@ -38,6 +39,7 @@ mod yul_unsupported_constant;
 mod yul_unsupported_reference;
 mod yul_unsupported_suffix;
 
+pub use base_constructor_call_without_parentheses::BaseConstructorCallWithoutParentheses;
 pub use bytecode_dependency_validator_exhausted::BytecodeDependencyValidatorExhausted;
 pub use cyclic_bytecode_dependency::CyclicBytecodeDependency;
 pub use cyclic_constant_definition::CyclicConstantDefinition;
@@ -88,6 +90,9 @@ define_diagnostic_kind! {
     /// Group of diagnostics produced by semantic analysis.
     #[derive(Clone, Debug, Eq, PartialEq, Serialize)]
     pub enum SemanticDiagnosticKind {
+        /// A base constructor is invoked in a constructor's modifier list
+        /// without parentheses.
+        BaseConstructorCallWithoutParentheses(BaseConstructorCallWithoutParentheses),
         /// Contract bytecode dependency graph traversal exceeded the depth
         /// limit.
         BytecodeDependencyValidatorExhausted(BytecodeDependencyValidatorExhausted),
