@@ -926,7 +926,7 @@ pub fn metaslang_stack_graphs::partial::Cyclicity::fmt(&self, &mut core::fmt::Fo
 impl core::marker::Copy for metaslang_stack_graphs::partial::Cyclicity
 impl core::ops::bit::Not for metaslang_stack_graphs::partial::Cyclicity
 pub type metaslang_stack_graphs::partial::Cyclicity::Output = enumset::impl_set::EnumSet<metaslang_stack_graphs::partial::Cyclicity>
-pub fn metaslang_stack_graphs::partial::Cyclicity::not(self) -> Self::Output
+pub fn metaslang_stack_graphs::partial::Cyclicity::not(self) -> enumset::impl_set::EnumSet<metaslang_stack_graphs::partial::Cyclicity>
 impl enumset::traits::EnumSetConstHelper for metaslang_stack_graphs::partial::Cyclicity
 pub type metaslang_stack_graphs::partial::Cyclicity::ConstInitHelper = __EnumSetInitHelper
 pub type metaslang_stack_graphs::partial::Cyclicity::ConstOpHelper = __EnumSetOpHelper
@@ -935,23 +935,23 @@ pub const metaslang_stack_graphs::partial::Cyclicity::CONST_OP_HELPER: __EnumSet
 impl enumset::traits::EnumSetType for metaslang_stack_graphs::partial::Cyclicity
 impl enumset::traits::EnumSetTypePrivate for metaslang_stack_graphs::partial::Cyclicity
 pub type metaslang_stack_graphs::partial::Cyclicity::Repr = u8
-pub const metaslang_stack_graphs::partial::Cyclicity::ALL_BITS: Self::Repr
+pub const metaslang_stack_graphs::partial::Cyclicity::ALL_BITS: <Self as enumset::traits::EnumSetTypePrivate>::Repr
 pub const metaslang_stack_graphs::partial::Cyclicity::BIT_WIDTH: u32
 pub const metaslang_stack_graphs::partial::Cyclicity::VARIANT_COUNT: u32
 pub unsafe fn metaslang_stack_graphs::partial::Cyclicity::enum_from_u32(u32) -> Self
 pub fn metaslang_stack_graphs::partial::Cyclicity::enum_into_u32(self) -> u32
 impl<O: core::convert::Into<enumset::impl_set::EnumSet<metaslang_stack_graphs::partial::Cyclicity>>> core::ops::arith::Sub<O> for metaslang_stack_graphs::partial::Cyclicity
 pub type metaslang_stack_graphs::partial::Cyclicity::Output = enumset::impl_set::EnumSet<metaslang_stack_graphs::partial::Cyclicity>
-pub fn metaslang_stack_graphs::partial::Cyclicity::sub(self, O) -> Self::Output
+pub fn metaslang_stack_graphs::partial::Cyclicity::sub(self, O) -> enumset::impl_set::EnumSet<metaslang_stack_graphs::partial::Cyclicity>
 impl<O: core::convert::Into<enumset::impl_set::EnumSet<metaslang_stack_graphs::partial::Cyclicity>>> core::ops::bit::BitAnd<O> for metaslang_stack_graphs::partial::Cyclicity
 pub type metaslang_stack_graphs::partial::Cyclicity::Output = enumset::impl_set::EnumSet<metaslang_stack_graphs::partial::Cyclicity>
-pub fn metaslang_stack_graphs::partial::Cyclicity::bitand(self, O) -> Self::Output
+pub fn metaslang_stack_graphs::partial::Cyclicity::bitand(self, O) -> enumset::impl_set::EnumSet<metaslang_stack_graphs::partial::Cyclicity>
 impl<O: core::convert::Into<enumset::impl_set::EnumSet<metaslang_stack_graphs::partial::Cyclicity>>> core::ops::bit::BitOr<O> for metaslang_stack_graphs::partial::Cyclicity
 pub type metaslang_stack_graphs::partial::Cyclicity::Output = enumset::impl_set::EnumSet<metaslang_stack_graphs::partial::Cyclicity>
-pub fn metaslang_stack_graphs::partial::Cyclicity::bitor(self, O) -> Self::Output
+pub fn metaslang_stack_graphs::partial::Cyclicity::bitor(self, O) -> enumset::impl_set::EnumSet<metaslang_stack_graphs::partial::Cyclicity>
 impl<O: core::convert::Into<enumset::impl_set::EnumSet<metaslang_stack_graphs::partial::Cyclicity>>> core::ops::bit::BitXor<O> for metaslang_stack_graphs::partial::Cyclicity
 pub type metaslang_stack_graphs::partial::Cyclicity::Output = enumset::impl_set::EnumSet<metaslang_stack_graphs::partial::Cyclicity>
-pub fn metaslang_stack_graphs::partial::Cyclicity::bitxor(self, O) -> Self::Output
+pub fn metaslang_stack_graphs::partial::Cyclicity::bitxor(self, O) -> enumset::impl_set::EnumSet<metaslang_stack_graphs::partial::Cyclicity>
 #[repr(C)] pub struct metaslang_stack_graphs::partial::PartialPath
 pub metaslang_stack_graphs::partial::PartialPath::edges: metaslang_stack_graphs::partial::PartialPathEdgeList
 pub metaslang_stack_graphs::partial::PartialPath::end_node: metaslang_stack_graphs::arena::Handle<metaslang_stack_graphs::graph::Node>
