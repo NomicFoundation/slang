@@ -8,6 +8,7 @@ use super::types::{
     MetaType, TupleType, Type, TypeId, TypeRegistry, UserDefinedValueType, UserMetaType,
 };
 
+mod arguments;
 mod availability;
 #[path = "availability_specifiers.generated.rs"]
 mod availability_specifiers;
