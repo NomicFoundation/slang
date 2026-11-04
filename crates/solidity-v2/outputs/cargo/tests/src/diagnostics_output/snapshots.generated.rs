@@ -7818,6 +7818,19 @@ mod type_system {
         }
 
         #[test]
+        fn built_in_bytes_concat() -> Result<()> {
+            run("type_system/invalid_argument_type", "built_in_bytes_concat")
+        }
+
+        #[test]
+        fn built_in_bytes_concat_number_literal() -> Result<()> {
+            run(
+                "type_system/invalid_argument_type",
+                "built_in_bytes_concat_number_literal",
+            )
+        }
+
+        #[test]
         fn built_in_erc7201() -> Result<()> {
             run("type_system/invalid_argument_type", "built_in_erc7201")
         }
@@ -7830,6 +7843,14 @@ mod type_system {
         #[test]
         fn built_in_selfdestruct() -> Result<()> {
             run("type_system/invalid_argument_type", "built_in_selfdestruct")
+        }
+
+        #[test]
+        fn built_in_string_concat() -> Result<()> {
+            run(
+                "type_system/invalid_argument_type",
+                "built_in_string_concat",
+            )
         }
 
         #[test]
