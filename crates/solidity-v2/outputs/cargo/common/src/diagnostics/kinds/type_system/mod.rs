@@ -34,6 +34,7 @@ mod storage_layout_base_out_of_range;
 mod storage_layout_base_past_end;
 mod string_index_access;
 mod type_too_large_for_storage;
+mod unknown_named_argument;
 mod write_to_calldata;
 mod write_to_constant;
 mod wrong_argument_count;
@@ -75,6 +76,7 @@ pub use storage_layout_base_out_of_range::StorageLayoutBaseOutOfRange;
 pub use storage_layout_base_past_end::StorageLayoutBasePastEnd;
 pub use string_index_access::StringIndexAccess;
 pub use type_too_large_for_storage::TypeTooLargeForStorage;
+pub use unknown_named_argument::UnknownNamedArgument;
 pub use write_to_calldata::{CalldataWriteKind, WriteToCalldata};
 pub use write_to_constant::WriteToConstant;
 pub use wrong_argument_count::WrongArgumentCount;
@@ -153,6 +155,8 @@ define_diagnostic_kind! {
         /// An argument of a call does not implicitly convert to the type of its
         /// parameter.
         InvalidArgumentType(InvalidArgumentType),
+        /// A named argument of a call names none of the callee's parameters.
+        UnknownNamedArgument(UnknownNamedArgument),
         /// An expression in a position that requires a value names a built-in,
         /// `super`, or an uncalled `new` instead. Its `kind` says which.
         ExpressionNotAValue(ExpressionNotAValue),
