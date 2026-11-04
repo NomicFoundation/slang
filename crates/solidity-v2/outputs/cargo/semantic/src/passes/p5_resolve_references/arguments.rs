@@ -1,5 +1,6 @@
 use slang_solidity_v2_common::diagnostics::DiagnosticCollection;
 use slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind;
+use slang_solidity_v2_common::diagnostics::kinds::semantic::BaseConstructorCallWithoutParentheses;
 use slang_solidity_v2_common::diagnostics::kinds::type_system::{
     InvalidArgumentType, StructWithMappingConstructed, UnknownNamedArgument, WrongArgumentCount,
 };
@@ -292,7 +293,8 @@ impl Pass<'_> {
 
     /// Checks the `arguments` of the modifier invocation `node` against the
     /// parameters of the modifier, or on a constructor, of the base
-    /// constructor it names.
+    /// constructor it names. A base constructor call without parentheses is
+    /// reported instead.
     pub(super) fn check_arguments_of_modifier_invocation(
         &mut self,
         node: &ir::ModifierInvocation,
@@ -320,6 +322,12 @@ impl Pass<'_> {
             // invoked as a base constructor, and like a contract without a
             // constructor, it takes no arguments.
             Some(Definition::Contract(_) | Definition::Interface(_)) => {
+                // Even without arguments, a base constructor call needs
+                // parentheses. The missing arguments are not checked.
+                if node.arguments.is_none() {
+                    checker.report(node, BaseConstructorCallWithoutParentheses);
+                    return;
+                }
                 let parameters =
                     declared_parameters(binder, Some(definition_id)).unwrap_or_default();
                 checker.check_positional(node, parameters, false, arguments, argument_types);
