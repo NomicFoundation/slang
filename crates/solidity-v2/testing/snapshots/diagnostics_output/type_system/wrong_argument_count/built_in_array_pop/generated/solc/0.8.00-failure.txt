@@ -1,0 +1,11 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 1
+
+[TypeError 6160] Error: Wrong argument count for function call: 1 arguments given but expected 0.
+   ╭─[input.sol:8:9]
+   │
+ 8 │         items.pop(1);
+   │         ──────┬─────  
+   │               ╰─────── Error occurred here.
+───╯

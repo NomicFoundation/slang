@@ -1,0 +1,19 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 2
+
+[TypeError 6896] Error: The argument to erc7201 builtin must be a string.
+   ╭─[input.sol:6:17]
+   │
+ 6 │         erc7201(1);
+   │                 ┬  
+   │                 ╰── Error occurred here.
+───╯
+
+[TypeError 9553] Error: Invalid type for argument in function call. Invalid implicit conversion from int_const 1 to string memory requested.
+   ╭─[input.sol:6:17]
+   │
+ 6 │         erc7201(1);
+   │                 ┬  
+   │                 ╰── Error occurred here.
+───╯
