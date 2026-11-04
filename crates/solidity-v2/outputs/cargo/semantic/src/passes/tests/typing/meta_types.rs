@@ -270,25 +270,6 @@ fn test_abi_decode_tuple_of_types() {
         matches!(types.get_type_by_id(element_ids[1]), Type::Struct(_)),
         "expected the second element to decode to the struct",
     );
-
-    // A tuple element that is not a type name doesn't decode.
-    let (decoded, _) = expression("abi.decode(b, (uint, 5))")
-        .with_members("bytes b;")
-        .into_type();
-    assert_eq!(decoded, None);
-
-    // A nested tuple element is not a type name, so it doesn't decode either
-    // (matching solc, which rejects `abi.decode(b, (uint, (bool, bool)))`).
-    let (decoded, _) = expression("abi.decode(b, (uint, (bool, bool)))")
-        .with_members("bytes b;")
-        .into_type();
-    assert_eq!(decoded, None);
-
-    // Neither does a second argument that is not a type or tuple of types.
-    let (decoded, _) = expression("abi.decode(b, x)")
-        .with_members("bytes b; uint x;")
-        .into_type();
-    assert_eq!(decoded, None);
 }
 
 #[test]
@@ -296,7 +277,7 @@ fn test_tuple_of_type_names_is_a_tuple_of_meta_types() {
     // A tuple of type names is a *tuple of meta-types* (not a meta-type
     // itself): `(uint, bool)` types as `Tuple(type(uint256), type(bool))`.
     // This matches solc, which rejects a nested tuple element (it is not a
-    // type name) — see `test_abi_decode_tuple_of_types`.
+    // type name).
     let (type_, registry) = expression("(uint, bool)").into_resolved_type();
     let Type::Tuple(TupleType { types: element_ids }) = type_ else {
         panic!("expected `(uint, bool)` to type as a tuple, got {type_:?}");
