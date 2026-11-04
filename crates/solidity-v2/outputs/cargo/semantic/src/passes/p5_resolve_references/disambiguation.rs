@@ -1,6 +1,7 @@
 use slang_solidity_v2_common::nodes::NodeId;
 
 use super::Pass;
+use super::arguments::{declared_parameters, parameter_type_matches_argument_type};
 use crate::binder::{Definition, ParameterDefinition, Scope};
 use crate::types::{FunctionType, Type, TypeId, UserMetaType};
 
@@ -30,25 +31,6 @@ impl<T> OverloadMatch<T> {
 
 /// Disambiguation functions that require typing (aka overload resolution)
 impl Pass<'_> {
-    fn get_function_definition_parameters(
-        &self,
-        definition_id: Option<NodeId>,
-    ) -> Option<&[ParameterDefinition]> {
-        let Some(Definition::Function(function_definition)) =
-            self.binder.find_definition_by_id(definition_id?)
-        else {
-            return None;
-        };
-
-        let Scope::Parameters(parameters_scope) = self
-            .binder
-            .get_scope_by_id(function_definition.parameters_scope_id)
-        else {
-            unreachable!("incorrect scope kind, expected parameters");
-        };
-        Some(&parameters_scope.parameters)
-    }
-
     /// Fetch the `FunctionType` defined by `type_id`. It can be a direct
     /// function type `Type::Function` or a function declaration through a
     /// member access of a contract/interface, ie. `C.foo`, which is
@@ -115,8 +97,7 @@ impl Pass<'_> {
             let Some(function_type) = self.candidate_function_type(*type_id) else {
                 return false;
             };
-            let Some(parameters) =
-                self.get_function_definition_parameters(function_type.definition_id)
+            let Some(parameters) = declared_parameters(self.binder, function_type.definition_id)
             else {
                 return false;
             };
@@ -144,7 +125,8 @@ impl Pass<'_> {
                     && function_type.implicit_receiver_type.is_none()
                     && parameters.first().is_some_and(|parameter| {
                         parameter.type_id.is_some_and(|parameter_type| {
-                            self.parameter_type_matches_argument_type(
+                            parameter_type_matches_argument_type(
+                                self.types,
                                 parameter_type,
                                 receiver_type_id,
                                 external_call,
@@ -201,23 +183,14 @@ impl Pass<'_> {
             .zip(argument_types)
             .all(|(parameter, argument_type)| {
                 parameter.type_id.is_some_and(|type_id| {
-                    self.parameter_type_matches_argument_type(
+                    parameter_type_matches_argument_type(
+                        self.types,
                         type_id,
                         *argument_type,
                         external_call,
                     )
                 })
             })
-    }
-
-    fn parameter_type_matches_argument_type(
-        &self,
-        parameter_type: TypeId,
-        argument_type: TypeId,
-        external_call: bool,
-    ) -> bool {
-        self.types
-            .implicitly_convertible_to_for_call(argument_type, parameter_type, external_call)
     }
 
     pub(super) fn lookup_function_matching_named_arguments(
@@ -257,7 +230,12 @@ impl Pass<'_> {
                 return false;
             };
             parameter.type_id.is_some_and(|type_id| {
-                self.parameter_type_matches_argument_type(type_id, *argument_type, external_call)
+                parameter_type_matches_argument_type(
+                    self.types,
+                    type_id,
+                    *argument_type,
+                    external_call,
+                )
             })
         })
     }

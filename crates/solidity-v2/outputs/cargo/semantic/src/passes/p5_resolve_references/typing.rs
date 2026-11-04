@@ -1324,6 +1324,7 @@ impl Pass<'_> {
             Typing::Resolved(type_id) => self.typing_of_type_called_with_positional_arguments(
                 node,
                 type_id,
+                arguments,
                 argument_types.as_deref(),
             ),
             Typing::Undetermined(type_ids) => {
@@ -1347,9 +1348,12 @@ impl Pass<'_> {
                     // when calling it turns out to be invalid
                     self.fixup_operand_expression(&node.operand, candidate_type_id);
 
+                    // TODO: the selected overload already accepts the arguments,
+                    // so checking them again here is redundant.
                     self.typing_of_type_called_with_positional_arguments(
                         node,
                         candidate_type_id,
+                        arguments,
                         Some(&argument_types),
                     )
                 } else {
@@ -1403,10 +1407,20 @@ impl Pass<'_> {
         &mut self,
         node: &ir::FunctionCallExpression,
         type_id: TypeId,
+        arguments: &[ir::Expression],
         argument_types: Option<&[TypeId]>,
     ) -> Typing {
         match self.types.get_type_by_id(type_id) {
-            Type::Function(FunctionType { return_type, .. }) => Typing::Resolved(*return_type),
+            Type::Function(FunctionType { return_type, .. }) => {
+                let return_type = *return_type;
+                self.check_positional_arguments_of_function_call(
+                    node,
+                    type_id,
+                    arguments,
+                    argument_types,
+                );
+                Typing::Resolved(return_type)
+            }
             Type::MetaType(MetaType {
                 type_id: target_type_id,
             }) => {
