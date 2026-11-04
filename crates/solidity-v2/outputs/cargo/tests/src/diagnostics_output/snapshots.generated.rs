@@ -7537,6 +7537,19 @@ mod type_system {
         }
 
         #[test]
+        fn named_argument() -> Result<()> {
+            run("type_system/invalid_argument_type", "named_argument")
+        }
+
+        #[test]
+        fn named_memory_to_calldata_internal() -> Result<()> {
+            run(
+                "type_system/invalid_argument_type",
+                "named_memory_to_calldata_internal",
+            )
+        }
+
+        #[test]
         fn no_return_value() -> Result<()> {
             run("type_system/invalid_argument_type", "no_return_value")
         }
@@ -7855,6 +7868,43 @@ mod type_system {
         }
     }
 
+    mod unknown_named_argument {
+        use super::*;
+
+        #[test]
+        fn bound_receiver() -> Result<()> {
+            run("type_system/unknown_named_argument", "bound_receiver")
+        }
+
+        #[test]
+        fn function_declaration() -> Result<()> {
+            run("type_system/unknown_named_argument", "function_declaration")
+        }
+
+        #[test]
+        fn function_value() -> Result<()> {
+            run("type_system/unknown_named_argument", "function_value")
+        }
+
+        #[test]
+        fn getter() -> Result<()> {
+            run("type_system/unknown_named_argument", "getter")
+        }
+
+        #[test]
+        fn unnamed_parameter() -> Result<()> {
+            run("type_system/unknown_named_argument", "unnamed_parameter")
+        }
+
+        #[test]
+        fn with_invalid_argument_type() -> Result<()> {
+            run(
+                "type_system/unknown_named_argument",
+                "with_invalid_argument_type",
+            )
+        }
+    }
+
     mod write_to_constant {
         use super::*;
 
@@ -7903,6 +7953,11 @@ mod type_system {
         }
 
         #[test]
+        fn empty_named_arguments() -> Result<()> {
+            run("type_system/wrong_argument_count", "empty_named_arguments")
+        }
+
+        #[test]
         fn function_value() -> Result<()> {
             run("type_system/wrong_argument_count", "function_value")
         }
@@ -7915,6 +7970,11 @@ mod type_system {
         #[test]
         fn invalid_argument_types() -> Result<()> {
             run("type_system/wrong_argument_count", "invalid_argument_types")
+        }
+
+        #[test]
+        fn named_arguments() -> Result<()> {
+            run("type_system/wrong_argument_count", "named_arguments")
         }
 
         #[test]
