@@ -1,0 +1,11 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 1
+
+[TypeError 9308] Error: Need at least 1 arguments for function call, but provided only 0.
+   ╭─[input.sol:6:9]
+   │
+ 6 │         abi.encodeWithSignature();
+   │         ────────────┬────────────  
+   │                     ╰────────────── Error occurred here.
+───╯
