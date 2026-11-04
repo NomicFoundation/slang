@@ -1,0 +1,11 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 1
+
+[type-system/wrong-argument-count-in-conversion] Error: A type conversion takes exactly one argument.
+   ╭─[input.sol:6:9]
+   │
+ 6 │         payable(address(0), address(1));
+   │         ───────────────┬───────────────  
+   │                        ╰───────────────── Error occurred here.
+───╯
