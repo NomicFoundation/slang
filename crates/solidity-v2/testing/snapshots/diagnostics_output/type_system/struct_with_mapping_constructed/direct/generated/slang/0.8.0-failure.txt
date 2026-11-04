@@ -1,0 +1,11 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 1
+
+[type-system/struct-with-mapping-constructed] Error: A struct containing a mapping cannot be constructed.
+    ╭─[input.sol:11:9]
+    │
+ 11 │         S(1);
+    │         ──┬─  
+    │           ╰─── Error occurred here.
+────╯

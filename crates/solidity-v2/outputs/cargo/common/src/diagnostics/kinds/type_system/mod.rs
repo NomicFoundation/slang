@@ -33,6 +33,7 @@ mod storage_layout_base_not_constant;
 mod storage_layout_base_out_of_range;
 mod storage_layout_base_past_end;
 mod string_index_access;
+mod struct_with_mapping_constructed;
 mod type_too_large_for_storage;
 mod unknown_named_argument;
 mod write_to_calldata;
@@ -75,6 +76,7 @@ pub use storage_layout_base_not_constant::StorageLayoutBaseNotConstant;
 pub use storage_layout_base_out_of_range::StorageLayoutBaseOutOfRange;
 pub use storage_layout_base_past_end::StorageLayoutBasePastEnd;
 pub use string_index_access::StringIndexAccess;
+pub use struct_with_mapping_constructed::StructWithMappingConstructed;
 pub use type_too_large_for_storage::TypeTooLargeForStorage;
 pub use unknown_named_argument::UnknownNamedArgument;
 pub use write_to_calldata::{CalldataWriteKind, WriteToCalldata};
@@ -157,6 +159,8 @@ define_diagnostic_kind! {
         InvalidArgumentType(InvalidArgumentType),
         /// A named argument of a call names none of the callee's parameters.
         UnknownNamedArgument(UnknownNamedArgument),
+        /// A struct containing a mapping is constructed.
+        StructWithMappingConstructed(StructWithMappingConstructed),
         /// An expression in a position that requires a value names a built-in,
         /// `super`, or an uncalled `new` instead. Its `kind` says which.
         ExpressionNotAValue(ExpressionNotAValue),
