@@ -1148,6 +1148,12 @@ impl Pass<'_> {
                     // or a dynamic `bytes`/`string` (`new bytes(n)`), yielding a
                     // value of that type.
                     Type::Array(_) | Type::Contract(_) | Type::Bytes(_) | Type::String(_) => {
+                        self.check_positional_arguments_of_creation(
+                            node,
+                            type_id,
+                            arguments,
+                            argument_types.as_deref(),
+                        );
                         Typing::Resolved(type_id)
                     }
                     _ => Typing::Unresolved,
@@ -1427,14 +1433,23 @@ impl Pass<'_> {
                 }
             }
             Typing::NewExpression(type_id) => {
-                if let Type::Contract(ContractType { definition_id }) =
-                    self.types.get_type_by_id(type_id)
-                {
-                    (Typing::Resolved(type_id), Some(*definition_id))
-                } else {
-                    // only contracts can be created with `new`
-                    (Typing::Unresolved, None)
-                }
+                // The arguments of a contract creation name the parameters of
+                // its constructor; those of any other creation name nothing.
+                let (typing, definition_id) = match self.types.get_type_by_id(type_id) {
+                    Type::Contract(ContractType { definition_id }) => {
+                        (Typing::Resolved(type_id), Some(*definition_id))
+                    }
+                    // only contracts can be created with `new` and named
+                    // arguments
+                    _ => (Typing::Unresolved, None),
+                };
+                self.check_named_arguments_of_creation(
+                    node,
+                    type_id,
+                    arguments,
+                    argument_types.as_deref(),
+                );
+                (typing, definition_id)
             }
             Typing::BuiltIn(_) => {
                 // built-ins cannot be called with named arguments

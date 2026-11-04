@@ -184,20 +184,25 @@ impl Visitor for Pass<'_> {
             definition.externalized_type_id = Some(externalized_type_id);
         }
 
-        if !matches!(node.kind, ir::FunctionKind::Modifier) && node.name.is_some() {
-            // for non-modifier *named* functions, fill-in parameter types in
-            // parameters scope for overload disambiguation in p5
+        if !matches!(node.kind, ir::FunctionKind::Modifier) {
+            // for non-modifier functions, fill-in parameter types in parameters
+            // scope for overload disambiguation and argument checks in p5
             let parameter_types: Vec<_> = node
                 .parameters
                 .iter()
                 .map(|parameter| self.binder.node_typing(parameter.id()).as_type_id())
                 .collect();
 
-            let Some(parameters_scope_id) =
-                self.binder.get_parameters_scope_for_definition(node.id())
+            // A constructor is not a definition, so its parameters scope is
+            // reached through the function scope.
+            let Some(Scope::Function(function_scope)) = self
+                .binder
+                .scope_id_for_node_id(node.id())
+                .map(|scope_id| self.binder.get_scope_by_id(scope_id))
             else {
-                unreachable!("FunctionDefinition does not have associated parameters scope");
+                unreachable!("FunctionDefinition does not have an associated function scope");
             };
+            let parameters_scope_id = function_scope.parameters_scope_id;
             let Scope::Parameters(parameters_scope) =
                 self.binder.get_scope_mut(parameters_scope_id)
             else {
