@@ -1,0 +1,11 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 1
+
+[TypeError 9755] Error: Wrong argument count for struct constructor: 1 arguments given but expected 2.
+    ╭─[input.sol:11:9]
+    │
+ 11 │         S(1);
+    │         ──┬─  
+    │           ╰─── Error occurred here.
+────╯
