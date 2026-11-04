@@ -1,0 +1,19 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 2
+
+[type-system/named-arguments-to-built-in-function] Error: Built-in functions cannot take named arguments.
+   ╭─[input.sol:4:5]
+   │
+ 4 │     abi.decode({data: input, types: (uint256)});
+   │     ─────────────────────┬─────────────────────  
+   │                          ╰─────────────────────── Error occurred here.
+───╯
+
+[type-system/expression-not-a-value] Error: This expression denoting a type or module cannot be used as a value.
+   ╭─[input.sol:4:38]
+   │
+ 4 │     abi.decode({data: input, types: (uint256)});
+   │                                      ───┬───  
+   │                                         ╰───── Error occurred here.
+───╯

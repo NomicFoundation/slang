@@ -1,0 +1,11 @@
+{
+  "expected_solc_divergence": [
+    {
+      "specifier": {
+        "type": "From",
+        "from": "0.8.0"
+      },
+      "reason": "solc ignores the names of the arguments to 'abi.decode' and accepts the call. slang does not support named arguments to built-in functions."
+    }
+  ]
+}
