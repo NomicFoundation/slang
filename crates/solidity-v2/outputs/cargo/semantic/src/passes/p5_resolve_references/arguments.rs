@@ -1,7 +1,7 @@
 use slang_solidity_v2_common::diagnostics::DiagnosticCollection;
 use slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind;
 use slang_solidity_v2_common::diagnostics::kinds::type_system::{
-    InvalidArgumentType, UnknownNamedArgument, WrongArgumentCount,
+    InvalidArgumentType, StructWithMappingConstructed, UnknownNamedArgument, WrongArgumentCount,
 };
 use slang_solidity_v2_common::nodes::NodeId;
 use slang_solidity_v2_ir::ir;
@@ -239,7 +239,7 @@ impl Pass<'_> {
         arguments: &[ir::Expression],
         argument_types: Option<&[TypeId]>,
     ) {
-        if !self.register_struct_member_types_in_memory(definition_id) {
+        if !self.register_struct_member_types_in_memory(node, definition_id) {
             return;
         }
         let (binder, mut checker) = self.arguments_checker();
@@ -256,7 +256,7 @@ impl Pass<'_> {
         arguments: &[ir::NamedArgument],
         argument_types: Option<&[(&str, TypeId)]>,
     ) {
-        if !self.register_struct_member_types_in_memory(definition_id) {
+        if !self.register_struct_member_types_in_memory(node, definition_id) {
             return;
         }
         let (binder, mut checker) = self.arguments_checker();
@@ -266,16 +266,21 @@ impl Pass<'_> {
 
     /// Registers the memory form of every member type of the struct
     /// `definition_id`, which [`StructMembers`] reads, and returns whether the
-    /// struct can be constructed at all.
-    fn register_struct_member_types_in_memory(&mut self, definition_id: NodeId) -> bool {
+    /// struct can be constructed at all. Reports at `node` if it cannot.
+    fn register_struct_member_types_in_memory(
+        &mut self,
+        node: &ir::FunctionCallExpression,
+        definition_id: NodeId,
+    ) -> bool {
         let Some(Definition::Struct(struct_definition)) =
             self.binder.find_definition_by_id(definition_id)
         else {
             unreachable!("a struct construction names a struct");
         };
-        // TODO(validation) SDR[1677]: a struct containing a mapping cannot be
-        // constructed. Its arguments are not checked.
+        // A mapping has no memory form, so neither has the struct, and its
+        // arguments are not checked.
         if struct_definition.contains_mapping {
+            self.push_diagnostic(node, StructWithMappingConstructed);
             return false;
         }
         for member in struct_definition.ir_node.members.iter() {

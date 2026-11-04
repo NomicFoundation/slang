@@ -7889,6 +7889,28 @@ mod type_system {
         }
     }
 
+    mod struct_with_mapping_constructed {
+        use super::*;
+
+        #[test]
+        fn direct() -> Result<()> {
+            run("type_system/struct_with_mapping_constructed", "direct")
+        }
+
+        #[test]
+        fn named_arguments() -> Result<()> {
+            run(
+                "type_system/struct_with_mapping_constructed",
+                "named_arguments",
+            )
+        }
+
+        #[test]
+        fn nested() -> Result<()> {
+            run("type_system/struct_with_mapping_constructed", "nested")
+        }
+    }
+
     mod type_too_large_for_storage {
         use super::*;
 
