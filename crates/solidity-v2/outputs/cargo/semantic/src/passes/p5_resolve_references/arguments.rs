@@ -30,7 +30,8 @@ pub(super) trait ParameterList {
     }
 }
 
-/// The parameters of a declaration, eg. a function or a constructor.
+/// The parameters of a declaration, eg. a function, a constructor, an event
+/// or an error.
 impl ParameterList for [ParameterDefinition] {
     fn count(&self) -> usize {
         self.len()
@@ -169,6 +170,40 @@ impl Pass<'_> {
         }
     }
 
+    /// Checks the positional `arguments` of a use of the declaration
+    /// `definition_id`, eg. an event in an `emit` statement or an error in a
+    /// `revert` statement, against its parameters. A wrong argument count is
+    /// reported at `node`.
+    pub(super) fn check_positional_arguments_of_declaration(
+        &mut self,
+        node: &(impl NodeIdentity + TextRange),
+        definition_id: NodeId,
+        arguments: &[ir::Expression],
+        argument_types: Option<&[TypeId]>,
+    ) {
+        let (binder, mut checker) = self.arguments_checker();
+        if let Some(parameters) = declared_parameters(binder, Some(definition_id)) {
+            checker.check_positional(node, parameters, false, arguments, argument_types);
+        }
+    }
+
+    /// Checks the named `arguments` of a use of the declaration
+    /// `definition_id`, eg. an event in an `emit` statement or an error in a
+    /// `revert` statement, against its parameters. A wrong argument count is
+    /// reported at `node`.
+    pub(super) fn check_named_arguments_of_declaration(
+        &mut self,
+        node: &(impl NodeIdentity + TextRange),
+        definition_id: NodeId,
+        arguments: &[ir::NamedArgument],
+        argument_types: Option<&[(&str, TypeId)]>,
+    ) {
+        let (binder, mut checker) = self.arguments_checker();
+        if let Some(parameters) = declared_parameters(binder, Some(definition_id)) {
+            checker.check_named(node, parameters, false, arguments, argument_types);
+        }
+    }
+
     /// Splits the pass into the binder, which parameters are read from, and a
     /// checker that reports on the arguments.
     fn arguments_checker(&mut self) -> (&Binder, ArgumentsChecker<'_>) {
@@ -196,7 +231,7 @@ impl ArgumentsChecker<'_> {
     /// position. When an argument has no type, only the count is checked.
     fn check_positional(
         &mut self,
-        node: &ir::FunctionCallExpression,
+        node: &(impl NodeIdentity + TextRange),
         parameters: &(impl ParameterList + ?Sized),
         external_call: bool,
         arguments: &[ir::Expression],
@@ -234,7 +269,7 @@ impl ArgumentsChecker<'_> {
     /// not checked.
     fn check_named(
         &mut self,
-        node: &ir::FunctionCallExpression,
+        node: &(impl NodeIdentity + TextRange),
         parameters: &(impl ParameterList + ?Sized),
         external_call: bool,
         arguments: &[ir::NamedArgument],

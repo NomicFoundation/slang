@@ -1,0 +1,11 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 1
+
+[type-system/wrong-argument-count] Error: Wrong argument count: 2 arguments given but expected 1.
+   ╭─[input.sol:8:16]
+   │
+ 8 │         revert Err(1, 2);
+   │                ─┬─  
+   │                 ╰─── Error occurred here.
+───╯

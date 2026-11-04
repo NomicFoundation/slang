@@ -1,0 +1,11 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 1
+
+[TypeError 4974] Error: Named argument "b" does not match function declaration.
+   ╭─[input.sol:9:14]
+   │
+ 9 │         emit E({b: 1});
+   │              ────┬────  
+   │                  ╰────── Error occurred here.
+───╯

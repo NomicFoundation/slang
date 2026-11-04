@@ -7506,6 +7506,16 @@ mod type_system {
         use super::*;
 
         #[test]
+        fn emit_event() -> Result<()> {
+            run("type_system/invalid_argument_type", "emit_event")
+        }
+
+        #[test]
+        fn emit_event_named() -> Result<()> {
+            run("type_system/invalid_argument_type", "emit_event_named")
+        }
+
+        #[test]
         fn function_value() -> Result<()> {
             run("type_system/invalid_argument_type", "function_value")
         }
@@ -7580,6 +7590,16 @@ mod type_system {
         #[test]
         fn no_return_value() -> Result<()> {
             run("type_system/invalid_argument_type", "no_return_value")
+        }
+
+        #[test]
+        fn require_error() -> Result<()> {
+            run("type_system/invalid_argument_type", "require_error")
+        }
+
+        #[test]
+        fn revert_error() -> Result<()> {
+            run("type_system/invalid_argument_type", "revert_error")
         }
     }
 
@@ -7905,6 +7925,11 @@ mod type_system {
         }
 
         #[test]
+        fn emit_event() -> Result<()> {
+            run("type_system/unknown_named_argument", "emit_event")
+        }
+
+        #[test]
         fn function_declaration() -> Result<()> {
             run("type_system/unknown_named_argument", "function_declaration")
         }
@@ -7927,6 +7952,11 @@ mod type_system {
         #[test]
         fn new_contract() -> Result<()> {
             run("type_system/unknown_named_argument", "new_contract")
+        }
+
+        #[test]
+        fn revert_error() -> Result<()> {
+            run("type_system/unknown_named_argument", "revert_error")
         }
 
         #[test]
@@ -7991,8 +8021,18 @@ mod type_system {
         }
 
         #[test]
+        fn emit_event() -> Result<()> {
+            run("type_system/wrong_argument_count", "emit_event")
+        }
+
+        #[test]
         fn empty_named_arguments() -> Result<()> {
             run("type_system/wrong_argument_count", "empty_named_arguments")
+        }
+
+        #[test]
+        fn error_construction() -> Result<()> {
+            run("type_system/wrong_argument_count", "error_construction")
         }
 
         #[test]
@@ -8039,6 +8079,11 @@ mod type_system {
                 "type_system/wrong_argument_count",
                 "new_contract_without_constructor",
             )
+        }
+
+        #[test]
+        fn revert_error() -> Result<()> {
+            run("type_system/wrong_argument_count", "revert_error")
         }
 
         #[test]

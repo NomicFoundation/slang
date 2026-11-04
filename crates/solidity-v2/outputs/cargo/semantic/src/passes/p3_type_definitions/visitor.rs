@@ -379,14 +379,28 @@ impl Visitor for Pass<'_> {
     fn leave_error_definition(&mut self, node: &ir::ErrorDefinition) {
         self.mark_user_meta_type_node(node.id());
 
-        // Resolve the types of the parameters
+        // Resolve and collect the types of the parameters, saving them in the
+        // scope to check the arguments of an error construction
+        let mut parameter_types = Vec::new();
         for parameter in node.parameters.iter() {
             // TODO: the data location is not strictly correct, but strings, bytes
             // and structs are allowed as error parameters and they won't type if we
             // pass None here
             let type_id = self.resolve_type_name(&parameter.type_name, Some(DataLocation::Memory));
             self.binder.set_node_type(parameter.id(), type_id);
+            parameter_types.push(type_id);
         }
+
+        let Some(parameters_scope_id) = self.binder.get_parameters_scope_for_definition(node.id())
+        else {
+            unreachable!("ErrorDefinition does not have associated parameters scope");
+        };
+        let Scope::Parameters(parameters_scope) = self.binder.get_scope_mut(parameters_scope_id)
+        else {
+            unreachable!("scope is not a ParametersScope");
+        };
+        parameters_scope.set_parameter_types(&parameter_types);
+
         self.leave_scope_for_node_id(node.id());
     }
 
