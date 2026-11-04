@@ -6607,6 +6607,18 @@ mod type_system {
         }
     }
 
+    mod encoded_arguments_not_inline_tuple {
+        use super::*;
+
+        #[test]
+        fn tuple_returning_call() -> Result<()> {
+            run(
+                "type_system/encoded_arguments_not_inline_tuple",
+                "tuple_returning_call",
+            )
+        }
+    }
+
     mod explicit_conversion_not_allowed {
         use super::*;
 
@@ -7619,6 +7631,14 @@ mod type_system {
         }
 
         #[test]
+        fn abi_encode_call_component() -> Result<()> {
+            run(
+                "type_system/invalid_argument_type",
+                "abi_encode_call_component",
+            )
+        }
+
+        #[test]
         fn base_constructor_invocation() -> Result<()> {
             run(
                 "type_system/invalid_argument_type",
@@ -7858,6 +7878,33 @@ mod type_system {
         #[test]
         fn value() -> Result<()> {
             run("type_system/invalid_decoded_types", "value")
+        }
+    }
+
+    mod invalid_encoded_function {
+        use super::*;
+
+        #[test]
+        fn function_through_interface_name() -> Result<()> {
+            run(
+                "type_system/invalid_encoded_function",
+                "function_through_interface_name",
+            )
+        }
+
+        #[test]
+        fn internal_function() -> Result<()> {
+            run("type_system/invalid_encoded_function", "internal_function")
+        }
+
+        #[test]
+        fn library_function() -> Result<()> {
+            run("type_system/invalid_encoded_function", "library_function")
+        }
+
+        #[test]
+        fn not_a_function() -> Result<()> {
+            run("type_system/invalid_encoded_function", "not_a_function")
         }
     }
 
@@ -8387,6 +8434,19 @@ mod type_system {
         #[test]
         fn abi_decode() -> Result<()> {
             run("type_system/wrong_argument_count", "abi_decode")
+        }
+
+        #[test]
+        fn abi_encode_call() -> Result<()> {
+            run("type_system/wrong_argument_count", "abi_encode_call")
+        }
+
+        #[test]
+        fn abi_encode_call_components() -> Result<()> {
+            run(
+                "type_system/wrong_argument_count",
+                "abi_encode_call_components",
+            )
         }
 
         #[test]

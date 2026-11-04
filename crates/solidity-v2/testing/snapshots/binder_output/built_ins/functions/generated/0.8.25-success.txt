@@ -197,7 +197,7 @@ Bindings:
     │                                  ╰─────── built-in
     │                                       │  
     │                                       ╰── ref: 19
- 38 │         bytes memory v3 = abi.encodeCall(this.testMath, (1, 2, 3));
+ 38 │         bytes memory v3 = abi.encodeCall(this.testMath, ());
     │                      ─┬   ─┬─ ─────┬────      ────┬───  
     │                       ╰───────────────────────────────── name: 21
     │                            │       │              │     

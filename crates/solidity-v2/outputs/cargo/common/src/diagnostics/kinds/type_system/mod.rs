@@ -8,6 +8,7 @@ mod cannot_call_via_contract_type_name;
 mod constant_arithmetic_error;
 mod contract_too_large_for_storage;
 mod empty_array_literal;
+mod encoded_arguments_not_inline_tuple;
 mod explicit_conversion_not_allowed;
 mod expression_not_a_value;
 mod expression_not_an_lvalue;
@@ -19,6 +20,7 @@ mod incompatible_constant_operator;
 mod invalid_argument_type;
 mod invalid_base;
 mod invalid_decoded_types;
+mod invalid_encoded_function;
 mod invalid_utf8_string_literal;
 mod literal_too_large;
 mod named_arguments_in_conversion;
@@ -47,6 +49,7 @@ pub use cannot_call_via_contract_type_name::CannotCallViaContractTypeName;
 pub use constant_arithmetic_error::ConstantArithmeticError;
 pub use contract_too_large_for_storage::ContractTooLargeForStorage;
 pub use empty_array_literal::EmptyArrayLiteral;
+pub use encoded_arguments_not_inline_tuple::EncodedArgumentsNotInlineTuple;
 pub use explicit_conversion_not_allowed::ExplicitConversionNotAllowed;
 pub use expression_not_a_value::{ExpressionNotAValue, NotAValueKind};
 pub use expression_not_an_lvalue::ExpressionNotAnLValue;
@@ -58,6 +61,7 @@ pub use incompatible_constant_operator::IncompatibleConstantOperator;
 pub use invalid_argument_type::InvalidArgumentType;
 pub use invalid_base::InvalidBase;
 pub use invalid_decoded_types::InvalidDecodedTypes;
+pub use invalid_encoded_function::InvalidEncodedFunction;
 pub use invalid_utf8_string_literal::InvalidUtf8StringLiteral;
 pub use literal_too_large::LiteralTooLarge;
 pub use named_arguments_in_conversion::NamedArgumentsInConversion;
@@ -156,6 +160,11 @@ define_diagnostic_kind! {
         NamedArgumentsToBuiltInFunction(NamedArgumentsToBuiltInFunction),
         /// The second argument of `abi.decode` is not a tuple of type names.
         InvalidDecodedTypes(InvalidDecodedTypes),
+        /// The first argument of `abi.encodeCall` is not an external function.
+        InvalidEncodedFunction(InvalidEncodedFunction),
+        /// The second argument of `abi.encodeCall` has a tuple type without
+        /// being a tuple expression.
+        EncodedArgumentsNotInlineTuple(EncodedArgumentsNotInlineTuple),
         /// A struct containing a mapping is constructed.
         StructWithMappingConstructed(StructWithMappingConstructed),
         /// An expression in a position that requires a value names a built-in,

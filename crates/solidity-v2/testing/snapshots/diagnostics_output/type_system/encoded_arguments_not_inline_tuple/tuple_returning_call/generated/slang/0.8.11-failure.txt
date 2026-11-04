@@ -1,0 +1,11 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 1
+
+[type-system/encoded-arguments-not-inline-tuple] Error: The arguments to 'abi.encodeCall' must be given as an inline tuple.
+   ╭─[input.sol:6:32]
+   │
+ 6 │         abi.encodeCall(this.g, t());
+   │                                ─┬─  
+   │                                 ╰─── Error occurred here.
+───╯

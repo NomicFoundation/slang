@@ -35,7 +35,7 @@ contract BuiltInsTest {
         bytes memory x1;
         uint v1 = abi.decode(x1, (uint));
         bytes memory v2 = abi.encode(v1);
-        bytes memory v3 = abi.encodeCall(this.testMath, (1, 2, 3));
+        bytes memory v3 = abi.encodeCall(this.testMath, ());
         bytes memory v4 = abi.encodePacked(10, 20);
         bytes memory v5 = abi.encodeWithSelector(this.testMath.selector, (1, 2, 3));
         string memory x2;
