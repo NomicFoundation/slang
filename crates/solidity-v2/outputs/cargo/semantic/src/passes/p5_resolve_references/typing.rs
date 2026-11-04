@@ -1386,19 +1386,22 @@ impl Pass<'_> {
                 self.report_operand_not_callable(node);
                 (Typing::Unresolved, None)
             }
-            Typing::Resolved(type_id) => {
-                self.typing_of_type_called_with_named_arguments(node, type_id)
-            }
+            Typing::Resolved(type_id) => self.typing_of_type_called_with_named_arguments(
+                node,
+                type_id,
+                arguments,
+                argument_types.as_deref(),
+            ),
             Typing::Undetermined(type_ids) => {
                 // As in the positional form, an argument without a type cannot
                 // select an overload, and reporting the call would only cascade.
-                match argument_types {
+                match argument_types.as_deref() {
                     None => (Typing::Unresolved, None),
                     Some(argument_types) => {
                         let receiver_type_id = self.type_id_of_value_receiver(&node.operand);
                         let overload_match = self.lookup_function_matching_named_arguments(
                             &type_ids,
-                            &argument_types,
+                            argument_types,
                             receiver_type_id,
                         );
                         let candidate = self.select_overload(&node.operand, overload_match);
@@ -1408,7 +1411,14 @@ impl Pass<'_> {
                             // even when calling it turns out to be invalid
                             self.fixup_operand_expression(&node.operand, candidate_type_id);
 
-                            self.typing_of_type_called_with_named_arguments(node, candidate_type_id)
+                            // TODO: the selected overload already accepts the
+                            // arguments, so checking them again here is redundant.
+                            self.typing_of_type_called_with_named_arguments(
+                                node,
+                                candidate_type_id,
+                                arguments,
+                                Some(argument_types),
+                            )
                         } else {
                             (Typing::Unresolved, None)
                         }
@@ -1449,13 +1459,24 @@ impl Pass<'_> {
         &mut self,
         node: &ir::FunctionCallExpression,
         type_id: TypeId,
+        arguments: &[ir::NamedArgument],
+        argument_types: Option<&[(&str, TypeId)]>,
     ) -> (Typing, Option<NodeId>) {
         match self.types.get_type_by_id(type_id) {
             Type::Function(FunctionType {
                 definition_id,
                 return_type,
                 ..
-            }) => (Typing::Resolved(*return_type), *definition_id),
+            }) => {
+                let (definition_id, return_type) = (*definition_id, *return_type);
+                self.check_named_arguments_of_function_call(
+                    node,
+                    type_id,
+                    arguments,
+                    argument_types,
+                );
+                (Typing::Resolved(return_type), definition_id)
+            }
             Type::MetaType(_) => {
                 // This is a cast to the given type and is not valid with named arguments
                 (Typing::Unresolved, None)
