@@ -137,6 +137,11 @@ mod built_ins {
     }
 
     #[test]
+    fn empty_named_arguments() -> Result<()> {
+        run("built_ins", "empty_named_arguments")
+    }
+
+    #[test]
     fn erc7201() -> Result<()> {
         run("built_ins", "erc7201")
     }

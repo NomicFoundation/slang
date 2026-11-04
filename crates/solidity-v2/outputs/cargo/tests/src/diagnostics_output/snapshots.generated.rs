@@ -7877,6 +7877,63 @@ mod type_system {
         }
     }
 
+    mod named_arguments_to_built_in_function {
+        use super::*;
+
+        #[test]
+        fn abi_decode() -> Result<()> {
+            run(
+                "type_system/named_arguments_to_built_in_function",
+                "abi_decode",
+            )
+        }
+
+        #[test]
+        fn abi_encode() -> Result<()> {
+            run(
+                "type_system/named_arguments_to_built_in_function",
+                "abi_encode",
+            )
+        }
+
+        #[test]
+        fn abi_encode_call() -> Result<()> {
+            run(
+                "type_system/named_arguments_to_built_in_function",
+                "abi_encode_call",
+            )
+        }
+
+        #[test]
+        fn abi_encode_with_selector() -> Result<()> {
+            run(
+                "type_system/named_arguments_to_built_in_function",
+                "abi_encode_with_selector",
+            )
+        }
+
+        #[test]
+        fn addmod() -> Result<()> {
+            run("type_system/named_arguments_to_built_in_function", "addmod")
+        }
+
+        #[test]
+        fn blockhash() -> Result<()> {
+            run(
+                "type_system/named_arguments_to_built_in_function",
+                "blockhash",
+            )
+        }
+
+        #[test]
+        fn require() -> Result<()> {
+            run(
+                "type_system/named_arguments_to_built_in_function",
+                "require",
+            )
+        }
+    }
+
     mod partially_applied_function_used_as_value {
         use super::*;
 
@@ -8119,6 +8176,14 @@ mod type_system {
         #[test]
         fn abi_encode_with_selector() -> Result<()> {
             run("type_system/too_few_arguments", "abi_encode_with_selector")
+        }
+
+        #[test]
+        fn abi_encode_with_selector_empty_named_arguments() -> Result<()> {
+            run(
+                "type_system/too_few_arguments",
+                "abi_encode_with_selector_empty_named_arguments",
+            )
         }
 
         #[test]

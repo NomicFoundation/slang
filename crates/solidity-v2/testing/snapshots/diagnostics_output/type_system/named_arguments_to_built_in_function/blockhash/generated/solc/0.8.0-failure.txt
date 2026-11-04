@@ -1,0 +1,11 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 1
+
+[TypeError 4974] Error: Named argument "blockNumber" does not match function declaration.
+   ╭─[input.sol:6:9]
+   │
+ 6 │         blockhash({blockNumber: 1});
+   │         ─────────────┬─────────────  
+   │                      ╰─────────────── Error occurred here.
+───╯

@@ -3,8 +3,8 @@ use slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind;
 use slang_solidity_v2_common::diagnostics::kinds::resolution::NoMatchingCallableDeclaration;
 use slang_solidity_v2_common::diagnostics::kinds::semantic::BaseConstructorCallWithoutParentheses;
 use slang_solidity_v2_common::diagnostics::kinds::type_system::{
-    InvalidArgumentType, StructWithMappingConstructed, TooFewArguments, UnknownNamedArgument,
-    WrongArgumentCount,
+    InvalidArgumentType, NamedArgumentsToBuiltInFunction, StructWithMappingConstructed,
+    TooFewArguments, UnknownNamedArgument, WrongArgumentCount,
 };
 use slang_solidity_v2_common::nodes::NodeId;
 use slang_solidity_v2_ir::ir;
@@ -327,6 +327,22 @@ impl Pass<'_> {
             .match_overload(built_in, argument_types);
         if overload_match == BuiltInOverloadMatch::Rejected {
             self.push_diagnostic(node, NoMatchingCallableDeclaration);
+        }
+    }
+
+    /// Checks the named `arguments` of a call to `built_in`. The parameters of
+    /// a built-in have no names, so only an empty list is accepted.
+    pub(super) fn check_named_arguments_of_built_in_call(
+        &mut self,
+        node: &ir::FunctionCallExpression,
+        built_in: &InternalBuiltIn,
+        arguments: &[ir::NamedArgument],
+    ) {
+        // Without any arguments, the call is the same as a positional one.
+        if arguments.is_empty() {
+            self.check_positional_arguments_of_built_in_call(node, built_in, &[], Some(&[]));
+        } else {
+            self.push_diagnostic(node, NamedArgumentsToBuiltInFunction);
         }
     }
 
