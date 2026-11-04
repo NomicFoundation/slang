@@ -2,6 +2,7 @@ use std::sync::Arc;
 
 use slang_solidity_v2_common::diagnostics::DiagnosticCollection;
 use slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind;
+use slang_solidity_v2_common::diagnostics::kinds::resolution::NoMatchingCallableDeclaration;
 use slang_solidity_v2_common::diagnostics::kinds::semantic::BaseConstructorCallWithoutParentheses;
 use slang_solidity_v2_common::diagnostics::kinds::type_system::{
     InvalidArgumentType, StructWithMappingConstructed, UnknownNamedArgument, WrongArgumentCount,
@@ -12,7 +13,7 @@ use slang_solidity_v2_ir::ir::{NodeIdentity, TextRange};
 
 use super::Pass;
 use crate::binder::{Binder, Definition, ParameterDefinition, Resolution, Scope};
-use crate::built_ins::InternalBuiltIn;
+use crate::built_ins::{BuiltInOverloadMatch, InternalBuiltIn};
 use crate::context::FileNodeMapper;
 use crate::passes::common::node_location;
 use crate::types::{CallMode, ContractType, DataLocation, Type, TypeId, TypeRegistry};
@@ -270,7 +271,7 @@ impl Pass<'_> {
     }
 
     /// Checks the positional `arguments` of a call to `built_in` against its
-    /// parameters, if it has a fixed signature.
+    /// parameters, if it has a fixed signature, or against its overloads.
     pub(super) fn check_positional_arguments_of_built_in_call(
         &mut self,
         node: &ir::FunctionCallExpression,
@@ -278,11 +279,22 @@ impl Pass<'_> {
         arguments: &[ir::Expression],
         argument_types: Option<&[TypeId]>,
     ) {
-        let Some(parameter_types) = self.built_ins_resolver().parameter_types_of(built_in) else {
+        if let Some(parameter_types) = self.built_ins_resolver().parameter_types_of(built_in) {
+            let (_, mut checker) = self.arguments_checker();
+            checker.check_positional(node, &parameter_types[..], false, arguments, argument_types);
+            return;
+        }
+        // An argument without a type, which is already reported, cannot match
+        // an overload.
+        let Some(argument_types) = argument_types else {
             return;
         };
-        let (_, mut checker) = self.arguments_checker();
-        checker.check_positional(node, &parameter_types[..], false, arguments, argument_types);
+        let overload_match = self
+            .built_ins_resolver()
+            .match_overload(built_in, argument_types);
+        if overload_match == BuiltInOverloadMatch::Rejected {
+            self.push_diagnostic(node, NoMatchingCallableDeclaration);
+        }
     }
 
     /// Checks the `arguments` of the modifier invocation `node` against the

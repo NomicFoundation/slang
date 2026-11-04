@@ -10,6 +10,13 @@ Diagnostics:
    │ │            
    │ ╰──────────── Error occurred here.
 ───╯
+[resolution/no-matching-callable-declaration] Error: No matching declaration found after argument-dependent lookup.
+    ╭─[input.sol:10:9]
+    │
+ 10 │         require(ok, Failure({severity: 100, cause: "Testing"}));
+    │         ───────────────────────────┬───────────────────────────  
+    │                                    ╰───────────────────────────── Error occurred here.
+────╯
 
 ------------------------------------------------------------------------
 

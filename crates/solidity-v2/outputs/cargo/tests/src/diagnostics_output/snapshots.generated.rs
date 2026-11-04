@@ -2633,6 +2633,118 @@ mod resolution {
         use super::*;
 
         #[test]
+        fn built_in_array_push_dynamic_into_fixed_array() -> Result<()> {
+            run(
+                "resolution/no_matching_callable_declaration",
+                "built_in_array_push_dynamic_into_fixed_array",
+            )
+        }
+
+        #[test]
+        fn built_in_array_push_longer_fixed_array() -> Result<()> {
+            run(
+                "resolution/no_matching_callable_declaration",
+                "built_in_array_push_longer_fixed_array",
+            )
+        }
+
+        #[test]
+        fn built_in_array_push_mapping_element() -> Result<()> {
+            run(
+                "resolution/no_matching_callable_declaration",
+                "built_in_array_push_mapping_element",
+            )
+        }
+
+        #[test]
+        fn built_in_array_push_narrower_array_elements() -> Result<()> {
+            run(
+                "resolution/no_matching_callable_declaration",
+                "built_in_array_push_narrower_array_elements",
+            )
+        }
+
+        #[test]
+        fn built_in_array_push_two_arguments() -> Result<()> {
+            run(
+                "resolution/no_matching_callable_declaration",
+                "built_in_array_push_two_arguments",
+            )
+        }
+
+        #[test]
+        fn built_in_array_push_value() -> Result<()> {
+            run(
+                "resolution/no_matching_callable_declaration",
+                "built_in_array_push_value",
+            )
+        }
+
+        #[test]
+        fn built_in_array_push_wider_array_elements() -> Result<()> {
+            run(
+                "resolution/no_matching_callable_declaration",
+                "built_in_array_push_wider_array_elements",
+            )
+        }
+
+        #[test]
+        fn built_in_bytes_push_value() -> Result<()> {
+            run(
+                "resolution/no_matching_callable_declaration",
+                "built_in_bytes_push_value",
+            )
+        }
+
+        #[test]
+        fn built_in_require_condition() -> Result<()> {
+            run(
+                "resolution/no_matching_callable_declaration",
+                "built_in_require_condition",
+            )
+        }
+
+        #[test]
+        fn built_in_require_error() -> Result<()> {
+            run(
+                "resolution/no_matching_callable_declaration",
+                "built_in_require_error",
+            )
+        }
+
+        #[test]
+        fn built_in_require_reason() -> Result<()> {
+            run(
+                "resolution/no_matching_callable_declaration",
+                "built_in_require_reason",
+            )
+        }
+
+        #[test]
+        fn built_in_require_without_arguments() -> Result<()> {
+            run(
+                "resolution/no_matching_callable_declaration",
+                "built_in_require_without_arguments",
+            )
+        }
+
+        #[test]
+        fn built_in_revert_reason() -> Result<()> {
+            run(
+                "resolution/no_matching_callable_declaration",
+                "built_in_revert_reason",
+            )
+        }
+
+        #[test]
+        fn built_in_revert_two_arguments() -> Result<()> {
+            run(
+                "resolution/no_matching_callable_declaration",
+                "built_in_revert_two_arguments",
+            )
+        }
+
+        #[test]
         fn library_function_argument() -> Result<()> {
             run(
                 "resolution/no_matching_callable_declaration",

@@ -1,0 +1,8 @@
+{
+  "expected_solc_divergence": [
+    {
+      "specifier": { "type": "From", "from": "0.8.0" },
+      "reason": "TODO(validation) SDR[1615]: pushing a value into a storage array whose element holds a mapping is not reported yet. solc rejects it (TypeError 8871)."
+    }
+  ]
+}

@@ -15,6 +15,7 @@ mod availability_specifiers;
 #[path = "internal.generated.rs"]
 mod internal;
 
+pub(crate) use arguments::BuiltInOverloadMatch;
 pub(crate) use availability::is_built_in_available;
 pub(crate) use availability_specifiers::built_in_specifiers;
 pub use internal::InternalBuiltIn;
@@ -383,7 +384,7 @@ impl<'a> BuiltInsResolver<'a> {
                 "length" => Some(InternalBuiltIn::Length),
                 "pop" if *location == DataLocation::Storage => Some(InternalBuiltIn::ArrayPop),
                 "push" if *location == DataLocation::Storage => {
-                    Some(InternalBuiltIn::ArrayPush(self.types.uint8()))
+                    Some(InternalBuiltIn::ArrayPush(self.types.bytes1()))
                 }
                 _ => None,
             },

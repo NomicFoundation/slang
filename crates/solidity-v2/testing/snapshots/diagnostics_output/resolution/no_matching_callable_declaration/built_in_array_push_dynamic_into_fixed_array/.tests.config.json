@@ -1,0 +1,8 @@
+{
+  "expected_solc_divergence": [
+    {
+      "specifier": { "type": "From", "from": "0.8.0" },
+      "reason": "TODO(validation) SDR[1686,1750,1751]: pushing an array into a storage array is not checked yet. A copy into storage converts each element and accepts a shorter fixed-size or any dynamic target, which no conversion check covers, so slang accepts the push. solc rejects a dynamic array pushed into a fixed-size one (TypeError 9582)."
+    }
+  ]
+}
