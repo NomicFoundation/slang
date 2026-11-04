@@ -124,10 +124,10 @@ impl Visitor for Pass<'_> {
 
     fn leave_modifier_invocation(&mut self, node: &ir::ModifierInvocation) {
         // Both a modifier's arguments and, on a constructor, a base
-        // constructor's are values.
-        if let Some(arguments) = &node.arguments {
-            self.check_positional_argument_values(arguments);
-        }
+        // constructor's are values. A bare invocation passes none.
+        let arguments = node.arguments.as_deref().unwrap_or_default();
+        let argument_types = self.collect_positional_argument_types(arguments);
+        self.check_arguments_of_modifier_invocation(node, arguments, argument_types.as_deref());
     }
 
     fn leave_state_variable_definition(&mut self, node: &ir::StateVariableDefinition) {

@@ -8,7 +8,7 @@ use slang_solidity_v2_ir::ir;
 use slang_solidity_v2_ir::ir::{NodeIdentity, TextRange};
 
 use super::Pass;
-use crate::binder::{Binder, Definition, ParameterDefinition, Scope};
+use crate::binder::{Binder, Definition, ParameterDefinition, Resolution, Scope};
 use crate::context::FileNodeMapper;
 use crate::passes::common::node_location;
 use crate::types::{ContractType, FunctionType, Type, TypeId, TypeRegistry};
@@ -84,6 +84,32 @@ impl ParameterList for StructMembers<'_> {
             .node_typing(self.members[index].id())
             .as_type_id()?;
         Some(self.types.memory_type_id(type_id))
+    }
+}
+
+/// The parameters of a modifier, which are declared in its own scope rather
+/// than in a parameters scope.
+struct ModifierParameters<'a> {
+    binder: &'a Binder,
+    parameters: &'a ir::Parameters,
+}
+
+impl ParameterList for ModifierParameters<'_> {
+    fn count(&self) -> usize {
+        self.parameters.len()
+    }
+
+    fn name(&self, index: usize) -> Option<&str> {
+        self.parameters[index]
+            .name
+            .as_ref()
+            .map(|name| name.unparse())
+    }
+
+    fn type_id(&self, index: usize) -> Option<TypeId> {
+        self.binder
+            .node_typing(self.parameters[index].id())
+            .as_type_id()
     }
 }
 
@@ -262,6 +288,44 @@ impl Pass<'_> {
         let (binder, mut checker) = self.arguments_checker();
         let members = struct_members(binder, checker.types, definition_id);
         checker.check_named(node, &members, false, arguments, argument_types);
+    }
+
+    /// Checks the `arguments` of the modifier invocation `node` against the
+    /// parameters of the modifier, or on a constructor, of the base
+    /// constructor it names.
+    pub(super) fn check_arguments_of_modifier_invocation(
+        &mut self,
+        node: &ir::ModifierInvocation,
+        arguments: &[ir::Expression],
+        argument_types: Option<&[TypeId]>,
+    ) {
+        let identifier = node.name.last().expect("an identifier path is not empty");
+        let Some(Resolution::Definition(definition_id)) =
+            self.followed_resolution_of_reference(identifier.id())
+        else {
+            return;
+        };
+        let (binder, mut checker) = self.arguments_checker();
+        match binder.find_definition_by_id(definition_id) {
+            Some(Definition::Modifier(modifier_definition)) => {
+                let parameters = ModifierParameters {
+                    binder,
+                    parameters: &modifier_definition.ir_node.parameters,
+                };
+                checker.check_positional(node, &parameters, false, arguments, argument_types);
+            }
+            // Look up the parameters of the contract's own constructor. Without
+            // one, the contract takes no arguments, even if it inherits a
+            // constructor that does. Surprisingly, an interface can also be
+            // invoked as a base constructor, and like a contract without a
+            // constructor, it takes no arguments.
+            Some(Definition::Contract(_) | Definition::Interface(_)) => {
+                let parameters =
+                    declared_parameters(binder, Some(definition_id)).unwrap_or_default();
+                checker.check_positional(node, parameters, false, arguments, argument_types);
+            }
+            _ => {}
+        }
     }
 
     /// Registers the memory form of every member type of the struct
