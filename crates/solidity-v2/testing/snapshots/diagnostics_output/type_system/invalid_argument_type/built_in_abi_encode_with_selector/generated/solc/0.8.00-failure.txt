@@ -1,0 +1,11 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 1
+
+[TypeError 9553] Error: Invalid type for argument in function call. Invalid implicit conversion from int_const 1 to bytes4 requested.
+   ╭─[input.sol:6:32]
+   │
+ 6 │         abi.encodeWithSelector(1, 2);
+   │                                ┬  
+   │                                ╰── Error occurred here.
+───╯
