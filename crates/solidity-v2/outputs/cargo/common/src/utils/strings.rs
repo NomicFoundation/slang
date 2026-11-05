@@ -98,15 +98,12 @@ fn take_hex_digits(
     chars: &mut std::iter::Peekable<std::str::Chars<'_>>,
     count: usize,
 ) -> Result<u32, String> {
+    let start = chars.clone();
     let mut value = 0;
-    let mut digits = String::new();
-    for _ in 0..count {
+    for taken in 0..count {
         match chars.next_if(char::is_ascii_hexdigit) {
-            Some(digit) => {
-                value = (value << 4) | digit.to_digit(16).unwrap();
-                digits.push(digit);
-            }
-            None => return Err(digits),
+            Some(digit) => value = (value << 4) | digit.to_digit(16).unwrap(),
+            None => return Err(start.take(taken).collect()),
         }
     }
     Ok(value)
