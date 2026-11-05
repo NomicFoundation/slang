@@ -800,6 +800,14 @@ mod resolution {
         }
 
         #[test]
+        fn external_library_function_called_internally() -> Result<()> {
+            run(
+                "resolution/identifier_not_found",
+                "external_library_function_called_internally",
+            )
+        }
+
+        #[test]
         fn inherited_event_in_function() -> Result<()> {
             run(
                 "resolution/identifier_not_found",
@@ -2057,8 +2065,40 @@ mod resolution {
         }
 
         #[test]
+        fn bound_calldata_parameter_on_memory_receiver() -> Result<()> {
+            run(
+                "resolution/member_not_found",
+                "bound_calldata_parameter_on_memory_receiver",
+            )
+        }
+
+        #[test]
+        fn bound_storage_parameter_on_memory_receiver() -> Result<()> {
+            run(
+                "resolution/member_not_found",
+                "bound_storage_parameter_on_memory_receiver",
+            )
+        }
+
+        #[test]
         fn concat_on_bytes_value() -> Result<()> {
             run("resolution/member_not_found", "concat_on_bytes_value")
+        }
+
+        #[test]
+        fn constant_of_unrelated_contract() -> Result<()> {
+            run(
+                "resolution/member_not_found",
+                "constant_of_unrelated_contract",
+            )
+        }
+
+        #[test]
+        fn constant_of_unrelated_contract_in_storage_layout() -> Result<()> {
+            run(
+                "resolution/member_not_found",
+                "constant_of_unrelated_contract_in_storage_layout",
+            )
         }
 
         #[test]
@@ -2071,6 +2111,19 @@ mod resolution {
             run(
                 "resolution/member_not_found",
                 "creation_code_on_abstract_contract",
+            )
+        }
+
+        #[test]
+        fn event_of_unrelated_contract() -> Result<()> {
+            run("resolution/member_not_found", "event_of_unrelated_contract")
+        }
+
+        #[test]
+        fn event_of_unrelated_interface() -> Result<()> {
+            run(
+                "resolution/member_not_found",
+                "event_of_unrelated_interface",
             )
         }
 
@@ -2105,6 +2158,14 @@ mod resolution {
             run(
                 "resolution/member_not_found",
                 "interface_id_on_concrete_contract",
+            )
+        }
+
+        #[test]
+        fn internal_function_of_unrelated_contract() -> Result<()> {
+            run(
+                "resolution/member_not_found",
+                "internal_function_of_unrelated_contract",
             )
         }
 
@@ -2170,6 +2231,22 @@ mod resolution {
         }
 
         #[test]
+        fn modifier_via_base_contract_name() -> Result<()> {
+            run(
+                "resolution/member_not_found",
+                "modifier_via_base_contract_name",
+            )
+        }
+
+        #[test]
+        fn modifier_via_own_contract_name() -> Result<()> {
+            run(
+                "resolution/member_not_found",
+                "modifier_via_own_contract_name",
+            )
+        }
+
+        #[test]
         fn name_on_integer_meta_type() -> Result<()> {
             run("resolution/member_not_found", "name_on_integer_meta_type")
         }
@@ -2177,6 +2254,14 @@ mod resolution {
         #[test]
         fn no_overload_accepts() -> Result<()> {
             run("resolution/member_not_found", "no_overload_accepts")
+        }
+
+        #[test]
+        fn operator_only_attached_function() -> Result<()> {
+            run(
+                "resolution/member_not_found",
+                "operator_only_attached_function",
+            )
         }
 
         #[test]
@@ -2210,6 +2295,54 @@ mod resolution {
         #[test]
         fn pop_on_value_type() -> Result<()> {
             run("resolution/member_not_found", "pop_on_value_type")
+        }
+
+        #[test]
+        fn private_constant_via_own_contract_name() -> Result<()> {
+            run(
+                "resolution/member_not_found",
+                "private_constant_via_own_contract_name",
+            )
+        }
+
+        #[test]
+        fn private_function_via_base_contract_name() -> Result<()> {
+            run(
+                "resolution/member_not_found",
+                "private_function_via_base_contract_name",
+            )
+        }
+
+        #[test]
+        fn private_function_via_own_contract_name() -> Result<()> {
+            run(
+                "resolution/member_not_found",
+                "private_function_via_own_contract_name",
+            )
+        }
+
+        #[test]
+        fn private_function_via_own_library_name() -> Result<()> {
+            run(
+                "resolution/member_not_found",
+                "private_function_via_own_library_name",
+            )
+        }
+
+        #[test]
+        fn private_state_variable_via_base_contract_name() -> Result<()> {
+            run(
+                "resolution/member_not_found",
+                "private_state_variable_via_base_contract_name",
+            )
+        }
+
+        #[test]
+        fn public_state_variable_of_unrelated_contract() -> Result<()> {
+            run(
+                "resolution/member_not_found",
+                "public_state_variable_of_unrelated_contract",
+            )
         }
 
         #[test]
@@ -2266,8 +2399,50 @@ mod resolution {
         }
 
         #[test]
+        fn state_variable_of_contract_in_free_function() -> Result<()> {
+            run(
+                "resolution/member_not_found",
+                "state_variable_of_contract_in_free_function",
+            )
+        }
+
+        #[test]
+        fn state_variable_of_unrelated_contract() -> Result<()> {
+            run(
+                "resolution/member_not_found",
+                "state_variable_of_unrelated_contract",
+            )
+        }
+
+        #[test]
         fn state_variable_via_super() -> Result<()> {
             run("resolution/member_not_found", "state_variable_via_super")
+        }
+
+        #[test]
+        fn string_length() -> Result<()> {
+            run("resolution/member_not_found", "string_length")
+        }
+
+        #[test]
+        fn string_literal_length() -> Result<()> {
+            run("resolution/member_not_found", "string_literal_length")
+        }
+
+        #[test]
+        fn unimplemented_function_via_super() -> Result<()> {
+            run(
+                "resolution/member_not_found",
+                "unimplemented_function_via_super",
+            )
+        }
+
+        #[test]
+        fn unimplemented_function_via_super_in_derived() -> Result<()> {
+            run(
+                "resolution/member_not_found",
+                "unimplemented_function_via_super_in_derived",
+            )
         }
 
         #[test]
@@ -2299,6 +2474,22 @@ mod resolution {
 
     mod namespace_member_not_found {
         use super::*;
+
+        #[test]
+        fn emit_event_of_contract_in_free_function() -> Result<()> {
+            run(
+                "resolution/namespace_member_not_found",
+                "emit_event_of_contract_in_free_function",
+            )
+        }
+
+        #[test]
+        fn emit_event_of_unrelated_contract() -> Result<()> {
+            run(
+                "resolution/namespace_member_not_found",
+                "emit_event_of_unrelated_contract",
+            )
+        }
 
         #[test]
         fn missing_error_in_nested_path() -> Result<()> {

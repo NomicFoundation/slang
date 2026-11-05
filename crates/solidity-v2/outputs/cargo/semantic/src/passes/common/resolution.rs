@@ -76,15 +76,7 @@ impl PathResolution {
                 let kind = if index == 0 {
                     IdentifierNotFound.into()
                 } else {
-                    NamespaceMemberNotFound {
-                        name: identifier.unparse().to_owned(),
-                        namespace: identifier_path[..index]
-                            .iter()
-                            .map(|qualifier| qualifier.unparse())
-                            .collect::<Vec<_>>()
-                            .join("."),
-                    }
-                    .into()
+                    namespace_member_not_found(identifier_path, index).into()
                 };
                 Some((identifier, kind))
             }
@@ -127,6 +119,22 @@ impl PathResolution {
                 ..
             }
         ) && matches!(self.resolution, Resolution::Ambiguous(_))
+    }
+}
+
+/// The diagnostic for the identifier at `index` of `identifier_path` not being
+/// provided by the identifiers before it.
+pub(crate) fn namespace_member_not_found(
+    identifier_path: &ir::IdentifierPath,
+    index: usize,
+) -> NamespaceMemberNotFound {
+    NamespaceMemberNotFound {
+        name: identifier_path[index].unparse().to_owned(),
+        namespace: identifier_path[..index]
+            .iter()
+            .map(|qualifier| qualifier.unparse())
+            .collect::<Vec<_>>()
+            .join("."),
     }
 }
 

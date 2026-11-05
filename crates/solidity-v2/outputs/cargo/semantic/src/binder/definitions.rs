@@ -315,6 +315,34 @@ impl Definition {
         )
     }
 
+    /// Whether this is a function declared with a body.
+    pub(crate) fn is_implemented_function(&self) -> bool {
+        matches!(
+            self,
+            Self::Function(function_definition) if function_definition.ir_node.body.is_some()
+        )
+    }
+
+    /// Whether this is a function, state variable or constant declared
+    /// `private`.
+    pub(crate) fn is_private(&self) -> bool {
+        match self {
+            Self::Function(function_definition) => matches!(
+                function_definition.ir_node.attributes.visibility,
+                ir::FunctionVisibility::Private
+            ),
+            Self::StateVariable(variable_definition) => matches!(
+                variable_definition.ir_node.attributes.visibility,
+                ir::StateVariableVisibility::Private
+            ),
+            Self::Constant(constant_definition) => matches!(
+                constant_definition.ir_node.visibility,
+                Some(ir::StateVariableVisibility::Private)
+            ),
+            _ => false,
+        }
+    }
+
     pub(crate) fn is_private_or_internally_visible(&self) -> bool {
         if let Self::Function(function_definition) = self {
             !matches!(

@@ -213,13 +213,8 @@ impl Pass<'_> {
         argument_type: TypeId,
         external_call: bool,
     ) -> bool {
-        if external_call {
-            self.types
-                .implicitly_convertible_to_for_external_call(argument_type, parameter_type)
-        } else {
-            self.types
-                .implicitly_convertible_to(argument_type, parameter_type)
-        }
+        self.types
+            .implicitly_convertible_to_for_call(argument_type, parameter_type, external_call)
     }
 
     pub(super) fn lookup_function_matching_named_arguments(

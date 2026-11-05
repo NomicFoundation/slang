@@ -1,0 +1,11 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 1
+
+[resolution/namespace-member-not-found] Error: 'E' not found or not visible in 'D'.
+   ╭─[input.sol:9:12]
+   │
+ 9 │     emit D.E();
+   │            ┬  
+   │            ╰── Error occurred here.
+───╯
