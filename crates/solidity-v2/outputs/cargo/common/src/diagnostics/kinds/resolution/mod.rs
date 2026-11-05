@@ -7,11 +7,13 @@ mod external_declaration_shadowing;
 mod identifier_not_found;
 mod identifier_not_function_or_not_unique;
 mod identifier_not_library_name;
+mod identifier_not_namespace;
 mod identifier_redeclaration;
 mod imported_declaration_not_found;
 mod incompatible_built_in_target;
 mod incompatible_built_in_version;
 mod member_not_found;
+mod namespace_member_not_found;
 mod no_matching_callable_declaration;
 mod non_free_or_library_function_in_using_directive;
 
@@ -24,11 +26,13 @@ pub use external_declaration_shadowing::ExternalDeclarationShadowing;
 pub use identifier_not_found::IdentifierNotFound;
 pub use identifier_not_function_or_not_unique::IdentifierNotFunctionOrNotUnique;
 pub use identifier_not_library_name::IdentifierNotLibraryName;
+pub use identifier_not_namespace::IdentifierNotNamespace;
 pub use identifier_redeclaration::IdentifierRedeclaration;
 pub use imported_declaration_not_found::ImportedDeclarationNotFound;
 pub use incompatible_built_in_target::IncompatibleBuiltInTarget;
 pub use incompatible_built_in_version::IncompatibleBuiltInVersion;
 pub use member_not_found::MemberNotFound;
+pub use namespace_member_not_found::NamespaceMemberNotFound;
 pub use no_matching_callable_declaration::NoMatchingCallableDeclaration;
 pub use non_free_or_library_function_in_using_directive::NonFreeOrLibraryFunctionInUsingDirective;
 use serde::Serialize;
@@ -73,6 +77,11 @@ define_diagnostic_kind! {
         /// A member access named something its operand's type does not
         /// provide.
         MemberNotFound(MemberNotFound),
+        /// An identifier path named something its qualifier does not provide.
+        NamespaceMemberNotFound(NamespaceMemberNotFound),
+        /// A qualifier in an identifier path names a declaration that has no
+        /// members.
+        IdentifierNotNamespace(IdentifierNotNamespace),
 
         /// A symbol in a `using {...} for` directive did not resolve to a
         /// unique function.

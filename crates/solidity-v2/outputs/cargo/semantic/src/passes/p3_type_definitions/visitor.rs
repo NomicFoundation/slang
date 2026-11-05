@@ -16,6 +16,7 @@ use crate::binder::{
     UsingDirective,
 };
 use crate::built_ins::InternalBuiltIn;
+use crate::passes::common::IdentifierPathTarget;
 use crate::types::{ContractType, DataLocation, EnumType, InterfaceType, LibraryType, Type};
 
 impl Visitor for Pass<'_> {
@@ -240,7 +241,10 @@ impl Visitor for Pass<'_> {
 
     fn enter_type_name(&mut self, node: &ir::TypeName) -> bool {
         if let ir::TypeName::IdentifierPath(identifier_path) = node {
-            self.resolve_identifier_path_as_type(identifier_path);
+            self.resolve_and_check_identifier_path_as_type(
+                identifier_path,
+                IdentifierPathTarget::Type,
+            );
             false
         } else {
             true
@@ -320,7 +324,10 @@ impl Visitor for Pass<'_> {
 
     fn enter_override_paths(&mut self, items: &ir::OverridePaths) -> bool {
         for identifier_path in items.iter() {
-            self.resolve_identifier_path_as_type(identifier_path);
+            self.resolve_and_check_identifier_path_as_type(
+                identifier_path,
+                IdentifierPathTarget::Contract,
+            );
         }
         false
     }
@@ -588,8 +595,10 @@ impl Visitor for Pass<'_> {
     }
 
     fn enter_revert_statement(&mut self, node: &ir::RevertStatement) -> bool {
-        // TODO(validation) SDR[1686]: report a segment that is not a member of its contract.
-        self.resolve_identifier_path_as_expression(&node.error);
+        self.resolve_and_check_identifier_path_as_expression(
+            &node.error,
+            IdentifierPathTarget::Error,
+        );
         true
     }
 
@@ -599,8 +608,10 @@ impl Visitor for Pass<'_> {
     }
 
     fn enter_emit_statement(&mut self, node: &ir::EmitStatement) -> bool {
-        // TODO(validation) SDR[1686]: report a segment that is not a member of its contract.
-        self.resolve_identifier_path_as_expression(&node.event);
+        self.resolve_and_check_identifier_path_as_expression(
+            &node.event,
+            IdentifierPathTarget::Event,
+        );
         true
     }
 

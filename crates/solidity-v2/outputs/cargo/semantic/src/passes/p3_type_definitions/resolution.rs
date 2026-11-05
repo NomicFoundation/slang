@@ -19,8 +19,8 @@ use crate::passes::common::constant_evaluator::{
     ConstantResolver, EvaluationError, evaluate_compile_time_constant,
 };
 use crate::passes::common::{
-    node_location, resolve_identifier_path_as_expression_in_scope,
-    resolve_identifier_path_as_type_in_scope,
+    IdentifierPathTarget, PathResolution, node_location,
+    resolve_identifier_path_as_expression_in_scope, resolve_identifier_path_as_type_in_scope,
 };
 use crate::types::{
     ArrayType, DataLocation, FixedSizeArrayType, FunctionType, MappingType, TupleType, Type, TypeId,
@@ -32,7 +32,7 @@ impl Pass<'_> {
     pub(super) fn resolve_identifier_path_as_type(
         &mut self,
         identifier_path: &ir::IdentifierPath,
-    ) -> Resolution {
+    ) -> PathResolution {
         resolve_identifier_path_as_type_in_scope(
             self.binder,
             identifier_path,
@@ -40,17 +40,41 @@ impl Pass<'_> {
         )
     }
 
-    /// Resolves an `IdentifierPath` in an expression context starting at the
-    /// current lexical scope.  Returns the resolution of the last reference.
-    pub(super) fn resolve_identifier_path_as_expression(
+    /// Resolves an `IdentifierPath` in a type context starting at the current
+    /// lexical scope, and reports its first identifier that does not name a
+    /// single declaration, expecting it to name a `target`.
+    pub(super) fn resolve_and_check_identifier_path_as_type(
         &mut self,
         identifier_path: &ir::IdentifierPath,
-    ) -> Resolution {
-        resolve_identifier_path_as_expression_in_scope(
+        target: IdentifierPathTarget,
+    ) {
+        let path_resolution = self.resolve_identifier_path_as_type(identifier_path);
+        if let Some((identifier, kind)) =
+            path_resolution.unresolved_identifier(identifier_path, target)
+        {
+            self.push_diagnostic(identifier, kind);
+        }
+    }
+
+    /// Resolves an `IdentifierPath` in an expression context starting at the
+    /// current lexical scope, and reports its first identifier that does not
+    /// name a single declaration. See [`PathResolution::unresolved_identifier`]
+    /// for `target`.
+    pub(super) fn resolve_and_check_identifier_path_as_expression(
+        &mut self,
+        identifier_path: &ir::IdentifierPath,
+        target: IdentifierPathTarget,
+    ) {
+        let path_resolution = resolve_identifier_path_as_expression_in_scope(
             self.binder,
             identifier_path,
             self.current_scope_id(),
-        )
+        );
+        if let Some((identifier, kind)) =
+            path_resolution.unresolved_identifier(identifier_path, target)
+        {
+            self.push_diagnostic(identifier, kind);
+        }
     }
 
     pub(super) fn resolve_parameter_types(
