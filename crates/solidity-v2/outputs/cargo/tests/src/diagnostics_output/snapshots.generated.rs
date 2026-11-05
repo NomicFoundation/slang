@@ -6132,8 +6132,40 @@ mod type_system {
         use super::*;
 
         #[test]
+        fn abi_decode_array_literal_type_name() -> Result<()> {
+            run(
+                "type_system/expression_not_a_value",
+                "abi_decode_array_literal_type_name",
+            )
+        }
+
+        #[test]
         fn array_literal_item() -> Result<()> {
             run("type_system/expression_not_a_value", "array_literal_item")
+        }
+
+        #[test]
+        fn array_literal_magic_variable() -> Result<()> {
+            run(
+                "type_system/expression_not_a_value",
+                "array_literal_magic_variable",
+            )
+        }
+
+        #[test]
+        fn array_literal_type_expression() -> Result<()> {
+            run(
+                "type_system/expression_not_a_value",
+                "array_literal_type_expression",
+            )
+        }
+
+        #[test]
+        fn array_literal_type_name() -> Result<()> {
+            run(
+                "type_system/expression_not_a_value",
+                "array_literal_type_name",
+            )
         }
 
         #[test]
@@ -6813,6 +6845,24 @@ mod type_system {
         use super::*;
 
         #[test]
+        fn array_literal_among_items() -> Result<()> {
+            run("type_system/literal_too_large", "array_literal_among_items")
+        }
+
+        #[test]
+        fn array_literal_in_tuple_assignment() -> Result<()> {
+            run(
+                "type_system/literal_too_large",
+                "array_literal_in_tuple_assignment",
+            )
+        }
+
+        #[test]
+        fn array_literal_single_item() -> Result<()> {
+            run("type_system/literal_too_large", "array_literal_single_item")
+        }
+
+        #[test]
         fn conditional_branch() -> Result<()> {
             run("type_system/literal_too_large", "conditional_branch")
         }
@@ -6820,6 +6870,38 @@ mod type_system {
 
     mod partially_applied_function_used_as_value {
         use super::*;
+
+        #[test]
+        fn array_literal_bound_function() -> Result<()> {
+            run(
+                "type_system/partially_applied_function_used_as_value",
+                "array_literal_bound_function",
+            )
+        }
+
+        #[test]
+        fn array_literal_bound_function_mixed() -> Result<()> {
+            run(
+                "type_system/partially_applied_function_used_as_value",
+                "array_literal_bound_function_mixed",
+            )
+        }
+
+        #[test]
+        fn array_literal_call_options() -> Result<()> {
+            run(
+                "type_system/partially_applied_function_used_as_value",
+                "array_literal_call_options",
+            )
+        }
+
+        #[test]
+        fn array_literal_tuple_item() -> Result<()> {
+            run(
+                "type_system/partially_applied_function_used_as_value",
+                "array_literal_tuple_item",
+            )
+        }
 
         #[test]
         fn conditional_branch() -> Result<()> {

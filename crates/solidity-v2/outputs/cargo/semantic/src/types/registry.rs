@@ -56,6 +56,7 @@ pub struct TypeRegistry {
 }
 
 /// Why a type has no mobile type.
+#[derive(Debug)]
 pub(crate) enum NoMobileType {
     /// A type name or a declaration (a module, or a function declaration
     /// reached through a contract type name) rather than a value.
@@ -847,13 +848,18 @@ impl TypeRegistry {
     ///
     /// This is used to unify types of literal arrays.
     /// Only the first element is mobile-typed unconditionally.
+    ///
+    /// Panics if an element has no mobile type: callers must have checked, and
+    /// reported, that every element has one.
     pub(crate) fn type_of_array_literal(&mut self, type_ids: &[TypeId]) -> Option<TypeId> {
         let (first_id, rest) = type_ids.split_first()?;
         if !self.get_type_by_id(*first_id).can_be_array_element() {
             // TODO(validation) SDR[750]: Error if the element type can't be an array element
             return None;
         }
-        let mut element_type_id = self.compute_mobile_type(*first_id).ok()?;
+        let mut element_type_id = self
+            .compute_mobile_type(*first_id)
+            .expect("the caller checks that every element has a mobile type");
         for &item_type_id in rest {
             if self.implicitly_convertible_to(item_type_id, element_type_id) {
                 // Item already fits the accumulator
@@ -863,7 +869,9 @@ impl TypeRegistry {
                 // TODO(validation) SDR[750]: Error if the element type can't be an array element
                 return None;
             }
-            let item_mobile_type_id = self.compute_mobile_type(item_type_id).ok()?;
+            let item_mobile_type_id = self
+                .compute_mobile_type(item_type_id)
+                .expect("the caller checks that every element has a mobile type");
             if !self.implicitly_convertible_to(element_type_id, item_mobile_type_id) {
                 // TODO(validation) SDR[1741,1353]: types are not compatible
                 return None;
