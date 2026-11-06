@@ -1,0 +1,11 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 1
+
+[syntax/invalid-escape-sequence] Error: Invalid escape sequence. Only '\n', '\r', '\t', '\'', '\"', '\\', '\xNN', '\uNNNN' or a newline can follow a backslash.
+   ╭─[input.sol:6:17]
+   │
+ 6 │     string s = "\q é";
+   │                 ─┬  
+   │                  ╰── Error occurred here.
+───╯

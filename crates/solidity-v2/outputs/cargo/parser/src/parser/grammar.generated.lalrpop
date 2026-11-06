@@ -2796,7 +2796,7 @@ UncheckedKeyword: UncheckedKeyword = {
 #[inline]
 UnicodeStringLiteral: UnicodeStringLiteral = {
 
-        <l:@L> L_UnicodeStringLiteral <r:@L> => new_unicode_string_literal(l..r, ctx.source),
+        <l:@L> L_UnicodeStringLiteral <r:@L> => { validation::validate_unicode_string_literal(ctx, l..r); new_unicode_string_literal(l..r, ctx.source) },
 
 };
 #[inline]

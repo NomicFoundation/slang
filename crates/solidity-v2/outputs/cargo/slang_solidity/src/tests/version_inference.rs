@@ -394,6 +394,20 @@ fn old_yul_strings_keep_their_boundaries() {
 }
 
 #[test]
+fn old_invalid_escapes_keep_their_boundaries() {
+    // After 0.4.25 Solidity doesn't allow unknown escapes like `\q` in strings,
+    // we're still resilient and accept files with such a shape.
+    let source = r#"
+        pragma solidity ^0.4.24;
+        contract A {
+            string a = "\q"; string b = "pragma solidity 0.4.0;";
+        }
+    "#;
+
+    assert_eq!(matches(source, &["0.4.0", "0.4.24"]), [false, true]);
+}
+
+#[test]
 fn syntax_errors_around_the_pragma_do_not_hide_it() {
     let source = "
         contract { function ((( }

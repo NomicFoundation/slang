@@ -48,17 +48,25 @@ pub fn decode_escape_sequences(content: &str) -> Vec<u8> {
                 }
             }
             '\n' => {}
-            'x' => {
-                let h1 = u8::try_from(chars.next().unwrap().to_digit(16).unwrap()).unwrap();
-                let h2 = u8::try_from(chars.next().unwrap().to_digit(16).unwrap()).unwrap();
-                out.push((h1 << 4) | h2);
-            }
+            // The parser doesn't guarantee exactly 2 characters after `\x`,
+            // if less than 2 are present we defensively pass them verbatim
+            'x' => match take_hex_digits(&mut chars, 2) {
+                Ok(byte) => out.push(u8::try_from(byte).unwrap()),
+                Err(digits) => {
+                    out.push(b'x');
+                    out.extend_from_slice(digits.as_bytes());
+                }
+            },
+            // Like `\x`, the parser doesn't guarantee what follows a `\u`
             'u' => {
-                let h1 = chars.next().unwrap().to_digit(16).unwrap();
-                let h2 = chars.next().unwrap().to_digit(16).unwrap();
-                let h3 = chars.next().unwrap().to_digit(16).unwrap();
-                let h4 = chars.next().unwrap().to_digit(16).unwrap();
-                let code_point = (h1 << 12) | (h2 << 8) | (h3 << 4) | h4;
+                let code_point = match take_hex_digits(&mut chars, 4) {
+                    Ok(code_point) => code_point,
+                    Err(digits) => {
+                        out.push(b'u');
+                        out.extend_from_slice(digits.as_bytes());
+                        continue;
+                    }
+                };
                 match char::from_u32(code_point) {
                     Some(ch) => out.extend_from_slice(ch.encode_utf8(&mut buf).as_bytes()),
                     // Encode surrogates manually using the three-byte UTF-8 formula.
@@ -75,13 +83,30 @@ pub fn decode_escape_sequences(content: &str) -> Vec<u8> {
                 }
             }
             other => {
-                // Grammar should prevent unknown escape chars, but pass
+                // The grammar allows unknown escape chars, pass
                 // them through verbatim as a defensive fallback.
                 out.extend_from_slice(other.encode_utf8(&mut buf).as_bytes());
             }
         }
     }
     out
+}
+
+/// Takes the `count` hex digits of an escape sequence, and their value. An escape that is cut
+/// short, which no solc version accepts but the lexer still takes, gives back the digits it has.
+fn take_hex_digits(
+    chars: &mut std::iter::Peekable<std::str::Chars<'_>>,
+    count: usize,
+) -> Result<u32, String> {
+    let start = chars.clone();
+    let mut value = 0;
+    for taken in 0..count {
+        match chars.next_if(char::is_ascii_hexdigit) {
+            Some(digit) => value = (value << 4) | digit.to_digit(16).unwrap(),
+            None => return Err(start.take(taken).collect()),
+        }
+    }
+    Ok(value)
 }
 
 pub fn decode_hex_string(content: &str) -> Vec<u8> {
@@ -282,6 +307,15 @@ mod tests {
             decode_escape_sequences(r"\ud83d\ude00"),
             &[0xED, 0xA0, 0xBD, 0xED, 0xB8, 0x80]
         );
+    }
+
+    #[test]
+    fn decode_invalid_escapes_without_panicking() {
+        assert_eq!(decode_escape_sequences(r"\q"), b"q");
+        assert_eq!(decode_escape_sequences(r"\x4"), b"x4");
+        assert_eq!(decode_escape_sequences(r"\x4g"), b"x4g");
+        assert_eq!(decode_escape_sequences(r"\u00e"), b"u00e");
+        assert_eq!(decode_escape_sequences(r"\u"), b"u");
     }
 
     #[test]

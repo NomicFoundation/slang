@@ -3,6 +3,7 @@ mod incompatible_syntax_version;
 mod incompatible_version_pragma;
 mod invalid_assembly_dialect;
 mod invalid_character_in_string;
+mod invalid_escape_sequence;
 mod invalid_mutability;
 mod invalid_version_specifier;
 mod invalid_visibility;
@@ -26,6 +27,7 @@ pub use incompatible_syntax_version::IncompatibleSyntaxVersion;
 pub use incompatible_version_pragma::IncompatibleVersionPragma;
 pub use invalid_assembly_dialect::InvalidAssemblyDialect;
 pub use invalid_character_in_string::InvalidCharacterInString;
+pub use invalid_escape_sequence::InvalidEscapeSequence;
 pub use invalid_mutability::InvalidMutability;
 pub use invalid_version_specifier::InvalidVersionSpecifier;
 pub use invalid_visibility::InvalidVisibility;
@@ -60,6 +62,8 @@ define_diagnostic_kind! {
         UnexpectedTerminal(UnexpectedTerminal),
         /// A string literal holds a character outside of printable ASCII.
         InvalidCharacterInString(InvalidCharacterInString),
+        /// A string literal holds a backslash that does not start a valid escape sequence.
+        InvalidEscapeSequence(InvalidEscapeSequence),
 
         /// A piece of syntax is not compatible with the currently selected language version.
         IncompatibleSyntaxVersion(IncompatibleSyntaxVersion),

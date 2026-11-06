@@ -5410,6 +5410,65 @@ mod syntax {
         }
     }
 
+    mod invalid_escape_sequence {
+        use super::*;
+
+        #[test]
+        fn assembly_flag() -> Result<()> {
+            run("syntax/invalid_escape_sequence", "assembly_flag")
+        }
+
+        #[test]
+        fn character_first() -> Result<()> {
+            run("syntax/invalid_escape_sequence", "character_first")
+        }
+
+        #[test]
+        fn escape_first() -> Result<()> {
+            run("syntax/invalid_escape_sequence", "escape_first")
+        }
+
+        #[test]
+        fn escaped_non_ascii() -> Result<()> {
+            run("syntax/invalid_escape_sequence", "escaped_non_ascii")
+        }
+
+        #[test]
+        fn non_hex_digit() -> Result<()> {
+            run("syntax/invalid_escape_sequence", "non_hex_digit")
+        }
+
+        #[test]
+        fn short_hex() -> Result<()> {
+            run("syntax/invalid_escape_sequence", "short_hex")
+        }
+
+        #[test]
+        fn short_unicode() -> Result<()> {
+            run("syntax/invalid_escape_sequence", "short_unicode")
+        }
+
+        #[test]
+        fn unicode_literal() -> Result<()> {
+            run("syntax/invalid_escape_sequence", "unicode_literal")
+        }
+
+        #[test]
+        fn unknown_escape() -> Result<()> {
+            run("syntax/invalid_escape_sequence", "unknown_escape")
+        }
+
+        #[test]
+        fn valid() -> Result<()> {
+            run("syntax/invalid_escape_sequence", "valid")
+        }
+
+        #[test]
+        fn yul() -> Result<()> {
+            run("syntax/invalid_escape_sequence", "yul")
+        }
+    }
+
     mod invalid_mutability {
         use super::*;
 

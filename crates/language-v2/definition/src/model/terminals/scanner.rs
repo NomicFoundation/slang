@@ -26,6 +26,7 @@ pub enum TokenScanner {
     Not {
         chars: IndexSet<char>,
     },
+    AnyChar,
     Range {
         inclusive_start: char,
         inclusive_end: char,
@@ -66,6 +67,7 @@ impl TokenScanner {
             | Self::ZeroOrMore { .. }
             | Self::OneOrMore { .. }
             | Self::Not { .. }
+            | Self::AnyChar
             | Self::Range { .. }
             | Self::Fragment { .. } => None,
         }
