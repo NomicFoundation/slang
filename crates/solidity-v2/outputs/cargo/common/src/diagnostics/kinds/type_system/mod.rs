@@ -119,7 +119,7 @@ define_diagnostic_kind! {
         ExpressionNotAValue(ExpressionNotAValue),
         /// A partially applied function is used as a value rather than called.
         PartiallyAppliedFunctionUsedAsValue(PartiallyAppliedFunctionUsedAsValue),
-        /// A number literal too large for any EVM type is used as a value.
+        /// A number literal too large for any EVM type.
         LiteralTooLarge(LiteralTooLarge),
         /// The two branches of a conditional have no common type.
         IncompatibleConditionalBranches(IncompatibleConditionalBranches),
