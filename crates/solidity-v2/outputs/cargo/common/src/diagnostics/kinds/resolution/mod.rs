@@ -17,6 +17,7 @@ mod imported_declaration_not_found;
 mod incompatible_built_in_target;
 mod incompatible_built_in_version;
 mod member_not_found;
+mod modifier_not_in_contract_hierarchy;
 mod namespace_member_not_found;
 mod no_matching_callable_declaration;
 mod non_free_or_library_function_in_using_directive;
@@ -41,6 +42,7 @@ pub use imported_declaration_not_found::ImportedDeclarationNotFound;
 pub use incompatible_built_in_target::IncompatibleBuiltInTarget;
 pub use incompatible_built_in_version::IncompatibleBuiltInVersion;
 pub use member_not_found::MemberNotFound;
+pub use modifier_not_in_contract_hierarchy::ModifierNotInContractHierarchy;
 pub use namespace_member_not_found::NamespaceMemberNotFound;
 pub use no_matching_callable_declaration::NoMatchingCallableDeclaration;
 pub use non_free_or_library_function_in_using_directive::NonFreeOrLibraryFunctionInUsingDirective;
@@ -102,6 +104,9 @@ define_diagnostic_kind! {
         /// The library name in a `using ... for` directive did not resolve to
         /// a unique library.
         IdentifierNotLibraryName(IdentifierNotLibraryName),
+        /// A modifier invocation names a modifier from outside the enclosing
+        /// contract's hierarchy.
+        ModifierNotInContractHierarchy(ModifierNotInContractHierarchy),
         /// The target of a `revert` is not an error.
         IdentifierNotError(IdentifierNotError),
         /// The target of an `emit` is not an event.

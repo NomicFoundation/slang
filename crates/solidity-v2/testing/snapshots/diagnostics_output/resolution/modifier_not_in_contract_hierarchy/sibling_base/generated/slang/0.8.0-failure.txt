@@ -1,0 +1,11 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 1
+
+[resolution/modifier-not-in-contract-hierarchy] Error: Only modifiers of the current contract or of its bases can be invoked.
+    ╭─[input.sol:15:27]
+    │
+ 15 │     function f() public C.m {}
+    │                           ┬  
+    │                           ╰── Error occurred here.
+────╯
