@@ -7243,11 +7243,6 @@ mod type_system {
         }
 
         #[test]
-        fn modifier() -> Result<()> {
-            run("type_system/expression_not_callable", "modifier")
-        }
-
-        #[test]
         fn named_arguments() -> Result<()> {
             run("type_system/expression_not_callable", "named_arguments")
         }
@@ -7400,6 +7395,73 @@ mod type_system {
         #[test]
         fn conditional_branch() -> Result<()> {
             run("type_system/literal_too_large", "conditional_branch")
+        }
+    }
+
+    mod modifier_outside_function_header {
+        use super::*;
+
+        #[test]
+        fn assigned() -> Result<()> {
+            run("type_system/modifier_outside_function_header", "assigned")
+        }
+
+        #[test]
+        fn bare_statement() -> Result<()> {
+            run(
+                "type_system/modifier_outside_function_header",
+                "bare_statement",
+            )
+        }
+
+        #[test]
+        fn called() -> Result<()> {
+            run("type_system/modifier_outside_function_header", "called")
+        }
+
+        #[test]
+        fn called_with_named_arguments() -> Result<()> {
+            run(
+                "type_system/modifier_outside_function_header",
+                "called_with_named_arguments",
+            )
+        }
+
+        #[test]
+        fn conditional_callee() -> Result<()> {
+            run(
+                "type_system/modifier_outside_function_header",
+                "conditional_callee",
+            )
+        }
+
+        #[test]
+        fn member_access_on_modifier() -> Result<()> {
+            run(
+                "type_system/modifier_outside_function_header",
+                "member_access_on_modifier",
+            )
+        }
+
+        #[test]
+        fn overridden() -> Result<()> {
+            run("type_system/modifier_outside_function_header", "overridden")
+        }
+
+        #[test]
+        fn this_member() -> Result<()> {
+            run(
+                "type_system/modifier_outside_function_header",
+                "this_member",
+            )
+        }
+
+        #[test]
+        fn tuple_component() -> Result<()> {
+            run(
+                "type_system/modifier_outside_function_header",
+                "tuple_component",
+            )
         }
     }
 

@@ -755,7 +755,12 @@ impl Pass<'_> {
                         type_ids.push(type_id);
                     }
                 }
-                Typing::Undetermined(type_ids)
+                // None of them is typed, eg. the overrides of a modifier.
+                if type_ids.is_empty() {
+                    Typing::Unresolved
+                } else {
+                    Typing::Undetermined(type_ids)
+                }
             }
         }
     }
@@ -1412,6 +1417,23 @@ impl Pass<'_> {
         match error {
             BuiltInCallError::Diagnostic(kind) => self.push_diagnostic(node, kind),
             BuiltInCallError::NotReportedYet | BuiltInCallError::UnresolvedDependency => {}
+        }
+    }
+
+    /// Whether `resolution` names a modifier, or the overrides of one. A
+    /// modifier is not a value, so a reference to one is unresolved, and only a
+    /// function header can make one: check only unresolved references.
+    pub(super) fn resolves_to_modifier(&self, resolution: &Resolution) -> bool {
+        let is_modifier = |definition_id: &NodeId| {
+            matches!(
+                self.binder.find_definition_by_id(*definition_id),
+                Some(Definition::Modifier(_))
+            )
+        };
+        match resolution {
+            Resolution::Definition(definition_id) => is_modifier(definition_id),
+            Resolution::Ambiguous(definition_ids) => definition_ids.iter().all(is_modifier),
+            Resolution::BuiltIn(_) | Resolution::Unresolved => false,
         }
     }
 }

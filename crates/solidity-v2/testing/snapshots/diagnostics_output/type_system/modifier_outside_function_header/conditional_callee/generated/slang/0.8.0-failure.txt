@@ -1,0 +1,19 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 2
+
+[type-system/modifier-outside-function-header] Error: A modifier can only be referenced in a function header.
+    ╭─[input.sol:11:14]
+    │
+ 11 │         (b ? m : m)(1);
+    │              ┬  
+    │              ╰── Error occurred here.
+────╯
+
+[type-system/modifier-outside-function-header] Error: A modifier can only be referenced in a function header.
+    ╭─[input.sol:11:18]
+    │
+ 11 │         (b ? m : m)(1);
+    │                  ┬  
+    │                  ╰── Error occurred here.
+────╯
