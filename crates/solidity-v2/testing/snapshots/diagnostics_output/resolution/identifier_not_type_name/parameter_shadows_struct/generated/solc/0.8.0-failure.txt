@@ -1,0 +1,19 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 2
+
+[Warning 2519] Warning: This declaration shadows an existing declaration.
+    ╭─[input.sol:10:12]
+    │
+ 10 │ function f(uint256 S, S memory s) pure {}
+    │            ────┬────  
+    │                ╰────── Warning occurred here.
+────╯
+
+[TypeError 5172] Error: Name has to refer to a struct, enum or contract.
+    ╭─[input.sol:10:23]
+    │
+ 10 │ function f(uint256 S, S memory s) pure {}
+    │                       ┬  
+    │                       ╰── Error occurred here.
+────╯

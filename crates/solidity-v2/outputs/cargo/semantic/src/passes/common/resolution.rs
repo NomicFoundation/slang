@@ -4,8 +4,8 @@ use std::sync::Arc;
 use slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind;
 use slang_solidity_v2_common::diagnostics::kinds::resolution::{
     AmbiguousReference, IdentifierNotFound, IdentifierNotFunctionOrNotUnique,
-    IdentifierNotLibraryName, IdentifierNotNamespace, NamespaceMemberNotFound,
-    NonFreeOrLibraryFunctionInUsingDirective,
+    IdentifierNotLibraryName, IdentifierNotNamespace, IdentifierNotTypeName,
+    NamespaceMemberNotFound, NonFreeOrLibraryFunctionInUsingDirective,
 };
 use slang_solidity_v2_common::diagnostics::kinds::semantic::OverridableKind;
 use slang_solidity_v2_common::diagnostics::kinds::type_system::InvalidBase;
@@ -103,6 +103,15 @@ impl PathContext {
             .find_definition_by_id(definition_id)
             .expect("a resolution names a registered definition");
         match self {
+            Self::Type => match definition {
+                Definition::Contract(_)
+                | Definition::Interface(_)
+                | Definition::Library(_)
+                | Definition::Struct(_)
+                | Definition::Enum(_)
+                | Definition::UserDefinedValueType(_) => Ok(()),
+                _ => Err(IdentifierNotTypeName.into()),
+            },
             Self::Base => match definition {
                 Definition::Contract(_) | Definition::Interface(_) => Ok(()),
                 _ => Err(InvalidBase.into()),
@@ -118,9 +127,7 @@ impl PathContext {
                 Definition::Function(_) => Err(NonFreeOrLibraryFunctionInUsingDirective.into()),
                 _ => Err(IdentifierNotFunctionOrNotUnique.into()),
             },
-            Self::Type | Self::Override | Self::ModifierInvocation | Self::Event | Self::Error => {
-                Ok(())
-            }
+            Self::Override | Self::ModifierInvocation | Self::Event | Self::Error => Ok(()),
         }
     }
 

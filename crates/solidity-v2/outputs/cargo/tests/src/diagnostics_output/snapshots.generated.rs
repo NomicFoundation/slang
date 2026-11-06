@@ -1276,6 +1276,75 @@ mod resolution {
         }
     }
 
+    mod identifier_not_type_name {
+        use super::*;
+
+        #[test]
+        fn error() -> Result<()> {
+            run("resolution/identifier_not_type_name", "error")
+        }
+
+        #[test]
+        fn error_parameter_named_like_type() -> Result<()> {
+            run(
+                "resolution/identifier_not_type_name",
+                "error_parameter_named_like_type",
+            )
+        }
+
+        #[test]
+        fn event() -> Result<()> {
+            run("resolution/identifier_not_type_name", "event")
+        }
+
+        #[test]
+        fn event_parameter_named_like_type() -> Result<()> {
+            run(
+                "resolution/identifier_not_type_name",
+                "event_parameter_named_like_type",
+            )
+        }
+
+        #[test]
+        fn function() -> Result<()> {
+            run("resolution/identifier_not_type_name", "function")
+        }
+
+        #[test]
+        fn local_variable_shadows_struct() -> Result<()> {
+            run(
+                "resolution/identifier_not_type_name",
+                "local_variable_shadows_struct",
+            )
+        }
+
+        #[test]
+        fn modifier() -> Result<()> {
+            run("resolution/identifier_not_type_name", "modifier")
+        }
+
+        #[test]
+        fn parameter_shadows_struct() -> Result<()> {
+            run(
+                "resolution/identifier_not_type_name",
+                "parameter_shadows_struct",
+            )
+        }
+
+        #[test]
+        fn qualified_state_variable() -> Result<()> {
+            run(
+                "resolution/identifier_not_type_name",
+                "qualified_state_variable",
+            )
+        }
+
+        #[test]
+        fn state_variable() -> Result<()> {
+            run("resolution/identifier_not_type_name", "state_variable")
+        }
+    }
+
     mod identifier_redeclaration {
         use super::*;
 
