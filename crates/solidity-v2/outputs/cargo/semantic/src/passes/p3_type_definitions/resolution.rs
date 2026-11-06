@@ -19,22 +19,21 @@ use crate::binder::{Definition, Resolution, Scope, ScopeId};
 use crate::passes::common::constant_evaluator::{
     ConstantResolver, EvaluationError, evaluate_compile_time_constant,
 };
-use crate::passes::common::{
-    IdentifierPathTarget, PathResolution, node_location, resolve_identifier_path_as_type_in_scope,
-};
+use crate::passes::common::{PathContext, PathResolution, node_location, resolve_identifier_path};
 use crate::types::{
     ArrayType, DataLocation, FixedSizeArrayType, FunctionType, MappingType, TupleType, Type, TypeId,
 };
 
 impl Pass<'_> {
-    /// Resolves an `IdentifierPath` in a type context starting at the current
-    /// lexical scope.  Returns the resolution of the last reference.
-    pub(super) fn resolve_identifier_path_as_type(
+    /// Resolves an `IdentifierPath` written in `context`, starting at the
+    /// current lexical scope.
+    pub(super) fn resolve_identifier_path(
         &mut self,
         identifier_path: &ir::IdentifierPath,
+        context: PathContext,
     ) -> PathResolution {
         let scope_id = self.type_name_scope_id();
-        resolve_identifier_path_as_type_in_scope(self.binder, identifier_path, scope_id)
+        resolve_identifier_path(self.binder, identifier_path, scope_id, context)
     }
 
     /// The scope type names resolve in. Same as the current lexical scope,
@@ -56,18 +55,15 @@ impl Pass<'_> {
         }
     }
 
-    /// Resolves an `IdentifierPath` in a type context starting at the current
-    /// lexical scope, and reports its first identifier that does not name a
-    /// single declaration, expecting it to name a `target`.
-    pub(super) fn resolve_and_check_identifier_path_as_type(
+    /// Resolves an `IdentifierPath` written in `context`, and reports its
+    /// first identifier that does not name a declaration the path can use.
+    pub(super) fn resolve_and_check_identifier_path(
         &mut self,
         identifier_path: &ir::IdentifierPath,
-        target: IdentifierPathTarget,
+        context: PathContext,
     ) {
-        let path_resolution = self.resolve_identifier_path_as_type(identifier_path);
-        if let Some((identifier, kind)) =
-            path_resolution.unresolved_identifier(identifier_path, target)
-        {
+        let path_resolution = self.resolve_identifier_path(identifier_path, context);
+        if let Some((identifier, kind)) = path_resolution.diagnostic(identifier_path) {
             self.push_diagnostic(identifier, kind);
         }
     }

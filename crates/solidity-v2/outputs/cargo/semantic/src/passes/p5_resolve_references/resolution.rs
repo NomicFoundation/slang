@@ -12,8 +12,8 @@ use crate::binder::{
 };
 use crate::built_ins::BuiltInsResolver;
 use crate::passes::common::{
-    IdentifierPathTarget, find_definition_namespace_scope_id, namespace_member_not_found,
-    resolve_identifier_path_as_expression_in_scope, resolve_identifier_path_as_type_in_scope,
+    PathContext, find_definition_namespace_scope_id, namespace_member_not_found,
+    resolve_identifier_path,
 };
 use crate::types::{ContractType, InterfaceType, StructType, Type, TypeId, UserMetaType};
 
@@ -332,16 +332,18 @@ impl Pass<'_> {
         modifier_invocation: &ir::ModifierInvocation,
     ) {
         // Resolved before entering the function's scope, so this starts at
-        // the enclosing contract, or at the file for a free function.
+        // the enclosing contract, or at the file for a free function. A
+        // virtual modifier names its most derived override here: which one
+        // runs is decided per compiled contract, see
+        // `SemanticContext::resolve_modifier`.
         let identifier_path = &modifier_invocation.name;
-        let path_resolution = resolve_identifier_path_as_type_in_scope(
+        let path_resolution = resolve_identifier_path(
             self.binder,
             identifier_path,
             self.current_scope_id(),
+            PathContext::ModifierInvocation,
         );
-        if let Some((identifier, kind)) =
-            path_resolution.unresolved_identifier(identifier_path, IdentifierPathTarget::Modifier)
-        {
+        if let Some((identifier, kind)) = path_resolution.diagnostic(identifier_path) {
             self.push_diagnostic(identifier, kind);
         }
 
@@ -350,19 +352,6 @@ impl Pass<'_> {
         // verify that the initial symbol lookup is reachable from the
         // contract only (ie. it's a contract modifier, a modifier in a
         // base, or it's the identifier of a base of the current contract)
-
-        // A virtual modifier resolves to all of its overrides, most derived
-        // first. Keep that one: which override runs is decided per compiled
-        // contract, see `SemanticContext::resolve_modifier`.
-        if path_resolution.is_modifier_override_set()
-            && let Resolution::Ambiguous(definition_ids) = &path_resolution.resolution
-        {
-            let name = identifier_path
-                .last()
-                .expect("an identifier path has at least one identifier");
-            self.binder
-                .fixup_reference(name.id(), Resolution::Definition(definition_ids[0]));
-        }
     }
 
     /// Resolves the event of an `emit` or the error of a `revert`, reporting
@@ -371,16 +360,15 @@ impl Pass<'_> {
     pub(super) fn resolve_emit_or_revert_target(
         &mut self,
         identifier_path: &ir::IdentifierPath,
-        target: IdentifierPathTarget,
+        context: PathContext,
     ) {
-        let path_resolution = resolve_identifier_path_as_expression_in_scope(
+        let path_resolution = resolve_identifier_path(
             self.binder,
             identifier_path,
             self.current_scope_id(),
+            context,
         );
-        if let Some((identifier, kind)) =
-            path_resolution.unresolved_identifier(identifier_path, target)
-        {
+        if let Some((identifier, kind)) = path_resolution.diagnostic(identifier_path) {
             self.push_diagnostic(identifier, kind);
         } else if let Some(member) = self.unreachable_qualified_member(identifier_path) {
             self.binder
