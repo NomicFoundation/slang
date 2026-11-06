@@ -230,17 +230,16 @@ impl<'a> AnalysisBuilder<'a> {
         files: &[TestFile],
         diagnostics: &mut DiagnosticCollection,
     ) -> Output {
-        let mut binder = Binder::default();
+        let mut binder = Binder::new(self.language_version);
         let mut types = TypeRegistry::new(self.language_version);
         let file_node_mapper = FileNodeMapper::build_from(files);
 
-        p1_collect_definitions::run(files, &mut binder, self.language_version, diagnostics);
+        p1_collect_definitions::run(files, &mut binder, diagnostics);
         p2_linearise_contracts::run(files, &mut binder, diagnostics);
         if analyse >= Analyse::Types {
             p3_type_definitions::run(
                 files,
                 &mut binder,
-                self.language_version,
                 &mut types,
                 &file_node_mapper,
                 diagnostics,
@@ -253,7 +252,6 @@ impl<'a> AnalysisBuilder<'a> {
             drop(p4_compute_linearisations::run(
                 &binder,
                 &types,
-                self.language_version,
                 &file_node_mapper,
                 diagnostics,
             ));
@@ -268,7 +266,6 @@ impl<'a> AnalysisBuilder<'a> {
         if analyse >= Analyse::Yul {
             p6_resolve_yul::run(
                 &mut binder,
-                self.language_version,
                 self.evm_target,
                 &types,
                 &file_node_mapper,
