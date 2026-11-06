@@ -119,6 +119,7 @@ impl Pass<'_> {
     }
 
     fn resolve_symbol_in_type(&mut self, type_id: TypeId, symbol: &str) -> Resolution {
+        let current_contract_id = self.current_contract_node_id();
         let type_ = self.types.get_type_by_id(type_id);
 
         // Resolve direct members of the type first
@@ -130,11 +131,6 @@ impl Pass<'_> {
                 let scope_id = self.binder.scope_id_for_node_id(*definition_id).unwrap();
                 self.binder
                     .resolve_in_contract_scope(scope_id, symbol, ResolveOptions::External)
-                    .or_else(|| {
-                        self.built_ins_resolver()
-                            .lookup_member_of_type_id(type_id, symbol)
-                            .into()
-                    })
             }
             Type::Struct(StructType { definition_id, .. }) => {
                 let scope_id = self.binder.scope_id_for_node_id(*definition_id).unwrap();
@@ -168,7 +164,7 @@ impl Pass<'_> {
         Resolution::from(definition_ids).or_else(|| {
             // If still unresolved, try with a built-in
             self.built_ins_resolver()
-                .lookup_member_of_type_id(type_id, symbol)
+                .lookup_member_of_type_id(type_id, symbol, current_contract_id)
                 .into()
         })
     }
@@ -256,7 +252,7 @@ impl Pass<'_> {
                 self.types.implicitly_convertible_to_for_call(
                     receiver_type_id,
                     *type_id,
-                    function_type.is_externally_visible(),
+                    self.is_delegate_called_library_function(definition_id),
                 )
             })
     }

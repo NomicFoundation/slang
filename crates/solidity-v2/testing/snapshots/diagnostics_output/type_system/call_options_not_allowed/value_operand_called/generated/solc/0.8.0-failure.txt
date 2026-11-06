@@ -1,0 +1,11 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 1
+
+[TypeError 2622] Error: Expected callable expression before call options.
+   ╭─[input.sol:7:9]
+   │
+ 7 │         a{gas: 1000}();
+   │         ──────┬─────  
+   │               ╰─────── Error occurred here.
+───╯

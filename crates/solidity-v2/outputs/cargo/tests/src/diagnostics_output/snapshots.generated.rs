@@ -2033,11 +2033,29 @@ mod resolution {
         use super::*;
 
         #[test]
+        fn address_on_base_function() -> Result<()> {
+            run("resolution/member_not_found", "address_on_base_function")
+        }
+
+        #[test]
+        fn address_on_bound_library_function() -> Result<()> {
+            run(
+                "resolution/member_not_found",
+                "address_on_bound_library_function",
+            )
+        }
+
+        #[test]
         fn address_on_internal_function() -> Result<()> {
             run(
                 "resolution/member_not_found",
                 "address_on_internal_function",
             )
+        }
+
+        #[test]
+        fn address_on_library_function() -> Result<()> {
+            run("resolution/member_not_found", "address_on_library_function")
         }
 
         #[test]
@@ -2367,6 +2385,22 @@ mod resolution {
         }
 
         #[test]
+        fn selector_on_conditional_base_function() -> Result<()> {
+            run(
+                "resolution/member_not_found",
+                "selector_on_conditional_base_function",
+            )
+        }
+
+        #[test]
+        fn selector_on_conditional_library_function() -> Result<()> {
+            run(
+                "resolution/member_not_found",
+                "selector_on_conditional_library_function",
+            )
+        }
+
+        #[test]
         fn selector_on_error_instantiation() -> Result<()> {
             run(
                 "resolution/member_not_found",
@@ -2391,10 +2425,31 @@ mod resolution {
         }
 
         #[test]
+        fn selector_on_free_function() -> Result<()> {
+            run("resolution/member_not_found", "selector_on_free_function")
+        }
+
+        #[test]
         fn selector_on_internal_function() -> Result<()> {
             run(
                 "resolution/member_not_found",
                 "selector_on_internal_function",
+            )
+        }
+
+        #[test]
+        fn selector_on_own_function_via_contract_name() -> Result<()> {
+            run(
+                "resolution/member_not_found",
+                "selector_on_own_function_via_contract_name",
+            )
+        }
+
+        #[test]
+        fn selector_on_public_function_by_name() -> Result<()> {
+            run(
+                "resolution/member_not_found",
+                "selector_on_public_function_by_name",
             )
         }
 
@@ -2427,6 +2482,11 @@ mod resolution {
         #[test]
         fn string_literal_length() -> Result<()> {
             run("resolution/member_not_found", "string_literal_length")
+        }
+
+        #[test]
+        fn super_public_overload() -> Result<()> {
+            run("resolution/member_not_found", "super_public_overload")
         }
 
         #[test]
@@ -2568,6 +2628,22 @@ mod resolution {
         use super::*;
 
         #[test]
+        fn library_function_argument() -> Result<()> {
+            run(
+                "resolution/no_matching_callable_declaration",
+                "library_function_argument",
+            )
+        }
+
+        #[test]
+        fn library_public_overload_called_internally() -> Result<()> {
+            run(
+                "resolution/no_matching_callable_declaration",
+                "library_public_overload_called_internally",
+            )
+        }
+
+        #[test]
         fn named_arguments_incompatible_types() -> Result<()> {
             run(
                 "resolution/no_matching_callable_declaration",
@@ -2596,6 +2672,14 @@ mod resolution {
             run(
                 "resolution/no_matching_callable_declaration",
                 "positional_arguments",
+            )
+        }
+
+        #[test]
+        fn public_overload_called_internally() -> Result<()> {
+            run(
+                "resolution/no_matching_callable_declaration",
+                "public_overload_called_internally",
             )
         }
     }
@@ -6260,6 +6344,97 @@ mod type_system {
         #[test]
         fn zero() -> Result<()> {
             run("type_system/array_length", "zero")
+        }
+    }
+
+    mod call_options_not_allowed {
+        use super::*;
+
+        #[test]
+        fn array_creation() -> Result<()> {
+            run("type_system/call_options_not_allowed", "array_creation")
+        }
+
+        #[test]
+        fn bound_library_function() -> Result<()> {
+            run(
+                "type_system/call_options_not_allowed",
+                "bound_library_function",
+            )
+        }
+
+        #[test]
+        fn built_in_function() -> Result<()> {
+            run("type_system/call_options_not_allowed", "built_in_function")
+        }
+
+        #[test]
+        fn built_in_namespace() -> Result<()> {
+            run("type_system/call_options_not_allowed", "built_in_namespace")
+        }
+
+        #[test]
+        fn event_without_emit() -> Result<()> {
+            run("type_system/call_options_not_allowed", "event_without_emit")
+        }
+
+        #[test]
+        fn free_function() -> Result<()> {
+            run("type_system/call_options_not_allowed", "free_function")
+        }
+
+        #[test]
+        fn internal_function() -> Result<()> {
+            run("type_system/call_options_not_allowed", "internal_function")
+        }
+
+        #[test]
+        fn library_function() -> Result<()> {
+            run("type_system/call_options_not_allowed", "library_function")
+        }
+
+        #[test]
+        fn modifier() -> Result<()> {
+            run("type_system/call_options_not_allowed", "modifier")
+        }
+
+        #[test]
+        fn overloaded_internal_function() -> Result<()> {
+            run(
+                "type_system/call_options_not_allowed",
+                "overloaded_internal_function",
+            )
+        }
+
+        #[test]
+        fn public_function_by_name() -> Result<()> {
+            run(
+                "type_system/call_options_not_allowed",
+                "public_function_by_name",
+            )
+        }
+
+        #[test]
+        fn this_operand() -> Result<()> {
+            run("type_system/call_options_not_allowed", "this_operand")
+        }
+
+        #[test]
+        fn type_conversion() -> Result<()> {
+            run("type_system/call_options_not_allowed", "type_conversion")
+        }
+
+        #[test]
+        fn value_operand() -> Result<()> {
+            run("type_system/call_options_not_allowed", "value_operand")
+        }
+
+        #[test]
+        fn value_operand_called() -> Result<()> {
+            run(
+                "type_system/call_options_not_allowed",
+                "value_operand_called",
+            )
         }
     }
 
