@@ -6,8 +6,8 @@ use slang_solidity_v2_common::diagnostics::kinds::resolution::{
 use slang_solidity_v2_common::diagnostics::kinds::type_system::{
     CannotCallViaContractTypeName, ExplicitConversionNotAllowed, ExpressionNotAValue,
     ExpressionNotAnLValue, ExpressionNotCallable, IncompatibleConditionalBranches,
-    InvalidUtf8StringLiteral, LiteralTooLarge, NotAValueKind, PartiallyAppliedFunctionUsedAsValue,
-    WriteToConstant,
+    InvalidUtf8StringLiteral, LiteralTooLarge, NamedArgumentsInConversion, NotAValueKind,
+    PartiallyAppliedFunctionUsedAsValue, WriteToConstant, WrongArgumentCountInConversion,
 };
 use slang_solidity_v2_common::nodes::NodeId;
 use slang_solidity_v2_ir::ir;
@@ -1059,6 +1059,17 @@ impl Pass<'_> {
         Typing::Resolved(type_id)
     }
 
+    /// Reports an explicit conversion that is not given exactly one argument.
+    fn check_conversion_argument_count(
+        &mut self,
+        node: &ir::FunctionCallExpression,
+        arguments: &[ir::Expression],
+    ) {
+        if arguments.len() != 1 {
+            self.push_diagnostic(node, WrongArgumentCountInConversion);
+        }
+    }
+
     /// Collects the types of `arguments`, each of which is a value position.
     pub(super) fn collect_positional_argument_types(
         &mut self,
@@ -1273,6 +1284,7 @@ impl Pass<'_> {
             }) => {
                 // This is an explicit cast to the (meta-)type, eg. `uint(x)`.
                 let target_type_id = *target_type_id;
+                self.check_conversion_argument_count(node, arguments);
                 if let Some([argument_type_id]) = argument_types {
                     self.typing_of_cast(node, *argument_type_id, target_type_id)
                 } else {
@@ -1286,7 +1298,7 @@ impl Pass<'_> {
                 let definition_id = *definition_id;
                 match self.binder.find_definition_by_id(definition_id) {
                     Some(definition) if definition.is_type_conversion_target() => {
-                        // TODO(validation) SDR[868]: only one argument expected
+                        self.check_conversion_argument_count(node, arguments);
                         let type_id = self.type_id_of_type_definition(definition_id);
                         if let Some([argument_type_id]) = argument_types {
                             self.typing_of_cast(node, *argument_type_id, type_id)
@@ -1507,7 +1519,8 @@ impl Pass<'_> {
                 }
             }
             Type::MetaType(_) => {
-                // This is a cast to the given type and is not valid with named arguments
+                // A cast to the given type, which takes no named arguments.
+                self.push_diagnostic(node, NamedArgumentsInConversion);
                 (Typing::Unresolved, None)
             }
             Type::UserMetaType(UserMetaType { definition_id }) => {
@@ -1516,6 +1529,12 @@ impl Pass<'_> {
                 // of such struct in memory
                 let definition_id = *definition_id;
                 match self.binder.find_definition_by_id(definition_id) {
+                    Some(definition) if definition.is_type_conversion_target() => {
+                        // A cast to the type of the definition, which takes no
+                        // named arguments.
+                        self.push_diagnostic(node, NamedArgumentsInConversion);
+                        (Typing::Unresolved, None)
+                    }
                     Some(Definition::Struct(_)) => {
                         // struct construction
                         self.check_named_arguments_of_struct_construction(

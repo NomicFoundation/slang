@@ -7829,6 +7829,25 @@ mod type_system {
         }
     }
 
+    mod named_arguments_in_conversion {
+        use super::*;
+
+        #[test]
+        fn built_in_type() -> Result<()> {
+            run("type_system/named_arguments_in_conversion", "built_in_type")
+        }
+
+        #[test]
+        fn contract_type() -> Result<()> {
+            run("type_system/named_arguments_in_conversion", "contract_type")
+        }
+
+        #[test]
+        fn enum_type() -> Result<()> {
+            run("type_system/named_arguments_in_conversion", "enum_type")
+        }
+    }
+
     mod partially_applied_function_used_as_value {
         use super::*;
 
@@ -8383,6 +8402,47 @@ mod type_system {
         #[test]
         fn too_many_arguments() -> Result<()> {
             run("type_system/wrong_argument_count", "too_many_arguments")
+        }
+    }
+
+    mod wrong_argument_count_in_conversion {
+        use super::*;
+
+        #[test]
+        fn enum_type() -> Result<()> {
+            run(
+                "type_system/wrong_argument_count_in_conversion",
+                "enum_type",
+            )
+        }
+
+        #[test]
+        fn payable() -> Result<()> {
+            run("type_system/wrong_argument_count_in_conversion", "payable")
+        }
+
+        #[test]
+        fn two_arguments() -> Result<()> {
+            run(
+                "type_system/wrong_argument_count_in_conversion",
+                "two_arguments",
+            )
+        }
+
+        #[test]
+        fn user_defined_value_type() -> Result<()> {
+            run(
+                "type_system/wrong_argument_count_in_conversion",
+                "user_defined_value_type",
+            )
+        }
+
+        #[test]
+        fn without_arguments() -> Result<()> {
+            run(
+                "type_system/wrong_argument_count_in_conversion",
+                "without_arguments",
+            )
         }
     }
 }
