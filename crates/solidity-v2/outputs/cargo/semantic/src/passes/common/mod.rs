@@ -20,9 +20,8 @@ mod scope_stack;
 
 pub(crate) use node_extensions::node_location;
 pub(crate) use resolution::{
-    IdentifierPathTarget, Overridable, PathResolution, filter_overridden_definitions,
+    Overridable, PathContext, PathResolution, filter_overridden_definitions,
     filter_overridden_definitions_by_selector, find_definition_namespace_scope_id,
-    namespace_member_not_found, resolve_identifier_path_as_expression_in_scope,
-    resolve_identifier_path_as_type_in_scope,
+    namespace_member_not_found, resolve_identifier_path,
 };
 pub(crate) use scope_stack::ScopeStack;

@@ -16,7 +16,7 @@ use super::Pass;
 use crate::binder::{Definition, Reference, Resolution, Typing, UsingOperator};
 use crate::built_ins::InternalBuiltIn;
 use crate::passes::common::{
-    IdentifierPathTarget, filter_overridden_definitions, filter_overridden_definitions_by_selector,
+    PathContext, filter_overridden_definitions, filter_overridden_definitions_by_selector,
 };
 use crate::types::{
     AddressType, ArraySliceType, ArrayType, BytesType, FixedSizeArrayType, MappingType, MetaType,
@@ -766,7 +766,7 @@ impl Visitor for Pass<'_> {
 
     fn enter_emit_statement(&mut self, node: &ir::EmitStatement) -> bool {
         // Resolved on entering, since leaving reads the event's reference.
-        self.resolve_emit_or_revert_target(&node.event, IdentifierPathTarget::Event);
+        self.resolve_emit_or_revert_target(&node.event, PathContext::Event);
         true
     }
 
@@ -823,7 +823,7 @@ impl Visitor for Pass<'_> {
 
     fn enter_revert_statement(&mut self, node: &ir::RevertStatement) -> bool {
         // Resolved on entering, since leaving reads the error's reference.
-        self.resolve_emit_or_revert_target(&node.error, IdentifierPathTarget::Error);
+        self.resolve_emit_or_revert_target(&node.error, PathContext::Error);
         true
     }
 
