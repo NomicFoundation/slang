@@ -2668,6 +2668,20 @@ mod resolution {
             )
         }
     }
+
+    mod override_not_a_contract {
+        use super::*;
+
+        #[test]
+        fn function() -> Result<()> {
+            run("resolution/override_not_a_contract", "function")
+        }
+
+        #[test]
+        fn struct_definition() -> Result<()> {
+            run("resolution/override_not_a_contract", "struct_definition")
+        }
+    }
 }
 
 mod runner {

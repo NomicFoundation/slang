@@ -17,6 +17,7 @@ mod member_not_found;
 mod namespace_member_not_found;
 mod no_matching_callable_declaration;
 mod non_free_or_library_function_in_using_directive;
+mod override_not_a_contract;
 
 pub use ambiguous_reference::AmbiguousReference;
 pub use ambiguous_yul_reference::AmbiguousYulReference;
@@ -37,6 +38,7 @@ pub use member_not_found::MemberNotFound;
 pub use namespace_member_not_found::NamespaceMemberNotFound;
 pub use no_matching_callable_declaration::NoMatchingCallableDeclaration;
 pub use non_free_or_library_function_in_using_directive::NonFreeOrLibraryFunctionInUsingDirective;
+pub use override_not_a_contract::OverrideNotAContract;
 use serde::Serialize;
 
 use crate::diagnostics::kinds::DiagnosticKind;
@@ -94,6 +96,9 @@ define_diagnostic_kind! {
         /// The library name in a `using ... for` directive did not resolve to
         /// a unique library.
         IdentifierNotLibraryName(IdentifierNotLibraryName),
+        /// An entry of an `override` list is neither a contract nor an
+        /// interface.
+        OverrideNotAContract(OverrideNotAContract),
         /// A type name resolved to a declaration that is not a type.
         IdentifierNotTypeName(IdentifierNotTypeName),
 

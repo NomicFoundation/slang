@@ -1,0 +1,9 @@
+{
+  "override_language_versions": {
+    "specifier": {
+      "type": "From",
+      "from": "0.8.2"
+    },
+    "reason": "solc 0.8.0 and 0.8.1 crash when an `override` list names a function, so they cannot run this input at all. Every later version reports it instead."
+  }
+}
