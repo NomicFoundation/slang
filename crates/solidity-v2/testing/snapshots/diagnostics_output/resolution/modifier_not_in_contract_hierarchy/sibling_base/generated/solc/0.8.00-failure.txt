@@ -1,0 +1,11 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 1
+
+[TypeError 9428] Error: Can only use modifiers defined in the current contract or in base contracts.
+    ╭─[input.sol:15:25]
+    │
+ 15 │     function f() public C.m {}
+    │                         ─┬─  
+    │                          ╰─── Error occurred here.
+────╯
