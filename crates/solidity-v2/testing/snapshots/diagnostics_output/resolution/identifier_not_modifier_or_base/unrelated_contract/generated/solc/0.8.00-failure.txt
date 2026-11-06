@@ -1,0 +1,11 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 1
+
+[TypeError 4659] Error: Referenced declaration is neither modifier nor base class.
+   ╭─[input.sol:8:19]
+   │
+ 8 │     constructor() A() {}
+   │                   ─┬─  
+   │                    ╰─── Error occurred here.
+───╯

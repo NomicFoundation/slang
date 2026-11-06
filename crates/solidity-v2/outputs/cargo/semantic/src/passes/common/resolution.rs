@@ -4,8 +4,9 @@ use std::sync::Arc;
 use slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind;
 use slang_solidity_v2_common::diagnostics::kinds::resolution::{
     AmbiguousReference, IdentifierNotFound, IdentifierNotFunctionOrNotUnique,
-    IdentifierNotLibraryName, IdentifierNotNamespace, IdentifierNotTypeName,
-    NamespaceMemberNotFound, NonFreeOrLibraryFunctionInUsingDirective, OverrideNotAContract,
+    IdentifierNotLibraryName, IdentifierNotModifierOrBase, IdentifierNotNamespace,
+    IdentifierNotTypeName, NamespaceMemberNotFound, NonFreeOrLibraryFunctionInUsingDirective,
+    OverrideNotAContract,
 };
 use slang_solidity_v2_common::diagnostics::kinds::semantic::OverridableKind;
 use slang_solidity_v2_common::diagnostics::kinds::type_system::InvalidBase;
@@ -27,9 +28,9 @@ pub(crate) enum PathContext {
     Base,
     /// An entry of an `override` list.
     Override,
-    /// A modifier invocation: a modifier, or a base whose constructor is
-    /// invoked.
-    ModifierInvocation,
+    /// A modifier invocation: a modifier or, on the constructor of
+    /// `constructor_of`, a base whose constructor is invoked.
+    ModifierInvocation { constructor_of: Option<NodeId> },
     /// The library of a `using L for` directive.
     UsingLibrary,
     /// A function of a `using {f} for` directive.
@@ -50,7 +51,7 @@ impl PathContext {
             Self::Type
             | Self::Base
             | Self::Override
-            | Self::ModifierInvocation
+            | Self::ModifierInvocation { .. }
             | Self::UsingLibrary
             | Self::UsingFunction => Binder::resolve_in_scope_as_namespace,
         }
@@ -62,7 +63,7 @@ impl PathContext {
     fn accepts_set(self, binder: &Binder, definition_ids: &[NodeId]) -> bool {
         match self {
             Self::Event => true,
-            Self::ModifierInvocation => definition_ids.iter().all(|definition_id| {
+            Self::ModifierInvocation { .. } => definition_ids.iter().all(|definition_id| {
                 matches!(
                     binder.find_definition_by_id(*definition_id),
                     Some(Definition::Modifier(_))
@@ -131,7 +132,18 @@ impl PathContext {
                 Definition::Function(_) => Err(NonFreeOrLibraryFunctionInUsingDirective.into()),
                 _ => Err(IdentifierNotFunctionOrNotUnique.into()),
             },
-            Self::ModifierInvocation | Self::Event | Self::Error => Ok(()),
+            Self::ModifierInvocation { constructor_of } => match definition {
+                Definition::Modifier(_) => Ok(()),
+                Definition::Contract(_) | Definition::Interface(_)
+                    if constructor_of.is_some_and(|contract_id| {
+                        is_base_of(binder, definition_id, contract_id)
+                    }) =>
+                {
+                    Ok(())
+                }
+                _ => Err(IdentifierNotModifierOrBase.into()),
+            },
+            Self::Event | Self::Error => Ok(()),
         }
     }
 
@@ -144,7 +156,7 @@ impl PathContext {
             Self::Type
             | Self::Base
             | Self::Override
-            | Self::ModifierInvocation
+            | Self::ModifierInvocation { .. }
             | Self::Event
             | Self::Error => None,
         }
@@ -162,6 +174,15 @@ fn is_free_or_library_function(binder: &Binder, definition_id: NodeId) -> bool {
                 Some(Definition::Library(_))
             )
         })
+}
+
+/// Whether `base_id` is one of the bases of `contract_id`. A contract whose
+/// bases failed to linearise is reported on its own, so anything may be one of
+/// its bases.
+fn is_base_of(binder: &Binder, base_id: NodeId, contract_id: NodeId) -> bool {
+    binder
+        .get_linearised_bases(contract_id)
+        .is_none_or(|bases| bases.iter().skip(1).any(|base| *base == base_id))
 }
 
 /// The first identifier of an `IdentifierPath` that fails to resolve to a
@@ -311,7 +332,7 @@ pub(crate) fn resolve_identifier_path(
             && let Resolution::Ambiguous(definition_ids) = &resolution
             && context.accepts_set(binder, definition_ids)
         {
-            if matches!(context, PathContext::ModifierInvocation) {
+            if matches!(context, PathContext::ModifierInvocation { .. }) {
                 resolution = Resolution::Definition(definition_ids[0]);
                 binder.fixup_reference(identifier.id(), resolution.clone());
             }
