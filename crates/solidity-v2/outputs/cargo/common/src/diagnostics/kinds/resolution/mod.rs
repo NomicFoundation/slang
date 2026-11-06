@@ -8,6 +8,7 @@ mod identifier_not_found;
 mod identifier_not_function_or_not_unique;
 mod identifier_not_library_name;
 mod identifier_not_namespace;
+mod identifier_not_type_name;
 mod identifier_redeclaration;
 mod imported_declaration_not_found;
 mod incompatible_built_in_target;
@@ -27,6 +28,7 @@ pub use identifier_not_found::IdentifierNotFound;
 pub use identifier_not_function_or_not_unique::IdentifierNotFunctionOrNotUnique;
 pub use identifier_not_library_name::IdentifierNotLibraryName;
 pub use identifier_not_namespace::IdentifierNotNamespace;
+pub use identifier_not_type_name::IdentifierNotTypeName;
 pub use identifier_redeclaration::IdentifierRedeclaration;
 pub use imported_declaration_not_found::ImportedDeclarationNotFound;
 pub use incompatible_built_in_target::IncompatibleBuiltInTarget;
@@ -92,6 +94,8 @@ define_diagnostic_kind! {
         /// The library name in a `using ... for` directive did not resolve to
         /// a unique library.
         IdentifierNotLibraryName(IdentifierNotLibraryName),
+        /// A type name resolved to a declaration that is not a type.
+        IdentifierNotTypeName(IdentifierNotTypeName),
 
         /// A built-in is not compatible with the currently selected language version.
         IncompatibleBuiltInVersion(IncompatibleBuiltInVersion),
