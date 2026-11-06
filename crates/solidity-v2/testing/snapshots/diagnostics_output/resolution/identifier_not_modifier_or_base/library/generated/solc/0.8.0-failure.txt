@@ -1,0 +1,11 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 1
+
+[TypeError 1130] Error: Invalid use of a library name.
+   ╭─[input.sol:8:25]
+   │
+ 8 │     function f() public L {}
+   │                         ┬  
+   │                         ╰── Error occurred here.
+───╯

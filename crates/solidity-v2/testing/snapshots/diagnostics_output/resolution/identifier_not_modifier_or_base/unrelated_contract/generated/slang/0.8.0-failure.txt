@@ -1,0 +1,11 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 1
+
+[resolution/identifier-not-modifier-or-base] Error: Identifier is neither a modifier nor a base contract.
+   ╭─[input.sol:8:19]
+   │
+ 8 │     constructor() A() {}
+   │                   ┬  
+   │                   ╰── Error occurred here.
+───╯

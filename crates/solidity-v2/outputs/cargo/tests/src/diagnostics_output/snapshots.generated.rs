@@ -1216,6 +1216,57 @@ mod resolution {
         }
     }
 
+    mod identifier_not_modifier_or_base {
+        use super::*;
+
+        #[test]
+        fn base_on_function() -> Result<()> {
+            run(
+                "resolution/identifier_not_modifier_or_base",
+                "base_on_function",
+            )
+        }
+
+        #[test]
+        fn event() -> Result<()> {
+            run("resolution/identifier_not_modifier_or_base", "event")
+        }
+
+        #[test]
+        fn function() -> Result<()> {
+            run("resolution/identifier_not_modifier_or_base", "function")
+        }
+
+        #[test]
+        fn interface_base_on_constructor() -> Result<()> {
+            run(
+                "resolution/identifier_not_modifier_or_base",
+                "interface_base_on_constructor",
+            )
+        }
+
+        #[test]
+        fn library() -> Result<()> {
+            run("resolution/identifier_not_modifier_or_base", "library")
+        }
+
+        #[test]
+        fn state_variable() -> Result<()> {
+            run(
+                "resolution/identifier_not_modifier_or_base",
+                "state_variable",
+            )
+        }
+
+        #[test]
+        fn unrelated_contract() -> Result<()> {
+            run(
+                "resolution/identifier_not_modifier_or_base",
+                "unrelated_contract",
+            )
+        }
+    }
+
     mod identifier_not_namespace {
         use super::*;
 

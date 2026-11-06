@@ -327,9 +327,13 @@ impl Pass<'_> {
                 .all(|parameter_type_id| *parameter_type_id == operand_type_id)
     }
 
+    /// Resolves an invocation in the header of a function, or of a
+    /// constructor when `is_constructor`, where it may also call a base's
+    /// constructor.
     pub(super) fn resolve_modifier_invocation(
         &mut self,
         modifier_invocation: &ir::ModifierInvocation,
+        is_constructor: bool,
     ) {
         // Resolved before entering the function's scope, so this starts at
         // the enclosing contract, or at the file for a free function. A
@@ -337,21 +341,23 @@ impl Pass<'_> {
         // runs is decided per compiled contract, see
         // `SemanticContext::resolve_modifier`.
         let identifier_path = &modifier_invocation.name;
+        let constructor_of = if is_constructor {
+            self.current_contract_node_id()
+        } else {
+            None
+        };
         let path_resolution = resolve_identifier_path(
             self.binder,
             identifier_path,
             self.current_scope_id(),
-            PathContext::ModifierInvocation,
+            PathContext::ModifierInvocation { constructor_of },
         );
         if let Some((identifier, kind)) = path_resolution.diagnostic(identifier_path) {
             self.push_diagnostic(identifier, kind);
         }
 
-        // TODO(validation) SDR[35]: the found definition(s) must be modifiers
-        // and be in the current contract hierarchy. We could potentially
-        // verify that the initial symbol lookup is reachable from the
-        // contract only (ie. it's a contract modifier, a modifier in a
-        // base, or it's the identifier of a base of the current contract)
+        // TODO(validation) SDR[35]: a modifier must also be declared in the
+        // current contract hierarchy.
     }
 
     /// Resolves the event of an `emit` or the error of a `revert`, reporting

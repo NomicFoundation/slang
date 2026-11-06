@@ -7,6 +7,7 @@ mod external_declaration_shadowing;
 mod identifier_not_found;
 mod identifier_not_function_or_not_unique;
 mod identifier_not_library_name;
+mod identifier_not_modifier_or_base;
 mod identifier_not_namespace;
 mod identifier_not_type_name;
 mod identifier_redeclaration;
@@ -28,6 +29,7 @@ pub use external_declaration_shadowing::ExternalDeclarationShadowing;
 pub use identifier_not_found::IdentifierNotFound;
 pub use identifier_not_function_or_not_unique::IdentifierNotFunctionOrNotUnique;
 pub use identifier_not_library_name::IdentifierNotLibraryName;
+pub use identifier_not_modifier_or_base::IdentifierNotModifierOrBase;
 pub use identifier_not_namespace::IdentifierNotNamespace;
 pub use identifier_not_type_name::IdentifierNotTypeName;
 pub use identifier_redeclaration::IdentifierRedeclaration;
@@ -96,6 +98,8 @@ define_diagnostic_kind! {
         /// The library name in a `using ... for` directive did not resolve to
         /// a unique library.
         IdentifierNotLibraryName(IdentifierNotLibraryName),
+        /// A modifier invocation names neither a modifier nor a base contract.
+        IdentifierNotModifierOrBase(IdentifierNotModifierOrBase),
         /// An entry of an `override` list is neither a contract nor an
         /// interface.
         OverrideNotAContract(OverrideNotAContract),
