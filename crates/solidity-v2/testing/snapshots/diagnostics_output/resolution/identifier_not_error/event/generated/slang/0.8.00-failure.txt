@@ -1,0 +1,27 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 3
+
+[syntax/incompatible-syntax-version] Error: This syntax was introduced in version '0.8.22'.
+   ╭─[input.sol:5:1]
+   │
+ 5 │ event E();
+   │ ─────┬────  
+   │      ╰────── Error occurred here.
+───╯
+
+[syntax/incompatible-syntax-version] Error: This syntax was introduced in version '0.8.4'.
+   ╭─[input.sol:9:9]
+   │
+ 9 │         revert E();
+   │         ─────┬─────  
+   │              ╰─────── Error occurred here.
+───╯
+
+[resolution/identifier-not-error] Error: Identifier does not name an error.
+   ╭─[input.sol:9:16]
+   │
+ 9 │         revert E();
+   │                ┬  
+   │                ╰── Error occurred here.
+───╯

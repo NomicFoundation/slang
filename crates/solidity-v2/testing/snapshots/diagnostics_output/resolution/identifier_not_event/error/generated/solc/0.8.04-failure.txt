@@ -1,0 +1,11 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 1
+
+[TypeError 9292] Error: Expression has to be an event invocation.
+   ╭─[input.sol:9:14]
+   │
+ 9 │         emit Er();
+   │              ─┬  
+   │               ╰── Error occurred here.
+───╯

@@ -1,0 +1,19 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 2
+
+[syntax/incompatible-syntax-version] Error: This syntax was introduced in version '0.8.4'.
+   ╭─[input.sol:5:1]
+   │
+ 5 │ error Er();
+   │ ─────┬─────  
+   │      ╰─────── Error occurred here.
+───╯
+
+[resolution/identifier-not-event] Error: Identifier does not name an event.
+   ╭─[input.sol:9:14]
+   │
+ 9 │         emit Er();
+   │              ─┬  
+   │               ╰── Error occurred here.
+───╯
