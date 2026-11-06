@@ -148,6 +148,10 @@ pub(crate) enum ResolveOptions {
     /// Use all bases and only excludes private members in bases types (used for
     /// identifier paths, eg. type names).
     Qualified,
+    /// Only the contract's own members, reached through its name used as a
+    /// value (eg. `emit C.E()` or `C.f.selector`): neither a private member
+    /// nor a modifier, not even from within the contract itself.
+    Declared,
     /// Starts at `node_id` and proceeds in order for an external lookup.
     This(NodeId),
     /// Starts at the contract _following_ `node_id` (ie. its parent) for an
@@ -171,6 +175,9 @@ impl ResolveOptions {
                 in_own_contract
                     || definition.is_internally_visible()
                     || definition.is_externally_visible()
+            }
+            Self::Declared => {
+                !definition.is_private() && !matches!(definition, Definition::Modifier(_))
             }
             Self::This(_) | Self::External => definition.is_externally_visible(),
             // `super` reaches the implemented functions of the bases, and
@@ -642,6 +649,8 @@ impl Binder {
                 ResolveOptions::Internal | ResolveOptions::External | ResolveOptions::Qualified => {
                     linearisations.as_slice()
                 }
+                // The contract itself comes first in its linearisation.
+                ResolveOptions::Declared => &linearisations[..1],
                 ResolveOptions::This(node_id) => {
                     if let Some(index) = linearisations.iter().position(|id| *id == node_id) {
                         &linearisations[index..]
@@ -982,30 +991,18 @@ impl Binder {
     /// used when resolving members in an identifier path in a value context
     /// (eg. `emit C.E()`, or `C.f.selector`) as opposed to a typing context
     /// (eg. `C.S var`) where the member is searched in all inherited bases.
-    /// Neither a private member nor a modifier is reachable this way, not even
-    /// from within its own contract or library.
+    /// See `ResolveOptions::Declared` for what a contract exposes this way.
     pub(crate) fn resolve_in_scope_as_expression_member(
         &self,
         scope_id: ScopeId,
         symbol: &str,
     ) -> Resolution {
         match self.get_scope_by_id(scope_id) {
-            Scope::Contract(contract_scope) => {
-                let Some(definitions) = contract_scope.definitions.get(symbol) else {
-                    return Resolution::Unresolved;
-                };
-                let is_reachable = |definition_id: &NodeId| {
-                    let definition = &self.definitions[definition_id];
-                    !definition.is_private() && !matches!(definition, Definition::Modifier(_))
-                };
-                if definitions.iter().all(is_reachable) {
-                    Resolution::from(definitions.as_slice())
-                } else {
-                    let results: DefinitionIds =
-                        definitions.iter().copied().filter(is_reachable).collect();
-                    Resolution::from(results)
-                }
-            }
+            Scope::Contract(contract_scope) => self.resolve_in_contract_scope_internal(
+                contract_scope,
+                symbol,
+                ResolveOptions::Declared,
+            ),
             _ => self.resolve_in_scope_as_namespace(scope_id, symbol),
         }
     }
