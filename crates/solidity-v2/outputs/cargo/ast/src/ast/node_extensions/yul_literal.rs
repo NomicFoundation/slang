@@ -16,12 +16,12 @@ impl YulLiteral {
                 .ir_node
                 .unparse()
                 .parse()
-                .expect("the parser validated this decimal literal"),
+                .expect("semantic analysis rejects Yul decimal literals wider than 256 bits"),
             YulLiteral::HexLiteral(hex) => hex
                 .ir_node
                 .unparse()
                 .parse()
-                .expect("the parser validated this hex literal"),
+                .expect("semantic analysis rejects Yul hex literals wider than 256 bits"),
             YulLiteral::StringLiteral(string) => Self::pack_word(
                 &literals::value_of_string_literals(std::slice::from_ref(&string.ir_node)),
             ),
