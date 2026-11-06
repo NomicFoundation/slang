@@ -195,23 +195,19 @@ impl Pass<'_> {
         // runs is decided per compiled contract, see
         // `SemanticContext::resolve_modifier`.
         let identifier_path = &modifier_invocation.name;
-        let constructor_of = if is_constructor {
-            self.current_contract_node_id()
-        } else {
-            None
+        let context = PathContext::ModifierInvocation {
+            contract_id: self.current_contract_node_id(),
+            is_constructor,
         };
         let path_resolution = resolve_identifier_path(
             self.binder,
             identifier_path,
             self.current_scope_id(),
-            PathContext::ModifierInvocation { constructor_of },
+            context,
         );
         if let Some((identifier, kind)) = path_resolution.diagnostic(identifier_path) {
             self.push_diagnostic(identifier, kind);
         }
-
-        // TODO(validation) SDR[35]: a modifier must also be declared in the
-        // current contract hierarchy.
     }
 
     /// Resolves the event of an `emit` or the error of a `revert`, reporting

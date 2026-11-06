@@ -5,8 +5,8 @@ use slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind;
 use slang_solidity_v2_common::diagnostics::kinds::resolution::{
     AmbiguousReference, IdentifierNotError, IdentifierNotEvent, IdentifierNotFound,
     IdentifierNotFunctionOrNotUnique, IdentifierNotLibraryName, IdentifierNotModifierOrBase,
-    IdentifierNotNamespace, IdentifierNotTypeName, NamespaceMemberNotFound,
-    NonFreeOrLibraryFunctionInUsingDirective, OverrideNotAContract,
+    IdentifierNotNamespace, IdentifierNotTypeName, ModifierNotInContractHierarchy,
+    NamespaceMemberNotFound, NonFreeOrLibraryFunctionInUsingDirective, OverrideNotAContract,
 };
 use slang_solidity_v2_common::diagnostics::kinds::semantic::OverridableKind;
 use slang_solidity_v2_common::diagnostics::kinds::type_system::InvalidBase;
@@ -28,9 +28,13 @@ pub(crate) enum PathContext {
     Base,
     /// An entry of an `override` list.
     Override,
-    /// A modifier invocation: a modifier or, on the constructor of
-    /// `constructor_of`, a base whose constructor is invoked.
-    ModifierInvocation { constructor_of: Option<NodeId> },
+    /// A modifier invocation in the header of a function of `contract_id`,
+    /// if any: a modifier of its hierarchy or, on its constructor, a base
+    /// whose constructor is invoked.
+    ModifierInvocation {
+        contract_id: Option<NodeId>,
+        is_constructor: bool,
+    },
     /// The library of a `using L for` directive.
     UsingLibrary,
     /// A function of a `using {f} for` directive.
@@ -130,12 +134,25 @@ impl PathContext {
                 Definition::Function(_) => Err(NonFreeOrLibraryFunctionInUsingDirective.into()),
                 _ => Err(IdentifierNotFunctionOrNotUnique.into()),
             },
-            Self::ModifierInvocation { constructor_of } => match definition {
-                Definition::Modifier(_) => Ok(()),
+            Self::ModifierInvocation {
+                contract_id,
+                is_constructor,
+            } => match definition {
+                // A free function cannot have modifiers at all, which is
+                // reported on its own.
+                Definition::Modifier(_) => match contract_id {
+                    Some(contract_id)
+                        if !is_in_hierarchy_of(binder, definition_id, contract_id) =>
+                    {
+                        Err(ModifierNotInContractHierarchy.into())
+                    }
+                    _ => Ok(()),
+                },
                 Definition::Contract(_) | Definition::Interface(_)
-                    if constructor_of.is_some_and(|contract_id| {
-                        is_base_of(binder, definition_id, contract_id)
-                    }) =>
+                    if is_constructor
+                        && contract_id.is_some_and(|contract_id| {
+                            is_base_of(binder, definition_id, contract_id)
+                        }) =>
                 {
                     Ok(())
                 }
@@ -188,6 +205,23 @@ fn is_base_of(binder: &Binder, base_id: NodeId, contract_id: NodeId) -> bool {
     binder
         .get_linearised_bases(contract_id)
         .is_none_or(|bases| bases.iter().skip(1).any(|base| *base == base_id))
+}
+
+/// Whether the member `member_id` is declared in `contract_id` or in one of its
+/// bases. A library has no bases. A contract whose bases failed to linearise
+/// is reported on its own, so any member may be in its hierarchy.
+fn is_in_hierarchy_of(binder: &Binder, member_id: NodeId, contract_id: NodeId) -> bool {
+    let Some(owner_id) = binder.enclosing_definition_node_id(member_id) else {
+        return false;
+    };
+    owner_id == contract_id
+        || match binder.get_linearised_bases(contract_id) {
+            Some(bases) => bases.contains(&owner_id),
+            None => !matches!(
+                binder.find_definition_by_id(contract_id),
+                Some(Definition::Library(_))
+            ),
+        }
 }
 
 /// The first identifier of an `IdentifierPath` that fails to resolve to a

@@ -2630,6 +2630,50 @@ mod resolution {
         }
     }
 
+    mod modifier_not_in_contract_hierarchy {
+        use super::*;
+
+        #[test]
+        fn base_modifier_qualified() -> Result<()> {
+            run(
+                "resolution/modifier_not_in_contract_hierarchy",
+                "base_modifier_qualified",
+            )
+        }
+
+        #[test]
+        fn library_modifier() -> Result<()> {
+            run(
+                "resolution/modifier_not_in_contract_hierarchy",
+                "library_modifier",
+            )
+        }
+
+        #[test]
+        fn library_own_modifier() -> Result<()> {
+            run(
+                "resolution/modifier_not_in_contract_hierarchy",
+                "library_own_modifier",
+            )
+        }
+
+        #[test]
+        fn sibling_base() -> Result<()> {
+            run(
+                "resolution/modifier_not_in_contract_hierarchy",
+                "sibling_base",
+            )
+        }
+
+        #[test]
+        fn unrelated_contract() -> Result<()> {
+            run(
+                "resolution/modifier_not_in_contract_hierarchy",
+                "unrelated_contract",
+            )
+        }
+    }
+
     mod namespace_member_not_found {
         use super::*;
 
