@@ -8,7 +8,7 @@ use slang_solidity_v2_common::files::FileId;
 use slang_solidity_v2_common::nodes::NodeId;
 use slang_solidity_v2_ir::ir;
 
-use super::common::{IdentifierPathTarget, resolve_identifier_path_as_type_in_scope};
+use super::common::{PathContext, resolve_identifier_path};
 use crate::binder::{Binder, ContractDefinition, Definition, InterfaceDefinition, ScopeId};
 use crate::context::SemanticFile;
 
@@ -109,17 +109,17 @@ impl<'a> Pass<'a> {
     ) -> Vec<NodeId> {
         let mut resolved_bases = Vec::new();
         for inheritance_type in types.iter() {
-            let path_resolution = resolve_identifier_path_as_type_in_scope(
+            let path_resolution = resolve_identifier_path(
                 self.binder,
                 &inheritance_type.type_name,
                 scope_id,
+                PathContext::Base,
             );
             match path_resolution.resolution.as_definition_id() {
                 None => {
-                    if let Some((identifier, kind)) = path_resolution.unresolved_identifier(
-                        &inheritance_type.type_name,
-                        IdentifierPathTarget::Contract,
-                    ) {
+                    if let Some((identifier, kind)) =
+                        path_resolution.diagnostic(&inheritance_type.type_name)
+                    {
                         self.diagnostics
                             .push(self.file_id.clone(), identifier.range.clone(), kind);
                     }
