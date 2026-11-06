@@ -291,7 +291,7 @@ impl Visitor for Pass<'_> {
         // reaches zero at the last chain member (before its value subtree is
         // visited), so a mapping nested inside e.g. a function-type value is
         // correctly treated as a new namespace root.
-        if self.language_version >= LanguageVersion::V0_8_18 {
+        if self.binder.language_version() >= LanguageVersion::V0_8_18 {
             if self.nested_mappings_to_skip > 0 {
                 self.nested_mappings_to_skip -= 1;
             } else {
@@ -344,7 +344,7 @@ impl Visitor for Pass<'_> {
     // an array length, which is evaluated in the definition's own scope when
     // typing.
     fn enter_event_definition(&mut self, node: &ir::EventDefinition) -> bool {
-        if self.language_version < LanguageVersion::V0_8_5 {
+        if self.binder.language_version() < LanguageVersion::V0_8_5 {
             self.enter_scope_for_node_id(node.id());
         }
         true
@@ -352,7 +352,7 @@ impl Visitor for Pass<'_> {
 
     fn leave_event_definition(&mut self, node: &ir::EventDefinition) {
         self.mark_user_meta_type_node(node.id());
-        if self.language_version >= LanguageVersion::V0_8_5 {
+        if self.binder.language_version() >= LanguageVersion::V0_8_5 {
             self.enter_scope_for_node_id(node.id());
         }
 
@@ -383,7 +383,7 @@ impl Visitor for Pass<'_> {
     }
 
     fn enter_error_definition(&mut self, node: &ir::ErrorDefinition) -> bool {
-        if self.language_version < LanguageVersion::V0_8_5 {
+        if self.binder.language_version() < LanguageVersion::V0_8_5 {
             self.enter_scope_for_node_id(node.id());
         }
         true
@@ -391,7 +391,7 @@ impl Visitor for Pass<'_> {
 
     fn leave_error_definition(&mut self, node: &ir::ErrorDefinition) {
         self.mark_user_meta_type_node(node.id());
-        if self.language_version >= LanguageVersion::V0_8_5 {
+        if self.binder.language_version() >= LanguageVersion::V0_8_5 {
             self.enter_scope_for_node_id(node.id());
         }
 

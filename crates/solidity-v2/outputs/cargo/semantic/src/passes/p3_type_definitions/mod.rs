@@ -2,7 +2,6 @@ use slang_solidity_v2_common::collections::Set;
 use slang_solidity_v2_common::diagnostics::DiagnosticCollection;
 use slang_solidity_v2_common::diagnostics::kinds::type_system::TypeTooLargeForStorage;
 use slang_solidity_v2_common::nodes::NodeId;
-use slang_solidity_v2_common::versions::LanguageVersion;
 use slang_solidity_v2_ir::ir;
 
 use crate::binder::{Binder, Definition, ScopeId};
@@ -28,20 +27,12 @@ mod visitor;
 pub fn run(
     files: &[impl SemanticFile],
     binder: &mut Binder,
-    language_version: LanguageVersion,
     types: &mut TypeRegistry,
     file_node_mapper: &FileNodeMapper,
     diagnostics: &mut DiagnosticCollection,
 ) {
     for file in files {
-        Pass::visit_file(
-            file,
-            binder,
-            language_version,
-            types,
-            file_node_mapper,
-            diagnostics,
-        );
+        Pass::visit_file(file, binder, types, file_node_mapper, diagnostics);
     }
 
     // TODO: move the recursive struct check in p8 to this pass, so that
@@ -53,7 +44,6 @@ pub fn run(
         Pass::visit_file_state_variables(
             file,
             binder,
-            language_version,
             types,
             file_node_mapper,
             diagnostics,
@@ -65,7 +55,6 @@ pub fn run(
 struct Pass<'a> {
     scope_stack: ScopeStack,
     binder: &'a mut Binder,
-    language_version: LanguageVersion,
     types: &'a mut TypeRegistry,
     file_node_mapper: &'a FileNodeMapper,
     diagnostics: &'a mut DiagnosticCollection,
@@ -89,7 +78,6 @@ impl<'a> Pass<'a> {
     fn visit_file(
         file: &'a impl SemanticFile,
         binder: &'a mut Binder,
-        language_version: LanguageVersion,
         types: &'a mut TypeRegistry,
         file_node_mapper: &'a FileNodeMapper,
         diagnostics: &'a mut DiagnosticCollection,
@@ -97,7 +85,6 @@ impl<'a> Pass<'a> {
         let mut pass = Self {
             scope_stack: ScopeStack::default(),
             binder,
-            language_version,
             types,
             file_node_mapper,
             diagnostics,
@@ -118,7 +105,6 @@ impl<'a> Pass<'a> {
     fn visit_file_state_variables(
         file: &'a impl SemanticFile,
         binder: &'a mut Binder,
-        language_version: LanguageVersion,
         types: &'a mut TypeRegistry,
         file_node_mapper: &'a FileNodeMapper,
         diagnostics: &'a mut DiagnosticCollection,
@@ -127,7 +113,6 @@ impl<'a> Pass<'a> {
         let mut pass = Self {
             scope_stack: ScopeStack::default(),
             binder,
-            language_version,
             types,
             file_node_mapper,
             diagnostics,

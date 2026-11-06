@@ -5,7 +5,6 @@ use slang_solidity_v2_common::diagnostics::kinds::resolution::{
 };
 use slang_solidity_v2_common::evm_targets::EvmTarget;
 use slang_solidity_v2_common::nodes::NodeId;
-use slang_solidity_v2_common::versions::LanguageVersion;
 use slang_solidity_v2_ir::ir;
 use slang_solidity_v2_ir::ir::{NodeIdentity, TextRange};
 
@@ -40,7 +39,6 @@ use structure_checks::YulForLoopClause;
 /// references a Yul definition.
 pub fn run(
     binder: &mut Binder,
-    language_version: LanguageVersion,
     evm_target: EvmTarget,
     types: &TypeRegistry,
     file_node_mapper: &FileNodeMapper,
@@ -57,7 +55,6 @@ pub fn run(
     for block in assembly_blocks.values_mut() {
         Pass::visit_assembly_statement(
             binder,
-            language_version,
             evm_target,
             types,
             file_node_mapper,
@@ -70,7 +67,6 @@ pub fn run(
 
 struct Pass<'a> {
     file_node_mapper: &'a FileNodeMapper,
-    language_version: LanguageVersion,
     evm_target: EvmTarget,
     // We don't need to chain Yul scopes, so `ScopeId` is enough to track the scope stack
     scope_stack: Vec<ScopeId>,
@@ -96,7 +92,6 @@ impl<'a> Pass<'a> {
     /// definitions it references directly into the block.
     fn visit_assembly_statement(
         binder: &'a mut Binder,
-        language_version: LanguageVersion,
         evm_target: EvmTarget,
         types: &'a TypeRegistry,
         file_node_mapper: &'a FileNodeMapper,
@@ -112,7 +107,6 @@ impl<'a> Pass<'a> {
         } = block;
         let mut pass = Self {
             file_node_mapper,
-            language_version,
             evm_target,
             // Seed the stack with the enclosing Solidity scope (created in p1)
             // so the block's Yul scope parents correctly and Yul identifiers
@@ -191,7 +185,7 @@ impl<'a> Pass<'a> {
 
         let conflict_kind: Option<DiagnosticKind> = match conflicts::find_conflicting_yul_definition(
             self.binder,
-            self.language_version,
+            self.binder.language_version(),
             self.evm_target,
             scope_id,
             symbol,

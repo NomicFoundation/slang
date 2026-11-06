@@ -97,30 +97,26 @@ impl SemanticContext {
         // When the IR node-kind histogram is available, pre-size the dominant
         // binder maps from it to avoid grow/rehash churn while populating them.
         let mut binder = match node_kinds {
-            Some(node_kinds) => Binder::with_capacity(BinderCapacities::from(node_kinds)),
-            None => Binder::default(),
+            Some(node_kinds) => {
+                Binder::with_capacity(language_version, BinderCapacities::from(node_kinds))
+            }
+            None => Binder::new(language_version),
         };
         let mut types = TypeRegistry::new(language_version);
         let file_node_mapper = FileNodeMapper::build_from(files);
 
-        p1_collect_definitions::run(files, &mut binder, language_version, diagnostics);
+        p1_collect_definitions::run(files, &mut binder, diagnostics);
         p2_linearise_contracts::run(files, &mut binder, diagnostics);
         p3_type_definitions::run(
             files,
             &mut binder,
-            language_version,
             &mut types,
             &file_node_mapper,
             diagnostics,
         );
 
-        let mut contract_data = p4_compute_linearisations::run(
-            &binder,
-            &types,
-            language_version,
-            &file_node_mapper,
-            diagnostics,
-        );
+        let mut contract_data =
+            p4_compute_linearisations::run(&binder, &types, &file_node_mapper, diagnostics);
         p5_resolve_references::run(
             files,
             &mut binder,
@@ -130,7 +126,6 @@ impl SemanticContext {
         );
         p6_resolve_yul::run(
             &mut binder,
-            language_version,
             evm_target,
             &types,
             &file_node_mapper,
@@ -140,7 +135,6 @@ impl SemanticContext {
         p8_code_analysis::run(
             &binder,
             &contract_data,
-            language_version,
             evm_target,
             &file_node_mapper,
             &types,

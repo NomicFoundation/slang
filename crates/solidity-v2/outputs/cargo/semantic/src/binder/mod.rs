@@ -3,6 +3,7 @@ use std::collections::VecDeque;
 use slang_solidity_v2_common::collections::{DefaultWithCapacity, Map, Set};
 use slang_solidity_v2_common::files::FileId;
 use slang_solidity_v2_common::nodes::NodeId;
+use slang_solidity_v2_common::versions::LanguageVersion;
 use slang_solidity_v2_ir::ir;
 use smallvec::{SmallVec, smallvec};
 
@@ -95,8 +96,9 @@ impl Typing {
 /// The `Binder` contains binding information for all definitions and references
 /// in the `CompilationUnit`, typing information for relevant AST nodes, as well
 /// as other semantic information (such as scopes and linearisations).
-#[derive(Default)]
 pub struct Binder {
+    /// The language version the compilation unit is analysed for.
+    language_version: LanguageVersion,
     /// Index of `Scope` objects. The `ScopeId` is an opaque index into this vector
     scopes: Vec<Scope>,
     /// Scopes (set of definitions contained and relationship to other scopes), indexed by `NodeId`
@@ -199,11 +201,20 @@ impl ResolveOptions {
 pub(crate) type DefinitionIds = SmallVec<[NodeId; 4]>;
 
 impl Binder {
-    /// Creates a binder with its dominant `NodeId`-keyed maps pre-sized per
-    /// `capacities`. All other fields start empty (`Default`); they are either
-    /// much smaller or not keyed per-node.
-    pub(crate) fn with_capacity(capacities: BinderCapacities) -> Self {
+    /// Creates an empty binder for `language_version`.
+    pub(crate) fn new(language_version: LanguageVersion) -> Self {
+        Self::with_capacity(language_version, BinderCapacities::default())
+    }
+
+    /// Creates a binder for `language_version` with its dominant
+    /// `NodeId`-keyed maps pre-sized per `capacities`. All other fields start
+    /// empty; they are either much smaller or not keyed per-node.
+    pub(crate) fn with_capacity(
+        language_version: LanguageVersion,
+        capacities: BinderCapacities,
+    ) -> Self {
         Self {
+            language_version,
             scopes: Vec::with_capacity(capacities.scopes),
             scopes_by_node_id: Map::default_with_capacity(capacities.scopes_by_node_id),
             node_typing: Map::default_with_capacity(capacities.node_typing),
@@ -213,8 +224,17 @@ impl Binder {
             definitions_by_identifier: Map::default_with_capacity(capacities.definitions),
             linearisations: Map::default_with_capacity(capacities.linearisations),
             assembly_blocks: Map::default_with_capacity(capacities.assembly_blocks),
-            ..Default::default()
+            scopes_by_file_id: Map::default(),
+            global_using_directives: Vec::new(),
+            operator_functions: Map::default(),
+            definitions_to_references: Map::default(),
+            enclosing_definitions: Map::default(),
         }
+    }
+
+    /// The language version the compilation unit is analysed for.
+    pub(crate) fn language_version(&self) -> LanguageVersion {
+        self.language_version
     }
 
     pub(crate) fn get_scope_by_id(&self, scope_id: ScopeId) -> &Scope {

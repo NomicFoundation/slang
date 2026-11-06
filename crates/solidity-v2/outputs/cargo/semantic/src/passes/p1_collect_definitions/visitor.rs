@@ -263,7 +263,7 @@ impl<F: SemanticFile> Visitor for Pass<'_, F> {
         // parser still yields an `ErrorDefinition` node, but it is already
         // flagged as invalid syntax for the version, so don't pile a semantic
         // diagnostic on top of it.
-        if self.language_version >= LanguageVersion::V0_8_4
+        if self.binder.language_version() >= LanguageVersion::V0_8_4
             && matches!(node.name.text.as_str(), "Error" | "Panic")
         {
             self.report(node.as_ref(), RedefinedBuiltInError);
