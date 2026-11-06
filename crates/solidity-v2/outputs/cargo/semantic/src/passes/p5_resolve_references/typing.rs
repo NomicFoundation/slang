@@ -17,7 +17,6 @@ use slang_solidity_v2_ir::ir::NodeIdentity;
 
 use super::Pass;
 use super::disambiguation::OverloadMatch;
-use super::members::MemberContext;
 use crate::binder::{Binder, Definition, Resolution, Typing};
 use crate::built_ins::{BuiltInCallError, InternalBuiltIn};
 use crate::context::FileNodeMapper;
@@ -246,10 +245,7 @@ impl Pass<'_> {
                 // there is no setter to write through. Qualified by the name of
                 // a base contract instead (`Base.x`), a state variable is the
                 // same location as its plain name.
-                if matches!(
-                    self.member_context(operand_typing),
-                    MemberContext::ContractValue { .. }
-                ) {
+                if self.is_contract_value(operand_typing) {
                     return WriteTarget::NotALocation;
                 }
                 // A calldata struct is the read-only input of a call.
