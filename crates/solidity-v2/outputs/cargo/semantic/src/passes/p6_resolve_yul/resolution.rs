@@ -34,7 +34,7 @@ impl Pass<'_> {
         // redeclaration, so no user definition can legally be in scope under
         // that name anyway.
         if built_in.is_some_and(|built_in| {
-            is_built_in_available(built_in, self.language_version, self.evm_target)
+            is_built_in_available(built_in, self.binder.language_version(), self.evm_target)
         }) {
             return built_in.into();
         }
