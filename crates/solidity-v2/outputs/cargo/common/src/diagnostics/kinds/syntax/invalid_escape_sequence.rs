@@ -18,6 +18,6 @@ impl DiagnosticExtensions for InvalidEscapeSequence {
     }
 
     fn message(&self) -> String {
-        "Invalid escape sequence. Only '\\n', '\\r', '\\t', '\\'', '\\\"', '\\\\', '\\xNN', '\\uNNNN' and a line break can follow a backslash.".to_string()
+        "Invalid escape sequence. Only '\\n', '\\r', '\\t', '\\'', '\\\"', '\\\\', '\\xNN', '\\uNNNN' or a newline can follow a backslash.".to_string()
     }
 }
