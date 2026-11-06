@@ -1,0 +1,11 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 1
+
+[TypeError 4659] Error: Referenced declaration is neither modifier nor base class.
+   ╭─[input.sol:9:25]
+   │
+ 9 │     function f() public A {}
+   │                         ┬  
+   │                         ╰── Error occurred here.
+───╯

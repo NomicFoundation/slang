@@ -92,8 +92,9 @@ impl Visitor for Pass<'_> {
     }
 
     fn enter_function_definition(&mut self, node: &ir::FunctionDefinition) -> bool {
+        let is_constructor = matches!(node.kind, ir::FunctionKind::Constructor);
         for modifier_invocation in node.attributes.modifier_invocations.iter() {
-            self.resolve_modifier_invocation(modifier_invocation);
+            self.resolve_modifier_invocation(modifier_invocation, is_constructor);
         }
 
         self.enter_scope_for_node_id(node.id());
