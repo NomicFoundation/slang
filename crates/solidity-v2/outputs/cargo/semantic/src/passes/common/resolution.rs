@@ -5,7 +5,7 @@ use slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind;
 use slang_solidity_v2_common::diagnostics::kinds::resolution::{
     AmbiguousReference, IdentifierNotFound, IdentifierNotFunctionOrNotUnique,
     IdentifierNotLibraryName, IdentifierNotNamespace, IdentifierNotTypeName,
-    NamespaceMemberNotFound, NonFreeOrLibraryFunctionInUsingDirective,
+    NamespaceMemberNotFound, NonFreeOrLibraryFunctionInUsingDirective, OverrideNotAContract,
 };
 use slang_solidity_v2_common::diagnostics::kinds::semantic::OverridableKind;
 use slang_solidity_v2_common::diagnostics::kinds::type_system::InvalidBase;
@@ -116,6 +116,10 @@ impl PathContext {
                 Definition::Contract(_) | Definition::Interface(_) => Ok(()),
                 _ => Err(InvalidBase.into()),
             },
+            Self::Override => match definition {
+                Definition::Contract(_) | Definition::Interface(_) => Ok(()),
+                _ => Err(OverrideNotAContract.into()),
+            },
             Self::UsingLibrary => match definition {
                 Definition::Library(_) => Ok(()),
                 _ => Err(IdentifierNotLibraryName.into()),
@@ -127,7 +131,7 @@ impl PathContext {
                 Definition::Function(_) => Err(NonFreeOrLibraryFunctionInUsingDirective.into()),
                 _ => Err(IdentifierNotFunctionOrNotUnique.into()),
             },
-            Self::Override | Self::ModifierInvocation | Self::Event | Self::Error => Ok(()),
+            Self::ModifierInvocation | Self::Event | Self::Error => Ok(()),
         }
     }
 

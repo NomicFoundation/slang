@@ -1,0 +1,11 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 1
+
+[TypeError 9301] Error: Expected contract but got function ().
+    ╭─[input.sol:12:34]
+    │
+ 12 │     function f() public override(g) {}
+    │                                  ┬  
+    │                                  ╰── Error occurred here.
+────╯

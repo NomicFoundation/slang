@@ -1,0 +1,11 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 1
+
+[resolution/override-not-a-contract] Error: An 'override' list can only name contracts and interfaces.
+    ╭─[input.sol:14:34]
+    │
+ 14 │     function f() public override(S) {}
+    │                                  ┬  
+    │                                  ╰── Error occurred here.
+────╯
