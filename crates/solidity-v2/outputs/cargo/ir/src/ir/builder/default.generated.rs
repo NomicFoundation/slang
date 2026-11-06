@@ -1390,6 +1390,11 @@ impl<S: Source> CstToIrBuilder<'_, S> {
                     self.build_function_definition(function_definition),
                 )
             }
+            input::ContractMember::ModifierDefinition(modifier_definition) => {
+                output::ContractMember::ModifierDefinition(
+                    self.build_modifier_definition(modifier_definition),
+                )
+            }
             input::ContractMember::StructDefinition(struct_definition) => {
                 output::ContractMember::StructDefinition(
                     self.build_struct_definition(struct_definition),

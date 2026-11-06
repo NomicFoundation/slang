@@ -10,15 +10,16 @@ use super::nodes::{
     EnumDefinition, EnumDefinitionStruct, ErrorDefinition, ErrorDefinitionStruct, EventDefinition,
     EventDefinitionStruct, FunctionDefinition, FunctionDefinitionStruct, Identifier,
     ImportDeconstructionSymbol, ImportDeconstructionSymbolStruct, InterfaceDefinition,
-    InterfaceDefinitionStruct, LibraryDefinition, LibraryDefinitionStruct, Parameter,
-    ParameterStruct, PathImport, PathImportStruct, StateVariableDefinition,
-    StateVariableDefinitionStruct, StructDefinition, StructDefinitionStruct, StructMember,
-    StructMemberStruct, UserDefinedValueTypeDefinition, UserDefinedValueTypeDefinitionStruct,
-    VariableDeclaration, VariableDeclarationStruct, YulFunctionDefinition,
-    YulFunctionDefinitionStruct, create_constant_definition, create_contract_definition,
-    create_enum_definition, create_error_definition, create_event_definition,
-    create_function_definition, create_identifier, create_import_deconstruction_symbol,
-    create_interface_definition, create_library_definition, create_parameter, create_path_import,
+    InterfaceDefinitionStruct, LibraryDefinition, LibraryDefinitionStruct, ModifierDefinition,
+    ModifierDefinitionStruct, Parameter, ParameterStruct, PathImport, PathImportStruct,
+    StateVariableDefinition, StateVariableDefinitionStruct, StructDefinition,
+    StructDefinitionStruct, StructMember, StructMemberStruct, UserDefinedValueTypeDefinition,
+    UserDefinedValueTypeDefinitionStruct, VariableDeclaration, VariableDeclarationStruct,
+    YulFunctionDefinition, YulFunctionDefinitionStruct, create_constant_definition,
+    create_contract_definition, create_enum_definition, create_error_definition,
+    create_event_definition, create_function_definition, create_identifier,
+    create_import_deconstruction_symbol, create_interface_definition, create_library_definition,
+    create_modifier_definition, create_parameter, create_path_import,
     create_state_variable_definition, create_struct_definition, create_struct_member,
     create_user_defined_value_type_definition, create_variable_declaration,
     create_yul_function_definition,
@@ -39,7 +40,7 @@ pub enum Definition {
     ImportedSymbol(ImportDeconstructionSymbol),
     Interface(InterfaceDefinition),
     Library(LibraryDefinition),
-    Modifier(FunctionDefinition),
+    Modifier(ModifierDefinition),
     Parameter(Parameter),
     StateVariable(StateVariableDefinition),
     Struct(StructDefinition),
@@ -91,7 +92,7 @@ impl Definition {
                 create_library_definition(&library_definition.ir_node, semantic),
             ),
             binder::Definition::Modifier(modifier_definition) => Self::Modifier(
-                create_function_definition(&modifier_definition.ir_node, semantic),
+                create_modifier_definition(&modifier_definition.ir_node, semantic),
             ),
             binder::Definition::Parameter(parameter_definition) => {
                 Self::Parameter(create_parameter(&parameter_definition.ir_node, semantic))
@@ -145,7 +146,7 @@ impl Definition {
             }
             Definition::Interface(interface_definition) => interface_definition.node_id(),
             Definition::Library(library_definition) => library_definition.node_id(),
-            Definition::Modifier(function_definition) => function_definition.node_id(),
+            Definition::Modifier(modifier_definition) => modifier_definition.node_id(),
             Definition::Parameter(parameter) => parameter.node_id(),
             Definition::StateVariable(state_variable_definition) => {
                 state_variable_definition.node_id()
@@ -192,10 +193,7 @@ impl Definition {
             }
             Definition::Interface(interface_definition) => interface_definition.name(),
             Definition::Library(library_definition) => library_definition.name(),
-            Definition::Modifier(function_definition) => {
-                // modifiers always have a name
-                function_definition.name().expect("modifiers have a name")
-            }
+            Definition::Modifier(modifier_definition) => modifier_definition.name(),
             Definition::Parameter(parameter) => {
                 // parameters that are definitions always have a name
                 parameter.name().expect("parameter definitions have a name")
@@ -238,7 +236,7 @@ impl Definition {
             }
             Definition::Interface(interface_definition) => interface_definition.references(),
             Definition::Library(library_definition) => library_definition.references(),
-            Definition::Modifier(function_definition) => function_definition.references(),
+            Definition::Modifier(modifier_definition) => modifier_definition.references(),
             Definition::Parameter(parameter) => parameter.references(),
             Definition::StateVariable(state_variable_definition) => {
                 state_variable_definition.references()
@@ -269,7 +267,7 @@ impl Definition {
             Definition::Error(error_definition) => error_definition.enclosing_definition(),
             Definition::Event(event_definition) => event_definition.enclosing_definition(),
             Definition::Function(function_definition) => function_definition.enclosing_definition(),
-            Definition::Modifier(function_definition) => function_definition.enclosing_definition(),
+            Definition::Modifier(modifier_definition) => modifier_definition.enclosing_definition(),
             Definition::StateVariable(state_variable_definition) => {
                 state_variable_definition.enclosing_definition()
             }
@@ -322,6 +320,7 @@ define_references_method!(FunctionDefinition);
 define_references_method!(ImportDeconstructionSymbol);
 define_references_method!(InterfaceDefinition);
 define_references_method!(LibraryDefinition);
+define_references_method!(ModifierDefinition);
 define_references_method!(Parameter);
 define_references_method!(PathImport);
 define_references_method!(StateVariableDefinition);
@@ -336,6 +335,7 @@ define_enclosing_definition_method!(EnumDefinition);
 define_enclosing_definition_method!(ErrorDefinition);
 define_enclosing_definition_method!(EventDefinition);
 define_enclosing_definition_method!(FunctionDefinition);
+define_enclosing_definition_method!(ModifierDefinition);
 define_enclosing_definition_method!(StateVariableDefinition);
 define_enclosing_definition_method!(StructDefinition);
 define_enclosing_definition_method!(StructMember);

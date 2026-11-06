@@ -1,0 +1,11 @@
+{
+  "expected_solc_divergence": [
+    {
+      "specifier": {
+        "type": "From",
+        "from": "0.8.0"
+      },
+      "reason": "A modifier has no type, so a reference to one from an expression is not reported yet."
+    }
+  ]
+}

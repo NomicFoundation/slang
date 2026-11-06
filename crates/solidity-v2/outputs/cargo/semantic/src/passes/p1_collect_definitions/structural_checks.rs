@@ -262,7 +262,7 @@ impl<F: SemanticFile> Pass<'_, F> {
     }
 
     /// Check modifier attributes, also constrained by the grammar.
-    pub(super) fn check_modifier_attributes(&mut self, node: &ir::FunctionDefinition) {
+    pub(super) fn check_modifier_attributes(&mut self, node: &ir::ModifierDefinition) {
         // A modifier cannot be defined or declared in an interface. solc only
         // began rejecting this in 0.8.8 (error 6408); earlier versions accept
         // it, so gate the diagnostic accordingly.

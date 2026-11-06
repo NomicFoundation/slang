@@ -1,6 +1,6 @@
 use super::super::{
     ContractMember, ContractMembersStruct, ErrorDefinition, EventDefinition, FunctionDefinition,
-    InterfaceMembersStruct, LibraryMembersStruct, StateVariableDefinition,
+    InterfaceMembersStruct, LibraryMembersStruct, ModifierDefinition, StateVariableDefinition,
 };
 
 /// A contract's, an interface's and a library's member lists are all lists of
@@ -25,6 +25,7 @@ macro_rules! define_member_iterators {
 
 define_member_iterators!(ContractMembersStruct {
     iter_function_definitions(FunctionDefinition),
+    iter_modifier_definitions(ModifierDefinition),
     iter_state_variable_definitions(StateVariableDefinition),
     iter_error_definitions(ErrorDefinition),
     iter_event_definitions(EventDefinition),

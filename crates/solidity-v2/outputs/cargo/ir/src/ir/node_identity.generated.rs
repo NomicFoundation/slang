@@ -314,6 +314,18 @@ impl NodeIdentity for MemberAccessExpressionStruct {
     }
 }
 
+impl NodeIdentity for ModifierAttributesStruct {
+    fn node_id(&self) -> Option<NodeId> {
+        Some(self.id)
+    }
+}
+
+impl NodeIdentity for ModifierDefinitionStruct {
+    fn node_id(&self) -> Option<NodeId> {
+        Some(self.id)
+    }
+}
+
 impl NodeIdentity for ModifierInvocationStruct {
     fn node_id(&self) -> Option<NodeId> {
         Some(self.id)
@@ -689,6 +701,8 @@ impl NodeIdentity for ContractMember {
 
             ContractMember::FunctionDefinition(inner) => inner.node_id(),
 
+            ContractMember::ModifierDefinition(inner) => inner.node_id(),
+
             ContractMember::StructDefinition(inner) => inner.node_id(),
 
             ContractMember::EnumDefinition(inner) => inner.node_id(),
@@ -856,8 +870,6 @@ impl NodeIdentity for FunctionKind {
             FunctionKind::Fallback => None,
 
             FunctionKind::Receive => None,
-
-            FunctionKind::Modifier => None,
         }
     }
 }
