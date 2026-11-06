@@ -3,10 +3,10 @@ use std::sync::Arc;
 
 use slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind;
 use slang_solidity_v2_common::diagnostics::kinds::resolution::{
-    AmbiguousReference, IdentifierNotFound, IdentifierNotFunctionOrNotUnique,
-    IdentifierNotLibraryName, IdentifierNotModifierOrBase, IdentifierNotNamespace,
-    IdentifierNotTypeName, NamespaceMemberNotFound, NonFreeOrLibraryFunctionInUsingDirective,
-    OverrideNotAContract,
+    AmbiguousReference, IdentifierNotError, IdentifierNotEvent, IdentifierNotFound,
+    IdentifierNotFunctionOrNotUnique, IdentifierNotLibraryName, IdentifierNotModifierOrBase,
+    IdentifierNotNamespace, IdentifierNotTypeName, NamespaceMemberNotFound,
+    NonFreeOrLibraryFunctionInUsingDirective, OverrideNotAContract,
 };
 use slang_solidity_v2_common::diagnostics::kinds::semantic::OverridableKind;
 use slang_solidity_v2_common::diagnostics::kinds::type_system::InvalidBase;
@@ -61,21 +61,19 @@ impl PathContext {
     /// down later: the overloads of an event, by the arguments of the `emit`,
     /// and the overrides of a virtual modifier, by the contract it runs in.
     fn accepts_set(self, binder: &Binder, definition_ids: &[NodeId]) -> bool {
-        match self {
-            Self::Event => true,
-            Self::ModifierInvocation { .. } => definition_ids.iter().all(|definition_id| {
-                matches!(
-                    binder.find_definition_by_id(*definition_id),
-                    Some(Definition::Modifier(_))
-                )
-            }),
+        let narrows_sets = match self {
+            Self::Event | Self::ModifierInvocation { .. } => true,
             Self::Type
             | Self::Base
             | Self::Override
             | Self::UsingLibrary
             | Self::UsingFunction
             | Self::Error => false,
-        }
+        };
+        narrows_sets
+            && definition_ids
+                .iter()
+                .all(|definition_id| self.check_definition(binder, *definition_id).is_ok())
     }
 
     /// Checks what the path ends at, returning the diagnostic to report when
@@ -143,7 +141,14 @@ impl PathContext {
                 }
                 _ => Err(IdentifierNotModifierOrBase.into()),
             },
-            Self::Event | Self::Error => Ok(()),
+            Self::Event => match definition {
+                Definition::Event(_) => Ok(()),
+                _ => Err(IdentifierNotEvent.into()),
+            },
+            Self::Error => match definition {
+                Definition::Error(_) => Ok(()),
+                _ => Err(IdentifierNotError.into()),
+            },
         }
     }
 
