@@ -3,7 +3,6 @@ use slang_solidity_v2_common::diagnostics::DiagnosticCollection;
 use slang_solidity_v2_common::diagnostics::kinds::semantic::{
     CyclicInheritance, LinearisationImpossible,
 };
-use slang_solidity_v2_common::diagnostics::kinds::type_system::InvalidBase;
 use slang_solidity_v2_common::files::FileId;
 use slang_solidity_v2_common::nodes::NodeId;
 use slang_solidity_v2_ir::ir;
@@ -115,29 +114,15 @@ impl<'a> Pass<'a> {
                 scope_id,
                 PathContext::Base,
             );
-            match path_resolution.resolution.as_definition_id() {
-                None => {
-                    if let Some((identifier, kind)) =
-                        path_resolution.diagnostic(&inheritance_type.type_name)
-                    {
-                        self.diagnostics
-                            .push(self.file_id.clone(), identifier.range.clone(), kind);
-                    }
-                }
-                Some(definition_id) => {
-                    match self.binder.find_definition_by_id(definition_id).unwrap() {
-                        Definition::Contract(_) | Definition::Interface(_) => {
-                            resolved_bases.push(definition_id);
-                        }
-                        _ => {
-                            self.diagnostics.push(
-                                self.file_id.clone(),
-                                inheritance_type.range.clone(),
-                                InvalidBase,
-                            );
-                        }
-                    }
-                }
+            if let Some((identifier, kind)) =
+                path_resolution.diagnostic(&inheritance_type.type_name)
+            {
+                self.diagnostics
+                    .push(self.file_id.clone(), identifier.range.clone(), kind);
+            }
+            // The context only lets a contract or an interface through.
+            if let Some(definition_id) = path_resolution.resolution.as_definition_id() {
+                resolved_bases.push(definition_id);
             }
         }
         resolved_bases
