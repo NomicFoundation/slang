@@ -5,7 +5,9 @@ use slang_solidity_v2_common::diagnostics::kinds::resolution::{
     IdentifierNotFound, MemberNotFound,
 };
 use slang_solidity_v2_common::diagnostics::kinds::structure::DuplicateNamedArgument;
-use slang_solidity_v2_common::diagnostics::kinds::type_system::EmptyArrayLiteral;
+use slang_solidity_v2_common::diagnostics::kinds::type_system::{
+    EmptyArrayLiteral, ModifierOutsideFunctionHeader,
+};
 use slang_solidity_v2_ir::ir;
 use slang_solidity_v2_ir::ir::NodeIdentity;
 use slang_solidity_v2_ir::ir::visitor::Visitor;
@@ -213,6 +215,12 @@ impl Visitor for Pass<'_> {
                 // follow through in order to get to the actual typing.
                 let followed_resolution = self.binder.follow_symbol_aliases(resolution.clone());
                 let typing = self.typing_of_resolution(&followed_resolution);
+                let typing = if self.names_modifier(&followed_resolution, &typing) {
+                    self.push_diagnostic(identifier, ModifierOutsideFunctionHeader);
+                    Typing::Unresolved
+                } else {
+                    typing
+                };
                 self.binder.set_node_typing(identifier.id(), typing);
 
                 // Finally, create the reference for the identifier.
@@ -483,6 +491,12 @@ impl Visitor for Pass<'_> {
             self.typing_of_resolution_as_contract_member(&resolution)
         } else {
             self.typing_of_resolution(&resolution)
+        };
+        let typing = if self.names_modifier(&resolution, &typing) {
+            self.push_diagnostic(node, ModifierOutsideFunctionHeader);
+            Typing::Unresolved
+        } else {
+            typing
         };
 
         // Special cases: see `adjust_member_access_type_for_operand`

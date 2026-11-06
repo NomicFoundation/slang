@@ -1,0 +1,11 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 1
+
+[TypeError 3112] Error: Modifier can only be referenced in function headers.
+    ╭─[input.sol:12:9]
+    │
+ 12 │         m;
+    │         ┬  
+    │         ╰── Error occurred here.
+────╯

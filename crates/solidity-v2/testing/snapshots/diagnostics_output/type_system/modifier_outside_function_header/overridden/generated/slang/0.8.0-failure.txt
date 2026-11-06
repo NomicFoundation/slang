@@ -1,0 +1,11 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 1
+
+[type-system/modifier-outside-function-header] Error: A modifier can only be referenced in a function header.
+    ╭─[input.sol:17:9]
+    │
+ 17 │         m;
+    │         ┬  
+    │         ╰── Error occurred here.
+────╯
