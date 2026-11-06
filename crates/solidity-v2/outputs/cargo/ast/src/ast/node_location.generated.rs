@@ -487,6 +487,26 @@ impl NodeLocation for MemberAccessExpressionStruct {
     }
 }
 
+impl NodeLocation for ModifierAttributesStruct {
+    fn calculate_file_id(&self) -> Option<&FileId> {
+        Some(self.get_file_id())
+    }
+
+    fn calculate_text_range(&self) -> Option<Range<usize>> {
+        Some(self.get_text_range().clone())
+    }
+}
+
+impl NodeLocation for ModifierDefinitionStruct {
+    fn calculate_file_id(&self) -> Option<&FileId> {
+        Some(self.get_file_id())
+    }
+
+    fn calculate_text_range(&self) -> Option<Range<usize>> {
+        Some(self.get_text_range().clone())
+    }
+}
+
 impl NodeLocation for ModifierInvocationStruct {
     fn calculate_file_id(&self) -> Option<&FileId> {
         Some(self.get_file_id())
@@ -1128,6 +1148,8 @@ impl NodeLocation for ContractMember {
 
             ContractMember::FunctionDefinition(inner) => inner.calculate_file_id(),
 
+            ContractMember::ModifierDefinition(inner) => inner.calculate_file_id(),
+
             ContractMember::StructDefinition(inner) => inner.calculate_file_id(),
 
             ContractMember::EnumDefinition(inner) => inner.calculate_file_id(),
@@ -1149,6 +1171,8 @@ impl NodeLocation for ContractMember {
             ContractMember::UsingDirective(inner) => inner.calculate_text_range(),
 
             ContractMember::FunctionDefinition(inner) => inner.calculate_text_range(),
+
+            ContractMember::ModifierDefinition(inner) => inner.calculate_text_range(),
 
             ContractMember::StructDefinition(inner) => inner.calculate_text_range(),
 
@@ -1449,8 +1473,6 @@ impl NodeLocation for FunctionKind {
             FunctionKind::Fallback => None,
 
             FunctionKind::Receive => None,
-
-            FunctionKind::Modifier => None,
         }
     }
 
@@ -1463,8 +1485,6 @@ impl NodeLocation for FunctionKind {
             FunctionKind::Fallback => None,
 
             FunctionKind::Receive => None,
-
-            FunctionKind::Modifier => None,
         }
     }
 }

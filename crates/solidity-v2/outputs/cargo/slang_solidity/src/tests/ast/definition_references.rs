@@ -1,5 +1,5 @@
 use super::fixtures;
-use crate::ast::{ContractMember, Definition, FunctionKind};
+use crate::ast::{ContractMember, Definition};
 
 #[test]
 fn test_definition_references() {
@@ -15,18 +15,10 @@ fn test_definition_references() {
         .members()
         .iter()
         .find_map(|member| {
-            let ContractMember::FunctionDefinition(function) = member else {
+            let ContractMember::ModifierDefinition(modifier) = member else {
                 return None;
             };
-            if matches!(function.kind(), FunctionKind::Modifier)
-                && function
-                    .name()
-                    .is_some_and(|name| name.name() == "onlyOwner")
-            {
-                Some(function)
-            } else {
-                None
-            }
+            (modifier.name().name() == "onlyOwner").then_some(modifier)
         })
         .expect("can find onlyOwner modifier");
 
@@ -42,10 +34,6 @@ fn test_definition_references() {
                     None
                 }
             })
-            .is_some_and(|modifier| {
-                modifier
-                    .name()
-                    .is_some_and(|name| name.name() == "onlyOwner")
-            })
+            .is_some_and(|modifier| modifier.name().name() == "onlyOwner")
     }));
 }

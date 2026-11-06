@@ -184,8 +184,8 @@ impl Visitor for Pass<'_> {
             definition.externalized_type_id = Some(externalized_type_id);
         }
 
-        if !matches!(node.kind, ir::FunctionKind::Modifier) && node.name.is_some() {
-            // for non-modifier *named* functions, fill-in parameter types in
+        if node.name.is_some() {
+            // for *named* functions, fill-in parameter types in
             // parameters scope for overload disambiguation in p5
             let parameter_types: Vec<_> = node
                 .parameters
@@ -205,6 +205,18 @@ impl Visitor for Pass<'_> {
             };
             parameters_scope.set_parameter_types(&parameter_types);
         }
+    }
+
+    fn enter_modifier_definition(&mut self, node: &ir::ModifierDefinition) -> bool {
+        self.enter_scope_for_node_id(node.id());
+        true
+    }
+
+    fn leave_modifier_definition(&mut self, node: &ir::ModifierDefinition) {
+        // Only the parameters are typed: a modifier is not a value, so the
+        // definition itself has no type.
+        self.visit_parameters(&node.parameters);
+        self.leave_scope_for_node_id(node.id());
     }
 
     fn leave_function_type(&mut self, node: &ir::FunctionType) {

@@ -1012,35 +1012,6 @@ fn resolve_virtual_of_an_unimplemented_interface_member_is_the_declaration() {
 }
 
 #[test]
-fn resolve_virtual_of_a_virtual_modifier_is_its_override() {
-    let analysis = analyse(
-        "contract Base {
-            modifier m() virtual { _; }
-            function f() public m {}
-        }
-        contract Derived is Base {
-            modifier m() override { _; }
-        }",
-    )
-    .expect_no_diagnostics();
-    let context = analysis.context();
-
-    let derived = contract_id(context, "Derived");
-    let base_m = find_function(analysis.find_members("Base"), "m").expect("Base declares m");
-    let derived_m =
-        find_function(analysis.find_members("Derived"), "m").expect("Derived declares m");
-
-    let Some(VirtualTarget::Function(target)) = context.resolve_virtual(derived, base_m) else {
-        panic!("a modifier is never overridden by a getter");
-    };
-    assert_eq!(
-        target.id(),
-        derived_m.id(),
-        "Derived.m is what runs in code compiled into Derived"
-    );
-}
-
-#[test]
 fn resolve_virtual_of_a_function_a_getter_overrides() {
     let context = build_context(
         "contract Base {

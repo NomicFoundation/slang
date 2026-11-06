@@ -16,8 +16,10 @@ pub(super) struct CodeUnit<'a> {
 }
 
 enum CodeUnitKind<'a> {
-    /// A function, modifier, constructor, fallback or receive definition.
+    /// A function, constructor, fallback or receive definition.
     Callable(&'a ir::FunctionDefinition),
+    /// A modifier definition.
+    Modifier(&'a ir::ModifierDefinition),
     /// A state variable or constant value. Non-constant values run in the
     /// creation code. Constant values are compiled into every referencing
     /// unit, and into the getter of a public one.
@@ -42,7 +44,7 @@ pub(super) fn collect(binder: &Binder) -> Vec<CodeUnit<'_>> {
             Definition::Modifier(modifier) => units.push(CodeUnit {
                 id: *definition_id,
                 enclosing_definition,
-                kind: CodeUnitKind::Callable(&modifier.ir_node),
+                kind: CodeUnitKind::Modifier(&modifier.ir_node),
             }),
             // A constant without a getter is never an entry point. Its unit
             // is reached only through references.
@@ -110,6 +112,12 @@ pub(super) fn visit_code_unit(unit: &CodeUnit<'_>, visitor: &mut impl Visitor) {
                 visitor,
             );
             if let Some(body) = &function.body {
+                ir::visitor::accept_block(body, visitor);
+            }
+        }
+        CodeUnitKind::Modifier(modifier) => {
+            // Only the body can hold references.
+            if let Some(body) = &modifier.body {
                 ir::visitor::accept_block(body, visitor);
             }
         }

@@ -326,11 +326,9 @@ impl DependencyCollector<'_> {
         }
     }
 
-    fn resolve_modifier(&self, modifier: &ir::FunctionDefinition) -> Option<NodeId> {
+    fn resolve_modifier(&self, modifier: &ir::ModifierDefinition) -> Option<NodeId> {
         // Most-derived first. Modifiers cannot overload, the name suffices.
-        // The interface flag is never read here, so it is left `false`.
-        let overridden =
-            Overridable::of_function(modifier, false).expect("a modifier definition is a modifier");
+        let overridden = Overridable::Modifier(modifier);
         modifier_target(
             self.binder,
             self.types,

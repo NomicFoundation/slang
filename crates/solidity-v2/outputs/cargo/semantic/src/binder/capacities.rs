@@ -100,8 +100,8 @@ const EXPRESSION_KINDS: &[NodeKind] = &[
 /// "minus definitions" correction for `node_typing`/`references`.
 ///
 /// Expected accuracy: a slight **over**-count. `Parameter` also counts mapping
-/// key/value types and other unnamed parameters that don't become definitions,
-/// and `FunctionDefinition` covers modifiers. Pulling the other way, definitions
+/// key/value types and other unnamed parameters that don't become definitions.
+/// Pulling the other way, definitions
 /// whose definiens is a shared node kind are omitted because the histogram can't
 /// attribute them — `EnumMember`, `YulParameter`, and `YulVariable` all key on
 /// `Identifier`, most of whose occurrences are *not* definitions. The net is a
@@ -114,10 +114,11 @@ const DEFINITION_KINDS: &[NodeKind] = &[
     NodeKind::EnumDefinition,
     NodeKind::ErrorDefinition,
     NodeKind::EventDefinition,
-    NodeKind::FunctionDefinition, // also covers modifiers
+    NodeKind::FunctionDefinition,
     NodeKind::ImportDeconstructionSymbol,
     NodeKind::InterfaceDefinition,
     NodeKind::LibraryDefinition,
+    NodeKind::ModifierDefinition,
     NodeKind::Parameter, // also covers type parameters
     NodeKind::PathImport,
     NodeKind::StateVariableDefinition,
@@ -130,16 +131,16 @@ const DEFINITION_KINDS: &[NodeKind] = &[
 
 /// IR node kinds that each open exactly one scope keyed by their own `NodeId`,
 /// i.e. every entry in `scopes_by_node_id`. The mapping is fixed — these nodes
-/// always open a scope — so the sum is the exact count. `FunctionDefinition`
-/// opens either a function or a modifier scope (a modifier lowers to a
-/// `FunctionDefinition`); `Block`/`ForStatement` both open block scopes; the
-/// three contract-like kinds all open contract scopes.
+/// always open a scope — so the sum is the exact count. `Block`/`ForStatement`
+/// both open block scopes; the three contract-like kinds all open contract
+/// scopes.
 const SCOPE_NODE_KINDS: &[NodeKind] = &[
     NodeKind::SourceUnit,                   // file scope
     NodeKind::ContractDefinition,           // contract scope
     NodeKind::InterfaceDefinition,          // contract scope
     NodeKind::LibraryDefinition,            // contract scope
-    NodeKind::FunctionDefinition,           // function or modifier scope
+    NodeKind::FunctionDefinition,           // function scope
+    NodeKind::ModifierDefinition,           // modifier scope
     NodeKind::EventDefinition,              // signature scope
     NodeKind::ErrorDefinition,              // signature scope
     NodeKind::TryStatement,                 // signature scope
@@ -155,9 +156,7 @@ const SCOPE_NODE_KINDS: &[NodeKind] = &[
 
 /// IR node kinds that additionally open a *parameter* scope. These scopes have
 /// no `NodeId`, so they only live in the `scopes` vec, not `scopes_by_node_id`.
-/// `FunctionDefinition` overcounts by the number of modifiers (which collect
-/// their parameters into the modifier scope rather than a dedicated one); that
-/// only over-reserves the `scopes` vec, which is harmless (see module docs).
+/// A modifier collects its parameters into its own scope, so it opens none.
 const PARAMETER_SCOPE_NODE_KINDS: &[NodeKind] = &[
     NodeKind::FunctionDefinition,
     NodeKind::ErrorDefinition,

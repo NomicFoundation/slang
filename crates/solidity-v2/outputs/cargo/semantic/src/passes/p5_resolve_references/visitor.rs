@@ -102,6 +102,15 @@ impl Visitor for Pass<'_> {
         self.leave_scope_for_node_id(node.id());
     }
 
+    fn enter_modifier_definition(&mut self, node: &ir::ModifierDefinition) -> bool {
+        self.enter_scope_for_node_id(node.id());
+        true
+    }
+
+    fn leave_modifier_definition(&mut self, node: &ir::ModifierDefinition) {
+        self.leave_scope_for_node_id(node.id());
+    }
+
     fn enter_event_definition(&mut self, node: &ir::EventDefinition) -> bool {
         self.enter_scope_for_node_id(node.id());
         true
