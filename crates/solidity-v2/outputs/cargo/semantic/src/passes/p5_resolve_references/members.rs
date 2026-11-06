@@ -47,6 +47,7 @@ pub(super) enum MemberContext {
 
 impl MemberContext {
     /// The type of the operand, if it has one.
+    #[inline]
     fn operand_type_id(self) -> Option<TypeId> {
         match self {
             Self::ContractValue { type_id, .. }
@@ -62,6 +63,7 @@ impl Pass<'_> {
     /// The context a member access whose operand types as `operand_typing`
     /// resolves its member in. An overload set operand is reported and sunk
     /// before getting here.
+    #[inline]
     pub(super) fn member_context(&self, operand_typing: &Typing) -> MemberContext {
         match operand_typing {
             Typing::Unresolved | Typing::Undetermined(_) | Typing::NewExpression(_) => {
@@ -90,6 +92,21 @@ impl Pass<'_> {
                 },
                 _ => MemberContext::Value { type_id: *type_id },
             },
+        }
+    }
+
+    /// Whether `operand_typing` reaches members as a contract value, ie. is
+    /// `this` in a contract or a value of a contract or interface type. This
+    /// is what makes `Self::member_context` a `MemberContext::ContractValue`,
+    /// without classifying any other operand.
+    #[inline]
+    pub(super) fn is_contract_value(&self, operand_typing: &Typing) -> bool {
+        match operand_typing {
+            Typing::Resolved(type_id) | Typing::This(type_id) => matches!(
+                self.types.get_type_by_id(*type_id),
+                Type::Contract(_) | Type::Interface(_)
+            ),
+            _ => false,
         }
     }
 
@@ -209,6 +226,7 @@ impl Pass<'_> {
     /// Adds to `own_members` the functions attached to `type_id` by the
     /// active `using` directives, falling back to a built-in member of the
     /// type when there are none.
+    #[inline]
     fn with_attached_functions(
         &mut self,
         type_id: TypeId,
