@@ -62,28 +62,10 @@ impl Pass<'_> {
                         location: data_location,
                     }))
                 }),
-                Definition::TypeParameter(_) => {
-                    unreachable!("type parameter names don't have a type")
-                }
                 Definition::UserDefinedValueType(_) => Some(self.types.register_type(
                     Type::UserDefinedValue(UserDefinedValueType { definition_id }),
                 )),
-
-                Definition::Constant(_)
-                | Definition::EnumMember(_)
-                | Definition::Error(_)
-                | Definition::Event(_)
-                | Definition::Function(_)
-                | Definition::Import(_)
-                | Definition::ImportedSymbol(_)
-                | Definition::Modifier(_)
-                | Definition::Parameter(_)
-                | Definition::StateVariable(_)
-                | Definition::StructMember(_)
-                | Definition::Variable(_)
-                | Definition::YulFunction(_)
-                | Definition::YulParameter(_)
-                | Definition::YulVariable(_) => None,
+                _ => unreachable!("a type name only resolves to a type"),
             }
         } else {
             None
