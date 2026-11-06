@@ -643,14 +643,16 @@ impl Binder {
         symbol: &str,
         options: ResolveOptions,
     ) -> Resolution {
-        // Search for the symbol in the linearised bases *in-order*.
-        if let Some(linearisations) = self.linearisations.get(&contract_scope.node_id) {
+        // Search for the symbol in the linearised bases *in-order*, unless
+        // only the contract's own members are wanted.
+        if !matches!(options, ResolveOptions::Declared)
+            && let Some(linearisations) = self.linearisations.get(&contract_scope.node_id)
+        {
             let linearisations = match options {
                 ResolveOptions::Internal | ResolveOptions::External | ResolveOptions::Qualified => {
                     linearisations.as_slice()
                 }
-                // The contract itself comes first in its linearisation.
-                ResolveOptions::Declared => &linearisations[..1],
+                ResolveOptions::Declared => unreachable!("own members are searched directly"),
                 ResolveOptions::This(node_id) => {
                     if let Some(index) = linearisations.iter().position(|id| *id == node_id) {
                         &linearisations[index..]
@@ -710,7 +712,8 @@ impl Binder {
             Resolution::from(results)
         } else if let Some(definitions) = contract_scope.definitions.get(symbol) {
             // Libraries are not linearised, and neither is a contract whose
-            // bases failed to linearise: search only the scope's own members.
+            // bases failed to linearise: search only the scope's own members,
+            // as a lookup of the members a contract declares does.
             // A qualified lookup sees all of a scope's own members.
             let can_see =
                 |definition_id: &NodeId| options.can_see(&self.definitions[definition_id], true);
