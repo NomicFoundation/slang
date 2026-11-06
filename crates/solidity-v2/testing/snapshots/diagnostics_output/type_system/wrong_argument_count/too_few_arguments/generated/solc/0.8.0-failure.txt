@@ -1,0 +1,11 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 1
+
+[TypeError 6160] Error: Wrong argument count for function call: 1 arguments given but expected 2.
+   ╭─[input.sol:8:9]
+   │
+ 8 │         f(1);
+   │         ──┬─  
+   │           ╰─── Error occurred here.
+───╯

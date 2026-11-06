@@ -7594,6 +7594,107 @@ mod type_system {
         }
     }
 
+    mod invalid_argument_type {
+        use super::*;
+
+        #[test]
+        fn emit_event() -> Result<()> {
+            run("type_system/invalid_argument_type", "emit_event")
+        }
+
+        #[test]
+        fn emit_event_named() -> Result<()> {
+            run("type_system/invalid_argument_type", "emit_event_named")
+        }
+
+        #[test]
+        fn function_value() -> Result<()> {
+            run("type_system/invalid_argument_type", "function_value")
+        }
+
+        #[test]
+        fn internal_function() -> Result<()> {
+            run("type_system/invalid_argument_type", "internal_function")
+        }
+
+        #[test]
+        fn literal_out_of_range() -> Result<()> {
+            run("type_system/invalid_argument_type", "literal_out_of_range")
+        }
+
+        #[test]
+        fn memory_to_calldata_external_function_value() -> Result<()> {
+            run(
+                "type_system/invalid_argument_type",
+                "memory_to_calldata_external_function_value",
+            )
+        }
+
+        #[test]
+        fn memory_to_calldata_internal() -> Result<()> {
+            run(
+                "type_system/invalid_argument_type",
+                "memory_to_calldata_internal",
+            )
+        }
+
+        #[test]
+        fn named_argument() -> Result<()> {
+            run("type_system/invalid_argument_type", "named_argument")
+        }
+
+        #[test]
+        fn named_memory_to_calldata_internal() -> Result<()> {
+            run(
+                "type_system/invalid_argument_type",
+                "named_memory_to_calldata_internal",
+            )
+        }
+
+        #[test]
+        fn new_array_length() -> Result<()> {
+            run("type_system/invalid_argument_type", "new_array_length")
+        }
+
+        #[test]
+        fn new_bytes_length() -> Result<()> {
+            run("type_system/invalid_argument_type", "new_bytes_length")
+        }
+
+        #[test]
+        fn new_contract() -> Result<()> {
+            run("type_system/invalid_argument_type", "new_contract")
+        }
+
+        #[test]
+        fn new_contract_named() -> Result<()> {
+            run("type_system/invalid_argument_type", "new_contract_named")
+        }
+
+        #[test]
+        fn new_contract_with_call_options() -> Result<()> {
+            run(
+                "type_system/invalid_argument_type",
+                "new_contract_with_call_options",
+            )
+        }
+
+        #[test]
+        fn no_return_value() -> Result<()> {
+            run("type_system/invalid_argument_type", "no_return_value")
+        }
+
+        #[test]
+        fn require_error() -> Result<()> {
+            run("type_system/invalid_argument_type", "require_error")
+        }
+
+        #[test]
+        fn revert_error() -> Result<()> {
+            run("type_system/invalid_argument_type", "revert_error")
+        }
+    }
+
     mod invalid_base {
         use super::*;
 
@@ -7907,6 +8008,63 @@ mod type_system {
         }
     }
 
+    mod unknown_named_argument {
+        use super::*;
+
+        #[test]
+        fn bound_receiver() -> Result<()> {
+            run("type_system/unknown_named_argument", "bound_receiver")
+        }
+
+        #[test]
+        fn emit_event() -> Result<()> {
+            run("type_system/unknown_named_argument", "emit_event")
+        }
+
+        #[test]
+        fn function_declaration() -> Result<()> {
+            run("type_system/unknown_named_argument", "function_declaration")
+        }
+
+        #[test]
+        fn function_value() -> Result<()> {
+            run("type_system/unknown_named_argument", "function_value")
+        }
+
+        #[test]
+        fn getter() -> Result<()> {
+            run("type_system/unknown_named_argument", "getter")
+        }
+
+        #[test]
+        fn new_array() -> Result<()> {
+            run("type_system/unknown_named_argument", "new_array")
+        }
+
+        #[test]
+        fn new_contract() -> Result<()> {
+            run("type_system/unknown_named_argument", "new_contract")
+        }
+
+        #[test]
+        fn revert_error() -> Result<()> {
+            run("type_system/unknown_named_argument", "revert_error")
+        }
+
+        #[test]
+        fn unnamed_parameter() -> Result<()> {
+            run("type_system/unknown_named_argument", "unnamed_parameter")
+        }
+
+        #[test]
+        fn with_invalid_argument_type() -> Result<()> {
+            run(
+                "type_system/unknown_named_argument",
+                "with_invalid_argument_type",
+            )
+        }
+    }
+
     mod write_to_constant {
         use super::*;
 
@@ -7943,6 +8101,91 @@ mod type_system {
         #[test]
         fn qualified_constant() -> Result<()> {
             run("type_system/write_to_constant", "qualified_constant")
+        }
+    }
+
+    mod wrong_argument_count {
+        use super::*;
+
+        #[test]
+        fn bound_function() -> Result<()> {
+            run("type_system/wrong_argument_count", "bound_function")
+        }
+
+        #[test]
+        fn emit_event() -> Result<()> {
+            run("type_system/wrong_argument_count", "emit_event")
+        }
+
+        #[test]
+        fn empty_named_arguments() -> Result<()> {
+            run("type_system/wrong_argument_count", "empty_named_arguments")
+        }
+
+        #[test]
+        fn error_construction() -> Result<()> {
+            run("type_system/wrong_argument_count", "error_construction")
+        }
+
+        #[test]
+        fn function_value() -> Result<()> {
+            run("type_system/wrong_argument_count", "function_value")
+        }
+
+        #[test]
+        fn getter() -> Result<()> {
+            run("type_system/wrong_argument_count", "getter")
+        }
+
+        #[test]
+        fn invalid_argument_types() -> Result<()> {
+            run("type_system/wrong_argument_count", "invalid_argument_types")
+        }
+
+        #[test]
+        fn named_arguments() -> Result<()> {
+            run("type_system/wrong_argument_count", "named_arguments")
+        }
+
+        #[test]
+        fn new_array() -> Result<()> {
+            run("type_system/wrong_argument_count", "new_array")
+        }
+
+        #[test]
+        fn new_contract() -> Result<()> {
+            run("type_system/wrong_argument_count", "new_contract")
+        }
+
+        #[test]
+        fn new_contract_with_inherited_constructor() -> Result<()> {
+            run(
+                "type_system/wrong_argument_count",
+                "new_contract_with_inherited_constructor",
+            )
+        }
+
+        #[test]
+        fn new_contract_without_constructor() -> Result<()> {
+            run(
+                "type_system/wrong_argument_count",
+                "new_contract_without_constructor",
+            )
+        }
+
+        #[test]
+        fn revert_error() -> Result<()> {
+            run("type_system/wrong_argument_count", "revert_error")
+        }
+
+        #[test]
+        fn too_few_arguments() -> Result<()> {
+            run("type_system/wrong_argument_count", "too_few_arguments")
+        }
+
+        #[test]
+        fn too_many_arguments() -> Result<()> {
+            run("type_system/wrong_argument_count", "too_many_arguments")
         }
     }
 }

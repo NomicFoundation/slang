@@ -78,9 +78,7 @@ impl Pass<'_> {
     /// The type of `node` in a position that requires a value. On top of
     /// [`Self::check_type_of_value_or_type_name_expression`], an expression
     /// that denotes a type or a module is not a value either, and neither is a
-    /// tuple with a component that does.
-    // __SLANG_VALUE_TYPING__ keep the typings that denote a value in sync with
-    // the guard in `Self::check_lvalues_under`
+    /// tuple with a component that does, or with an omitted component.
     #[inline]
     pub(super) fn check_type_of_value_expression(
         &mut self,
@@ -89,12 +87,37 @@ impl Pass<'_> {
         // A tuple is typed even when its components name types, as the second
         // argument of `abi.decode` needs, so those are only rejected here. They
         // are looked for first, since a tuple with another component that
-        // failed has no type at all.
+        // failed has no type at all. An omitted component is already reported
+        // where it is written, so it is rejected silently.
+        if let ir::Expression::TupleExpression(tuple) = node
+            && (self.report_type_names_in_tuple(tuple) || has_omitted_component(tuple))
+        {
+            return None;
+        }
+        self.check_type_of_value_typing(node)
+    }
+
+    /// The type of the target of an assignment, which is a value position
+    /// where a tuple may omit components, eg. `(x, ) = f()`.
+    pub(super) fn check_type_of_assignment_target(
+        &mut self,
+        node: &ir::Expression,
+    ) -> Option<TypeId> {
         if let ir::Expression::TupleExpression(tuple) = node
             && self.report_type_names_in_tuple(tuple)
         {
             return None;
         }
+        self.check_type_of_value_typing(node)
+    }
+
+    /// The shared tail of [`Self::check_type_of_value_expression`] and
+    /// [`Self::check_type_of_assignment_target`], once a tuple's components
+    /// have been checked.
+    // __SLANG_VALUE_TYPING__ keep the typings that denote a value in sync with
+    // the guard in `Self::check_lvalues_under`
+    #[inline]
+    fn check_type_of_value_typing(&mut self, node: &ir::Expression) -> Option<TypeId> {
         let type_id = self.check_type_of_value_or_type_name_expression(node)?;
         if self.types.get_type_by_id(type_id).is_meta_type() {
             self.report_expression_not_a_value(node, NotAValueKind::TypeOrModule);
@@ -187,7 +210,7 @@ impl Pass<'_> {
         // Only an expression that typed as a value is judged: one that did not
         // is either unresolved or already reported as not a value.
         // __SLANG_VALUE_TYPING__ keep in sync with the typings
-        // `Self::check_type_of_value_expression` accepts. The two cannot share
+        // `Self::check_type_of_value_typing` accepts. The two cannot share
         // an accessor on `Typing`: this one only asks whether there is a value,
         // while that one also tells an unresolved typing, which reports
         // nothing, from one naming something that is not a value, which does.
@@ -1125,6 +1148,12 @@ impl Pass<'_> {
                     // or a dynamic `bytes`/`string` (`new bytes(n)`), yielding a
                     // value of that type.
                     Type::Array(_) | Type::Contract(_) | Type::Bytes(_) | Type::String(_) => {
+                        self.check_positional_arguments_of_creation(
+                            node,
+                            type_id,
+                            arguments,
+                            argument_types.as_deref(),
+                        );
                         Typing::Resolved(type_id)
                     }
                     _ => Typing::Unresolved,
@@ -1145,6 +1174,7 @@ impl Pass<'_> {
             Typing::Resolved(type_id) => self.typing_of_type_called_with_positional_arguments(
                 node,
                 type_id,
+                arguments,
                 argument_types.as_deref(),
             ),
             Typing::Undetermined(type_ids) => {
@@ -1168,9 +1198,12 @@ impl Pass<'_> {
                     // when calling it turns out to be invalid
                     self.fixup_operand_expression(&node.operand, candidate_type_id);
 
+                    // TODO: the selected overload already accepts the arguments,
+                    // so checking them again here is redundant.
                     self.typing_of_type_called_with_positional_arguments(
                         node,
                         candidate_type_id,
+                        arguments,
                         Some(&argument_types),
                     )
                 } else {
@@ -1224,6 +1257,7 @@ impl Pass<'_> {
         &mut self,
         node: &ir::FunctionCallExpression,
         type_id: TypeId,
+        arguments: &[ir::Expression],
         argument_types: Option<&[TypeId]>,
     ) -> Typing {
         match self.types.get_type_by_id(type_id) {
@@ -1237,6 +1271,12 @@ impl Pass<'_> {
                     self.report_operand_not_callable(node);
                     Typing::Unresolved
                 } else {
+                    self.check_positional_arguments_of_function_call(
+                        node,
+                        type_id,
+                        arguments,
+                        argument_types,
+                    );
                     Typing::Resolved(return_type)
                 }
             }
@@ -1273,6 +1313,12 @@ impl Pass<'_> {
                         // TODO(validation): an error instance is only valid in
                         // a `revert` statement or as the second parameter of a
                         // `require`/`assert`. See SDR[1504]
+                        self.check_positional_arguments_of_declaration(
+                            node,
+                            definition_id,
+                            arguments,
+                            argument_types,
+                        );
                         let type_id = self
                             .types
                             .register_type(Type::Error(ErrorType { definition_id }));
@@ -1281,6 +1327,12 @@ impl Pass<'_> {
                     Some(Definition::Event(_)) => {
                         // TODO(validation) SDR[950]: an event invocation has
                         // to be prefixed by `emit`.
+                        self.check_positional_arguments_of_declaration(
+                            node,
+                            definition_id,
+                            arguments,
+                            argument_types,
+                        );
                         let type_id = self
                             .types
                             .register_type(Type::Event(EventType { definition_id }));
@@ -1353,19 +1405,22 @@ impl Pass<'_> {
                 self.report_operand_not_callable(node);
                 (Typing::Unresolved, None)
             }
-            Typing::Resolved(type_id) => {
-                self.typing_of_type_called_with_named_arguments(node, type_id)
-            }
+            Typing::Resolved(type_id) => self.typing_of_type_called_with_named_arguments(
+                node,
+                type_id,
+                arguments,
+                argument_types.as_deref(),
+            ),
             Typing::Undetermined(type_ids) => {
                 // As in the positional form, an argument without a type cannot
                 // select an overload, and reporting the call would only cascade.
-                match argument_types {
+                match argument_types.as_deref() {
                     None => (Typing::Unresolved, None),
                     Some(argument_types) => {
                         let receiver_type_id = self.type_id_of_value_receiver(&node.operand);
                         let overload_match = self.lookup_function_matching_named_arguments(
                             &type_ids,
-                            &argument_types,
+                            argument_types,
                             receiver_type_id,
                         );
                         let candidate = self.select_overload(&node.operand, overload_match);
@@ -1375,7 +1430,14 @@ impl Pass<'_> {
                             // even when calling it turns out to be invalid
                             self.fixup_operand_expression(&node.operand, candidate_type_id);
 
-                            self.typing_of_type_called_with_named_arguments(node, candidate_type_id)
+                            // TODO: the selected overload already accepts the
+                            // arguments, so checking them again here is redundant.
+                            self.typing_of_type_called_with_named_arguments(
+                                node,
+                                candidate_type_id,
+                                arguments,
+                                Some(argument_types),
+                            )
                         } else {
                             (Typing::Unresolved, None)
                         }
@@ -1383,14 +1445,23 @@ impl Pass<'_> {
                 }
             }
             Typing::NewExpression(type_id) => {
-                if let Type::Contract(ContractType { definition_id }) =
-                    self.types.get_type_by_id(type_id)
-                {
-                    (Typing::Resolved(type_id), Some(*definition_id))
-                } else {
-                    // only contracts can be created with `new`
-                    (Typing::Unresolved, None)
-                }
+                // The arguments of a contract creation name the parameters of
+                // its constructor; those of any other creation name nothing.
+                let (typing, definition_id) = match self.types.get_type_by_id(type_id) {
+                    Type::Contract(ContractType { definition_id }) => {
+                        (Typing::Resolved(type_id), Some(*definition_id))
+                    }
+                    // only contracts can be created with `new` and named
+                    // arguments
+                    _ => (Typing::Unresolved, None),
+                };
+                self.check_named_arguments_of_creation(
+                    node,
+                    type_id,
+                    arguments,
+                    argument_types.as_deref(),
+                );
+                (typing, definition_id)
             }
             Typing::BuiltIn(_) => {
                 // built-ins cannot be called with named arguments
@@ -1416,6 +1487,8 @@ impl Pass<'_> {
         &mut self,
         node: &ir::FunctionCallExpression,
         type_id: TypeId,
+        arguments: &[ir::NamedArgument],
+        argument_types: Option<&[(&str, TypeId)]>,
     ) -> (Typing, Option<NodeId>) {
         match self.types.get_type_by_id(type_id) {
             Type::Function(FunctionType {
@@ -1430,6 +1503,12 @@ impl Pass<'_> {
                     // resolve against the modifier's parameters.
                     (Typing::Unresolved, definition_id)
                 } else {
+                    self.check_named_arguments_of_function_call(
+                        node,
+                        type_id,
+                        arguments,
+                        argument_types,
+                    );
                     (Typing::Resolved(return_type), definition_id)
                 }
             }
@@ -1453,6 +1532,12 @@ impl Pass<'_> {
                         // TODO(validation): an error instance is only valid in
                         // a `revert` statement or as the second parameter of a
                         // `require`/`assert`
+                        self.check_named_arguments_of_declaration(
+                            node,
+                            definition_id,
+                            arguments,
+                            argument_types,
+                        );
                         let type_id = self
                             .types
                             .register_type(Type::Error(ErrorType { definition_id }));
@@ -1462,6 +1547,12 @@ impl Pass<'_> {
                         // TODO(validation) SDR[950]: an event invocation has to
                         // be prefixed by `emit` so this type is not valid in
                         // any other position.
+                        self.check_named_arguments_of_declaration(
+                            node,
+                            definition_id,
+                            arguments,
+                            argument_types,
+                        );
                         let type_id = self
                             .types
                             .register_type(Type::Event(EventType { definition_id }));
@@ -1527,6 +1618,22 @@ impl Pass<'_> {
         definition_id
             .and_then(|definition_id| self.binder.find_definition_by_id(definition_id))
             .is_some_and(|definition| matches!(definition, Definition::Modifier(_)))
+    }
+
+    /// Whether `definition_id` is an event.
+    pub(super) fn is_event_definition(&self, definition_id: NodeId) -> bool {
+        matches!(
+            self.binder.find_definition_by_id(definition_id),
+            Some(Definition::Event(_))
+        )
+    }
+
+    /// Whether `definition_id` is an error.
+    pub(super) fn is_error_definition(&self, definition_id: NodeId) -> bool {
+        matches!(
+            self.binder.find_definition_by_id(definition_id),
+            Some(Definition::Error(_))
+        )
     }
 
     /// Whether a callee typed as `typing` can take call options: only a
@@ -1596,6 +1703,15 @@ fn reference_identifier_for_expression(node: &ir::Expression) -> Option<&ir::Ide
         ir::Expression::CallOptionsExpression(f) => reference_identifier_for_expression(&f.operand),
         _ => None,
     }
+}
+
+/// Whether `tuple` omits a component, however deeply nested, eg. `(1, )`.
+fn has_omitted_component(tuple: &ir::TupleExpression) -> bool {
+    tuple.items.iter().any(|item| match &item.expression {
+        None => true,
+        Some(ir::Expression::TupleExpression(inner)) => has_omitted_component(inner),
+        Some(_) => false,
+    })
 }
 
 /// Typing functions for literals

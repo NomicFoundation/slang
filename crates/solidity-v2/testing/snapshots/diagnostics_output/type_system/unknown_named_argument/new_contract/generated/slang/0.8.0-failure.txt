@@ -1,0 +1,11 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 1
+
+[type-system/unknown-named-argument] Error: Named argument 'b' does not match any parameter of the callee.
+    ╭─[input.sol:11:16]
+    │
+ 11 │         new C({b: 1});
+    │                ┬  
+    │                ╰── Error occurred here.
+────╯

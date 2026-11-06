@@ -184,20 +184,25 @@ impl Visitor for Pass<'_> {
             definition.externalized_type_id = Some(externalized_type_id);
         }
 
-        if !matches!(node.kind, ir::FunctionKind::Modifier) && node.name.is_some() {
-            // for non-modifier *named* functions, fill-in parameter types in
-            // parameters scope for overload disambiguation in p5
+        if !matches!(node.kind, ir::FunctionKind::Modifier) {
+            // for non-modifier functions, fill-in parameter types in parameters
+            // scope for overload disambiguation and argument checks in p5
             let parameter_types: Vec<_> = node
                 .parameters
                 .iter()
                 .map(|parameter| self.binder.node_typing(parameter.id()).as_type_id())
                 .collect();
 
-            let Some(parameters_scope_id) =
-                self.binder.get_parameters_scope_for_definition(node.id())
+            // A constructor is not a definition, so its parameters scope is
+            // reached through the function scope.
+            let Some(Scope::Function(function_scope)) = self
+                .binder
+                .scope_id_for_node_id(node.id())
+                .map(|scope_id| self.binder.get_scope_by_id(scope_id))
             else {
-                unreachable!("FunctionDefinition does not have associated parameters scope");
+                unreachable!("FunctionDefinition does not have an associated function scope");
             };
+            let parameters_scope_id = function_scope.parameters_scope_id;
             let Scope::Parameters(parameters_scope) =
                 self.binder.get_scope_mut(parameters_scope_id)
             else {
@@ -374,14 +379,28 @@ impl Visitor for Pass<'_> {
     fn leave_error_definition(&mut self, node: &ir::ErrorDefinition) {
         self.mark_user_meta_type_node(node.id());
 
-        // Resolve the types of the parameters
+        // Resolve and collect the types of the parameters, saving them in the
+        // scope to check the arguments of an error construction
+        let mut parameter_types = Vec::new();
         for parameter in node.parameters.iter() {
             // TODO: the data location is not strictly correct, but strings, bytes
             // and structs are allowed as error parameters and they won't type if we
             // pass None here
             let type_id = self.resolve_type_name(&parameter.type_name, Some(DataLocation::Memory));
             self.binder.set_node_type(parameter.id(), type_id);
+            parameter_types.push(type_id);
         }
+
+        let Some(parameters_scope_id) = self.binder.get_parameters_scope_for_definition(node.id())
+        else {
+            unreachable!("ErrorDefinition does not have associated parameters scope");
+        };
+        let Scope::Parameters(parameters_scope) = self.binder.get_scope_mut(parameters_scope_id)
+        else {
+            unreachable!("scope is not a ParametersScope");
+        };
+        parameters_scope.set_parameter_types(&parameter_types);
+
         self.leave_scope_for_node_id(node.id());
     }
 
