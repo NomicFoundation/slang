@@ -703,9 +703,20 @@ impl Visitor for Pass<'_> {
         // overload set has to survive to the enclosing call.
         let operand_typing = self.raw_typing_of_expression(&node.operand).clone();
 
-        if self.call_options_allowed(&operand_typing) == Some(false) {
-            self.push_diagnostic(node, CallOptionsNotAllowed);
-        }
+        let operand_typing = match self.call_options_allowed(&operand_typing) {
+            Some(true) => operand_typing,
+            Some(false) => {
+                self.push_diagnostic(node, CallOptionsNotAllowed);
+                operand_typing
+            }
+            // The operand is not a function at all (eg. `a{gas: 1}` on a value).
+            // It is not passed on, or the enclosing call would report it again.
+            None if !matches!(operand_typing, Typing::Unresolved) => {
+                self.push_diagnostic(node, CallOptionsNotAllowed);
+                Typing::Unresolved
+            }
+            None => operand_typing,
+        };
 
         // Pre-applying call options to an external function (eg. `c.f{value: 3}`)
         // partially applies it. Any other operand keeps its typing.

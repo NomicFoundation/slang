@@ -1527,7 +1527,7 @@ impl Pass<'_> {
     /// function called by a message call can, ie. an external function, a
     /// contract creation, or the low-level `call`, `delegatecall` and
     /// `staticcall` of an address. Returns `None` when `typing` is not a
-    /// function at all, or did not resolve.
+    /// function at all (eg. a value, a type name or `msg`), or did not resolve.
     pub(super) fn call_options_allowed(&self, typing: &Typing) -> Option<bool> {
         match typing {
             Typing::Resolved(type_id) => self.call_options_allowed_for_type(*type_id),
