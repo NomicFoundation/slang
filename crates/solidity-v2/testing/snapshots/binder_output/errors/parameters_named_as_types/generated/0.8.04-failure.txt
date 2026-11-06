@@ -1,5 +1,30 @@
 # This file is generated automatically by infrastructure scripts. Please don't edit by hand.
 
+Diagnostics:
+[resolution/identifier-not-type-name] Error: Identifier does not name a type.
+    ╭─[input.sol:11:14]
+    │
+ 11 │     error E1(StructType StructType);
+    │              ─────┬────  
+    │                   ╰────── Error occurred here.
+────╯
+[resolution/identifier-not-type-name] Error: Identifier does not name a type.
+    ╭─[input.sol:12:14]
+    │
+ 12 │     error E2(EnumType StructType, StructType EnumType);
+    │              ────┬───  
+    │                  ╰───── Error occurred here.
+────╯
+[resolution/identifier-not-type-name] Error: Identifier does not name a type.
+    ╭─[input.sol:12:35]
+    │
+ 12 │     error E2(EnumType StructType, StructType EnumType);
+    │                                   ─────┬────  
+    │                                        ╰────── Error occurred here.
+────╯
+
+------------------------------------------------------------------------
+
 Definitions (12):
 - Def: #1 ["C" @ input.sol:4:10] (contract)
 - Def: #2 ["EnumType" @ input.sol:5:10] (enum)
@@ -8,18 +33,18 @@ Definitions (12):
 - Def: #5 ["C" @ input.sol:5:26] (enum member of EnumType)
 - Def: #6 ["StructType" @ input.sol:7:12] (struct)
 - Def: #7 ["x" @ input.sol:8:14] (struct member, type: uint256)
-- Def: #8 ["E1" @ input.sol:11:11] (event)
+- Def: #8 ["E1" @ input.sol:11:11] (error)
 - Def: #9 ["StructType" @ input.sol:11:25] (parameter, type: unresolved)
-- Def: #10 ["E2" @ input.sol:12:11] (event)
+- Def: #10 ["E2" @ input.sol:12:11] (error)
 - Def: #11 ["StructType" @ input.sol:12:23] (parameter, type: unresolved)
 - Def: #12 ["EnumType" @ input.sol:12:46] (parameter, type: unresolved)
 
 ------------------------------------------------------------------------
 
 References (3):
-- Ref: ["StructType" @ input.sol:11:14] -> #9
-- Ref: ["EnumType" @ input.sol:12:14] -> #12
-- Ref: ["StructType" @ input.sol:12:35] -> #11
+- Ref: ["StructType" @ input.sol:11:14] -> unresolved
+- Ref: ["EnumType" @ input.sol:12:14] -> unresolved
+- Ref: ["StructType" @ input.sol:12:35] -> unresolved
 
 ------------------------------------------------------------------------
 
@@ -50,22 +75,22 @@ Bindings:
     │              ┬  
     │              ╰── name: 7
     │ 
- 11 │     event E1(StructType StructType);
+ 11 │     error E1(StructType StructType);
     │           ─┬ ─────┬──── ─────┬────  
     │            ╰──────────────────────── name: 8
     │                   │          │      
-    │                   ╰───────────────── ref: 9
+    │                   ╰───────────────── unresolved
     │                              │      
     │                              ╰────── name: 9
- 12 │     event E2(EnumType StructType, StructType EnumType);
+ 12 │     error E2(EnumType StructType, StructType EnumType);
     │           ─┬ ────┬─── ─────┬────  ─────┬──── ────┬───  
     │            ╰─────────────────────────────────────────── name: 10
     │                  │         │           │         │     
-    │                  ╰───────────────────────────────────── ref: 12
+    │                  ╰───────────────────────────────────── unresolved
     │                            │           │         │     
     │                            ╰─────────────────────────── name: 11
     │                                        │         │     
-    │                                        ╰─────────────── ref: 11
+    │                                        ╰─────────────── unresolved
     │                                                  │     
     │                                                  ╰───── name: 12
 ────╯

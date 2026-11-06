@@ -8,12 +8,33 @@ Diagnostics:
     │     ────────────────┬───────────────  
     │                     ╰───────────────── Error occurred here.
 ────╯
+[resolution/identifier-not-type-name] Error: Identifier does not name a type.
+    ╭─[input.sol:11:14]
+    │
+ 11 │     error E1(StructType StructType);
+    │              ─────┬────  
+    │                   ╰────── Error occurred here.
+────╯
 [syntax/incompatible-syntax-version] Error: This syntax was introduced in version '0.8.4'.
     ╭─[input.sol:12:5]
     │
  12 │     error E2(EnumType StructType, StructType EnumType);
     │     ─────────────────────────┬─────────────────────────  
     │                              ╰─────────────────────────── Error occurred here.
+────╯
+[resolution/identifier-not-type-name] Error: Identifier does not name a type.
+    ╭─[input.sol:12:14]
+    │
+ 12 │     error E2(EnumType StructType, StructType EnumType);
+    │              ────┬───  
+    │                  ╰───── Error occurred here.
+────╯
+[resolution/identifier-not-type-name] Error: Identifier does not name a type.
+    ╭─[input.sol:12:35]
+    │
+ 12 │     error E2(EnumType StructType, StructType EnumType);
+    │                                   ─────┬────  
+    │                                        ╰────── Error occurred here.
 ────╯
 
 ------------------------------------------------------------------------
@@ -35,9 +56,9 @@ Definitions (12):
 ------------------------------------------------------------------------
 
 References (3):
-- Ref: ["StructType" @ input.sol:11:14] -> #9
-- Ref: ["EnumType" @ input.sol:12:14] -> #12
-- Ref: ["StructType" @ input.sol:12:35] -> #11
+- Ref: ["StructType" @ input.sol:11:14] -> unresolved
+- Ref: ["EnumType" @ input.sol:12:14] -> unresolved
+- Ref: ["StructType" @ input.sol:12:35] -> unresolved
 
 ------------------------------------------------------------------------
 
@@ -72,18 +93,18 @@ Bindings:
     │           ─┬ ─────┬──── ─────┬────  
     │            ╰──────────────────────── name: 8
     │                   │          │      
-    │                   ╰───────────────── ref: 9
+    │                   ╰───────────────── unresolved
     │                              │      
     │                              ╰────── name: 9
  12 │     error E2(EnumType StructType, StructType EnumType);
     │           ─┬ ────┬─── ─────┬────  ─────┬──── ────┬───  
     │            ╰─────────────────────────────────────────── name: 10
     │                  │         │           │         │     
-    │                  ╰───────────────────────────────────── ref: 12
+    │                  ╰───────────────────────────────────── unresolved
     │                            │           │         │     
     │                            ╰─────────────────────────── name: 11
     │                                        │         │     
-    │                                        ╰─────────────── ref: 11
+    │                                        ╰─────────────── unresolved
     │                                                  │     
     │                                                  ╰───── name: 12
 ────╯
