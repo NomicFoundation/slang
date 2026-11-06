@@ -1,0 +1,11 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 1
+
+[type-system/partially-applied-function-used-as-value] Error: A function with a bound argument or call options can only be called, not used as a value.
+    ╭─[input.sol:15:10]
+    │
+ 15 │         [(x.lf, 1)];
+    │          ────┬────  
+    │              ╰────── Error occurred here.
+────╯

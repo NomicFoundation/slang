@@ -499,8 +499,8 @@ impl Pass<'_> {
         &mut self,
         node: &ir::ConditionalExpression,
     ) -> Option<TypeId> {
-        let true_mobile = self.mobile_type_of_conditional_branch(&node.true_expression);
-        let false_mobile = self.mobile_type_of_conditional_branch(&node.false_expression);
+        let true_mobile = self.check_mobile_type_of_value_expression(&node.true_expression);
+        let false_mobile = self.check_mobile_type_of_value_expression(&node.false_expression);
         let common = self.types.common_type(true_mobile?, false_mobile?);
         if common.is_none() {
             self.push_diagnostic(node, IncompatibleConditionalBranches);
@@ -508,15 +508,21 @@ impl Pass<'_> {
         common
     }
 
-    /// The mobile type of one conditional branch, reporting why a branch has
+    /// The mobile type of a value expression that has no target type to check
+    /// against (eg. a conditional branch), reporting why it has none.
+    fn check_mobile_type_of_value_expression(&mut self, node: &ir::Expression) -> Option<TypeId> {
+        let type_id = self.check_type_of_value_expression(node)?;
+        self.check_mobile_type(node, type_id)
+    }
+
+    /// The mobile type of `type_id`, the type of `node`, reporting why it has
     /// none.
-    fn mobile_type_of_conditional_branch(&mut self, branch: &ir::Expression) -> Option<TypeId> {
-        let type_id = self.check_type_of_value_expression(branch)?;
+    fn check_mobile_type(&mut self, node: &ir::Expression, type_id: TypeId) -> Option<TypeId> {
         match self.types.compute_mobile_type(type_id) {
             Ok(mobile) => Some(mobile),
             Err(NoMobileType::NotAValue) => {
                 self.push_diagnostic(
-                    branch,
+                    node,
                     ExpressionNotAValue {
                         kind: NotAValueKind::TypeOrModule,
                     },
@@ -524,11 +530,11 @@ impl Pass<'_> {
                 None
             }
             Err(NoMobileType::PartiallyAppliedFunction) => {
-                self.push_diagnostic(branch, PartiallyAppliedFunctionUsedAsValue);
+                self.push_diagnostic(node, PartiallyAppliedFunctionUsedAsValue);
                 None
             }
             Err(NoMobileType::LiteralTooLarge) => {
-                self.push_diagnostic(branch, LiteralTooLarge);
+                self.push_diagnostic(node, LiteralTooLarge);
                 None
             }
         }
@@ -679,7 +685,11 @@ impl Pass<'_> {
         // one that has no type does not stop the rest from being checked (and
         // reported).
         for item in array.items.iter() {
-            if let Some(item_type_id) = self.check_type_of_value_expression(item) {
+            // Every item needs a mobile type, so the reason one has none is
+            // reported here.
+            if let Some(item_type_id) = self.check_type_of_value_expression(item)
+                && self.check_mobile_type(item, item_type_id).is_some()
+            {
                 item_type_ids.push(item_type_id);
             } else {
                 all_typed = false;

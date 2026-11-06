@@ -1,0 +1,11 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 1
+
+[TypeError 9563] Error: Invalid mobile type.
+    ╭─[input.sol:15:10]
+    │
+ 15 │         [(x.lf, 1)];
+    │          ────┬────  
+    │              ╰────── Error occurred here.
+────╯
