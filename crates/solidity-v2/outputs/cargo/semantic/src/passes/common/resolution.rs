@@ -3,9 +3,12 @@ use std::sync::Arc;
 
 use slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind;
 use slang_solidity_v2_common::diagnostics::kinds::resolution::{
-    AmbiguousReference, IdentifierNotFound, IdentifierNotNamespace, NamespaceMemberNotFound,
+    AmbiguousReference, IdentifierNotFound, IdentifierNotFunctionOrNotUnique,
+    IdentifierNotLibraryName, IdentifierNotNamespace, NamespaceMemberNotFound,
+    NonFreeOrLibraryFunctionInUsingDirective,
 };
 use slang_solidity_v2_common::diagnostics::kinds::semantic::OverridableKind;
+use slang_solidity_v2_common::diagnostics::kinds::type_system::InvalidBase;
 use slang_solidity_v2_common::nodes::NodeId;
 use slang_solidity_v2_ir::ir;
 
@@ -73,12 +76,86 @@ impl PathContext {
             | Self::Error => false,
         }
     }
+
+    /// Checks what the path ends at, returning the diagnostic to report when
+    /// this context cannot take it. Several declarations that are not a set
+    /// the context accepts are a redeclaration, reported on its own, but a
+    /// `using` directive cannot attach any of them either.
+    fn check_resolution(
+        self,
+        binder: &Binder,
+        resolution: &Resolution,
+    ) -> Result<(), DiagnosticKind> {
+        match resolution {
+            Resolution::Definition(definition_id) => self.check_definition(binder, *definition_id),
+            Resolution::Ambiguous(_) => self.unusable_name_diagnostic().map_or(Ok(()), Err),
+            Resolution::BuiltIn(_) | Resolution::Unresolved => Ok(()),
+        }
+    }
+
+    /// Checks a single declaration the path ends at.
+    fn check_definition(
+        self,
+        binder: &Binder,
+        definition_id: NodeId,
+    ) -> Result<(), DiagnosticKind> {
+        let definition = binder
+            .find_definition_by_id(definition_id)
+            .expect("a resolution names a registered definition");
+        match self {
+            Self::Base => match definition {
+                Definition::Contract(_) | Definition::Interface(_) => Ok(()),
+                _ => Err(InvalidBase.into()),
+            },
+            Self::UsingLibrary => match definition {
+                Definition::Library(_) => Ok(()),
+                _ => Err(IdentifierNotLibraryName.into()),
+            },
+            Self::UsingFunction => match definition {
+                Definition::Function(_) if is_free_or_library_function(binder, definition_id) => {
+                    Ok(())
+                }
+                Definition::Function(_) => Err(NonFreeOrLibraryFunctionInUsingDirective.into()),
+                _ => Err(IdentifierNotFunctionOrNotUnique.into()),
+            },
+            Self::Type | Self::Override | Self::ModifierInvocation | Self::Event | Self::Error => {
+                Ok(())
+            }
+        }
+    }
+
+    /// The diagnostic a `using` directive reports for a name it cannot attach,
+    /// in place of saying why the name failed to resolve.
+    fn unusable_name_diagnostic(self) -> Option<DiagnosticKind> {
+        match self {
+            Self::UsingLibrary => Some(IdentifierNotLibraryName.into()),
+            Self::UsingFunction => Some(IdentifierNotFunctionOrNotUnique.into()),
+            Self::Type
+            | Self::Base
+            | Self::Override
+            | Self::ModifierInvocation
+            | Self::Event
+            | Self::Error => None,
+        }
+    }
+}
+
+/// Whether the function `definition_id` is free, ie. has no enclosing
+/// definition, or is declared in a library.
+fn is_free_or_library_function(binder: &Binder, definition_id: NodeId) -> bool {
+    binder
+        .enclosing_definition_node_id(definition_id)
+        .is_none_or(|enclosing_id| {
+            matches!(
+                binder.find_definition_by_id(enclosing_id),
+                Some(Definition::Library(_))
+            )
+        })
 }
 
 /// The first identifier of an `IdentifierPath` that fails to resolve to a
 /// declaration the path can use. The identifiers after it cannot resolve and
 /// are not considered.
-#[derive(Clone, Copy)]
 pub(crate) enum PathResolutionFailure {
     /// Every identifier resolves to a declaration the path can use.
     None,
@@ -92,6 +169,9 @@ pub(crate) enum PathResolutionFailure {
     /// The identifier at this index is a qualifier naming a declaration that
     /// has no members, like a variable or a struct.
     NotANamespace(usize),
+    /// The last identifier names a declaration of a kind the context cannot
+    /// take, reported with this diagnostic. Its reference is left unresolved.
+    WrongKind(DiagnosticKind),
 }
 
 /// The outcome of resolving an `IdentifierPath`.
@@ -99,21 +179,42 @@ pub(crate) struct PathResolution {
     /// The resolution of the last identifier, with symbol aliases followed.
     pub(crate) resolution: Resolution,
     pub(crate) failure: PathResolutionFailure,
+    context: PathContext,
 }
 
 impl PathResolution {
     /// The identifier that failed to resolve, with the diagnostic to report
     /// for it: the head of the path is undeclared, any later identifier is a
     /// member that the preceding one does not provide, a qualifier without
-    /// members is not a namespace, and an identifier naming several
-    /// declarations is ambiguous.
+    /// members is not a namespace, an identifier naming several declarations
+    /// is ambiguous, and the last one may name the wrong kind of declaration.
     pub(crate) fn diagnostic<'a>(
         &self,
         identifier_path: &'a ir::IdentifierPath,
     ) -> Option<(&'a ir::Identifier, DiagnosticKind)> {
-        match self.failure {
-            PathResolutionFailure::None => None,
+        let last = identifier_path
+            .last()
+            .expect("an identifier path has at least one identifier");
+        if let PathResolutionFailure::WrongKind(kind) = &self.failure {
+            return Some((last, kind.clone()));
+        }
+        let (identifier, kind) = self.resolution_diagnostic(identifier_path)?;
+        Some(match self.context.unusable_name_diagnostic() {
+            Some(kind) => (last, kind),
+            None => (identifier, kind),
+        })
+    }
+
+    /// The diagnostic for an identifier that does not resolve to a single
+    /// declaration.
+    fn resolution_diagnostic<'a>(
+        &self,
+        identifier_path: &'a ir::IdentifierPath,
+    ) -> Option<(&'a ir::Identifier, DiagnosticKind)> {
+        match &self.failure {
+            PathResolutionFailure::None | PathResolutionFailure::WrongKind(_) => None,
             PathResolutionFailure::Unresolved(index) => {
+                let index = *index;
                 let identifier = &identifier_path[index];
                 let kind = if index == 0 {
                     IdentifierNotFound.into()
@@ -123,7 +224,7 @@ impl PathResolution {
                 Some((identifier, kind))
             }
             PathResolutionFailure::Ambiguous(index) => {
-                let identifier = &identifier_path[index];
+                let identifier = &identifier_path[*index];
                 let kind = AmbiguousReference {
                     name: identifier.unparse().to_owned(),
                 }
@@ -131,7 +232,7 @@ impl PathResolution {
                 Some((identifier, kind))
             }
             PathResolutionFailure::NotANamespace(index) => {
-                let identifier = &identifier_path[index];
+                let identifier = &identifier_path[*index];
                 let kind = IdentifierNotNamespace {
                     name: identifier.unparse().to_owned(),
                 }
@@ -242,9 +343,22 @@ pub(crate) fn resolve_identifier_path(
             is_reportable = false;
         }
     }
+
+    // A path that resolves names declarations of some kind, which the
+    // context may not take. Its reference is then left unresolved.
+    if matches!(failure, PathResolutionFailure::None)
+        && let Err(kind) = context.check_resolution(binder, &resolution)
+    {
+        let last = &identifier_path[last_index];
+        binder.fixup_reference(last.id(), Resolution::Unresolved);
+        resolution = Resolution::Unresolved;
+        failure = PathResolutionFailure::WrongKind(kind);
+    }
+
     PathResolution {
         resolution,
         failure,
+        context,
     }
 }
 
