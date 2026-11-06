@@ -33,6 +33,9 @@ pub struct TypeRegistry {
     // so a storage layout names one type id whether it is reached through a
     // struct member or a state variable.
     inherited_to_storage_type_mapping: Map<TypeId, TypeId>,
+    // Each `Inherited`-location member type of a constructed struct, mapped to
+    // its `Memory` form, which is where the struct is constructed.
+    inherited_to_memory_type_mapping: Map<TypeId, TypeId>,
     // Some implicit conversion rules are version dependant. The version is
     // threaded in here so we can gate those rules on it.
     language_version: LanguageVersion,
@@ -110,6 +113,7 @@ impl TypeRegistry {
             super_types: Map::default(),
             externalized_function_types: Map::default(),
             inherited_to_storage_type_mapping: Map::default(),
+            inherited_to_memory_type_mapping: Map::default(),
             language_version,
 
             address_type_id: TypeId(address_type),
@@ -650,6 +654,37 @@ impl TypeRegistry {
         debug_assert!(
             !self.get_type_by_id(type_id).is_inherited_location(),
             "struct member type {type_id:?} is not reachable from a state variable",
+        );
+        type_id
+    }
+
+    // Registers the `Memory` form of a member type of a constructed struct,
+    // remembering the pair for `memory_type_id`, and returns it. A type without
+    // an `Inherited` location is its own memory form.
+    pub(crate) fn register_inherited_to_memory_type_mapping(&mut self, type_id: TypeId) -> TypeId {
+        if !self.get_type_by_id(type_id).is_inherited_location() {
+            return type_id;
+        }
+        if let Some(memory_type_id) = self.inherited_to_memory_type_mapping.get(&type_id) {
+            return *memory_type_id;
+        }
+        let memory_type_id =
+            self.register_type_id_with_data_location(type_id, DataLocation::Memory);
+        self.inherited_to_memory_type_mapping
+            .insert(type_id, memory_type_id);
+        memory_type_id
+    }
+
+    /// The type a struct member of type `type_id` has in memory: its `Memory`
+    /// form when it is an `Inherited`-location type, else `type_id` itself.
+    /// Only members of constructed structs have one.
+    pub(crate) fn memory_type_id(&self, type_id: TypeId) -> TypeId {
+        if let Some(memory_type_id) = self.inherited_to_memory_type_mapping.get(&type_id) {
+            return *memory_type_id;
+        }
+        debug_assert!(
+            !self.get_type_by_id(type_id).is_inherited_location(),
+            "struct member type {type_id:?} is not of a constructed struct",
         );
         type_id
     }

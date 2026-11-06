@@ -1,7 +1,7 @@
 use slang_solidity_v2_common::diagnostics::DiagnosticCollection;
 use slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind;
 use slang_solidity_v2_common::diagnostics::kinds::type_system::{
-    InvalidArgumentType, UnknownNamedArgument, WrongArgumentCount,
+    InvalidArgumentType, StructWithMappingConstructed, UnknownNamedArgument, WrongArgumentCount,
 };
 use slang_solidity_v2_common::nodes::NodeId;
 use slang_solidity_v2_ir::ir;
@@ -58,6 +58,32 @@ impl ParameterList for [TypeId] {
 
     fn type_id(&self, index: usize) -> Option<TypeId> {
         Some(self[index])
+    }
+}
+
+/// The members of a struct, as the parameters of its construction. Each one has
+/// its type in memory, where the struct is constructed.
+struct StructMembers<'a> {
+    binder: &'a Binder,
+    types: &'a TypeRegistry,
+    members: &'a ir::StructMembers,
+}
+
+impl ParameterList for StructMembers<'_> {
+    fn count(&self) -> usize {
+        self.members.len()
+    }
+
+    fn name(&self, index: usize) -> Option<&str> {
+        Some(self.members[index].name.unparse())
+    }
+
+    fn type_id(&self, index: usize) -> Option<TypeId> {
+        let type_id = self
+            .binder
+            .node_typing(self.members[index].id())
+            .as_type_id()?;
+        Some(self.types.memory_type_id(type_id))
     }
 }
 
@@ -202,6 +228,68 @@ impl Pass<'_> {
         if let Some(parameters) = declared_parameters(binder, Some(definition_id)) {
             checker.check_named(node, parameters, false, arguments, argument_types);
         }
+    }
+
+    /// Checks the positional `arguments` of constructing the struct
+    /// `definition_id`, eg. `S(1, 2)`, against its members.
+    pub(super) fn check_positional_arguments_of_struct_construction(
+        &mut self,
+        node: &ir::FunctionCallExpression,
+        definition_id: NodeId,
+        arguments: &[ir::Expression],
+        argument_types: Option<&[TypeId]>,
+    ) {
+        if !self.register_struct_member_types_in_memory(node, definition_id) {
+            return;
+        }
+        let (binder, mut checker) = self.arguments_checker();
+        let members = struct_members(binder, checker.types, definition_id);
+        checker.check_positional(node, &members, false, arguments, argument_types);
+    }
+
+    /// Checks the named `arguments` of constructing the struct
+    /// `definition_id`, eg. `S({a: 1, b: 2})`, against its members.
+    pub(super) fn check_named_arguments_of_struct_construction(
+        &mut self,
+        node: &ir::FunctionCallExpression,
+        definition_id: NodeId,
+        arguments: &[ir::NamedArgument],
+        argument_types: Option<&[(&str, TypeId)]>,
+    ) {
+        if !self.register_struct_member_types_in_memory(node, definition_id) {
+            return;
+        }
+        let (binder, mut checker) = self.arguments_checker();
+        let members = struct_members(binder, checker.types, definition_id);
+        checker.check_named(node, &members, false, arguments, argument_types);
+    }
+
+    /// Registers the memory form of every member type of the struct
+    /// `definition_id`, which [`StructMembers`] reads, and returns whether the
+    /// struct can be constructed at all. Reports at `node` if it cannot.
+    fn register_struct_member_types_in_memory(
+        &mut self,
+        node: &ir::FunctionCallExpression,
+        definition_id: NodeId,
+    ) -> bool {
+        let Some(Definition::Struct(struct_definition)) =
+            self.binder.find_definition_by_id(definition_id)
+        else {
+            unreachable!("a struct construction names a struct");
+        };
+        // A mapping has no memory form, so neither has the struct, and its
+        // arguments are not checked.
+        if struct_definition.contains_mapping {
+            self.push_diagnostic(node, StructWithMappingConstructed);
+            return false;
+        }
+        for member in struct_definition.ir_node.members.iter() {
+            if let Some(type_id) = self.binder.node_typing(member.id()).as_type_id() {
+                self.types
+                    .register_inherited_to_memory_type_mapping(type_id);
+            }
+        }
+        true
     }
 
     /// Splits the pass into the binder, which parameters are read from, and a
@@ -370,6 +458,23 @@ pub(super) fn declared_parameters(
     match binder.get_scope_by_id(parameters_scope_id) {
         Scope::Parameters(parameters_scope) => Some(&parameters_scope.parameters),
         _ => None,
+    }
+}
+
+/// The members of the struct `definition_id`.
+fn struct_members<'a>(
+    binder: &'a Binder,
+    types: &'a TypeRegistry,
+    definition_id: NodeId,
+) -> StructMembers<'a> {
+    let Some(Definition::Struct(struct_definition)) = binder.find_definition_by_id(definition_id)
+    else {
+        unreachable!("a struct construction names a struct");
+    };
+    StructMembers {
+        binder,
+        types,
+        members: &struct_definition.ir_node.members,
     }
 }
 

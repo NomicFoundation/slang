@@ -1307,6 +1307,12 @@ impl Pass<'_> {
                         }
                     }
                     Some(Definition::Struct(_)) => {
+                        self.check_positional_arguments_of_struct_construction(
+                            node,
+                            definition_id,
+                            arguments,
+                            argument_types,
+                        );
                         Typing::Resolved(self.type_id_of_type_definition(definition_id))
                     }
                     Some(Definition::Error(_)) => {
@@ -1524,6 +1530,12 @@ impl Pass<'_> {
                 match self.binder.find_definition_by_id(definition_id) {
                     Some(Definition::Struct(_)) => {
                         // struct construction
+                        self.check_named_arguments_of_struct_construction(
+                            node,
+                            definition_id,
+                            arguments,
+                            argument_types,
+                        );
                         let type_id = self.type_id_of_type_definition(definition_id);
                         (Typing::Resolved(type_id), Some(definition_id))
                     }
