@@ -6310,6 +6310,11 @@ mod type_system {
         }
 
         #[test]
+        fn built_in_namespace() -> Result<()> {
+            run("type_system/call_options_not_allowed", "built_in_namespace")
+        }
+
+        #[test]
         fn event_without_emit() -> Result<()> {
             run("type_system/call_options_not_allowed", "event_without_emit")
         }
@@ -6330,6 +6335,11 @@ mod type_system {
         }
 
         #[test]
+        fn modifier() -> Result<()> {
+            run("type_system/call_options_not_allowed", "modifier")
+        }
+
+        #[test]
         fn overloaded_internal_function() -> Result<()> {
             run(
                 "type_system/call_options_not_allowed",
@@ -6342,6 +6352,29 @@ mod type_system {
             run(
                 "type_system/call_options_not_allowed",
                 "public_function_by_name",
+            )
+        }
+
+        #[test]
+        fn this_operand() -> Result<()> {
+            run("type_system/call_options_not_allowed", "this_operand")
+        }
+
+        #[test]
+        fn type_conversion() -> Result<()> {
+            run("type_system/call_options_not_allowed", "type_conversion")
+        }
+
+        #[test]
+        fn value_operand() -> Result<()> {
+            run("type_system/call_options_not_allowed", "value_operand")
+        }
+
+        #[test]
+        fn value_operand_called() -> Result<()> {
+            run(
+                "type_system/call_options_not_allowed",
+                "value_operand_called",
             )
         }
     }

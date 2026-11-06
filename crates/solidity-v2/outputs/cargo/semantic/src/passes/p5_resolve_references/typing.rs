@@ -1533,7 +1533,7 @@ impl Pass<'_> {
     /// function called by a message call can, ie. an external function, a
     /// contract creation, or the low-level `call`, `delegatecall` and
     /// `staticcall` of an address. Returns `None` when `typing` is not a
-    /// function at all, or did not resolve.
+    /// function at all (eg. a value, a type name or `msg`), or did not resolve.
     pub(super) fn call_options_allowed(&self, typing: &Typing) -> Option<bool> {
         match typing {
             Typing::Resolved(type_id) => self.call_options_allowed_for_type(*type_id),
@@ -1564,6 +1564,12 @@ impl Pass<'_> {
 
     fn call_options_allowed_for_type(&self, type_id: TypeId) -> Option<bool> {
         match self.types.get_type_by_id(type_id) {
+            // A modifier is typed as a function, but is not callable.
+            Type::Function(function_type)
+                if self.is_modifier_definition(function_type.definition_id) =>
+            {
+                None
+            }
             Type::Function(function_type) => Some(function_type.call_mode == CallMode::External),
             // A function declaration reached through its contract's name, or an
             // event or error, is called as a function but not externally.
