@@ -2628,6 +2628,78 @@ mod resolution {
         use super::*;
 
         #[test]
+        fn built_in_array_push_two_arguments() -> Result<()> {
+            run(
+                "resolution/no_matching_callable_declaration",
+                "built_in_array_push_two_arguments",
+            )
+        }
+
+        #[test]
+        fn built_in_array_push_value() -> Result<()> {
+            run(
+                "resolution/no_matching_callable_declaration",
+                "built_in_array_push_value",
+            )
+        }
+
+        #[test]
+        fn built_in_bytes_push_value() -> Result<()> {
+            run(
+                "resolution/no_matching_callable_declaration",
+                "built_in_bytes_push_value",
+            )
+        }
+
+        #[test]
+        fn built_in_require_condition() -> Result<()> {
+            run(
+                "resolution/no_matching_callable_declaration",
+                "built_in_require_condition",
+            )
+        }
+
+        #[test]
+        fn built_in_require_error() -> Result<()> {
+            run(
+                "resolution/no_matching_callable_declaration",
+                "built_in_require_error",
+            )
+        }
+
+        #[test]
+        fn built_in_require_reason() -> Result<()> {
+            run(
+                "resolution/no_matching_callable_declaration",
+                "built_in_require_reason",
+            )
+        }
+
+        #[test]
+        fn built_in_require_without_arguments() -> Result<()> {
+            run(
+                "resolution/no_matching_callable_declaration",
+                "built_in_require_without_arguments",
+            )
+        }
+
+        #[test]
+        fn built_in_revert_reason() -> Result<()> {
+            run(
+                "resolution/no_matching_callable_declaration",
+                "built_in_revert_reason",
+            )
+        }
+
+        #[test]
+        fn built_in_revert_two_arguments() -> Result<()> {
+            run(
+                "resolution/no_matching_callable_declaration",
+                "built_in_revert_two_arguments",
+            )
+        }
+
+        #[test]
         fn library_function_argument() -> Result<()> {
             run(
                 "resolution/no_matching_callable_declaration",
@@ -6627,6 +6699,18 @@ mod type_system {
         }
     }
 
+    mod encoded_arguments_not_inline_tuple {
+        use super::*;
+
+        #[test]
+        fn tuple_returning_call() -> Result<()> {
+            run(
+                "type_system/encoded_arguments_not_inline_tuple",
+                "tuple_returning_call",
+            )
+        }
+    }
+
     mod explicit_conversion_not_allowed {
         use super::*;
 
@@ -7634,11 +7718,94 @@ mod type_system {
         use super::*;
 
         #[test]
+        fn abi_decode_data() -> Result<()> {
+            run("type_system/invalid_argument_type", "abi_decode_data")
+        }
+
+        #[test]
+        fn abi_encode_call_component() -> Result<()> {
+            run(
+                "type_system/invalid_argument_type",
+                "abi_encode_call_component",
+            )
+        }
+
+        #[test]
         fn base_constructor_invocation() -> Result<()> {
             run(
                 "type_system/invalid_argument_type",
                 "base_constructor_invocation",
             )
+        }
+
+        #[test]
+        fn built_in_abi_encode_with_selector() -> Result<()> {
+            run(
+                "type_system/invalid_argument_type",
+                "built_in_abi_encode_with_selector",
+            )
+        }
+
+        #[test]
+        fn built_in_abi_encode_with_signature() -> Result<()> {
+            run(
+                "type_system/invalid_argument_type",
+                "built_in_abi_encode_with_signature",
+            )
+        }
+
+        #[test]
+        fn built_in_address_transfer() -> Result<()> {
+            run(
+                "type_system/invalid_argument_type",
+                "built_in_address_transfer",
+            )
+        }
+
+        #[test]
+        fn built_in_assert() -> Result<()> {
+            run("type_system/invalid_argument_type", "built_in_assert")
+        }
+
+        #[test]
+        fn built_in_bytes_concat() -> Result<()> {
+            run("type_system/invalid_argument_type", "built_in_bytes_concat")
+        }
+
+        #[test]
+        fn built_in_bytes_concat_number_literal() -> Result<()> {
+            run(
+                "type_system/invalid_argument_type",
+                "built_in_bytes_concat_number_literal",
+            )
+        }
+
+        #[test]
+        fn built_in_erc7201() -> Result<()> {
+            run("type_system/invalid_argument_type", "built_in_erc7201")
+        }
+
+        #[test]
+        fn built_in_keccak256() -> Result<()> {
+            run("type_system/invalid_argument_type", "built_in_keccak256")
+        }
+
+        #[test]
+        fn built_in_selfdestruct() -> Result<()> {
+            run("type_system/invalid_argument_type", "built_in_selfdestruct")
+        }
+
+        #[test]
+        fn built_in_string_concat() -> Result<()> {
+            run(
+                "type_system/invalid_argument_type",
+                "built_in_string_concat",
+            )
+        }
+
+        #[test]
+        fn built_in_unwrap() -> Result<()> {
+            run("type_system/invalid_argument_type", "built_in_unwrap")
         }
 
         #[test]
@@ -7800,6 +7967,60 @@ mod type_system {
         }
     }
 
+    mod invalid_decoded_types {
+        use super::*;
+
+        #[test]
+        fn nested_tuple() -> Result<()> {
+            run("type_system/invalid_decoded_types", "nested_tuple")
+        }
+
+        #[test]
+        fn tuple_component_value() -> Result<()> {
+            run("type_system/invalid_decoded_types", "tuple_component_value")
+        }
+
+        #[test]
+        fn type_name_without_parentheses() -> Result<()> {
+            run(
+                "type_system/invalid_decoded_types",
+                "type_name_without_parentheses",
+            )
+        }
+
+        #[test]
+        fn value() -> Result<()> {
+            run("type_system/invalid_decoded_types", "value")
+        }
+    }
+
+    mod invalid_encoded_function {
+        use super::*;
+
+        #[test]
+        fn function_through_interface_name() -> Result<()> {
+            run(
+                "type_system/invalid_encoded_function",
+                "function_through_interface_name",
+            )
+        }
+
+        #[test]
+        fn internal_function() -> Result<()> {
+            run("type_system/invalid_encoded_function", "internal_function")
+        }
+
+        #[test]
+        fn library_function() -> Result<()> {
+            run("type_system/invalid_encoded_function", "library_function")
+        }
+
+        #[test]
+        fn not_a_function() -> Result<()> {
+            run("type_system/invalid_encoded_function", "not_a_function")
+        }
+    }
+
     mod invalid_utf_8_string_literal {
         use super::*;
 
@@ -7845,6 +8066,63 @@ mod type_system {
         #[test]
         fn enum_type() -> Result<()> {
             run("type_system/named_arguments_in_conversion", "enum_type")
+        }
+    }
+
+    mod named_arguments_to_built_in_function {
+        use super::*;
+
+        #[test]
+        fn abi_decode() -> Result<()> {
+            run(
+                "type_system/named_arguments_to_built_in_function",
+                "abi_decode",
+            )
+        }
+
+        #[test]
+        fn abi_encode() -> Result<()> {
+            run(
+                "type_system/named_arguments_to_built_in_function",
+                "abi_encode",
+            )
+        }
+
+        #[test]
+        fn abi_encode_call() -> Result<()> {
+            run(
+                "type_system/named_arguments_to_built_in_function",
+                "abi_encode_call",
+            )
+        }
+
+        #[test]
+        fn abi_encode_with_selector() -> Result<()> {
+            run(
+                "type_system/named_arguments_to_built_in_function",
+                "abi_encode_with_selector",
+            )
+        }
+
+        #[test]
+        fn addmod() -> Result<()> {
+            run("type_system/named_arguments_to_built_in_function", "addmod")
+        }
+
+        #[test]
+        fn blockhash() -> Result<()> {
+            run(
+                "type_system/named_arguments_to_built_in_function",
+                "blockhash",
+            )
+        }
+
+        #[test]
+        fn require() -> Result<()> {
+            run(
+                "type_system/named_arguments_to_built_in_function",
+                "require",
+            )
         }
     }
 
@@ -8084,6 +8362,28 @@ mod type_system {
         }
     }
 
+    mod too_few_arguments {
+        use super::*;
+
+        #[test]
+        fn abi_encode_with_selector() -> Result<()> {
+            run("type_system/too_few_arguments", "abi_encode_with_selector")
+        }
+
+        #[test]
+        fn abi_encode_with_selector_empty_named_arguments() -> Result<()> {
+            run(
+                "type_system/too_few_arguments",
+                "abi_encode_with_selector_empty_named_arguments",
+            )
+        }
+
+        #[test]
+        fn abi_encode_with_signature() -> Result<()> {
+            run("type_system/too_few_arguments", "abi_encode_with_signature")
+        }
+    }
+
     mod type_too_large_for_storage {
         use super::*;
 
@@ -8245,6 +8545,24 @@ mod type_system {
         use super::*;
 
         #[test]
+        fn abi_decode() -> Result<()> {
+            run("type_system/wrong_argument_count", "abi_decode")
+        }
+
+        #[test]
+        fn abi_encode_call() -> Result<()> {
+            run("type_system/wrong_argument_count", "abi_encode_call")
+        }
+
+        #[test]
+        fn abi_encode_call_components() -> Result<()> {
+            run(
+                "type_system/wrong_argument_count",
+                "abi_encode_call_components",
+            )
+        }
+
+        #[test]
         fn bare_modifier_invocation() -> Result<()> {
             run(
                 "type_system/wrong_argument_count",
@@ -8279,6 +8597,36 @@ mod type_system {
         #[test]
         fn bound_function() -> Result<()> {
             run("type_system/wrong_argument_count", "bound_function")
+        }
+
+        #[test]
+        fn built_in_addmod() -> Result<()> {
+            run("type_system/wrong_argument_count", "built_in_addmod")
+        }
+
+        #[test]
+        fn built_in_address_call() -> Result<()> {
+            run("type_system/wrong_argument_count", "built_in_address_call")
+        }
+
+        #[test]
+        fn built_in_array_pop() -> Result<()> {
+            run("type_system/wrong_argument_count", "built_in_array_pop")
+        }
+
+        #[test]
+        fn built_in_gasleft() -> Result<()> {
+            run("type_system/wrong_argument_count", "built_in_gasleft")
+        }
+
+        #[test]
+        fn built_in_keccak256() -> Result<()> {
+            run("type_system/wrong_argument_count", "built_in_keccak256")
+        }
+
+        #[test]
+        fn built_in_wrap() -> Result<()> {
+            run("type_system/wrong_argument_count", "built_in_wrap")
         }
 
         #[test]

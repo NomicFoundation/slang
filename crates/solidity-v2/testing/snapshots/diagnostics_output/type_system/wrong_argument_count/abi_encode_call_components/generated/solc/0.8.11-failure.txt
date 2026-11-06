@@ -1,0 +1,11 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 1
+
+[TypeError 7788] Error: Expected 1 instead of 2 components for the tuple parameter.
+   ╭─[input.sol:6:9]
+   │
+ 6 │         abi.encodeCall(this.g, (1, 2));
+   │         ───────────────┬──────────────  
+   │                        ╰──────────────── Error occurred here.
+───╯

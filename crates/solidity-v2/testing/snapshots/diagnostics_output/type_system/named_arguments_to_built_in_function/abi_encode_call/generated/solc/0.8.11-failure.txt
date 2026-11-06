@@ -1,0 +1,11 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 1
+
+[TypeError 2627] Error: Named arguments cannot be used for functions that take arbitrary parameters.
+   ╭─[input.sol:6:9]
+   │
+ 6 │         abi.encodeCall({f: this.g, a: ()});
+   │         ─────────────────┬────────────────  
+   │                          ╰────────────────── Error occurred here.
+───╯

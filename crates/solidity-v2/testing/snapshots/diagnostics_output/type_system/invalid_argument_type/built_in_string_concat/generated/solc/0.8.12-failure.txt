@@ -1,0 +1,11 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 1
+
+[TypeError 9977] Error: Invalid type for argument in the string.concat function call. string type is required, but t_bytes_memory_ptr provided.
+   ╭─[input.sol:6:23]
+   │
+ 6 │         string.concat(x);
+   │                       ┬  
+   │                       ╰── Error occurred here.
+───╯

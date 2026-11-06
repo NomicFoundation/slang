@@ -1,0 +1,11 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 1
+
+[TypeError 9553] Error: Invalid type for argument in function call. Invalid implicit conversion from int_const 1 to U requested.
+   ╭─[input.sol:8:18]
+   │
+ 8 │         U.unwrap(1);
+   │                  ┬  
+   │                  ╰── Error occurred here.
+───╯

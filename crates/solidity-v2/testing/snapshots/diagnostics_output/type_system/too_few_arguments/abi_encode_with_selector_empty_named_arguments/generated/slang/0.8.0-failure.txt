@@ -1,0 +1,11 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 1
+
+[type-system/too-few-arguments] Error: Too few arguments: 0 arguments given but expected at least 1.
+   ╭─[input.sol:6:9]
+   │
+ 6 │         abi.encodeWithSelector({});
+   │         ─────────────┬────────────  
+   │                      ╰────────────── Error occurred here.
+───╯

@@ -8,12 +8,14 @@ use super::types::{
     MetaType, TupleType, Type, TypeId, TypeRegistry, UserDefinedValueType, UserMetaType,
 };
 
+mod arguments;
 mod availability;
 #[path = "availability_specifiers.generated.rs"]
 mod availability_specifiers;
 #[path = "internal.generated.rs"]
 mod internal;
 
+pub(crate) use arguments::BuiltInOverloadMatch;
 pub(crate) use availability::is_built_in_available;
 pub(crate) use availability_specifiers::built_in_specifiers;
 pub use internal::InternalBuiltIn;
@@ -23,10 +25,8 @@ pub use internal::InternalBuiltIn;
 pub(crate) enum BuiltInCallError {
     /// The call is invalid, and this is the diagnostic to report for it.
     Diagnostic(DiagnosticKind),
-    /// The call is invalid, but no diagnostic is implemented for it yet. The
-    /// `TODO(validation)` comment at each site tracks what is missing.
-    // TODO: remove when proper diagnostics are implemented
-    NotReportedYet,
+    /// The arguments of the call are invalid, which checking them reports.
+    InvalidArguments,
     /// A type the call depends on failed to resolve. That failure is reported
     /// where it happens, and the call has no result type only as a
     /// consequence, so reporting again here would just cascade.
@@ -382,7 +382,7 @@ impl<'a> BuiltInsResolver<'a> {
                 "length" => Some(InternalBuiltIn::Length),
                 "pop" if *location == DataLocation::Storage => Some(InternalBuiltIn::ArrayPop),
                 "push" if *location == DataLocation::Storage => {
-                    Some(InternalBuiltIn::ArrayPush(self.types.uint8()))
+                    Some(InternalBuiltIn::ArrayPush(self.types.bytes1()))
                 }
                 _ => None,
             },
@@ -556,7 +556,13 @@ impl<'a> BuiltInsResolver<'a> {
             return Err(BuiltInCallError::UnresolvedDependency);
         };
         let type_id = match built_in {
-            InternalBuiltIn::AbiDecode => self.type_of_abi_decode(argument_types)?,
+            InternalBuiltIn::AbiDecode => {
+                let [_, types] = argument_types else {
+                    return Err(BuiltInCallError::InvalidArguments);
+                };
+                self.decoded_type_of(*types)
+                    .ok_or(BuiltInCallError::InvalidArguments)?
+            }
             InternalBuiltIn::AbiEncode => self.types.bytes_memory(),
             InternalBuiltIn::AbiEncodeCall => {
                 self.externalize_encode_call_callee(argument_types);
@@ -641,45 +647,31 @@ impl<'a> BuiltInsResolver<'a> {
         }
     }
 
-    fn type_of_abi_decode(
-        &mut self,
-        argument_types: &[TypeId],
-    ) -> Result<TypeId, BuiltInCallError> {
-        // TODO(validation): report an error when `abi.decode` is not given
-        // exactly two arguments.
-        let [_, type_id] = argument_types else {
-            return Err(BuiltInCallError::NotReportedYet);
-        };
-
+    /// The type `abi.decode` decodes to, given the type of its second
+    /// argument, which names the types to decode. Returns `None` when it is
+    /// not a type name or a tuple of type names.
+    pub(crate) fn decoded_type_of(&mut self, type_id: TypeId) -> Option<TypeId> {
         // `abi.decode(data, (T))`: a single-element tuple collapses to the
         // meta-type of `T`, which decodes to `T` itself.
-        if let Some(decoded) = self.type_denoted_by_meta_type(*type_id) {
-            return Ok(decoded);
+        if let Some(decoded) = self.type_denoted_by_meta_type(type_id) {
+            return Some(decoded);
         }
 
         // `abi.decode(data, (T1, T2, ...))`: a tuple of meta-types decodes to
-        // the tuple of the types they denote. Note a *nested* tuple element is
-        // not a type name and does not decode (matching solc, which rejects
-        // eg. `abi.decode(data, (uint, (bool, bool)))`).
-        if let Type::Tuple(TupleType { types }) = self.types.get_type_by_id(*type_id) {
-            let element_ids = types.clone();
-            let mut decoded = Vec::with_capacity(element_ids.len());
-            for element_id in element_ids {
-                let Some(element) = self.type_denoted_by_meta_type(element_id) else {
-                    // TODO(validation) SDR[42]: report an error when a tuple
-                    // element is not a type name (eg. `abi.decode(b, (uint, 5))`).
-                    return Err(BuiltInCallError::NotReportedYet);
-                };
-                decoded.push(element);
-            }
-            return Ok(self
-                .types
-                .register_type(Type::Tuple(TupleType { types: decoded })));
+        // the tuple of the types they denote. A nested tuple element is not a
+        // type name, eg. in `abi.decode(data, (uint, (bool, bool)))`.
+        let Type::Tuple(TupleType { types }) = self.types.get_type_by_id(type_id) else {
+            return None;
+        };
+        let element_ids = types.clone();
+        let mut decoded = Vec::with_capacity(element_ids.len());
+        for element_id in element_ids {
+            decoded.push(self.type_denoted_by_meta_type(element_id)?);
         }
-
-        // TODO(validation) SDR[42]: report an error when the second argument
-        // is not a type or a tuple of types.
-        Err(BuiltInCallError::NotReportedYet)
+        Some(
+            self.types
+                .register_type(Type::Tuple(TupleType { types: decoded })),
+        )
     }
 
     /// Returns the value type a meta-type denotes: `type(T)` unwraps to `T`,

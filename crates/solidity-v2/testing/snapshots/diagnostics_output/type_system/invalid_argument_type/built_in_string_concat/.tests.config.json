@@ -1,0 +1,6 @@
+{
+    "override_language_versions": {
+        "specifier": { "type": "From", "from": "0.8.12" },
+        "reason": "The string.concat built-in was introduced in 0.8.12."
+    }
+}

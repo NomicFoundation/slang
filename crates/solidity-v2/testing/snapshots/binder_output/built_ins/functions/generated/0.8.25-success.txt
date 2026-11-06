@@ -169,7 +169,7 @@ Bindings:
  30 │     function testSelfDestruct() public {
     │              ────────┬───────  
     │                      ╰───────── name: 16
- 31 │         selfdestruct(address(0x0));
+ 31 │         selfdestruct(payable(address(0x0)));
     │         ──────┬─────  
     │               ╰─────── built-in
     │ 
@@ -197,7 +197,7 @@ Bindings:
     │                                  ╰─────── built-in
     │                                       │  
     │                                       ╰── ref: 19
- 38 │         bytes memory v3 = abi.encodeCall(this.testMath, (1, 2, 3));
+ 38 │         bytes memory v3 = abi.encodeCall(this.testMath, ());
     │                      ─┬   ─┬─ ─────┬────      ────┬───  
     │                       ╰───────────────────────────────── name: 21
     │                            │       │              │     
