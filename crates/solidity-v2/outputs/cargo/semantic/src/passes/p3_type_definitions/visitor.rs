@@ -281,7 +281,7 @@ impl Visitor for Pass<'_> {
         // reaches zero at the last chain member (before its value subtree is
         // visited), so a mapping nested inside e.g. a function-type value is
         // correctly treated as a new namespace root.
-        if self.language_version >= LanguageVersion::V0_8_18 {
+        if self.binder.language_version() >= LanguageVersion::V0_8_18 {
             if self.nested_mappings_to_skip > 0 {
                 self.nested_mappings_to_skip -= 1;
             } else {
