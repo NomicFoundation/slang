@@ -2,20 +2,16 @@ use std::sync::Arc;
 
 use slang_solidity_v2_common::collections::Set;
 use slang_solidity_v2_common::nodes::NodeId;
-use slang_solidity_v2_common::versions::LanguageVersion;
 use slang_solidity_v2_ir::ir;
 
 use super::Pass;
 use crate::binder::{
-    Definition, DefinitionIds, Reference, Resolution, ResolveOptions, ScopeId, Typing,
-    UsingDirective, UsingOperator,
+    Definition, DefinitionIds, Reference, Resolution, ScopeId, Typing, UsingDirective,
+    UsingOperator,
 };
 use crate::built_ins::BuiltInsResolver;
-use crate::passes::common::{
-    PathContext, find_definition_namespace_scope_id, namespace_member_not_found,
-    resolve_identifier_path,
-};
-use crate::types::{ContractType, InterfaceType, StructType, Type, TypeId, UserMetaType};
+use crate::passes::common::{PathContext, namespace_member_not_found, resolve_identifier_path};
+use crate::types::{Type, TypeId};
 
 /// Lexical style resolution of symbols
 impl Pass<'_> {
@@ -53,149 +49,7 @@ impl Pass<'_> {
             .filter(move |directive| directive.applies_to(type_id))
     }
 
-    pub(super) fn resolve_symbol_in_typing(&mut self, typing: &Typing, symbol: &str) -> Resolution {
-        match typing {
-            Typing::Unresolved => Resolution::Unresolved,
-            Typing::Undetermined(type_ids) => {
-                // We cannot use argument-type disambiguation here, so we will
-                // use the first result
-                // TODO(validation) SDR[37]: check that the types are consistent (eg.
-                // they are all function types) and that it makes sense to use
-                // the first one
-                self.resolve_symbol_in_type(type_ids[0], symbol)
-            }
-            Typing::Resolved(type_id) => self.resolve_symbol_in_type(*type_id, symbol),
-            Typing::Super(enclosing_contract) => {
-                // This resolves `super` against the linearisation of the contract it is
-                // written in; which function runs depends on the contract being compiled,
-                // see `SemanticContext::resolve_super`.
-                let scope_id = self
-                    .binder
-                    .scope_id_for_node_id(*enclosing_contract)
-                    .expect("a contract has a scope");
-                self.binder.resolve_in_contract_scope(
-                    scope_id,
-                    symbol,
-                    ResolveOptions::Super(*enclosing_contract),
-                )
-            }
-            Typing::This(receiver_type_id) => {
-                if let Some(scope_id) = self.current_contract_scope_id() {
-                    let node_id = self.binder.get_scope_by_id(scope_id).node_id();
-                    // TODO(validation) SDR[34]: for `this` resolutions we need to check
-                    // that the returned definitions are externally available
-                    // (ie. either `external` or `public`)
-                    let mut definition_ids = self
-                        .binder
-                        .resolve_in_contract_scope(scope_id, symbol, ResolveOptions::This(node_id))
-                        .get_definition_ids();
-
-                    // Consider active `using` directives for `this`
-                    if matches!(
-                        self.types.get_type_by_id(*receiver_type_id),
-                        Type::Contract(_)
-                    ) {
-                        self.add_attached_functions_for_type(
-                            *receiver_type_id,
-                            symbol,
-                            &mut definition_ids,
-                        );
-                    }
-
-                    Resolution::from(definition_ids)
-                } else {
-                    Resolution::Unresolved
-                }
-            }
-            Typing::NewExpression(_type_id) => {
-                // No legacy constructor call options in >= 0.8.0
-                Resolution::Unresolved
-            }
-            Typing::BuiltIn(built_in) => self
-                .built_ins_resolver()
-                .lookup_member_of(built_in, symbol)
-                .into(),
-        }
-    }
-
-    fn resolve_symbol_in_type(&mut self, type_id: TypeId, symbol: &str) -> Resolution {
-        let type_ = self.types.get_type_by_id(type_id);
-
-        // Resolve direct members of the type first
-        let mut definition_ids = match type_ {
-            Type::Contract(ContractType { definition_id })
-            | Type::Interface(InterfaceType { definition_id }) => {
-                // A `Type::Library` doesn't belong here, since values of type `library` (ie `this`)
-                // can't be used to access to library members.
-                let scope_id = self.binder.scope_id_for_node_id(*definition_id).unwrap();
-                self.binder
-                    .resolve_in_contract_scope(scope_id, symbol, ResolveOptions::External)
-                    .or_else(|| {
-                        self.built_ins_resolver()
-                            .lookup_member_of_type_id(type_id, symbol)
-                            .into()
-                    })
-            }
-            Type::Struct(StructType { definition_id, .. }) => {
-                let scope_id = self.binder.scope_id_for_node_id(*definition_id).unwrap();
-                self.binder.resolve_in_scope_as_namespace(scope_id, symbol)
-            }
-            Type::UserMetaType(UserMetaType { definition_id }) => {
-                let definition_id = *definition_id;
-                let resolution = find_definition_namespace_scope_id(self.binder, definition_id)
-                    .map_or(Resolution::Unresolved, |scope_id| {
-                        self.binder
-                            .resolve_in_scope_as_expression_member(scope_id, symbol)
-                    });
-                if self.is_foreign_contract_or_interface(definition_id) {
-                    let visible: DefinitionIds = resolution
-                        .get_definition_ids()
-                        .into_iter()
-                        .filter(|id| self.is_reachable_from_outside_hierarchy(*id))
-                        .collect();
-                    Resolution::from(visible)
-                } else {
-                    resolution
-                }
-            }
-            _ => Resolution::Unresolved,
-        }
-        .get_definition_ids();
-
-        // Next, consider active `using` directives in the current context
-        self.add_attached_functions_for_type(type_id, symbol, &mut definition_ids);
-
-        Resolution::from(definition_ids).or_else(|| {
-            // If still unresolved, try with a built-in
-            self.built_ins_resolver()
-                .lookup_member_of_type_id(type_id, symbol)
-                .into()
-        })
-    }
-
-    fn is_foreign_contract_or_interface(&self, definition_id: NodeId) -> bool {
-        matches!(
-            self.binder.find_definition_by_id(definition_id),
-            Some(Definition::Contract(_) | Definition::Interface(_))
-        ) && self.is_foreign_contract(definition_id)
-    }
-
-    /// Whether a member of a contract or interface can be reached through its
-    /// name from outside the contract's hierarchy: types, errors and
-    /// externally visible functions can, events only from 0.8.21, and
-    /// variables, modifiers and internal functions never.
-    fn is_reachable_from_outside_hierarchy(&self, definition_id: NodeId) -> bool {
-        match self.binder.find_definition_by_id(definition_id) {
-            Some(definition @ Definition::Function(_)) => definition.is_externally_visible(),
-            Some(Definition::Event(_)) => self.types.language_version() >= LanguageVersion::V0_8_21,
-            Some(
-                Definition::StateVariable(_) | Definition::Constant(_) | Definition::Modifier(_),
-            ) => false,
-            _ => true,
-        }
-    }
-
-    fn add_attached_functions_for_type(
+    pub(super) fn add_attached_functions_for_type(
         &self,
         receiver_type_id: TypeId,
         symbol: &str,

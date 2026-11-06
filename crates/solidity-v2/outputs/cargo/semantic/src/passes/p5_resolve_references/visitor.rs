@@ -15,9 +15,7 @@ use slang_solidity_v2_ir::ir::visitor::Visitor;
 use super::Pass;
 use crate::binder::{Definition, Reference, Resolution, Typing, UsingOperator};
 use crate::built_ins::InternalBuiltIn;
-use crate::passes::common::{
-    PathContext, filter_overridden_definitions, filter_overridden_definitions_by_selector,
-};
+use crate::passes::common::{PathContext, filter_overridden_definitions};
 use crate::types::{
     AddressType, ArraySliceType, ArrayType, BytesType, FixedSizeArrayType, MappingType, MetaType,
     Number, StringType, TupleType, Type, UserMetaType,
@@ -482,59 +480,18 @@ impl Visitor for Pass<'_> {
         // we need to resolve the identifier at this point that we already have
         // typing information of the operand expression
         let operand_typing = self.check_typing_of_expression(&node.operand).clone();
-        let member_resolution =
-            self.resolve_symbol_in_typing(&operand_typing, node.member.unparse());
-        // `super.f` sees the bases' functions as declared. Any other member,
-        // whether reached through a contract value or a type name, collapses
-        // by selector.
-        let resolution = if matches!(operand_typing, Typing::Super(_)) {
-            filter_overridden_definitions(self.binder, self.types, member_resolution)
-        } else {
-            filter_overridden_definitions_by_selector(self.binder, self.types, member_resolution)
-        };
-
-        // If the operand is either `this` or a contract/interface reference
-        // type, then resolve the member typing as a contract member. This
-        // handles public getters and visibility changes for public methods.
-        let typing = if self.typing_is_contract_reference(&operand_typing) {
-            self.typing_of_resolution_as_contract_member(&resolution)
-        } else {
-            self.typing_of_resolution(&resolution)
-        };
+        let operand_is_unresolved = matches!(operand_typing, Typing::Unresolved);
+        let context = self.member_context(&operand_typing);
+        let resolution = self.resolve_member(context, node.member.unparse());
+        let typing = self.typing_of_member(context, &resolution);
         if matches!(typing, Typing::Unresolved) && self.resolves_to_modifier(&resolution) {
             self.push_diagnostic(node, ModifierOutsideFunctionHeader);
         }
-
-        // Special cases: see `adjust_member_access_type_for_operand`
-        let typing = match typing {
-            Typing::Resolved(type_id) => Typing::Resolved(
-                self.adjust_member_access_type_for_operand(type_id, &operand_typing),
-            ),
-            Typing::This(type_id) => {
-                Typing::This(self.adjust_member_access_type_for_operand(type_id, &operand_typing))
-            }
-            Typing::Undetermined(type_ids) => Typing::Undetermined(
-                type_ids
-                    .into_iter()
-                    .map(|type_id| {
-                        self.adjust_member_access_type_for_operand(type_id, &operand_typing)
-                    })
-                    .collect(),
-            ),
-            Typing::Unresolved
-            | Typing::BuiltIn(_)
-            | Typing::NewExpression(_)
-            | Typing::Super(_) => typing,
-        };
-
-        // Store the typing
         self.binder.set_node_typing(node.id(), typing);
 
         // A member the operand's type does not provide. An operand that did
         // not resolve is already reported, so it is not reported again here.
-        if matches!(resolution, Resolution::Unresolved)
-            && !matches!(operand_typing, Typing::Unresolved)
-        {
+        if matches!(resolution, Resolution::Unresolved) && !operand_is_unresolved {
             let name = node.member.unparse().to_owned();
             self.push_diagnostic(&node.member, MemberNotFound { name });
         }

@@ -12,6 +12,7 @@ use crate::types::TypeRegistry;
 
 mod conversions;
 mod disambiguation;
+mod members;
 mod resolution;
 mod typing;
 mod visitor;
