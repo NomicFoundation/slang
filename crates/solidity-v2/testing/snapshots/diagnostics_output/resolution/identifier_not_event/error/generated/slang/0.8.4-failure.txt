@@ -1,0 +1,11 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 1
+
+[resolution/identifier-not-event] Error: Identifier does not name an event.
+   ╭─[input.sol:9:14]
+   │
+ 9 │         emit Er();
+   │              ─┬  
+   │               ╰── Error occurred here.
+───╯

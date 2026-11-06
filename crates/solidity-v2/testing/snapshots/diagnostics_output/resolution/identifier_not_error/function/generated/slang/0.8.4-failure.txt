@@ -1,0 +1,11 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 1
+
+[resolution/identifier-not-error] Error: Identifier does not name an error.
+   ╭─[input.sol:9:16]
+   │
+ 9 │         revert g();
+   │                ┬  
+   │                ╰── Error occurred here.
+───╯

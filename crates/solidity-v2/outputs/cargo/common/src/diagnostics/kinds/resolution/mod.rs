@@ -4,6 +4,8 @@ mod built_in_redeclaration;
 mod duplicate_event_definition;
 mod duplicate_function_definition;
 mod external_declaration_shadowing;
+mod identifier_not_error;
+mod identifier_not_event;
 mod identifier_not_found;
 mod identifier_not_function_or_not_unique;
 mod identifier_not_library_name;
@@ -26,6 +28,8 @@ pub use built_in_redeclaration::BuiltInRedeclaration;
 pub use duplicate_event_definition::DuplicateEventDefinition;
 pub use duplicate_function_definition::DuplicateFunctionDefinition;
 pub use external_declaration_shadowing::ExternalDeclarationShadowing;
+pub use identifier_not_error::IdentifierNotError;
+pub use identifier_not_event::IdentifierNotEvent;
 pub use identifier_not_found::IdentifierNotFound;
 pub use identifier_not_function_or_not_unique::IdentifierNotFunctionOrNotUnique;
 pub use identifier_not_library_name::IdentifierNotLibraryName;
@@ -98,6 +102,10 @@ define_diagnostic_kind! {
         /// The library name in a `using ... for` directive did not resolve to
         /// a unique library.
         IdentifierNotLibraryName(IdentifierNotLibraryName),
+        /// The target of a `revert` is not an error.
+        IdentifierNotError(IdentifierNotError),
+        /// The target of an `emit` is not an event.
+        IdentifierNotEvent(IdentifierNotEvent),
         /// A modifier invocation names neither a modifier nor a base contract.
         IdentifierNotModifierOrBase(IdentifierNotModifierOrBase),
         /// An entry of an `override` list is neither a contract nor an

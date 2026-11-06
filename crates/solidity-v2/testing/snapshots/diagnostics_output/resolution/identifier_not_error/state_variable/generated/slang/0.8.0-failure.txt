@@ -1,0 +1,19 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 2
+
+[syntax/incompatible-syntax-version] Error: This syntax was introduced in version '0.8.4'.
+   ╭─[input.sol:9:9]
+   │
+ 9 │         revert x();
+   │         ─────┬─────  
+   │              ╰─────── Error occurred here.
+───╯
+
+[resolution/identifier-not-error] Error: Identifier does not name an error.
+   ╭─[input.sol:9:16]
+   │
+ 9 │         revert x();
+   │                ┬  
+   │                ╰── Error occurred here.
+───╯

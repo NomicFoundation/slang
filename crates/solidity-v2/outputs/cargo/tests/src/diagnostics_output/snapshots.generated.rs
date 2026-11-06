@@ -780,6 +780,44 @@ mod resolution {
         }
     }
 
+    mod identifier_not_error {
+        use super::*;
+
+        #[test]
+        fn event() -> Result<()> {
+            run("resolution/identifier_not_error", "event")
+        }
+
+        #[test]
+        fn function() -> Result<()> {
+            run("resolution/identifier_not_error", "function")
+        }
+
+        #[test]
+        fn state_variable() -> Result<()> {
+            run("resolution/identifier_not_error", "state_variable")
+        }
+    }
+
+    mod identifier_not_event {
+        use super::*;
+
+        #[test]
+        fn error() -> Result<()> {
+            run("resolution/identifier_not_event", "error")
+        }
+
+        #[test]
+        fn function() -> Result<()> {
+            run("resolution/identifier_not_event", "function")
+        }
+
+        #[test]
+        fn state_variable() -> Result<()> {
+            run("resolution/identifier_not_event", "state_variable")
+        }
+    }
+
     mod identifier_not_found {
         use super::*;
 
