@@ -129,6 +129,10 @@ pub struct LibraryDefinition {
 #[derive(Debug)]
 pub struct ModifierDefinition {
     pub ir_node: ir::FunctionDefinition,
+    /// The modifier's signature, as a function type. It is kept here rather
+    /// than as the typing of its node, so an expression referencing the
+    /// modifier does not pick it up.
+    pub type_id: Option<TypeId>,
 }
 
 #[derive(Debug)]
@@ -535,6 +539,7 @@ impl Definition {
         );
         Self::Modifier(ModifierDefinition {
             ir_node: Arc::clone(ir_node),
+            type_id: None,
         })
     }
 

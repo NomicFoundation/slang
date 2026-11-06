@@ -582,9 +582,13 @@ impl<'a> Overridable<'a> {
         types: &'a TypeRegistry,
     ) -> Option<&'a FunctionType> {
         let type_id = match self {
-            Self::Function { definition, .. } | Self::Modifier(definition) => {
+            Self::Function { definition, .. } => {
                 binder.node_typing(definition.id()).as_type_id()?
             }
+            Self::Modifier(definition) => match binder.find_definition_by_id(definition.id()) {
+                Some(Definition::Modifier(definition)) => definition.type_id?,
+                _ => unreachable!("modifier is not registered as a definition"),
+            },
             Self::StateVariable(state_variable) => {
                 match binder.find_definition_by_id(state_variable.id()) {
                     Some(Definition::StateVariable(definition)) => definition.getter_type_id?,

@@ -215,12 +215,11 @@ impl Visitor for Pass<'_> {
                 // follow through in order to get to the actual typing.
                 let followed_resolution = self.binder.follow_symbol_aliases(resolution.clone());
                 let typing = self.typing_of_resolution(&followed_resolution);
-                let typing = if self.names_modifier(&followed_resolution, &typing) {
+                if matches!(typing, Typing::Unresolved)
+                    && self.resolves_to_modifier(&followed_resolution)
+                {
                     self.push_diagnostic(identifier, ModifierOutsideFunctionHeader);
-                    Typing::Unresolved
-                } else {
-                    typing
-                };
+                }
                 self.binder.set_node_typing(identifier.id(), typing);
 
                 // Finally, create the reference for the identifier.
@@ -492,12 +491,9 @@ impl Visitor for Pass<'_> {
         } else {
             self.typing_of_resolution(&resolution)
         };
-        let typing = if self.names_modifier(&resolution, &typing) {
+        if matches!(typing, Typing::Unresolved) && self.resolves_to_modifier(&resolution) {
             self.push_diagnostic(node, ModifierOutsideFunctionHeader);
-            Typing::Unresolved
-        } else {
-            typing
-        };
+        }
 
         // Special cases: see `adjust_member_access_type_for_operand`
         let typing = match typing {

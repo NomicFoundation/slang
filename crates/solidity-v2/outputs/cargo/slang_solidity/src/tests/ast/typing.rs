@@ -1016,3 +1016,56 @@ fn test_encode_call_pointer_callee_with_empty_tuple_has_type() {
         "`p` takes no parameters"
     );
 }
+
+define_fixture!(
+    ModifierSignature,
+    file: "main.sol", r#"
+// SPDX-License-Identifier: UNLICENSED
+pragma solidity ^0.8.0;
+
+contract C {
+    modifier m(uint256 x, bool b) {
+        _;
+    }
+}
+"#,
+);
+
+/// Captures the type of every modifier definition in a unit.
+#[derive(Default)]
+struct ModifierTypes {
+    types: Vec<Option<ast::Type>>,
+}
+
+impl Visitor for ModifierTypes {
+    fn enter_function_definition(&mut self, node: &ast::FunctionDefinition) -> bool {
+        if matches!(node.kind(), ast::FunctionKind::Modifier) {
+            self.types.push(node.get_type());
+        }
+        true
+    }
+}
+
+#[test]
+fn test_modifier_definition_has_function_type() {
+    let unit = ModifierSignature::build_compilation_unit();
+
+    let mut finder = ModifierTypes::default();
+    for file in unit.files() {
+        accept_source_unit(&file.ast(), &mut finder);
+    }
+
+    // A modifier's signature is kept on its definition rather than as the
+    // typing of its node, but the definition still exposes it as its type.
+    let [Some(ast::Type::Function(modifier))] = finder.types.as_slice() else {
+        panic!("the modifier definition should have a function type");
+    };
+    let parameter_types = modifier.parameter_types();
+    assert!(
+        matches!(
+            parameter_types.as_slice(),
+            [ast::Type::Integer(_), ast::Type::Boolean(_)]
+        ),
+        "`m` takes a `uint256` and a `bool`"
+    );
+}

@@ -173,6 +173,14 @@ impl Visitor for Pass<'_> {
 
         // now we can compute the function type
         let type_id = self.type_of_function_definition(node, self.current_receiver_type);
+        // A modifier's type is kept on its definition, see `ModifierDefinition`.
+        if matches!(node.kind, ir::FunctionKind::Modifier) {
+            let Definition::Modifier(definition) = self.binder.get_definition_mut(node.id()) else {
+                unreachable!("definition is not a modifier");
+            };
+            definition.type_id = type_id;
+            return;
+        }
         self.binder.set_node_type(node.id(), type_id);
 
         if let Some(externalized_type_id) =
@@ -184,8 +192,8 @@ impl Visitor for Pass<'_> {
             definition.externalized_type_id = Some(externalized_type_id);
         }
 
-        if !matches!(node.kind, ir::FunctionKind::Modifier) && node.name.is_some() {
-            // for non-modifier *named* functions, fill-in parameter types in
+        if node.name.is_some() {
+            // for *named* functions, fill-in parameter types in
             // parameters scope for overload disambiguation in p5
             let parameter_types: Vec<_> = node
                 .parameters

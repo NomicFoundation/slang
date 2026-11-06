@@ -1529,7 +1529,7 @@ impl FunctionDefinitionStruct {
     }
 
     pub fn get_type(&self) -> Option<Type> {
-        Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
+        Type::try_create_for_function_definition(self.ir_node.id(), &self.semantic)
     }
 
     pub fn get_file_id(&self) -> &FileId {

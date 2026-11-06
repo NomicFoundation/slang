@@ -755,7 +755,12 @@ impl Pass<'_> {
                         type_ids.push(type_id);
                     }
                 }
-                Typing::Undetermined(type_ids)
+                // None of them is typed, eg. the overrides of a modifier.
+                if type_ids.is_empty() {
+                    Typing::Unresolved
+                } else {
+                    Typing::Undetermined(type_ids)
+                }
             }
         }
     }
@@ -1415,22 +1420,10 @@ impl Pass<'_> {
         }
     }
 
-    /// Whether an expression typed as `typing` through `resolution` names a
-    /// modifier, or the overrides of one. Only a function header can reference
-    /// a modifier, so an expression naming one is reported and left untyped. A
-    /// modifier is typed as a function, so any other typing skips looking up
-    /// the definition.
-    pub(super) fn names_modifier(&self, resolution: &Resolution, typing: &Typing) -> bool {
-        let may_be_modifier = match typing {
-            Typing::Resolved(type_id) => {
-                matches!(self.types.get_type_by_id(*type_id), Type::Function(_))
-            }
-            Typing::Undetermined(_) => true,
-            _ => false,
-        };
-        if !may_be_modifier {
-            return false;
-        }
+    /// Whether `resolution` names a modifier, or the overrides of one. Only a
+    /// function header can reference a modifier. Its type is kept on its
+    /// definition, so a reference to one is unresolved: check only those.
+    pub(super) fn resolves_to_modifier(&self, resolution: &Resolution) -> bool {
         let is_modifier = |definition_id: &NodeId| {
             matches!(
                 self.binder.find_definition_by_id(*definition_id),

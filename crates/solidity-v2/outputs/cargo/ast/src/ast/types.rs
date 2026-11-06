@@ -109,6 +109,22 @@ impl Type {
         Some(Self::create(type_id, semantic))
     }
 
+    /// The type of a function definition. A modifier's type is kept on its
+    /// definition, not as the typing of its node.
+    pub(crate) fn try_create_for_function_definition(
+        node_id: NodeId,
+        semantic: &Arc<SemanticContext>,
+    ) -> Option<Self> {
+        let binder = semantic.binder();
+        let type_id = binder.node_typing(node_id).as_type_id().or_else(|| {
+            match binder.find_definition_by_id(node_id) {
+                Some(binder::Definition::Modifier(definition)) => definition.type_id,
+                _ => None,
+            }
+        })?;
+        Some(Self::create(type_id, semantic))
+    }
+
     pub(crate) fn create(type_id: TypeId, semantic: &Arc<SemanticContext>) -> Self {
         // Matched by reference, so that a literal is not copied: it may own a
         // large string value, and is read back from the registry instead.
