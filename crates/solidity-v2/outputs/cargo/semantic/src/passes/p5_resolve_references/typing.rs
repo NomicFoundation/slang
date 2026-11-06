@@ -15,14 +15,15 @@ use slang_solidity_v2_ir::ir::NodeIdentity;
 
 use super::Pass;
 use super::disambiguation::OverloadMatch;
+use super::members::MemberContext;
 use crate::binder::{Binder, Definition, Resolution, Typing};
 use crate::built_ins::{BuiltInCallError, InternalBuiltIn};
 use crate::context::FileNodeMapper;
 use crate::passes::common::node_location;
 use crate::types::{
     AddressType, ArraySliceType, ArrayType, ContractType, ConversionError, DataLocation, ErrorType,
-    EventType, FixedSizeArrayType, FunctionType, FunctionTypeVisibility, IntegerType, LiteralKind,
-    MetaType, NoMobileType, Number, StringType, Type, TypeId, UserMetaType, literals,
+    EventType, FixedSizeArrayType, FunctionType, IntegerType, LiteralKind, MetaType, NoMobileType,
+    Number, StringType, Type, TypeId, UserMetaType, literals,
 };
 
 impl Pass<'_> {
@@ -224,7 +225,10 @@ impl Pass<'_> {
                 // there is no setter to write through. Qualified by the name of
                 // a base contract instead (`Base.x`), a state variable is the
                 // same location as its plain name.
-                if self.typing_is_contract_reference(operand_typing) {
+                if matches!(
+                    self.member_context(operand_typing),
+                    MemberContext::ContractValue { .. }
+                ) {
                     return WriteTarget::NotALocation;
                 }
                 // Reaching a member through a type name rather than a value
@@ -765,53 +769,6 @@ impl Pass<'_> {
         }
     }
 
-    pub(super) fn typing_is_contract_reference(&self, typing: &Typing) -> bool {
-        match typing {
-            Typing::This(type_id) | Typing::Resolved(type_id) => matches!(
-                self.types.get_type_by_id(*type_id),
-                Type::Contract(_) | Type::Interface(_)
-            ),
-            _ => false,
-        }
-    }
-
-    pub(super) fn typing_of_resolution_as_contract_member(
-        &mut self,
-        resolution: &Resolution,
-    ) -> Typing {
-        // Check if the target is a state variable with a getter or a function
-        // with an externalized type; the member is accessed through that type.
-        if let Resolution::Definition(definition_id) = resolution
-            && let Some(member_type_id) =
-                match self.binder.find_definition_by_id(*definition_id).unwrap() {
-                    Definition::StateVariable(state_var_definition) => {
-                        state_var_definition.getter_type_id
-                    }
-                    Definition::Function(function_definition) => {
-                        function_definition.externalized_type_id
-                    }
-                    _ => None,
-                }
-        {
-            return Typing::Resolved(member_type_id);
-        }
-
-        let mut typing = self.typing_of_resolution(resolution);
-
-        // If the resolved type is a function and the operand is either
-        // `this` or something of an address type, the function is being
-        // used as an external function: change the expression typing to
-        // indicate the external access.
-        if let Some(type_id) = typing.as_type_id()
-            && let Type::Function(function_type) = self.types.get_type_by_id(type_id)
-            && function_type.is_externally_visible()
-        {
-            typing = Typing::Resolved(self.types.externalize_function_type(type_id));
-        }
-
-        typing
-    }
-
     /// Whether `contract_id` is accessed from a scope that neither is it nor
     /// derives from it (solc's "Foreign" access). The linearisation includes
     /// the contract itself, so containment means local/deriving access.
@@ -843,100 +800,6 @@ impl Pass<'_> {
         } else {
             None
         }
-    }
-
-    /// Adjusts the type of a member reached through a member access whose
-    /// operand types as `operand_typing`:
-    /// - reference types with an "inherited" data location take the operand's
-    ///   location;
-    /// - functions attached via `using for` bind the receiver as their first
-    ///   argument, producing a partially applied function;
-    /// - function declarations that are not callable through the operand's
-    ///   contract/interface type name become the user meta type of their
-    ///   definition.
-    pub(super) fn adjust_member_access_type_for_operand(
-        &mut self,
-        type_id: TypeId,
-        operand_typing: &Typing,
-    ) -> TypeId {
-        let type_ = self.types.get_type_by_id(type_id);
-
-        if type_.is_inherited_location() {
-            if let Some(operand_location) = operand_typing
-                .as_type_id()
-                .and_then(|type_id| self.types.get_type_by_id(type_id).data_location())
-            {
-                let type_ = type_.clone();
-                return self
-                    .types
-                    .register_type_with_data_location(type_, operand_location);
-            }
-        } else if let Type::Function(function_type) = type_
-            && let Some(receiver_type_id) = operand_typing.as_type_id()
-        {
-            if function_type.implicit_receiver_type.is_none()
-                && function_type.parameter_types.first().is_some_and(|first| {
-                    self.types.implicitly_convertible_to_for_call(
-                        receiver_type_id,
-                        *first,
-                        function_type.is_externally_visible(),
-                    )
-                })
-            {
-                return self
-                    .types
-                    .partially_apply_function_type(function_type.clone());
-            }
-
-            if let Some(declaration_type_id) = self.as_foreign_function_declaration_type(
-                receiver_type_id,
-                function_type.definition_id,
-                function_type.visibility,
-            ) {
-                return declaration_type_id;
-            }
-        }
-        type_id
-    }
-
-    /// Returns the user meta type of a function's definition when reaching the
-    /// function through a contract/interface *type name* (eg. `C.g`) makes it
-    /// a non-callable declaration with no mobile type: external functions
-    /// always, and public functions of a *foreign* contract. Internal/private
-    /// functions reached the same way stay normal callables (qualified base
-    /// calls), as do members of library type names (`L.f`).
-    fn as_foreign_function_declaration_type(
-        &mut self,
-        receiver_type_id: TypeId,
-        function_definition_id: Option<NodeId>,
-        visibility: FunctionTypeVisibility,
-    ) -> Option<TypeId> {
-        let Type::UserMetaType(UserMetaType { definition_id }) =
-            self.types.get_type_by_id(receiver_type_id)
-        else {
-            return None;
-        };
-        if !matches!(
-            self.binder.find_definition_by_id(*definition_id),
-            Some(Definition::Contract(_) | Definition::Interface(_))
-        ) {
-            return None;
-        }
-
-        let is_foreign_and_visible = match visibility {
-            FunctionTypeVisibility::External => true,
-            FunctionTypeVisibility::Public => self.is_foreign_contract(*definition_id),
-            FunctionTypeVisibility::Internal | FunctionTypeVisibility::Private => false,
-        };
-        if !is_foreign_and_visible {
-            return None;
-        }
-
-        let definition_id = function_definition_id?;
-        Some(
-            self.types
-                .register_type(Type::UserMetaType(UserMetaType { definition_id })),
-        )
     }
 
     /// Types the explicit conversion of the single argument of `node` to
