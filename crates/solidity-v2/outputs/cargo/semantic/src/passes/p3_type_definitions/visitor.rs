@@ -338,13 +338,23 @@ impl Visitor for Pass<'_> {
         false
     }
 
+    // From 0.8.5 the parameters of an event or an error are not visible to
+    // the type names of its parameters, unlike a function's, so these are
+    // resolved in the enclosing scope while traversing. They stay visible to
+    // an array length, which is evaluated in the definition's own scope when
+    // typing.
     fn enter_event_definition(&mut self, node: &ir::EventDefinition) -> bool {
-        self.enter_scope_for_node_id(node.id());
+        if self.language_version < LanguageVersion::V0_8_5 {
+            self.enter_scope_for_node_id(node.id());
+        }
         true
     }
 
     fn leave_event_definition(&mut self, node: &ir::EventDefinition) {
         self.mark_user_meta_type_node(node.id());
+        if self.language_version >= LanguageVersion::V0_8_5 {
+            self.enter_scope_for_node_id(node.id());
+        }
 
         // Resolve and collect the types of the parameters, saving them in the
         // scope to use in overload disambiguation when invoking an event as a
@@ -373,12 +383,17 @@ impl Visitor for Pass<'_> {
     }
 
     fn enter_error_definition(&mut self, node: &ir::ErrorDefinition) -> bool {
-        self.enter_scope_for_node_id(node.id());
+        if self.language_version < LanguageVersion::V0_8_5 {
+            self.enter_scope_for_node_id(node.id());
+        }
         true
     }
 
     fn leave_error_definition(&mut self, node: &ir::ErrorDefinition) {
         self.mark_user_meta_type_node(node.id());
+        if self.language_version >= LanguageVersion::V0_8_5 {
+            self.enter_scope_for_node_id(node.id());
+        }
 
         // Resolve the types of the parameters
         for parameter in node.parameters.iter() {
