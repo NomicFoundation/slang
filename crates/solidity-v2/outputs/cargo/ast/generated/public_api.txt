@@ -2990,6 +2990,8 @@ pub fn slang_solidity_v2_ast::ast::ModifierDefinitionStruct::name(&self) -> slan
 pub fn slang_solidity_v2_ast::ast::ModifierDefinitionStruct::node_id(&self) -> slang_solidity_v2_common::nodes::NodeId
 pub fn slang_solidity_v2_ast::ast::ModifierDefinitionStruct::parameters(&self) -> slang_solidity_v2_ast::ast::Parameters
 impl slang_solidity_v2_ast::ast::ModifierDefinitionStruct
+pub fn slang_solidity_v2_ast::ast::ModifierDefinitionStruct::compute_internal_signature(&self) -> core::option::Option<alloc::string::String>
+impl slang_solidity_v2_ast::ast::ModifierDefinitionStruct
 pub fn slang_solidity_v2_ast::ast::ModifierDefinitionStruct::enclosing_definition(&self) -> core::option::Option<slang_solidity_v2_ast::ast::Definition>
 impl slang_solidity_v2_ast::ast::ModifierDefinitionStruct
 pub fn slang_solidity_v2_ast::ast::ModifierDefinitionStruct::parameter_types(&self) -> core::option::Option<alloc::vec::Vec<slang_solidity_v2_ast::ast::Type>>
