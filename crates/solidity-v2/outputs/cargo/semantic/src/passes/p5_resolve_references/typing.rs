@@ -913,7 +913,10 @@ impl Pass<'_> {
                 self.is_delegate_called_library_function(definition_id)
             });
 
-            if function_type.implicit_receiver_type.is_none()
+            // Only a function declaration can be attached to the receiver: a
+            // function-typed value, eg. a struct field, keeps its call mode.
+            if function_type.definition_id.is_some()
+                && function_type.implicit_receiver_type.is_none()
                 && function_type.parameter_types.first().is_some_and(|first| {
                     self.types.implicitly_convertible_to_for_call(
                         receiver_type_id,
