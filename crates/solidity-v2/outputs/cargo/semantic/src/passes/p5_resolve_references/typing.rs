@@ -1558,7 +1558,7 @@ impl Pass<'_> {
 
     fn call_options_allowed_for_type(&self, type_id: TypeId) -> Option<bool> {
         match self.types.get_type_by_id(type_id) {
-            Type::Function(function_type) => Some(function_type.call_mode == CallMode::External),
+            Type::Function(function_type) => Some(function_type.call_mode.is_external()),
             // A function declaration reached through its contract's name, or an
             // event or error, is called as a function but not externally.
             Type::UserMetaType(UserMetaType { definition_id }) => {

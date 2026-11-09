@@ -1,0 +1,11 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 1
+
+[type-system/call-options-already-set] Error: Call options have already been set; combine them into a single '{...}'.
+   ╭─[input.sol:8:9]
+   │
+ 8 │         this.f{value: 1}{gas: 2}();
+   │         ────────────┬───────────  
+   │                     ╰───────────── Error occurred here.
+───╯

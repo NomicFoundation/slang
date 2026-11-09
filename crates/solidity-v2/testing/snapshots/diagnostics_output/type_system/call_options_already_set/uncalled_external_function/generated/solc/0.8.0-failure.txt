@@ -1,0 +1,11 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 1
+
+[TypeError 1645] Error: Function call options have already been set, you have to combine them into a single {...}-option.
+   ╭─[input.sol:8:9]
+   │
+ 8 │         this.f{value: 1}{gas: 2};
+   │         ────────────┬───────────  
+   │                     ╰───────────── Error occurred here.
+───╯

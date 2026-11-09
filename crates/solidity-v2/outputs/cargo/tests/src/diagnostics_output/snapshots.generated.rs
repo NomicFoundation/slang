@@ -6293,6 +6293,46 @@ mod type_system {
         }
     }
 
+    mod call_options_already_set {
+        use super::*;
+
+        #[test]
+        fn address_call() -> Result<()> {
+            run("type_system/call_options_already_set", "address_call")
+        }
+
+        #[test]
+        fn external_call() -> Result<()> {
+            run("type_system/call_options_already_set", "external_call")
+        }
+
+        #[test]
+        fn internal_function() -> Result<()> {
+            run("type_system/call_options_already_set", "internal_function")
+        }
+
+        #[test]
+        fn new_expression() -> Result<()> {
+            run("type_system/call_options_already_set", "new_expression")
+        }
+
+        #[test]
+        fn parenthesized_external_call() -> Result<()> {
+            run(
+                "type_system/call_options_already_set",
+                "parenthesized_external_call",
+            )
+        }
+
+        #[test]
+        fn uncalled_external_function() -> Result<()> {
+            run(
+                "type_system/call_options_already_set",
+                "uncalled_external_function",
+            )
+        }
+    }
+
     mod call_options_not_allowed {
         use super::*;
 

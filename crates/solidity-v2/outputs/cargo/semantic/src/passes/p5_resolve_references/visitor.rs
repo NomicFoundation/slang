@@ -6,7 +6,7 @@ use slang_solidity_v2_common::diagnostics::kinds::resolution::{
 };
 use slang_solidity_v2_common::diagnostics::kinds::structure::DuplicateNamedArgument;
 use slang_solidity_v2_common::diagnostics::kinds::type_system::{
-    CallOptionsNotAllowed, EmptyArrayLiteral, ModifierOutsideFunctionHeader,
+    CallOptionsAlreadySet, CallOptionsNotAllowed, EmptyArrayLiteral, ModifierOutsideFunctionHeader,
 };
 use slang_solidity_v2_ir::ir;
 use slang_solidity_v2_ir::ir::NodeIdentity;
@@ -704,7 +704,12 @@ impl Visitor for Pass<'_> {
         let operand_typing = self.raw_typing_of_expression(&node.operand).clone();
 
         let operand_typing = match self.call_options_allowed(&operand_typing) {
-            Some(true) => operand_typing,
+            Some(true) => {
+                if is_call_options_expression(&node.operand) {
+                    self.push_diagnostic(node, CallOptionsAlreadySet);
+                }
+                operand_typing
+            }
             Some(false) => {
                 self.push_diagnostic(node, CallOptionsNotAllowed);
                 operand_typing
@@ -937,5 +942,17 @@ impl Visitor for Pass<'_> {
             }
         }
         true
+    }
+}
+
+/// Whether `node` is a call options expression, seen through parentheses.
+fn is_call_options_expression(node: &ir::Expression) -> bool {
+    match node {
+        ir::Expression::CallOptionsExpression(_) => true,
+        ir::Expression::TupleExpression(tuple) if tuple.items.len() == 1 => tuple.items[0]
+            .expression
+            .as_ref()
+            .is_some_and(is_call_options_expression),
+        _ => false,
     }
 }
