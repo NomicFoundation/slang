@@ -2430,6 +2430,11 @@ mod resolution {
         }
 
         #[test]
+        fn selector_on_function_field() -> Result<()> {
+            run("resolution/member_not_found", "selector_on_function_field")
+        }
+
+        #[test]
         fn selector_on_internal_function() -> Result<()> {
             run(
                 "resolution/member_not_found",
