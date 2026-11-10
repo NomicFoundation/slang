@@ -2598,6 +2598,14 @@ mod resolution {
                 "positional_arguments",
             )
         }
+
+        #[test]
+        fn string_literal_to_calldata_internal() -> Result<()> {
+            run(
+                "resolution/no_matching_callable_declaration",
+                "string_literal_to_calldata_internal",
+            )
+        }
     }
 }
 
