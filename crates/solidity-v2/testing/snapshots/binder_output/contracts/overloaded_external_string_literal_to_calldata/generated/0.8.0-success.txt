@@ -1,0 +1,40 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Definitions (4):
+- Def: #1 ["C" @ input.sol:6:10] (contract)
+- Def: #2 ["f" @ input.sol:7:14] (function, type: function (bytes calldata) returns ())
+- Def: #3 ["f" @ input.sol:9:14] (function, type: function (uint256) returns ())
+- Def: #4 ["g" @ input.sol:11:14] (function, type: function () returns ())
+
+------------------------------------------------------------------------
+
+References (1):
+- Ref: ["f" @ input.sol:12:14] -> #2
+
+------------------------------------------------------------------------
+
+Unbound identifiers (0):
+
+------------------------------------------------------------------------
+
+Bindings: 
+    ╭─[input.sol:1:1]
+    │
+  6 │ contract C {
+    │          ┬  
+    │          ╰── name: 1
+  7 │     function f(bytes calldata) external {}
+    │              ┬  
+    │              ╰── name: 2
+    │ 
+  9 │     function f(uint256) external {}
+    │              ┬  
+    │              ╰── name: 3
+    │ 
+ 11 │     function g() public {
+    │              ┬  
+    │              ╰── name: 4
+ 12 │         this.f("x");
+    │              ┬  
+    │              ╰── ref: 2
+────╯

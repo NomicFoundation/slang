@@ -365,6 +365,14 @@ mod contracts {
     }
 
     #[test]
+    fn overloaded_external_string_literal_to_calldata() -> Result<()> {
+        run(
+            "contracts",
+            "overloaded_external_string_literal_to_calldata",
+        )
+    }
+
+    #[test]
     fn overloaded_internal_selected() -> Result<()> {
         run("contracts", "overloaded_internal_selected")
     }
@@ -372,6 +380,11 @@ mod contracts {
     #[test]
     fn overloaded_named_arguments_selected() -> Result<()> {
         run("contracts", "overloaded_named_arguments_selected")
+    }
+
+    #[test]
+    fn overloaded_string_literal_skips_calldata() -> Result<()> {
+        run("contracts", "overloaded_string_literal_skips_calldata")
     }
 
     #[test]

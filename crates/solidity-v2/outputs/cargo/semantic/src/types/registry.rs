@@ -273,7 +273,7 @@ impl TypeRegistry {
             (
                 Type::Literal(LiteralKind::HexString { value } | LiteralKind::String { value }),
                 Type::String(StringType { location }),
-            ) if *location == DataLocation::Memory || *location == DataLocation::Calldata => {
+            ) if *location == DataLocation::Memory => {
                 return std::str::from_utf8(value).map(|_| ()).map_err(|error| {
                     ConversionError::InvalidUtf8 {
                         position: error.valid_up_to(),
@@ -283,7 +283,7 @@ impl TypeRegistry {
             (
                 Type::Literal(LiteralKind::HexString { .. } | LiteralKind::String { .. }),
                 Type::Bytes(BytesType { location }),
-            ) if *location == DataLocation::Memory || *location == DataLocation::Calldata => true,
+            ) if *location == DataLocation::Memory => true,
 
             // Zero (any source — decimal, hex, or folded) is always
             // implicitly convertible to any byte-array type.
@@ -537,12 +537,26 @@ impl TypeRegistry {
             self.get_type_by_id(to_type_id).data_location(),
             Some(DataLocation::Storage)
         );
+        // The caller ABI-encodes the arguments of an external call, so a
+        // calldata `bytes` or `string` parameter accepts anything that
+        // converts to the memory type. That includes a string literal, which
+        // never converts to calldata otherwise.
+        let externalized_type_id = match self.get_type_by_id(to_type_id) {
+            Type::Bytes(BytesType {
+                location: DataLocation::Calldata,
+            }) => self.bytes_memory(),
+            Type::String(StringType {
+                location: DataLocation::Calldata,
+            }) => self.string_memory(),
+            _ => to_type_id,
+        };
         (!to_storage && self.equal_ignoring_location(from_type_id, to_type_id))
-            || self.implicitly_convertible_to(from_type_id, to_type_id)
+            || self.implicitly_convertible_to(from_type_id, externalized_type_id)
     }
 
-    // The ABI boundary decodes a calldata-located reference into fresh memory,
-    // so an externally callable signature names it there.
+    // The caller of an external function ABI-encodes its arguments and decodes
+    // its results into memory, so an externally callable signature names a
+    // calldata-located reference in memory.
     fn externalize_type(&mut self, type_id: TypeId) -> TypeId {
         let type_ = self.get_type_by_id(type_id);
         if type_
