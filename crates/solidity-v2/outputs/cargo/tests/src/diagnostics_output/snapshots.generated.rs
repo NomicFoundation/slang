@@ -7592,6 +7592,22 @@ mod type_system {
         }
 
         #[test]
+        fn getter_named_mapping_key() -> Result<()> {
+            run(
+                "type_system/invalid_argument_type",
+                "getter_named_mapping_key",
+            )
+        }
+
+        #[test]
+        fn getter_string_key_literal() -> Result<()> {
+            run(
+                "type_system/invalid_argument_type",
+                "getter_string_key_literal",
+            )
+        }
+
+        #[test]
         fn internal_function() -> Result<()> {
             run("type_system/invalid_argument_type", "internal_function")
         }
@@ -7631,8 +7647,56 @@ mod type_system {
         }
 
         #[test]
+        fn named_string_literal_to_calldata_internal() -> Result<()> {
+            run(
+                "type_system/invalid_argument_type",
+                "named_string_literal_to_calldata_internal",
+            )
+        }
+
+        #[test]
         fn no_return_value() -> Result<()> {
             run("type_system/invalid_argument_type", "no_return_value")
+        }
+
+        #[test]
+        fn string_literal_to_calldata_external() -> Result<()> {
+            run(
+                "type_system/invalid_argument_type",
+                "string_literal_to_calldata_external",
+            )
+        }
+
+        #[test]
+        fn string_literal_to_calldata_external_function_value() -> Result<()> {
+            run(
+                "type_system/invalid_argument_type",
+                "string_literal_to_calldata_external_function_value",
+            )
+        }
+
+        #[test]
+        fn string_literal_to_calldata_internal() -> Result<()> {
+            run(
+                "type_system/invalid_argument_type",
+                "string_literal_to_calldata_internal",
+            )
+        }
+
+        #[test]
+        fn string_literal_to_calldata_internal_function_value() -> Result<()> {
+            run(
+                "type_system/invalid_argument_type",
+                "string_literal_to_calldata_internal_function_value",
+            )
+        }
+
+        #[test]
+        fn string_literal_to_calldata_public_library() -> Result<()> {
+            run(
+                "type_system/invalid_argument_type",
+                "string_literal_to_calldata_public_library",
+            )
         }
     }
 
@@ -8040,6 +8104,22 @@ mod type_system {
         }
 
         #[test]
+        fn getter_named_mapping_key() -> Result<()> {
+            run(
+                "type_system/unknown_named_argument",
+                "getter_named_mapping_key",
+            )
+        }
+
+        #[test]
+        fn getter_named_mapping_key_mismatch() -> Result<()> {
+            run(
+                "type_system/unknown_named_argument",
+                "getter_named_mapping_key_mismatch",
+            )
+        }
+
+        #[test]
         fn unnamed_parameter() -> Result<()> {
             run("type_system/unknown_named_argument", "unnamed_parameter")
         }
@@ -8113,6 +8193,14 @@ mod type_system {
         #[test]
         fn getter() -> Result<()> {
             run("type_system/wrong_argument_count", "getter")
+        }
+
+        #[test]
+        fn getter_named_with_array_index() -> Result<()> {
+            run(
+                "type_system/wrong_argument_count",
+                "getter_named_with_array_index",
+            )
         }
 
         #[test]

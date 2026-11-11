@@ -1,0 +1,11 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 1
+
+[type-system/wrong-argument-count] Error: Wrong argument count: 2 arguments given but expected 3.
+   ╭─[input.sol:8:16]
+   │
+ 8 │         return this.m({owner: address(0), id: 2});
+   │                ─────────────────┬────────────────  
+   │                                 ╰────────────────── Error occurred here.
+───╯

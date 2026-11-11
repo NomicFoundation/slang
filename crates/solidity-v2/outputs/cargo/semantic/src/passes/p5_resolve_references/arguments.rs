@@ -83,7 +83,7 @@ impl Pass<'_> {
                 arguments,
                 argument_types,
             ),
-            // A function value or a getter has the types at the call itself.
+            // A function value has only the types of its parameters.
             None => checker.check_positional(
                 node,
                 unbound(function_type, &function_type.parameter_types),
@@ -116,7 +116,7 @@ impl Pass<'_> {
                 arguments,
                 argument_types,
             ),
-            // A function value or a getter has no parameter names to match.
+            // A function value has no parameter names to match.
             None => checker.check_named(
                 node,
                 unbound(function_type, &function_type.parameter_types),
@@ -283,7 +283,9 @@ fn crosses_external_boundary(function_type: &FunctionType) -> bool {
 }
 
 /// The parameters declared by `definition_id`, if it declares any, eg. a
-/// function. A getter declares none.
+/// function or a getter.
+// TODO: replace this and `parameters_of_scope` with
+// `Binder::get_parameters_for_definition` once #2370 is merged.
 pub(super) fn declared_parameters(
     binder: &Binder,
     definition_id: Option<NodeId>,
