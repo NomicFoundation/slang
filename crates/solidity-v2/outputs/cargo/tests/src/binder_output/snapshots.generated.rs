@@ -418,6 +418,11 @@ mod contracts {
     }
 
     #[test]
+    fn public_getter_named_arguments() -> Result<()> {
+        run("contracts", "public_getter_named_arguments")
+    }
+
+    #[test]
     fn public_getter_selector() -> Result<()> {
         run("contracts", "public_getter_selector")
     }

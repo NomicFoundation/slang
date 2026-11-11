@@ -157,10 +157,14 @@ const SCOPE_NODE_KINDS: &[NodeKind] = &[
 /// IR node kinds that additionally open a *parameter* scope. These scopes have
 /// no `NodeId`, so they only live in the `scopes` vec, not `scopes_by_node_id`.
 /// A modifier collects its parameters into its own scope, so it opens none.
+/// `StateVariableDefinition` overcounts by the non-public variables (only a
+/// getter gets one); that only over-reserves the `scopes` vec, which is
+/// harmless (see module docs).
 const PARAMETER_SCOPE_NODE_KINDS: &[NodeKind] = &[
     NodeKind::FunctionDefinition,
     NodeKind::ErrorDefinition,
     NodeKind::EventDefinition,
+    NodeKind::StateVariableDefinition,
     NodeKind::TryStatement,
 ];
 
@@ -201,8 +205,8 @@ pub(crate) struct BinderCapacities {
     /// Scopes keyed by a `NodeId` (`scopes_by_node_id`). **Exact.**
     pub scopes_by_node_id: usize,
     /// Total scopes including the no-`NodeId` parameter scopes (the `scopes`
-    /// vec). Slight **over**-count (modifier parameter scopes); harmless for a
-    /// `Vec`, which reserves exactly.
+    /// vec). Slight **over**-count (modifier parameter scopes, non-public state
+    /// variables); harmless for a `Vec`, which reserves exactly.
     pub scopes: usize,
     /// Linearised contracts/interfaces (`linearisations`). **Exact.**
     pub linearisations: usize,
