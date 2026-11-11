@@ -344,7 +344,7 @@ fn filter_overridden_functions(
                 //
                 // Remember the getter type if present to override functions in
                 // bases.
-                if let Some(getter_type_id) = state_variable.getter_type_id {
+                if let Some(getter_type_id) = state_variable.getter_type_id() {
                     let Type::Function(getter_type) = types.get_type_by_id(getter_type_id) else {
                         unreachable!("getter function type is not a function")
                     };
@@ -587,7 +587,7 @@ impl<'a> Overridable<'a> {
             }
             Self::StateVariable(state_variable) => {
                 match binder.find_definition_by_id(state_variable.id()) {
-                    Some(Definition::StateVariable(definition)) => definition.getter_type_id?,
+                    Some(Definition::StateVariable(definition)) => definition.getter_type_id()?,
                     _ => unreachable!("state variable is not registered as a definition"),
                 }
             }
