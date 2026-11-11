@@ -1,0 +1,11 @@
+{
+  "expected_solc_divergence": [
+    {
+      "specifier": {
+        "type": "From",
+        "from": "0.8.18"
+      },
+      "reason": "Slang reports the named key as unknown. #2370 gives getters a parameter list with the mapping key names. Until it is merged, named getter arguments are matched against unnamed parameters."
+    }
+  ]
+}
