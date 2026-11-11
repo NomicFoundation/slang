@@ -83,7 +83,7 @@ impl Pass<'_> {
                 arguments,
                 argument_types,
             ),
-            // A function value has the types at the call itself.
+            // A function value has only the types of its parameters.
             None => checker.check_positional(
                 node,
                 unbound(function_type, &function_type.parameter_types),
@@ -116,7 +116,7 @@ impl Pass<'_> {
                 arguments,
                 argument_types,
             ),
-            // A function value or a getter has no parameter names to match.
+            // A function value has no parameter names to match.
             None => checker.check_named(
                 node,
                 unbound(function_type, &function_type.parameter_types),
