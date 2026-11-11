@@ -108,11 +108,29 @@ pub(crate) struct ModifierScope {
     pub(crate) definitions: Map<String, NodeId>,
 }
 
-/// This is stored in a vector in the `ParametersScope` below preserving order
-/// for positional arguments and used by the binder, both to resolve named
-/// arguments, and disambiguate overloads of functions and events.
-pub(crate) struct ParameterDefinition {
+/// One positional slot of something callable: a parameter of a function,
+/// constructor, event or error, or an input or output of a public state
+/// variable's getter. It is used to match arguments by position or by name,
+/// to disambiguate overloads, and to name the slot in the ABI.
+///
+/// A slot is not necessarily a [`Definition::Parameter`](super::Definition):
+/// a getter's slots come from the variable's declared type, so a named one is
+/// a mapping's [`Definition::TypeParameter`](super::Definition) or a
+/// [`Definition::StructMember`](super::Definition).
+#[derive(Debug)]
+pub struct ParameterDefinition {
     pub(crate) name: Option<String>,
+    /// The node the slot is declared by:
+    ///
+    /// - a parameter of a declaration: its `ir::Parameter`;
+    /// - a getter input for a mapping key: the key's `ir::Parameter`;
+    /// - a getter input for an array index: the `ir::ArrayTypeName`, as the
+    ///   index has no node of its own;
+    /// - a getter output: the returned `ir::StructMember`, else the innermost
+    ///   mapping value's `ir::Parameter`, else the state variable itself.
+    ///
+    /// A named slot's node is also its definition, see
+    /// [`ParameterDefinition::definition_id`].
     pub(crate) node_id: NodeId,
     /// The type of the parameter, or `None` if it's not yet computed or cannot
     /// be computed. For some parameter containers (eg. errors) it's never
@@ -120,6 +138,34 @@ pub(crate) struct ParameterDefinition {
     pub(crate) type_id: Option<TypeId>,
 }
 
+impl ParameterDefinition {
+    pub fn name(&self) -> Option<&str> {
+        self.name.as_deref()
+    }
+
+    /// The node the slot is declared by, named or not.
+    pub fn node_id(&self) -> NodeId {
+        self.node_id
+    }
+
+    /// The definition named arguments and identifiers resolve to, which only a
+    /// named slot has: its declaring node. A nameless slot is never resolved
+    /// to. The binder checks this holds when the slots are stored.
+    pub fn definition_id(&self) -> Option<NodeId> {
+        self.name.as_ref().map(|_| self.node_id)
+    }
+
+    pub fn type_id(&self) -> Option<TypeId> {
+        self.type_id
+    }
+}
+
+/// The ordered slots of something callable, see [`ParameterDefinition`]. It is
+/// reached from the callable's definition (see
+/// `Binder::get_parameters_scope_for_definition`), and also chained into a
+/// function's or a signature's scope, so its named slots resolve as
+/// identifiers there. A getter's scope is never chained: its slots are only
+/// reached by the arguments of a call to the getter.
 pub(crate) struct ParametersScope {
     pub(crate) parameters: Vec<ParameterDefinition>,
 }
@@ -430,6 +476,19 @@ impl ParametersScope {
         });
     }
 
+    pub(crate) fn add_typed_parameter(
+        &mut self,
+        name: Option<String>,
+        node_id: NodeId,
+        type_id: TypeId,
+    ) {
+        self.parameters.push(ParameterDefinition {
+            name,
+            node_id,
+            type_id: Some(type_id),
+        });
+    }
+
     pub(crate) fn set_parameter_types(&mut self, type_ids: &[Option<TypeId>]) {
         if type_ids.len() != self.parameters.len() {
             unreachable!("parameter count mismatch while setting types");
@@ -443,7 +502,7 @@ impl ParametersScope {
         self.parameters
             .iter()
             .find(|parameter| parameter.name.as_ref().is_some_and(|name| name == symbol))
-            .map(|parameter| parameter.node_id)
+            .and_then(ParameterDefinition::definition_id)
     }
 }
 

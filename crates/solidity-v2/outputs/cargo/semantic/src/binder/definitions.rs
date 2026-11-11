@@ -139,13 +139,31 @@ pub struct ParameterDefinition {
 #[derive(Debug)]
 pub struct StateVariableDefinition {
     pub ir_node: ir::StateVariableDefinition,
-    pub getter_type_id: Option<TypeId>,
-    // The struct members the getter's return type is built from, in declaration
-    // order.
-    pub getter_member_ids: Vec<NodeId>,
+    /// The generated getter. Only a public variable has one, and only once
+    /// its type can be computed.
+    pub getter: Option<Getter>,
     // This is the scope the variable is defined in, and is used to change the
     // resolution context in the `CompileConstantEvaluator`.
     pub(crate) enclosing_scope_id: ScopeId,
+}
+
+impl StateVariableDefinition {
+    pub fn getter_type_id(&self) -> Option<TypeId> {
+        self.getter.as_ref().map(|getter| getter.type_id)
+    }
+}
+
+/// The getter generated for a public state variable.
+#[derive(Debug)]
+pub struct Getter {
+    /// The getter's function type.
+    pub type_id: TypeId,
+    /// The getter's inputs, one per mapping key or array index, in nesting
+    /// order.
+    pub(crate) parameters_scope_id: ScopeId,
+    /// The getter's outputs, matching its return type: one per returned struct
+    /// member, or the single returned value. Never empty.
+    pub return_parameters: Vec<super::scopes::ParameterDefinition>,
 }
 
 #[derive(Debug, Eq, Ord, PartialEq, PartialOrd)]
@@ -554,8 +572,7 @@ impl Definition {
     ) -> Self {
         Self::StateVariable(StateVariableDefinition {
             ir_node: Arc::clone(ir_node),
-            getter_type_id: None,
-            getter_member_ids: Vec::new(),
+            getter: None,
             enclosing_scope_id,
         })
     }

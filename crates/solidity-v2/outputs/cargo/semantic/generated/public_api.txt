@@ -97,12 +97,26 @@ pub fn slang_solidity_v2_semantic::binder::Binder::find_definition_by_id(&self, 
 pub fn slang_solidity_v2_semantic::binder::Binder::find_definition_by_identifier_node_id(&self, slang_solidity_v2_common::nodes::NodeId) -> core::option::Option<&slang_solidity_v2_semantic::binder::Definition>
 pub fn slang_solidity_v2_semantic::binder::Binder::find_reference_by_identifier_node_id(&self, slang_solidity_v2_common::nodes::NodeId) -> core::option::Option<&slang_solidity_v2_semantic::binder::Reference>
 pub fn slang_solidity_v2_semantic::binder::Binder::get_linearised_bases(&self, slang_solidity_v2_common::nodes::NodeId) -> core::option::Option<&alloc::vec::Vec<slang_solidity_v2_common::nodes::NodeId>>
+pub fn slang_solidity_v2_semantic::binder::Binder::get_parameters_for_definition(&self, slang_solidity_v2_common::nodes::NodeId) -> core::option::Option<&[slang_solidity_v2_semantic::binder::ParameterDefinition]>
 pub fn slang_solidity_v2_semantic::binder::Binder::get_references_by_definition_id(&self, slang_solidity_v2_common::nodes::NodeId) -> alloc::vec::Vec<slang_solidity_v2_common::nodes::NodeId>
 pub fn slang_solidity_v2_semantic::binder::Binder::node_typing(&self, slang_solidity_v2_common::nodes::NodeId) -> &slang_solidity_v2_semantic::binder::Typing
 pub fn slang_solidity_v2_semantic::binder::Binder::references(&self) -> &slang_solidity_v2_common::collections::aliases::Map<slang_solidity_v2_common::nodes::NodeId, slang_solidity_v2_semantic::binder::Reference>
 pub fn slang_solidity_v2_semantic::binder::Binder::resolved_operator_function(&self, slang_solidity_v2_common::nodes::NodeId) -> core::option::Option<slang_solidity_v2_common::nodes::NodeId>
 impl core::default::Default for slang_solidity_v2_semantic::binder::Binder
 pub fn slang_solidity_v2_semantic::binder::Binder::default() -> slang_solidity_v2_semantic::binder::Binder
+pub struct slang_solidity_v2_semantic::binder::Getter
+pub slang_solidity_v2_semantic::binder::Getter::return_parameters: alloc::vec::Vec<slang_solidity_v2_semantic::binder::ParameterDefinition>
+pub slang_solidity_v2_semantic::binder::Getter::type_id: slang_solidity_v2_semantic::types::TypeId
+impl core::fmt::Debug for slang_solidity_v2_semantic::binder::Getter
+pub fn slang_solidity_v2_semantic::binder::Getter::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+pub struct slang_solidity_v2_semantic::binder::ParameterDefinition
+impl slang_solidity_v2_semantic::binder::ParameterDefinition
+pub fn slang_solidity_v2_semantic::binder::ParameterDefinition::definition_id(&self) -> core::option::Option<slang_solidity_v2_common::nodes::NodeId>
+pub fn slang_solidity_v2_semantic::binder::ParameterDefinition::name(&self) -> core::option::Option<&str>
+pub fn slang_solidity_v2_semantic::binder::ParameterDefinition::node_id(&self) -> slang_solidity_v2_common::nodes::NodeId
+pub fn slang_solidity_v2_semantic::binder::ParameterDefinition::type_id(&self) -> core::option::Option<slang_solidity_v2_semantic::types::TypeId>
+impl core::fmt::Debug for slang_solidity_v2_semantic::binder::ParameterDefinition
+pub fn slang_solidity_v2_semantic::binder::ParameterDefinition::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
 pub struct slang_solidity_v2_semantic::binder::Reference
 pub slang_solidity_v2_semantic::binder::Reference::identifier: slang_solidity_v2_ir::ir::nodes::Identifier
 pub slang_solidity_v2_semantic::binder::Reference::resolution: slang_solidity_v2_semantic::binder::Resolution
