@@ -90,7 +90,7 @@ impl Pass<'_> {
         // failed has no type at all. An omitted component is already reported
         // where it is written, so it is rejected silently.
         if let ir::Expression::TupleExpression(tuple) = node
-            && (self.report_type_names_in_tuple(tuple) || has_omitted_component(tuple))
+            && (self.report_type_names_in_tuple(tuple) || tuple.has_omitted_component())
         {
             return None;
         }
@@ -1178,6 +1178,7 @@ impl Pass<'_> {
                 type_id,
                 arguments,
                 argument_types.as_deref(),
+                false,
             ),
             Typing::Undetermined(type_ids) => {
                 // No overload can accept an argument that has no type, so the
@@ -1200,13 +1201,13 @@ impl Pass<'_> {
                     // when calling it turns out to be invalid
                     self.fixup_operand_expression(&node.operand, candidate_type_id);
 
-                    // TODO: the selected overload already accepts the arguments,
-                    // so checking them again here is redundant.
+                    // The selected overload already accepts the arguments.
                     self.typing_of_type_called_with_positional_arguments(
                         node,
                         candidate_type_id,
                         arguments,
                         Some(&argument_types),
+                        true,
                     )
                 } else {
                     Typing::Unresolved
@@ -1254,23 +1255,28 @@ impl Pass<'_> {
     /// construction), and the user meta type of a function is a non-callable
     /// declaration reached through a contract/interface type name.
     /// `argument_types` remains optional because there are cascading
-    /// diagnostics that are worth reporting regardless.
+    /// diagnostics that are worth reporting regardless. `skip_arguments_check`
+    /// is set when the arguments are already known to be accepted, eg. after
+    /// selecting an overload by them.
     fn typing_of_type_called_with_positional_arguments(
         &mut self,
         node: &ir::FunctionCallExpression,
         type_id: TypeId,
         arguments: &[ir::Expression],
         argument_types: Option<&[TypeId]>,
+        skip_arguments_check: bool,
     ) -> Typing {
         match self.types.get_type_by_id(type_id) {
             Type::Function(FunctionType { return_type, .. }) => {
                 let return_type = *return_type;
-                self.check_positional_arguments_of_function_call(
-                    node,
-                    type_id,
-                    arguments,
-                    argument_types,
-                );
+                if !skip_arguments_check {
+                    self.check_positional_arguments_of_function_call(
+                        node,
+                        type_id,
+                        arguments,
+                        argument_types,
+                    );
+                }
                 Typing::Resolved(return_type)
             }
             Type::MetaType(MetaType {
@@ -1391,6 +1397,7 @@ impl Pass<'_> {
                 type_id,
                 arguments,
                 argument_types.as_deref(),
+                false,
             ),
             Typing::Undetermined(type_ids) => {
                 // As in the positional form, an argument without a type cannot
@@ -1411,13 +1418,13 @@ impl Pass<'_> {
                             // even when calling it turns out to be invalid
                             self.fixup_operand_expression(&node.operand, candidate_type_id);
 
-                            // TODO: the selected overload already accepts the
-                            // arguments, so checking them again here is redundant.
+                            // The selected overload already accepts the arguments.
                             self.typing_of_type_called_with_named_arguments(
                                 node,
                                 candidate_type_id,
                                 arguments,
                                 Some(argument_types),
+                                true,
                             )
                         } else {
                             (Typing::Unresolved, None)
@@ -1454,13 +1461,16 @@ impl Pass<'_> {
     /// function and of an event are non-callable declarations, reached through
     /// a contract/interface type name and outside an `emit` statement
     /// respectively. Anything else, including the alias of an imported file, is
-    /// not callable at all.
+    /// not callable at all. `skip_arguments_check` is set when the arguments
+    /// are already known to be accepted, eg. after selecting an overload by
+    /// them.
     fn typing_of_type_called_with_named_arguments(
         &mut self,
         node: &ir::FunctionCallExpression,
         type_id: TypeId,
         arguments: &[ir::NamedArgument],
         argument_types: Option<&[(&str, TypeId)]>,
+        skip_arguments_check: bool,
     ) -> (Typing, Option<NodeId>) {
         match self.types.get_type_by_id(type_id) {
             Type::Function(FunctionType {
@@ -1469,12 +1479,14 @@ impl Pass<'_> {
                 ..
             }) => {
                 let (definition_id, return_type) = (*definition_id, *return_type);
-                self.check_named_arguments_of_function_call(
-                    node,
-                    type_id,
-                    arguments,
-                    argument_types,
-                );
+                if !skip_arguments_check {
+                    self.check_named_arguments_of_function_call(
+                        node,
+                        type_id,
+                        arguments,
+                        argument_types,
+                    );
+                }
                 (Typing::Resolved(return_type), definition_id)
             }
             Type::MetaType(_) => {
@@ -1642,15 +1654,6 @@ fn reference_identifier_for_expression(node: &ir::Expression) -> Option<&ir::Ide
         ir::Expression::CallOptionsExpression(f) => reference_identifier_for_expression(&f.operand),
         _ => None,
     }
-}
-
-/// Whether `tuple` omits a component, however deeply nested, eg. `(1, )`.
-fn has_omitted_component(tuple: &ir::TupleExpression) -> bool {
-    tuple.items.iter().any(|item| match &item.expression {
-        None => true,
-        Some(ir::Expression::TupleExpression(inner)) => has_omitted_component(inner),
-        Some(_) => false,
-    })
 }
 
 /// Typing functions for literals

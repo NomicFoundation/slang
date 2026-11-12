@@ -297,6 +297,12 @@ impl CallMode {
         matches!(self, Self::External | Self::ExternalWithCallOptions)
     }
 
+    /// Whether a call passes the declared parameters across an external
+    /// boundary: an external or a delegate call.
+    pub(crate) fn crosses_external_boundary(self) -> bool {
+        self.is_external() || self.is_delegate()
+    }
+
     /// The same call mode, with nothing applied.
     #[must_use]
     pub fn unapplied(self) -> Self {

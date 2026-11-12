@@ -4646,6 +4646,11 @@ mod structure {
         }
 
         #[test]
+        fn internal_call_argument() -> Result<()> {
+            run("structure/empty_tuple_component", "internal_call_argument")
+        }
+
+        #[test]
         fn read_statement() -> Result<()> {
             run("structure/empty_tuple_component", "read_statement")
         }

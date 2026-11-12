@@ -101,10 +101,9 @@ impl Pass<'_> {
             else {
                 return false;
             };
-            // Only a call that crosses an external boundary (an external or
-            // delegate call) reads a calldata parameter as memory.
-            let external_call =
-                function_type.call_mode.is_external() || function_type.call_mode.is_delegate();
+            // Only a call that crosses an external boundary reads a calldata
+            // parameter as memory.
+            let external_call = function_type.call_mode.crosses_external_boundary();
             if let Some(receiver_type_id) = receiver_type_id {
                 // we have a receiver type, so either check for an implicit
                 // receiver type, or the first parameter type

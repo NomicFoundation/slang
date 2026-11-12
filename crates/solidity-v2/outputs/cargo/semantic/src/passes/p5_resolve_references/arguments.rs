@@ -11,7 +11,7 @@ use super::Pass;
 use crate::binder::{Binder, ParameterDefinition, Scope, ScopeId};
 use crate::context::FileNodeMapper;
 use crate::passes::common::node_location;
-use crate::types::{FunctionType, Type, TypeId, TypeRegistry};
+use crate::types::{CallMode, Type, TypeId, TypeRegistry};
 
 /// The ordered parameters that the arguments of a call are checked against,
 /// with the name and type of each one where known.
@@ -78,15 +78,19 @@ impl Pass<'_> {
         match declared_parameters(binder, function_type.definition_id) {
             Some(parameters) => checker.check_positional(
                 node,
-                unbound(function_type, parameters),
-                crosses_external_boundary(function_type),
+                without_bound_receiver(parameters, function_type.call_mode),
+                function_type.call_mode.crosses_external_boundary(),
                 arguments,
                 argument_types,
             ),
-            // A function value has only the types of its parameters.
+            // A function value or a getter has the types at the call itself.
+            // TODO: review whether an external function value should relax
+            // the data location rules like an external call to a declared
+            // function does, eg. accept a memory argument for a calldata one.
+            // `external_call` is false for now for compatibility with solc.
             None => checker.check_positional(
                 node,
-                unbound(function_type, &function_type.parameter_types),
+                without_bound_receiver(&function_type.parameter_types, function_type.call_mode),
                 false,
                 arguments,
                 argument_types,
@@ -111,15 +115,19 @@ impl Pass<'_> {
         match declared_parameters(binder, function_type.definition_id) {
             Some(parameters) => checker.check_named(
                 node,
-                unbound(function_type, parameters),
-                crosses_external_boundary(function_type),
+                without_bound_receiver(parameters, function_type.call_mode),
+                function_type.call_mode.crosses_external_boundary(),
                 arguments,
                 argument_types,
             ),
-            // A function value has no parameter names to match.
+            // A function value or a getter has no parameter names to match.
+            // TODO: review whether an external function value should relax
+            // the data location rules like an external call to a declared
+            // function does, eg. accept a memory argument for a calldata one.
+            // `external_call` is false for now for compatibility with solc.
             None => checker.check_named(
                 node,
-                unbound(function_type, &function_type.parameter_types),
+                without_bound_receiver(&function_type.parameter_types, function_type.call_mode),
                 false,
                 arguments,
                 argument_types,
@@ -176,9 +184,9 @@ impl ArgumentsChecker<'_> {
             return;
         };
         for (index, argument) in arguments.iter().enumerate() {
-            if !self.converts(
-                argument_types[index],
+            if !self.parameter_accepts_argument(
                 parameters.type_id(index),
+                argument_types[index],
                 external_call,
             ) {
                 self.report(argument, InvalidArgumentType);
@@ -234,18 +242,23 @@ impl ArgumentsChecker<'_> {
         };
         for (index, argument) in arguments.iter().enumerate() {
             let parameter_type = parameters.type_id(parameter_indices[index]);
-            if !self.converts(argument_types[index].1, parameter_type, external_call) {
+            if !self.parameter_accepts_argument(
+                parameter_type,
+                argument_types[index].1,
+                external_call,
+            ) {
                 self.report(&argument.value, InvalidArgumentType);
             }
         }
     }
 
-    /// Whether `argument_type` converts to `parameter_type`. A parameter
-    /// without a type is already reported, so any argument converts to it.
-    fn converts(
+    /// Whether a parameter of `parameter_type` accepts an argument of
+    /// `argument_type`. A parameter without a type is already reported, so it
+    /// accepts any argument.
+    fn parameter_accepts_argument(
         &self,
-        argument_type: TypeId,
         parameter_type: Option<TypeId>,
+        argument_type: TypeId,
         external_call: bool,
     ) -> bool {
         parameter_type.is_none_or(|parameter_type| {
@@ -276,14 +289,8 @@ pub(super) fn parameter_type_matches_argument_type(
     types.implicitly_convertible_to_for_call(argument_type, parameter_type, external_call)
 }
 
-/// Whether a call to `function_type` passes its declared parameters across an
-/// external boundary: an external or a delegate call.
-fn crosses_external_boundary(function_type: &FunctionType) -> bool {
-    function_type.call_mode.is_external() || function_type.call_mode.is_delegate()
-}
-
 /// The parameters declared by `definition_id`, if it declares any, eg. a
-/// function or a getter.
+/// function. A getter declares none.
 // TODO: replace this and `parameters_of_scope` with
 // `Binder::get_parameters_for_definition` once #2370 is merged.
 pub(super) fn declared_parameters(
@@ -301,9 +308,9 @@ fn parameters_of_scope(binder: &Binder, parameters_scope_id: ScopeId) -> &[Param
     &parameters_scope.parameters
 }
 
-/// The part of `parameters` (of `function_type`) that a call passes: a bound
-/// function already has its first argument, which cannot be named either.
-fn unbound<'a, T>(function_type: &FunctionType, parameters: &'a [T]) -> &'a [T] {
-    let skip = usize::from(function_type.call_mode.is_bound());
+/// The `parameters` a call passes arguments for. A bound call, eg. `x.f(..)`,
+/// already has its first argument, so a named argument cannot target it.
+fn without_bound_receiver<T>(parameters: &[T], call_mode: CallMode) -> &[T] {
+    let skip = usize::from(call_mode.is_bound());
     parameters.get(skip..).unwrap_or_default()
 }
