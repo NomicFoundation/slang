@@ -3340,6 +3340,8 @@ pub struct slang_solidity_v2_ir::ir::TupleExpressionStruct
 pub slang_solidity_v2_ir::ir::TupleExpressionStruct::items: slang_solidity_v2_ir::ir::TupleValues
 pub slang_solidity_v2_ir::ir::TupleExpressionStruct::range: core::ops::range::Range<usize>
 impl slang_solidity_v2_ir::ir::TupleExpressionStruct
+pub fn slang_solidity_v2_ir::ir::TupleExpressionStruct::has_omitted_component(&self) -> bool
+impl slang_solidity_v2_ir::ir::TupleExpressionStruct
 pub fn slang_solidity_v2_ir::ir::TupleExpressionStruct::id(&self) -> slang_solidity_v2_common::nodes::NodeId
 impl core::fmt::Debug for slang_solidity_v2_ir::ir::TupleExpressionStruct
 pub fn slang_solidity_v2_ir::ir::TupleExpressionStruct::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
