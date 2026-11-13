@@ -1,0 +1,11 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 1
+
+[TypeError 9515] Error: Struct containing a (nested) mapping cannot be constructed.
+    ╭─[input.sol:15:9]
+    │
+ 15 │         S(1);
+    │         ──┬─  
+    │           ╰─── Error occurred here.
+────╯

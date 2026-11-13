@@ -1,5 +1,6 @@
 //! Tests for the struct recursion kinds p3 sets on struct definitions: which
 //! references each follows, and the by-value dependencies recorded for p8.
+//! Also the structs it marks as containing a mapping.
 
 use super::support::{Analyse, Analysis};
 use crate::binder::{Definition, RecursionKind, StructDefinition};
@@ -188,4 +189,28 @@ fn by_value_dependencies_follow_member_order_and_skip_indirect_references() {
             .by_value_dependencies
             .is_empty()
     );
+}
+
+#[test]
+fn structs_holding_a_mapping_contain_a_mapping() {
+    let analysis = analyse(
+        "pragma solidity *;
+        struct Plain { uint256 a; }
+        struct Direct { mapping(uint256 => uint256) m; }
+        struct InStruct { Plain p; Direct d; }
+        struct InArray { InStruct[] items; }
+        struct InFixedArray { mapping(uint256 => bool)[2] ms; }
+        struct InSignature { function(Direct storage) internal f; }",
+    );
+    for (name, contains_mapping) in [
+        ("Plain", false),
+        ("Direct", true),
+        ("InStruct", true),
+        ("InArray", true),
+        ("InFixedArray", true),
+        ("InSignature", false),
+    ] {
+        let definition = struct_named(&analysis, name);
+        assert_eq!(definition.contains_mapping, contains_mapping, "{name}");
+    }
 }

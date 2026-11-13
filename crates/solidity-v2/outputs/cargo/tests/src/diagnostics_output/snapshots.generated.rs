@@ -7774,6 +7774,35 @@ mod type_system {
                 "string_literal_to_calldata_public_library",
             )
         }
+
+        #[test]
+        fn struct_construction() -> Result<()> {
+            run("type_system/invalid_argument_type", "struct_construction")
+        }
+
+        #[test]
+        fn struct_construction_named() -> Result<()> {
+            run(
+                "type_system/invalid_argument_type",
+                "struct_construction_named",
+            )
+        }
+
+        #[test]
+        fn struct_construction_other_struct() -> Result<()> {
+            run(
+                "type_system/invalid_argument_type",
+                "struct_construction_other_struct",
+            )
+        }
+
+        #[test]
+        fn struct_construction_qualified() -> Result<()> {
+            run(
+                "type_system/invalid_argument_type",
+                "struct_construction_qualified",
+            )
+        }
     }
 
     mod invalid_base {
@@ -8100,6 +8129,44 @@ mod type_system {
         }
     }
 
+    mod struct_with_mapping_constructed {
+        use super::*;
+
+        #[test]
+        fn direct() -> Result<()> {
+            run("type_system/struct_with_mapping_constructed", "direct")
+        }
+
+        #[test]
+        fn named_arguments() -> Result<()> {
+            run(
+                "type_system/struct_with_mapping_constructed",
+                "named_arguments",
+            )
+        }
+
+        #[test]
+        fn nested() -> Result<()> {
+            run("type_system/struct_with_mapping_constructed", "nested")
+        }
+
+        #[test]
+        fn through_dynamic_array() -> Result<()> {
+            run(
+                "type_system/struct_with_mapping_constructed",
+                "through_dynamic_array",
+            )
+        }
+
+        #[test]
+        fn through_fixed_size_array() -> Result<()> {
+            run(
+                "type_system/struct_with_mapping_constructed",
+                "through_fixed_size_array",
+            )
+        }
+    }
+
     mod type_too_large_for_storage {
         use super::*;
 
@@ -8223,6 +8290,11 @@ mod type_system {
         #[test]
         fn revert_error() -> Result<()> {
             run("type_system/unknown_named_argument", "revert_error")
+        }
+
+        #[test]
+        fn struct_construction() -> Result<()> {
+            run("type_system/unknown_named_argument", "struct_construction")
         }
 
         #[test]
@@ -8358,6 +8430,19 @@ mod type_system {
         #[test]
         fn revert_error() -> Result<()> {
             run("type_system/wrong_argument_count", "revert_error")
+        }
+
+        #[test]
+        fn struct_construction() -> Result<()> {
+            run("type_system/wrong_argument_count", "struct_construction")
+        }
+
+        #[test]
+        fn struct_construction_named() -> Result<()> {
+            run(
+                "type_system/wrong_argument_count",
+                "struct_construction_named",
+            )
         }
 
         #[test]
