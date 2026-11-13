@@ -1,0 +1,11 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 1
+
+[type-system/invalid-argument-type] Error: Invalid type for argument: it does not implicitly convert to the parameter's type.
+   ╭─[input.sol:8:20]
+   │
+ 8 │         revert Err(true);
+   │                    ──┬─  
+   │                      ╰─── Error occurred here.
+───╯

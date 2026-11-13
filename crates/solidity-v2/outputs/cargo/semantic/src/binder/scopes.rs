@@ -102,8 +102,8 @@ pub(crate) struct ParameterDefinition {
     pub(crate) name: Option<String>,
     pub(crate) node_id: NodeId,
     /// The type of the parameter, or `None` if it's not yet computed or cannot
-    /// be computed. For some parameter containers (eg. errors) it's never
-    /// computed.
+    /// be computed. For some parameter containers (eg. the returns of a `try`
+    /// statement) it's never computed.
     pub(crate) type_id: Option<TypeId>,
 }
 

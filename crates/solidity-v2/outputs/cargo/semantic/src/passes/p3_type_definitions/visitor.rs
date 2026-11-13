@@ -184,12 +184,22 @@ impl Visitor for Pass<'_> {
             definition.externalized_type_id = Some(externalized_type_id);
         }
 
-        if node.name.is_some() {
-            // for *named* functions, fill-in parameter types in
-            // parameters scope for overload disambiguation in p5
-            self.binder
-                .set_parameter_types_of_definition(node.id(), &node.parameters);
-        }
+        // Fill-in parameter types in parameters scope for overload
+        // disambiguation and argument checks in p5.
+        //
+        // Reach the parameters scope through the function scope. We don't use
+        // the definition because not all functions produce definitions as they
+        // are nameless (eg. constructors).
+        let Some(Scope::Function(function_scope)) = self
+            .binder
+            .scope_id_for_node_id(node.id())
+            .map(|scope_id| self.binder.get_scope_by_id(scope_id))
+        else {
+            unreachable!("FunctionDefinition does not have an associated function scope");
+        };
+        let parameters_scope_id = function_scope.parameters_scope_id;
+        self.binder
+            .set_parameter_types(parameters_scope_id, &node.parameters);
     }
 
     fn enter_modifier_definition(&mut self, node: &ir::ModifierDefinition) -> bool {
@@ -363,7 +373,8 @@ impl Visitor for Pass<'_> {
     fn leave_error_definition(&mut self, node: &ir::ErrorDefinition) {
         self.mark_user_meta_type_node(node.id());
 
-        // Resolve the types of the parameters
+        // Resolve and collect the types of the parameters, saving them in the
+        // scope to check the arguments of an error construction
         for parameter in node.parameters.iter() {
             // TODO: the data location is not strictly correct, but strings, bytes
             // and structs are allowed as error parameters and they won't type if we
@@ -371,6 +382,9 @@ impl Visitor for Pass<'_> {
             let type_id = self.resolve_type_name(&parameter.type_name, Some(DataLocation::Memory));
             self.binder.set_node_type(parameter.id(), type_id);
         }
+        self.binder
+            .set_parameter_types_of_definition(node.id(), &node.parameters);
+
         self.leave_scope_for_node_id(node.id());
     }
 
