@@ -14,9 +14,7 @@ use slang_solidity_v2_ir::ir::NodeIdentity;
 use super::Pass;
 use crate::binder::{Binder, Definition, Reference, Resolution, Typing};
 use crate::built_ins::InternalBuiltIn;
-use crate::types::{
-    ArrayType, BytesType, DataLocation, FunctionTypeVisibility, LiteralKind, StringType, Type,
-};
+use crate::types::{ArrayType, BytesType, DataLocation, LiteralKind, StringType, Type};
 
 // Whether a path is read or assigned to.
 #[derive(Clone, Copy, Eq, PartialEq)]
@@ -143,7 +141,7 @@ impl Pass<'_> {
                 }
             }
         } else if let Type::Function(function_type) = variable_type {
-            let is_external = function_type.visibility == FunctionTypeVisibility::External;
+            let is_external = function_type.call_mode.is_external();
             match suffix {
                 None => {
                     if is_external {

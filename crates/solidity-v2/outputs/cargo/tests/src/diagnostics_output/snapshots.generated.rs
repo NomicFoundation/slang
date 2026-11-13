@@ -2033,11 +2033,29 @@ mod resolution {
         use super::*;
 
         #[test]
+        fn address_on_base_function() -> Result<()> {
+            run("resolution/member_not_found", "address_on_base_function")
+        }
+
+        #[test]
+        fn address_on_bound_library_function() -> Result<()> {
+            run(
+                "resolution/member_not_found",
+                "address_on_bound_library_function",
+            )
+        }
+
+        #[test]
         fn address_on_internal_function() -> Result<()> {
             run(
                 "resolution/member_not_found",
                 "address_on_internal_function",
             )
+        }
+
+        #[test]
+        fn address_on_library_function() -> Result<()> {
+            run("resolution/member_not_found", "address_on_library_function")
         }
 
         #[test]
@@ -2367,6 +2385,22 @@ mod resolution {
         }
 
         #[test]
+        fn selector_on_conditional_base_function() -> Result<()> {
+            run(
+                "resolution/member_not_found",
+                "selector_on_conditional_base_function",
+            )
+        }
+
+        #[test]
+        fn selector_on_conditional_library_function() -> Result<()> {
+            run(
+                "resolution/member_not_found",
+                "selector_on_conditional_library_function",
+            )
+        }
+
+        #[test]
         fn selector_on_error_instantiation() -> Result<()> {
             run(
                 "resolution/member_not_found",
@@ -2391,10 +2425,36 @@ mod resolution {
         }
 
         #[test]
+        fn selector_on_free_function() -> Result<()> {
+            run("resolution/member_not_found", "selector_on_free_function")
+        }
+
+        #[test]
+        fn selector_on_function_field() -> Result<()> {
+            run("resolution/member_not_found", "selector_on_function_field")
+        }
+
+        #[test]
         fn selector_on_internal_function() -> Result<()> {
             run(
                 "resolution/member_not_found",
                 "selector_on_internal_function",
+            )
+        }
+
+        #[test]
+        fn selector_on_own_function_via_contract_name() -> Result<()> {
+            run(
+                "resolution/member_not_found",
+                "selector_on_own_function_via_contract_name",
+            )
+        }
+
+        #[test]
+        fn selector_on_public_function_by_name() -> Result<()> {
+            run(
+                "resolution/member_not_found",
+                "selector_on_public_function_by_name",
             )
         }
 
@@ -2427,6 +2487,11 @@ mod resolution {
         #[test]
         fn string_literal_length() -> Result<()> {
             run("resolution/member_not_found", "string_literal_length")
+        }
+
+        #[test]
+        fn super_public_overload() -> Result<()> {
+            run("resolution/member_not_found", "super_public_overload")
         }
 
         #[test]
@@ -2568,6 +2633,22 @@ mod resolution {
         use super::*;
 
         #[test]
+        fn library_function_argument() -> Result<()> {
+            run(
+                "resolution/no_matching_callable_declaration",
+                "library_function_argument",
+            )
+        }
+
+        #[test]
+        fn library_public_overload_called_internally() -> Result<()> {
+            run(
+                "resolution/no_matching_callable_declaration",
+                "library_public_overload_called_internally",
+            )
+        }
+
+        #[test]
         fn named_arguments_incompatible_types() -> Result<()> {
             run(
                 "resolution/no_matching_callable_declaration",
@@ -2596,6 +2677,14 @@ mod resolution {
             run(
                 "resolution/no_matching_callable_declaration",
                 "positional_arguments",
+            )
+        }
+
+        #[test]
+        fn public_overload_called_internally() -> Result<()> {
+            run(
+                "resolution/no_matching_callable_declaration",
+                "public_overload_called_internally",
             )
         }
     }
@@ -7295,6 +7384,14 @@ mod type_system {
             run(
                 "type_system/incompatible_conditional_branches",
                 "byte_array_and_literal_zero",
+            )
+        }
+
+        #[test]
+        fn distinct_library_functions() -> Result<()> {
+            run(
+                "type_system/incompatible_conditional_branches",
+                "distinct_library_functions",
             )
         }
 
