@@ -1522,6 +1522,56 @@ impl Pass<'_> {
             Resolution::BuiltIn(_) | Resolution::Unresolved => false,
         }
     }
+
+    /// Whether a callee typed as `typing` can take call options: only a
+    /// function called by a message call can, ie. an external function, a
+    /// contract creation, or the low-level `call`, `delegatecall` and
+    /// `staticcall` of an address. Returns `None` when `typing` is not a
+    /// function at all (eg. a value, a type name or `msg`), or did not resolve.
+    pub(super) fn call_options_allowed(&self, typing: &Typing) -> Option<bool> {
+        match typing {
+            Typing::Resolved(type_id) => self.call_options_allowed_for_type(*type_id),
+            Typing::NewExpression(type_id) => Some(matches!(
+                self.types.get_type_by_id(*type_id),
+                Type::Contract(_)
+            )),
+            Typing::BuiltIn(built_in) => match built_in {
+                InternalBuiltIn::AddressCall
+                | InternalBuiltIn::AddressDelegatecall
+                | InternalBuiltIn::AddressStaticcall => Some(true),
+                InternalBuiltIn::Abi
+                | InternalBuiltIn::Block
+                | InternalBuiltIn::Msg
+                | InternalBuiltIn::Tx
+                | InternalBuiltIn::ModifierUnderscore => None,
+                _ => Some(false),
+            },
+            // Overloads of one name are all called the same way, so the set is
+            // rejected only when none of them can take call options.
+            Typing::Undetermined(type_ids) => type_ids
+                .iter()
+                .filter_map(|type_id| self.call_options_allowed_for_type(*type_id))
+                .reduce(|any_allowed, allowed| any_allowed || allowed),
+            Typing::This(_) | Typing::Super(_) | Typing::Unresolved => None,
+        }
+    }
+
+    fn call_options_allowed_for_type(&self, type_id: TypeId) -> Option<bool> {
+        match self.types.get_type_by_id(type_id) {
+            Type::Function(function_type) => Some(function_type.call_mode.is_external()),
+            // A function declaration reached through its contract's name, or an
+            // event or error, is called as a function but not externally.
+            Type::UserMetaType(UserMetaType { definition_id }) => {
+                match self.binder.find_definition_by_id(*definition_id) {
+                    Some(Definition::Function(_) | Definition::Event(_) | Definition::Error(_)) => {
+                        Some(false)
+                    }
+                    _ => None,
+                }
+            }
+            _ => None,
+        }
+    }
 }
 
 // Given an expression node that resolves to a reference, return the identifier

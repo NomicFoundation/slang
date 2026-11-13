@@ -6293,6 +6293,137 @@ mod type_system {
         }
     }
 
+    mod call_options_already_set {
+        use super::*;
+
+        #[test]
+        fn address_call() -> Result<()> {
+            run("type_system/call_options_already_set", "address_call")
+        }
+
+        #[test]
+        fn external_call() -> Result<()> {
+            run("type_system/call_options_already_set", "external_call")
+        }
+
+        #[test]
+        fn internal_function() -> Result<()> {
+            run("type_system/call_options_already_set", "internal_function")
+        }
+
+        #[test]
+        fn new_expression() -> Result<()> {
+            run("type_system/call_options_already_set", "new_expression")
+        }
+
+        #[test]
+        fn parenthesized_external_call() -> Result<()> {
+            run(
+                "type_system/call_options_already_set",
+                "parenthesized_external_call",
+            )
+        }
+
+        #[test]
+        fn uncalled_external_function() -> Result<()> {
+            run(
+                "type_system/call_options_already_set",
+                "uncalled_external_function",
+            )
+        }
+    }
+
+    mod call_options_not_allowed {
+        use super::*;
+
+        #[test]
+        fn array_creation() -> Result<()> {
+            run("type_system/call_options_not_allowed", "array_creation")
+        }
+
+        #[test]
+        fn bound_library_function() -> Result<()> {
+            run(
+                "type_system/call_options_not_allowed",
+                "bound_library_function",
+            )
+        }
+
+        #[test]
+        fn built_in_function() -> Result<()> {
+            run("type_system/call_options_not_allowed", "built_in_function")
+        }
+
+        #[test]
+        fn built_in_namespace() -> Result<()> {
+            run("type_system/call_options_not_allowed", "built_in_namespace")
+        }
+
+        #[test]
+        fn event_without_emit() -> Result<()> {
+            run("type_system/call_options_not_allowed", "event_without_emit")
+        }
+
+        #[test]
+        fn free_function() -> Result<()> {
+            run("type_system/call_options_not_allowed", "free_function")
+        }
+
+        #[test]
+        fn internal_function() -> Result<()> {
+            run("type_system/call_options_not_allowed", "internal_function")
+        }
+
+        #[test]
+        fn library_function() -> Result<()> {
+            run("type_system/call_options_not_allowed", "library_function")
+        }
+
+        #[test]
+        fn modifier() -> Result<()> {
+            run("type_system/call_options_not_allowed", "modifier")
+        }
+
+        #[test]
+        fn overloaded_internal_function() -> Result<()> {
+            run(
+                "type_system/call_options_not_allowed",
+                "overloaded_internal_function",
+            )
+        }
+
+        #[test]
+        fn public_function_by_name() -> Result<()> {
+            run(
+                "type_system/call_options_not_allowed",
+                "public_function_by_name",
+            )
+        }
+
+        #[test]
+        fn this_operand() -> Result<()> {
+            run("type_system/call_options_not_allowed", "this_operand")
+        }
+
+        #[test]
+        fn type_conversion() -> Result<()> {
+            run("type_system/call_options_not_allowed", "type_conversion")
+        }
+
+        #[test]
+        fn value_operand() -> Result<()> {
+            run("type_system/call_options_not_allowed", "value_operand")
+        }
+
+        #[test]
+        fn value_operand_called() -> Result<()> {
+            run(
+                "type_system/call_options_not_allowed",
+                "value_operand_called",
+            )
+        }
+    }
+
     mod cannot_call_via_contract_type_name {
         use super::*;
 

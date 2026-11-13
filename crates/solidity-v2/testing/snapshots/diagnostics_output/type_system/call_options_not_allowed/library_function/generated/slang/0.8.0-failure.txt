@@ -1,0 +1,11 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 1
+
+[type-system/call-options-not-allowed] Error: Call options can only be set on external function calls or contract creations.
+    ╭─[input.sol:11:9]
+    │
+ 11 │         L.f{gas: 1000}();
+    │         ───────┬──────  
+    │                ╰──────── Error occurred here.
+────╯
