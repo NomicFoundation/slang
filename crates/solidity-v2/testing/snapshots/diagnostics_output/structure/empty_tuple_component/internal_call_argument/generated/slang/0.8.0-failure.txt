@@ -1,0 +1,11 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 1
+
+[structure/empty-tuple-component] Error: Tuple component cannot be empty.
+    ╭─[input.sol:10:11]
+    │
+ 10 │         g((1, ));
+    │           ──┬──  
+    │             ╰──── Error occurred here.
+────╯

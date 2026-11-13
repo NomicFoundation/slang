@@ -285,7 +285,7 @@ impl Visitor for Pass<'_> {
     }
 
     fn leave_assignment_expression(&mut self, node: &ir::AssignmentExpression) {
-        let type_id = self.check_type_of_value_expression(&node.left_operand);
+        let type_id = self.check_type_of_assignment_target(&node.left_operand);
         self.check_lvalues_under(&node.left_operand);
         self.check_type_of_value_expression(&node.right_operand);
         // TODO(validation) SDR[59]: check that the type of right_operand can be applied

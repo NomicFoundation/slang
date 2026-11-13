@@ -4646,6 +4646,11 @@ mod structure {
         }
 
         #[test]
+        fn internal_call_argument() -> Result<()> {
+            run("structure/empty_tuple_component", "internal_call_argument")
+        }
+
+        #[test]
         fn read_statement() -> Result<()> {
             run("structure/empty_tuple_component", "read_statement")
         }
@@ -7583,6 +7588,123 @@ mod type_system {
         }
     }
 
+    mod invalid_argument_type {
+        use super::*;
+
+        #[test]
+        fn function_value() -> Result<()> {
+            run("type_system/invalid_argument_type", "function_value")
+        }
+
+        #[test]
+        fn getter_named_mapping_key() -> Result<()> {
+            run(
+                "type_system/invalid_argument_type",
+                "getter_named_mapping_key",
+            )
+        }
+
+        #[test]
+        fn getter_string_key_literal() -> Result<()> {
+            run(
+                "type_system/invalid_argument_type",
+                "getter_string_key_literal",
+            )
+        }
+
+        #[test]
+        fn internal_function() -> Result<()> {
+            run("type_system/invalid_argument_type", "internal_function")
+        }
+
+        #[test]
+        fn literal_out_of_range() -> Result<()> {
+            run("type_system/invalid_argument_type", "literal_out_of_range")
+        }
+
+        #[test]
+        fn memory_to_calldata_external_function_value() -> Result<()> {
+            run(
+                "type_system/invalid_argument_type",
+                "memory_to_calldata_external_function_value",
+            )
+        }
+
+        #[test]
+        fn memory_to_calldata_internal() -> Result<()> {
+            run(
+                "type_system/invalid_argument_type",
+                "memory_to_calldata_internal",
+            )
+        }
+
+        #[test]
+        fn named_argument() -> Result<()> {
+            run("type_system/invalid_argument_type", "named_argument")
+        }
+
+        #[test]
+        fn named_memory_to_calldata_internal() -> Result<()> {
+            run(
+                "type_system/invalid_argument_type",
+                "named_memory_to_calldata_internal",
+            )
+        }
+
+        #[test]
+        fn named_string_literal_to_calldata_internal() -> Result<()> {
+            run(
+                "type_system/invalid_argument_type",
+                "named_string_literal_to_calldata_internal",
+            )
+        }
+
+        #[test]
+        fn no_return_value() -> Result<()> {
+            run("type_system/invalid_argument_type", "no_return_value")
+        }
+
+        #[test]
+        fn string_literal_to_calldata_external() -> Result<()> {
+            run(
+                "type_system/invalid_argument_type",
+                "string_literal_to_calldata_external",
+            )
+        }
+
+        #[test]
+        fn string_literal_to_calldata_external_function_value() -> Result<()> {
+            run(
+                "type_system/invalid_argument_type",
+                "string_literal_to_calldata_external_function_value",
+            )
+        }
+
+        #[test]
+        fn string_literal_to_calldata_internal() -> Result<()> {
+            run(
+                "type_system/invalid_argument_type",
+                "string_literal_to_calldata_internal",
+            )
+        }
+
+        #[test]
+        fn string_literal_to_calldata_internal_function_value() -> Result<()> {
+            run(
+                "type_system/invalid_argument_type",
+                "string_literal_to_calldata_internal_function_value",
+            )
+        }
+
+        #[test]
+        fn string_literal_to_calldata_public_library() -> Result<()> {
+            run(
+                "type_system/invalid_argument_type",
+                "string_literal_to_calldata_public_library",
+            )
+        }
+    }
+
     mod invalid_base {
         use super::*;
 
@@ -7963,6 +8085,59 @@ mod type_system {
         }
     }
 
+    mod unknown_named_argument {
+        use super::*;
+
+        #[test]
+        fn bound_receiver() -> Result<()> {
+            run("type_system/unknown_named_argument", "bound_receiver")
+        }
+
+        #[test]
+        fn function_declaration() -> Result<()> {
+            run("type_system/unknown_named_argument", "function_declaration")
+        }
+
+        #[test]
+        fn function_value() -> Result<()> {
+            run("type_system/unknown_named_argument", "function_value")
+        }
+
+        #[test]
+        fn getter() -> Result<()> {
+            run("type_system/unknown_named_argument", "getter")
+        }
+
+        #[test]
+        fn getter_named_mapping_key() -> Result<()> {
+            run(
+                "type_system/unknown_named_argument",
+                "getter_named_mapping_key",
+            )
+        }
+
+        #[test]
+        fn getter_named_mapping_key_mismatch() -> Result<()> {
+            run(
+                "type_system/unknown_named_argument",
+                "getter_named_mapping_key_mismatch",
+            )
+        }
+
+        #[test]
+        fn unnamed_parameter() -> Result<()> {
+            run("type_system/unknown_named_argument", "unnamed_parameter")
+        }
+
+        #[test]
+        fn with_invalid_argument_type() -> Result<()> {
+            run(
+                "type_system/unknown_named_argument",
+                "with_invalid_argument_type",
+            )
+        }
+    }
+
     mod write_to_constant {
         use super::*;
 
@@ -7999,6 +8174,58 @@ mod type_system {
         #[test]
         fn qualified_constant() -> Result<()> {
             run("type_system/write_to_constant", "qualified_constant")
+        }
+    }
+
+    mod wrong_argument_count {
+        use super::*;
+
+        #[test]
+        fn bound_function() -> Result<()> {
+            run("type_system/wrong_argument_count", "bound_function")
+        }
+
+        #[test]
+        fn empty_named_arguments() -> Result<()> {
+            run("type_system/wrong_argument_count", "empty_named_arguments")
+        }
+
+        #[test]
+        fn function_value() -> Result<()> {
+            run("type_system/wrong_argument_count", "function_value")
+        }
+
+        #[test]
+        fn getter() -> Result<()> {
+            run("type_system/wrong_argument_count", "getter")
+        }
+
+        #[test]
+        fn getter_named_with_array_index() -> Result<()> {
+            run(
+                "type_system/wrong_argument_count",
+                "getter_named_with_array_index",
+            )
+        }
+
+        #[test]
+        fn invalid_argument_types() -> Result<()> {
+            run("type_system/wrong_argument_count", "invalid_argument_types")
+        }
+
+        #[test]
+        fn named_arguments() -> Result<()> {
+            run("type_system/wrong_argument_count", "named_arguments")
+        }
+
+        #[test]
+        fn too_few_arguments() -> Result<()> {
+            run("type_system/wrong_argument_count", "too_few_arguments")
+        }
+
+        #[test]
+        fn too_many_arguments() -> Result<()> {
+            run("type_system/wrong_argument_count", "too_many_arguments")
         }
     }
 }

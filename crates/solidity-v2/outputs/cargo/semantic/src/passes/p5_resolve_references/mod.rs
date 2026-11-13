@@ -10,6 +10,7 @@ use crate::context::{FileNodeMapper, SemanticFile};
 use crate::passes::common::{ScopeStack, node_location};
 use crate::types::TypeRegistry;
 
+mod arguments;
 mod conversions;
 mod disambiguation;
 mod resolution;
