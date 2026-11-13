@@ -129,6 +129,7 @@ pub struct LibraryDefinition {
 #[derive(Debug)]
 pub struct ModifierDefinition {
     pub ir_node: ir::ModifierDefinition,
+    pub(crate) parameters_scope_id: ScopeId,
 }
 
 #[derive(Debug)]
@@ -520,9 +521,13 @@ impl Definition {
         })
     }
 
-    pub(crate) fn new_modifier(ir_node: &ir::ModifierDefinition) -> Self {
+    pub(crate) fn new_modifier(
+        ir_node: &ir::ModifierDefinition,
+        parameters_scope_id: ScopeId,
+    ) -> Self {
         Self::Modifier(ModifierDefinition {
             ir_node: Arc::clone(ir_node),
+            parameters_scope_id,
         })
     }
 

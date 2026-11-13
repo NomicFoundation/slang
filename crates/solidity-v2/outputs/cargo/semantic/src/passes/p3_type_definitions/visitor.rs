@@ -187,23 +187,8 @@ impl Visitor for Pass<'_> {
         if node.name.is_some() {
             // for *named* functions, fill-in parameter types in
             // parameters scope for overload disambiguation in p5
-            let parameter_types: Vec<_> = node
-                .parameters
-                .iter()
-                .map(|parameter| self.binder.node_typing(parameter.id()).as_type_id())
-                .collect();
-
-            let Some(parameters_scope_id) =
-                self.binder.get_parameters_scope_for_definition(node.id())
-            else {
-                unreachable!("FunctionDefinition does not have associated parameters scope");
-            };
-            let Scope::Parameters(parameters_scope) =
-                self.binder.get_scope_mut(parameters_scope_id)
-            else {
-                unreachable!("scope is not a ParametersScope");
-            };
-            parameters_scope.set_parameter_types(&parameter_types);
+            self.binder
+                .set_parameter_types_of_definition(node.id(), &node.parameters);
         }
     }
 
@@ -216,6 +201,8 @@ impl Visitor for Pass<'_> {
         // Only the parameters are typed: a modifier is not a value, so the
         // definition itself has no type.
         self.visit_parameters(&node.parameters);
+        self.binder
+            .set_parameter_types_of_definition(node.id(), &node.parameters);
         self.leave_scope_for_node_id(node.id());
     }
 
@@ -355,25 +342,15 @@ impl Visitor for Pass<'_> {
         // Resolve and collect the types of the parameters, saving them in the
         // scope to use in overload disambiguation when invoking an event as a
         // function
-        let mut parameter_types = Vec::new();
         for parameter in node.parameters.iter() {
             // TODO: the data location is not strictly correct, but strings, bytes
             // and structs are allowed as event parameters and they won't type if we
             // pass None here
             let type_id = self.resolve_type_name(&parameter.type_name, Some(DataLocation::Memory));
             self.binder.set_node_type(parameter.id(), type_id);
-            parameter_types.push(type_id);
         }
-
-        let Some(parameters_scope_id) = self.binder.get_parameters_scope_for_definition(node.id())
-        else {
-            unreachable!("EventDefinition does not have associated parameters scope");
-        };
-        let Scope::Parameters(parameters_scope) = self.binder.get_scope_mut(parameters_scope_id)
-        else {
-            unreachable!("scope is not a ParametersScope");
-        };
-        parameters_scope.set_parameter_types(&parameter_types);
+        self.binder
+            .set_parameter_types_of_definition(node.id(), &node.parameters);
 
         self.leave_scope_for_node_id(node.id());
     }

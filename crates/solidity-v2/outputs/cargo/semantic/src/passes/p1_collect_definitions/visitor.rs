@@ -197,12 +197,13 @@ impl<F: SemanticFile> Visitor for Pass<'_, F> {
             self.modifier_placeholder_found = Some(false);
         }
 
-        let definition = Definition::new_modifier(node);
+        let parameters_scope_id = self.collect_parameters(&node.parameters);
+        let definition = Definition::new_modifier(node, parameters_scope_id);
         self.insert_definition_in_current_scope(definition);
 
-        let modifier_scope = Scope::new_modifier(node.id(), self.current_scope_id());
-        let modifier_scope_id = self.enter_scope(modifier_scope);
-        self.collect_named_parameters_into_scope(&node.parameters, modifier_scope_id);
+        let signature_scope =
+            Scope::new_signature(node.id(), self.current_scope_id(), parameters_scope_id);
+        self.enter_scope(signature_scope);
         true
     }
 

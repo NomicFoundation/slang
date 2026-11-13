@@ -25,7 +25,6 @@ pub(crate) enum Scope {
     Enum(EnumScope),
     File(FileScope),
     Function(FunctionScope),
-    Modifier(ModifierScope),
     Parameters(ParametersScope),
     Signature(SignatureScope),
     Struct(StructScope),
@@ -96,18 +95,6 @@ pub(crate) struct FunctionScope {
     pub(crate) definitions: Map<String, NodeId>,
 }
 
-// TODO: Consider replacing this with a `SignatureScope`. Right now the modifier
-// parameters are stored in the `definitions` which is odd. We don't need
-// parameter ordering for modifiers, so it works.
-// The other singularity of `ModifierScope` is that it's used to decide if we
-// bind the `_` placeholder, but that's easily replaceable with a lookup of the
-// associated definition.
-pub(crate) struct ModifierScope {
-    pub(crate) node_id: NodeId,
-    pub(crate) parent_scope_id: ScopeId,
-    pub(crate) definitions: Map<String, NodeId>,
-}
-
 /// This is stored in a vector in the `ParametersScope` below preserving order
 /// for positional arguments and used by the binder, both to resolve named
 /// arguments, and disambiguate overloads of functions and events.
@@ -124,8 +111,9 @@ pub(crate) struct ParametersScope {
     pub(crate) parameters: Vec<ParameterDefinition>,
 }
 
-/// The scope of an event, an error or a try statement, where their parameters
-/// are visible to the parameter types and, for a try statement, to its body.
+/// The scope of an event, an error, a modifier or a try statement, where their
+/// parameters are visible to the parameter types and, for a modifier or a try
+/// statement, to its body.
 #[allow(clippy::struct_field_names)]
 pub(crate) struct SignatureScope {
     pub(crate) node_id: NodeId,
@@ -167,7 +155,6 @@ impl Scope {
             Self::Enum(enum_scope) => enum_scope.node_id,
             Self::File(file_scope) => file_scope.node_id,
             Self::Function(function_scope) => function_scope.node_id,
-            Self::Modifier(modifier_scope) => modifier_scope.node_id,
             Self::Parameters(_) => unreachable!("parameters scope don't have a node ID"),
             Self::Signature(signature_scope) => signature_scope.node_id,
             Self::Struct(struct_scope) => struct_scope.node_id,
@@ -185,7 +172,6 @@ impl Scope {
             Self::Enum(enum_scope) => enum_scope.insert_definition(symbol, node_id),
             Self::File(file_scope) => file_scope.insert_definition(symbol, node_id),
             Self::Function(function_scope) => function_scope.insert_definition(symbol, node_id),
-            Self::Modifier(modifier_scope) => modifier_scope.insert_definition(symbol, node_id),
             Self::Parameters(_) => {
                 unreachable!("cannot insert a definition into parameters scope directly")
             }
@@ -239,10 +225,6 @@ impl Scope {
             parent_scope_id,
             parameters_scope_id,
         ))
-    }
-
-    pub(crate) fn new_modifier(node_id: NodeId, parent_scope_id: ScopeId) -> Self {
-        Self::Modifier(ModifierScope::new(node_id, parent_scope_id))
     }
 
     pub(crate) fn new_signature(
@@ -392,20 +374,6 @@ impl FunctionScope {
             node_id,
             parent_scope_id,
             parameters_scope_id,
-            definitions: Map::default(),
-        }
-    }
-
-    pub(crate) fn insert_definition(&mut self, symbol: String, node_id: NodeId) {
-        self.definitions.insert(symbol, node_id);
-    }
-}
-
-impl ModifierScope {
-    fn new(node_id: NodeId, parent_scope_id: ScopeId) -> Self {
-        Self {
-            node_id,
-            parent_scope_id,
             definitions: Map::default(),
         }
     }

@@ -157,7 +157,7 @@ impl SemanticContext {
         let scope_id = self.binder.scope_id_for_node_id(member_id)?;
         let parent_scope_id = match self.binder.get_scope_by_id(scope_id) {
             Scope::Function(function_scope) => function_scope.parent_scope_id,
-            Scope::Modifier(modifier_scope) => modifier_scope.parent_scope_id,
+            Scope::Signature(signature_scope) => signature_scope.parent_scope_id,
             _ => return None,
         };
         let enclosing_node_id = self.binder.get_scope_by_id(parent_scope_id).node_id();
