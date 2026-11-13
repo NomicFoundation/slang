@@ -4,7 +4,7 @@ use slang_solidity_v2_common::nodes::NodeId;
 use slang_solidity_v2_ir::ir;
 use slang_solidity_v2_ir::ir::{NodeIdentity, TextRange};
 
-use crate::binder::{Binder, Scope, ScopeId};
+use crate::binder::{Binder, Definition, Scope, ScopeId};
 use crate::built_ins::BuiltInsResolver;
 use crate::context::{FileNodeMapper, SemanticFile};
 use crate::passes::common::{ScopeStack, node_location};
@@ -101,9 +101,15 @@ impl<'a> Pass<'a> {
     }
 
     fn is_in_modifier_scope(&self) -> bool {
-        self.scope_stack
-            .structural_scopes()
-            .any(|scope_id| matches!(self.binder.get_scope_by_id(scope_id), Scope::Modifier(_)))
+        self.scope_stack.structural_scopes().any(|scope_id| {
+            let Scope::Signature(signature_scope) = self.binder.get_scope_by_id(scope_id) else {
+                return false;
+            };
+            matches!(
+                self.binder.find_definition_by_id(signature_scope.node_id),
+                Some(Definition::Modifier(_))
+            )
+        })
     }
 
     fn current_contract_scope_id(&self) -> Option<ScopeId> {

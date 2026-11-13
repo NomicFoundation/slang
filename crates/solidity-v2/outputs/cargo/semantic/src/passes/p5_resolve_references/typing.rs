@@ -755,7 +755,12 @@ impl Pass<'_> {
                         type_ids.push(type_id);
                     }
                 }
-                Typing::Undetermined(type_ids)
+                // None of them is typed, eg. the overrides of a modifier.
+                if type_ids.is_empty() {
+                    Typing::Unresolved
+                } else {
+                    Typing::Undetermined(type_ids)
+                }
             }
         }
     }
@@ -1144,19 +1149,7 @@ impl Pass<'_> {
         argument_types: Option<&[TypeId]>,
     ) -> Typing {
         match self.types.get_type_by_id(type_id) {
-            Type::Function(FunctionType {
-                definition_id,
-                return_type,
-                ..
-            }) => {
-                let (definition_id, return_type) = (*definition_id, *return_type);
-                if self.is_modifier_definition(definition_id) {
-                    self.report_operand_not_callable(node);
-                    Typing::Unresolved
-                } else {
-                    Typing::Resolved(return_type)
-                }
-            }
+            Type::Function(FunctionType { return_type, .. }) => Typing::Resolved(*return_type),
             Type::MetaType(MetaType {
                 type_id: target_type_id,
             }) => {
@@ -1327,8 +1320,8 @@ impl Pass<'_> {
     /// and error constructions are callable this way; the user meta types of a
     /// function and of an event are non-callable declarations, reached through
     /// a contract/interface type name and outside an `emit` statement
-    /// respectively. Anything else, including a modifier and the alias of an
-    /// imported file, is not callable at all.
+    /// respectively. Anything else, including the alias of an imported file, is
+    /// not callable at all.
     fn typing_of_type_called_with_named_arguments(
         &mut self,
         node: &ir::FunctionCallExpression,
@@ -1339,17 +1332,7 @@ impl Pass<'_> {
                 definition_id,
                 return_type,
                 ..
-            }) => {
-                let (definition_id, return_type) = (*definition_id, *return_type);
-                if self.is_modifier_definition(definition_id) {
-                    self.report_operand_not_callable(node);
-                    // The definition is still returned so the argument names
-                    // resolve against the modifier's parameters.
-                    (Typing::Unresolved, definition_id)
-                } else {
-                    (Typing::Resolved(return_type), definition_id)
-                }
-            }
+            }) => (Typing::Resolved(*return_type), *definition_id),
             Type::MetaType(_) => {
                 // This is a cast to the given type and is not valid with named arguments
                 (Typing::Unresolved, None)
@@ -1437,13 +1420,21 @@ impl Pass<'_> {
         }
     }
 
-    /// Whether `definition_id` is a modifier. A modifier has a function type so
-    /// that its invocation can be checked against its parameters, but it is not
-    /// callable from an expression.
-    fn is_modifier_definition(&self, definition_id: Option<NodeId>) -> bool {
-        definition_id
-            .and_then(|definition_id| self.binder.find_definition_by_id(definition_id))
-            .is_some_and(|definition| matches!(definition, Definition::Modifier(_)))
+    /// Whether `resolution` names a modifier, or the overrides of one. A
+    /// modifier is not a value, so a reference to one is unresolved, and only a
+    /// function header can make one: check only unresolved references.
+    pub(super) fn resolves_to_modifier(&self, resolution: &Resolution) -> bool {
+        let is_modifier = |definition_id: &NodeId| {
+            matches!(
+                self.binder.find_definition_by_id(*definition_id),
+                Some(Definition::Modifier(_))
+            )
+        };
+        match resolution {
+            Resolution::Definition(definition_id) => is_modifier(definition_id),
+            Resolution::Ambiguous(definition_ids) => definition_ids.iter().all(is_modifier),
+            Resolution::BuiltIn(_) | Resolution::Unresolved => false,
+        }
     }
 }
 

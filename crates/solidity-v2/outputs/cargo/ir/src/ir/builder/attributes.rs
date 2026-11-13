@@ -249,8 +249,8 @@ impl<S: Source> CstToIrBuilder<'_, S> {
     pub(super) fn build_modifier_attributes(
         &mut self,
         attributes: &input::ModifierAttributes,
-    ) -> output::FunctionAttributes {
-        let id = self.next_id(output::NodeKind::FunctionAttributes);
+    ) -> output::ModifierAttributes {
+        let id = self.next_id(output::NodeKind::ModifierAttributes);
         let range = attributes.calculate_text_range().unwrap_or_default();
 
         let mut is_virtual = false;
@@ -267,15 +267,11 @@ impl<S: Source> CstToIrBuilder<'_, S> {
             }
         }
 
-        Arc::new(output::FunctionAttributesStruct {
+        Arc::new(output::ModifierAttributesStruct {
             id,
             range,
-            visibility: FunctionVisibility::Internal,
-            has_explicit_visibility: false,
-            mutability: FunctionMutability::NonPayable,
             is_virtual,
             override_specifier,
-            modifier_invocations: output::ModifierInvocations::default(),
         })
     }
 

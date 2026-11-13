@@ -5,7 +5,7 @@ use crate::diagnostics::severity::DiagnosticSeverity;
 
 /// Diagnostic emitted when the callee of a call cannot be called: a value of a
 /// non-function type (eg. `1(2)`, or a mapping, which is indexed instead), a
-/// declaration that names no callable (eg. a modifier or an import alias), a
+/// declaration that names no callable (eg. an import alias), a
 /// built-in namespace such as `msg`, or `this`/`super`.
 #[derive(Clone, Debug, Eq, PartialEq, Serialize)]
 pub struct ExpressionNotCallable;

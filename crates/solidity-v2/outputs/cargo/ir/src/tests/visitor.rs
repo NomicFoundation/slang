@@ -31,9 +31,11 @@ impl ir::visitor::Visitor for CounterVisitor {
     fn leave_function_definition(&mut self, node: &ir::FunctionDefinition) {
         match node.kind {
             ir::FunctionKind::Constructor => self.constructors += 1,
-            ir::FunctionKind::Modifier => self.modifiers += 1,
             _ => self.functions += 1,
         }
+    }
+    fn leave_modifier_definition(&mut self, _node: &ir::ModifierDefinition) {
+        self.modifiers += 1;
     }
     fn leave_state_variable_definition(&mut self, _node: &ir::StateVariableDefinition) {
         self.state_vars += 1;

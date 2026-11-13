@@ -781,20 +781,6 @@ fn test_function_externalized_type() {
         g.externalized_type().is_none(),
         "an internal function is never dispatched"
     );
-
-    let unit = fixtures::Counter::build_compilation_unit();
-    let ownable = unit
-        .find_contract_by_name("Ownable")
-        .next()
-        .expect("contract Ownable is found");
-    let modifiers = ownable.modifiers();
-    let [modifier] = modifiers.as_slice() else {
-        panic!("expected Ownable to declare one modifier");
-    };
-    assert!(
-        modifier.externalized_type().is_none(),
-        "a modifier is never dispatched"
-    );
 }
 
 define_fixture!(
@@ -1015,4 +1001,40 @@ fn test_encode_call_pointer_callee_with_empty_tuple_has_type() {
         callee.parameter_types().is_empty(),
         "`p` takes no parameters"
     );
+}
+
+define_fixture!(
+    ModifierSignature,
+    file: "main.sol", r#"
+// SPDX-License-Identifier: UNLICENSED
+pragma solidity ^0.8.0;
+
+contract C {
+    modifier m(uint256 x, bool y) {
+        _;
+    }
+}
+"#,
+);
+
+#[test]
+fn test_modifier_definition_has_parameter_types_but_no_type() {
+    let unit = ModifierSignature::build_compilation_unit();
+    let contract = unit
+        .find_contract_by_name("C")
+        .next()
+        .expect("contract C is found");
+    let modifiers = contract.modifiers();
+    let [modifier] = modifiers.as_slice() else {
+        panic!("expected C to declare one modifier");
+    };
+
+    assert!(modifier.get_type().is_none(), "a modifier is not a value");
+    let parameter_types = modifier
+        .parameter_types()
+        .expect("the parameter types resolve");
+    assert!(matches!(
+        parameter_types.as_slice(),
+        [ast::Type::Integer(_), ast::Type::Boolean(_)]
+    ));
 }

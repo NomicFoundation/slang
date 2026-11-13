@@ -4,11 +4,11 @@ use slang_solidity_v2_semantic::context::VirtualTarget as SemanticVirtualTarget;
 
 use super::super::nodes::{
     create_error_definition, create_event_definition, create_function_definition,
-    create_state_variable_definition,
+    create_modifier_definition, create_state_variable_definition,
 };
 use super::super::{
     ContractDefinition, ContractDefinitionStruct, Definition, ErrorDefinition, EventDefinition,
-    FunctionDefinition, FunctionKind, FunctionMutability, ModifierInvocation,
+    FunctionDefinition, FunctionKind, FunctionMutability, ModifierDefinition, ModifierInvocation,
     StateVariableDefinition,
 };
 use super::{ContractBase, VirtualTarget};
@@ -92,11 +92,8 @@ impl ContractDefinitionStruct {
         })
     }
 
-    pub fn modifiers(&self) -> Vec<FunctionDefinition> {
-        self.members()
-            .iter_function_definitions()
-            .filter(|function| matches!(function.kind(), FunctionKind::Modifier))
-            .collect()
+    pub fn modifiers(&self) -> Vec<ModifierDefinition> {
+        self.members().iter_modifier_definitions().collect()
     }
 
     pub fn constructor(&self) -> Option<FunctionDefinition> {
@@ -119,9 +116,10 @@ impl ContractDefinitionStruct {
     /// select their most-derived override, including public variable getters;
     /// nonvirtual members and declarations with no override resolve to themselves.
     ///
-    /// Returns `None` unless `function` is a function or modifier declared in
-    /// this contract's hierarchy and belongs to the same compilation unit.
-    /// Constructors and free or library functions are not accepted.
+    /// Returns `None` unless `function` is a function declared in this
+    /// contract's hierarchy and belongs to the same compilation unit.
+    /// Constructors and free or library functions are not accepted. A modifier
+    /// is resolved with `resolve_modifier` instead.
     pub fn resolve_virtual(&self, function: &FunctionDefinition) -> Option<VirtualTarget> {
         if !Arc::ptr_eq(&self.semantic, &function.semantic) {
             return None;
@@ -175,11 +173,11 @@ impl ContractDefinitionStruct {
     /// Returns `None` if `invocation` comes from another compilation unit, if
     /// it calls a base constructor instead of a modifier, or if the modifier
     /// is not declared in this contract or its bases.
-    pub fn resolve_modifier(&self, invocation: &ModifierInvocation) -> Option<FunctionDefinition> {
+    pub fn resolve_modifier(&self, invocation: &ModifierInvocation) -> Option<ModifierDefinition> {
         if !Arc::ptr_eq(&self.semantic, &invocation.semantic) {
             return None;
         }
-        Some(create_function_definition(
+        Some(create_modifier_definition(
             self.semantic
                 .resolve_modifier(self.ir_node.id(), &invocation.ir_node)?,
             &self.semantic,

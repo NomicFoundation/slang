@@ -128,7 +128,8 @@ pub struct LibraryDefinition {
 
 #[derive(Debug)]
 pub struct ModifierDefinition {
-    pub ir_node: ir::FunctionDefinition,
+    pub ir_node: ir::ModifierDefinition,
+    pub(crate) parameters_scope_id: ScopeId,
 }
 
 #[derive(Debug)]
@@ -259,11 +260,7 @@ impl Definition {
             }
             Self::Interface(interface_definition) => &interface_definition.ir_node.name,
             Self::Library(library_definition) => &library_definition.ir_node.name,
-            Self::Modifier(modifier_definition) => {
-                // Modifier definitions are only created for modifiers, which
-                // always have a name
-                modifier_definition.ir_node.name.as_ref().unwrap()
-            }
+            Self::Modifier(modifier_definition) => &modifier_definition.ir_node.name,
             Self::Parameter(parameter_definition) => {
                 // Definitions are created only for named parameters
                 parameter_definition.ir_node.name.as_ref().unwrap()
@@ -477,7 +474,7 @@ impl Definition {
         );
         assert!(
             matches!(ir_node.kind, ir::FunctionKind::Regular),
-            "Cannot create definition for special function or modifier"
+            "Cannot create definition for special function"
         );
         Self::Function(FunctionDefinition {
             ir_node: Arc::clone(ir_node),
@@ -524,17 +521,13 @@ impl Definition {
         })
     }
 
-    pub(crate) fn new_modifier(ir_node: &ir::FunctionDefinition) -> Self {
-        assert!(
-            ir_node.name.is_some(),
-            "Modifier definition must have a name"
-        );
-        assert!(
-            matches!(ir_node.kind, ir::FunctionKind::Modifier),
-            "Cannot create definition from a non-modifier function definition"
-        );
+    pub(crate) fn new_modifier(
+        ir_node: &ir::ModifierDefinition,
+        parameters_scope_id: ScopeId,
+    ) -> Self {
         Self::Modifier(ModifierDefinition {
             ir_node: Arc::clone(ir_node),
+            parameters_scope_id,
         })
     }
 

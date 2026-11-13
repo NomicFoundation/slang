@@ -9,6 +9,7 @@ use slang_solidity_v2_common::diagnostics::kinds::semantic::CyclicBytecodeDepend
 use slang_solidity_v2_common::evm_targets::EvmTarget;
 use slang_solidity_v2_common::nodes::NodeId;
 use slang_solidity_v2_common::versions::LanguageVersion;
+use slang_solidity_v2_ir::ir;
 
 use super::support::{Analyse, Analysis, find_function, only_diagnostic};
 use crate::binder::Definition;
@@ -1012,35 +1013,6 @@ fn resolve_virtual_of_an_unimplemented_interface_member_is_the_declaration() {
 }
 
 #[test]
-fn resolve_virtual_of_a_virtual_modifier_is_its_override() {
-    let analysis = analyse(
-        "contract Base {
-            modifier m() virtual { _; }
-            function f() public m {}
-        }
-        contract Derived is Base {
-            modifier m() override { _; }
-        }",
-    )
-    .expect_no_diagnostics();
-    let context = analysis.context();
-
-    let derived = contract_id(context, "Derived");
-    let base_m = find_function(analysis.find_members("Base"), "m").expect("Base declares m");
-    let derived_m =
-        find_function(analysis.find_members("Derived"), "m").expect("Derived declares m");
-
-    let Some(VirtualTarget::Function(target)) = context.resolve_virtual(derived, base_m) else {
-        panic!("a modifier is never overridden by a getter");
-    };
-    assert_eq!(
-        target.id(),
-        derived_m.id(),
-        "Derived.m is what runs in code compiled into Derived"
-    );
-}
-
-#[test]
 fn resolve_virtual_of_a_function_a_getter_overrides() {
     let context = build_context(
         "contract Base {
@@ -1106,6 +1078,49 @@ fn dispatch_rejects_invalid_contract_ids_and_unrelated_declarations() {
     assert!(context.resolve_virtual(b, unrelated_f).is_none());
     assert!(context.resolve_super(b, unrelated_f, b).is_none());
     assert!(context.resolve_super(a, f, a).is_none());
+}
+
+#[test]
+fn resolve_modifier_of_a_virtual_modifier_is_its_override() {
+    let analysis = analyse(
+        "contract Base {
+            modifier m() virtual { _; }
+            function f() public m {}
+        }
+        contract Derived is Base {
+            modifier m() override { _; }
+        }",
+    )
+    .expect_no_diagnostics();
+    let context = analysis.context();
+
+    let base = contract_id(context, "Base");
+    let derived = contract_id(context, "Derived");
+    let f = find_function(analysis.find_members("Base"), "f").expect("Base declares f");
+    let invocation = &f.attributes.modifier_invocations[0];
+    let modifier_of = |owner: &str| {
+        analysis
+            .find_members(owner)
+            .iter()
+            .find_map(|member| match member {
+                ir::ContractMember::ModifierDefinition(modifier) => Some(modifier.id()),
+                _ => None,
+            })
+            .expect("the contract declares m")
+    };
+
+    assert_eq!(
+        context.resolve_modifier(base, invocation).map(|m| m.id()),
+        Some(modifier_of("Base")),
+        "Base.m is what runs in code compiled into Base"
+    );
+    assert_eq!(
+        context
+            .resolve_modifier(derived, invocation)
+            .map(|m| m.id()),
+        Some(modifier_of("Derived")),
+        "Derived.m is what runs in code compiled into Derived"
+    );
 }
 
 #[test]

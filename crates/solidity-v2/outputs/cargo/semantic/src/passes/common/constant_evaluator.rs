@@ -686,7 +686,6 @@ impl ConstantIdentifierResolver<ScopeId> for ConstantResolver<'_> {
                     | Scope::Contract(_)
                     | Scope::File(_)
                     | Scope::Function(_)
-                    | Scope::Modifier(_)
                     | Scope::Signature(_) => BuiltInsResolver::lookup_global(identifier),
 
                     Scope::Enum(_) | Scope::Parameters(_) | Scope::Struct(_) | Scope::Using(_) => {

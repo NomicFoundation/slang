@@ -84,11 +84,6 @@ pub(super) fn find_conflicting_solidity_definition(
                     new_definition,
                 )
             }),
-        Scope::Modifier(modifier_scope) => modifier_scope
-            .definitions
-            .get(symbol)
-            .copied()
-            .and_then(|existing| conflicting_definition(binder, existing, new_definition)),
         Scope::Parameters(parameters_scope) => parameters_scope
             .lookup_definition(symbol)
             .and_then(|existing| conflicting_definition(binder, existing, new_definition)),

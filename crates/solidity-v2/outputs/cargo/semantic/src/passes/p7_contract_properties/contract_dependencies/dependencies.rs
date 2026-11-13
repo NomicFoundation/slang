@@ -181,7 +181,7 @@ impl DependencyCollector<'_> {
             let is_entry_point = match function.kind {
                 ir::FunctionKind::Regular => function.is_externally_visible(),
                 ir::FunctionKind::Fallback | ir::FunctionKind::Receive => true,
-                _ => false,
+                ir::FunctionKind::Constructor => false,
             };
             if is_entry_point {
                 units.push(function.id());
@@ -326,11 +326,9 @@ impl DependencyCollector<'_> {
         }
     }
 
-    fn resolve_modifier(&self, modifier: &ir::FunctionDefinition) -> Option<NodeId> {
+    fn resolve_modifier(&self, modifier: &ir::ModifierDefinition) -> Option<NodeId> {
         // Most-derived first. Modifiers cannot overload, the name suffices.
-        // The interface flag is never read here, so it is left `false`.
-        let overridden =
-            Overridable::of_function(modifier, false).expect("a modifier definition is a modifier");
+        let overridden = Overridable::Modifier(modifier);
         modifier_target(
             self.binder,
             self.types,
