@@ -5,10 +5,12 @@ use slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind;
 use slang_solidity_v2_common::diagnostics::kinds::resolution::NoMatchingCallableDeclaration;
 use slang_solidity_v2_common::diagnostics::kinds::semantic::BaseConstructorCallWithoutParentheses;
 use slang_solidity_v2_common::diagnostics::kinds::type_system::{
-    InvalidArgumentType, NamedArgumentsToBuiltInFunction, StructWithMappingConstructed,
+    EncodedArgumentsNotInlineTuple, InvalidArgumentType, InvalidDecodedTypes,
+    InvalidEncodedFunction, NamedArgumentsToBuiltInFunction, StructWithMappingConstructed,
     TooFewArguments, UnknownNamedArgument, WrongArgumentCount,
 };
 use slang_solidity_v2_common::nodes::NodeId;
+use slang_solidity_v2_common::versions::LanguageVersion;
 use slang_solidity_v2_ir::ir;
 use slang_solidity_v2_ir::ir::{NodeIdentity, TextRange};
 
@@ -17,7 +19,10 @@ use crate::binder::{Binder, Definition, ParameterDefinition, Resolution, Scope};
 use crate::built_ins::{BuiltInOverloadMatch, InternalBuiltIn};
 use crate::context::FileNodeMapper;
 use crate::passes::common::node_location;
-use crate::types::{CallMode, ContractType, DataLocation, Type, TypeId, TypeRegistry};
+use crate::types::{
+    CallMode, ContractType, DataLocation, FunctionType, TupleType, Type, TypeId, TypeRegistry,
+    UserMetaType,
+};
 
 /// The ordered parameters that the arguments of a call are checked against,
 /// with the name and type of each one where known.
@@ -281,6 +286,21 @@ impl Pass<'_> {
         arguments: &[ir::Expression],
         argument_types: Option<&[TypeId]>,
     ) {
+        match built_in {
+            InternalBuiltIn::AbiDecode => {
+                self.check_arguments_of_abi_decode(node, arguments, argument_types);
+                return;
+            }
+            InternalBuiltIn::AbiEncodeCall => {
+                self.check_arguments_of_abi_encode_call(node, arguments, argument_types);
+                return;
+            }
+            InternalBuiltIn::BytesConcat | InternalBuiltIn::StringConcat => {
+                self.check_arguments_of_concat(built_in, arguments, argument_types);
+                return;
+            }
+            _ => {}
+        }
         if let Some(parameter_types) = self.built_ins_resolver().parameter_types_of(built_in) {
             let (_, mut checker) = self.arguments_checker();
             checker.check_positional(node, &parameter_types[..], false, arguments, argument_types);
@@ -304,6 +324,155 @@ impl Pass<'_> {
             .match_overload(built_in, argument_types);
         if overload_match == BuiltInOverloadMatch::Rejected {
             self.push_diagnostic(node, NoMatchingCallableDeclaration);
+        }
+    }
+
+    /// Checks the `arguments` of `abi.decode(data, (T1, T2, ...))`: there are
+    /// two, the first is the bytes to decode, and the second is a
+    /// parenthesized type name or tuple of type names to decode them to.
+    fn check_arguments_of_abi_decode(
+        &mut self,
+        node: &ir::FunctionCallExpression,
+        arguments: &[ir::Expression],
+        argument_types: Option<&[TypeId]>,
+    ) {
+        let [data, types] = arguments else {
+            let (_, mut checker) = self.arguments_checker();
+            let kind = WrongArgumentCount {
+                given: arguments.len(),
+                expected: 2,
+            };
+            checker.report(node, kind);
+            return;
+        };
+        let Some([data_type, types_type]) = argument_types else {
+            return;
+        };
+        let decodes = matches!(types, ir::Expression::TupleExpression(_))
+            && self
+                .built_ins_resolver()
+                .decoded_type_of(*types_type)
+                .is_some();
+        let (_, mut checker) = self.arguments_checker();
+        if !checker.parameter_accepts_argument(
+            Some(checker.types.bytes_memory()),
+            *data_type,
+            false,
+        ) {
+            checker.report(data, InvalidArgumentType);
+        }
+        if !decodes {
+            checker.report(types, InvalidDecodedTypes);
+        }
+    }
+
+    /// Checks the `arguments` of `abi.encodeCall(f, (a, b, ...))`: there are
+    /// two, the first is an external function, and the second is the arguments
+    /// to encode a call to it with, either an inline tuple or a single value.
+    fn check_arguments_of_abi_encode_call(
+        &mut self,
+        node: &ir::FunctionCallExpression,
+        arguments: &[ir::Expression],
+        argument_types: Option<&[TypeId]>,
+    ) {
+        let (binder, mut checker) = self.arguments_checker();
+        let [function, encoded] = arguments else {
+            let kind = WrongArgumentCount {
+                given: arguments.len(),
+                expected: 2,
+            };
+            checker.report(node, kind);
+            return;
+        };
+        let Some([function_type, encoded_type]) = argument_types else {
+            return;
+        };
+        let Some(parameter_types) =
+            encoded_function_parameter_types(binder, checker.types, *function_type)
+        else {
+            checker.report(function, InvalidEncodedFunction);
+            return;
+        };
+
+        // The components of an inline tuple are the arguments, except that a
+        // single one types as itself. Any other expression is a single
+        // argument, which cannot be a tuple.
+        let encoded_types = checker.types.get_type_by_id(*encoded_type);
+        let (components, component_types) = match encoded {
+            ir::Expression::TupleExpression(tuple) => {
+                // An omitted component is already reported.
+                let Some(components) = tuple
+                    .items
+                    .iter()
+                    .map(|item| item.expression.clone())
+                    .collect::<Option<Vec<_>>>()
+                else {
+                    return;
+                };
+                let component_types = match encoded_types {
+                    Type::Tuple(TupleType { types }) if components.len() != 1 => types.clone(),
+                    _ => vec![*encoded_type],
+                };
+                (components, component_types)
+            }
+            _ if matches!(encoded_types, Type::Tuple(_)) => {
+                checker.report(encoded, EncodedArgumentsNotInlineTuple);
+                return;
+            }
+            _ => (vec![encoded.clone()], vec![*encoded_type]),
+        };
+        checker.check_positional(
+            encoded,
+            parameter_types,
+            true,
+            &components,
+            Some(&component_types),
+        );
+    }
+
+    /// Checks the `arguments` of `bytes.concat(...)` and `string.concat(...)`,
+    /// which take any number of them. Each argument to `bytes.concat` converts
+    /// to `bytes memory` or a fixed bytes type, and is not a number literal
+    /// from 0.8.7. Each argument to `string.concat` converts to `string memory`.
+    fn check_arguments_of_concat(
+        &mut self,
+        built_in: &InternalBuiltIn,
+        arguments: &[ir::Expression],
+        argument_types: Option<&[TypeId]>,
+    ) {
+        let Some(argument_types) = argument_types else {
+            return;
+        };
+        let (_, mut checker) = self.arguments_checker();
+        for (argument, argument_type) in arguments.iter().zip(argument_types) {
+            let accepted = if matches!(built_in, InternalBuiltIn::BytesConcat) {
+                let is_number_literal = checker.types.language_version() >= LanguageVersion::V0_8_7
+                    && checker
+                        .types
+                        .get_type_by_id(*argument_type)
+                        .is_literal_number();
+                // `bytes32` is the widest fixed bytes type, so any fixed bytes
+                // value converts to it.
+                let converts = checker.parameter_accepts_argument(
+                    Some(checker.types.bytes32()),
+                    *argument_type,
+                    false,
+                ) || checker.parameter_accepts_argument(
+                    Some(checker.types.bytes_memory()),
+                    *argument_type,
+                    false,
+                );
+                converts && !is_number_literal
+            } else {
+                checker.parameter_accepts_argument(
+                    Some(checker.types.string_memory()),
+                    *argument_type,
+                    false,
+                )
+            };
+            if !accepted {
+                checker.report(argument, InvalidArgumentType);
+            }
         }
     }
 
@@ -592,6 +761,38 @@ impl ArgumentsChecker<'_> {
     fn report(&mut self, node: &(impl NodeIdentity + TextRange), kind: impl Into<DiagnosticKind>) {
         let (file_id, range) = node_location(node, self.file_node_mapper);
         self.diagnostics.push(file_id, range, kind);
+    }
+}
+
+/// The parameter types of the function `abi.encodeCall` encodes a call to,
+/// given the type of its first argument: an external function value, or from
+/// 0.8.12, an externally visible function named through a contract or
+/// interface, eg. `I.f`. Returns `None` for anything else.
+fn encoded_function_parameter_types<'a>(
+    binder: &Binder,
+    types: &'a TypeRegistry,
+    type_id: TypeId,
+) -> Option<&'a [TypeId]> {
+    let type_id = match types.get_type_by_id(type_id) {
+        Type::UserMetaType(UserMetaType { definition_id })
+            if types.language_version() >= LanguageVersion::V0_8_12 =>
+        {
+            let Some(Definition::Function(function_definition)) =
+                binder.find_definition_by_id(*definition_id)
+            else {
+                return None;
+            };
+            function_definition.externalized_type_id?
+        }
+        _ => type_id,
+    };
+    match types.get_type_by_id(type_id) {
+        Type::Function(FunctionType {
+            parameter_types,
+            call_mode,
+            ..
+        }) if call_mode.is_external() => Some(parameter_types),
+        _ => None,
     }
 }
 

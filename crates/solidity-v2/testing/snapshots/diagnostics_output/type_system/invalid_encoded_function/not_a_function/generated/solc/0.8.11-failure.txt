@@ -1,0 +1,11 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 1
+
+[TypeError 5511] Error: Expected first argument to be a function pointer, not "int_const 1".
+   ╭─[input.sol:6:24]
+   │
+ 6 │         abi.encodeCall(1, ());
+   │                        ┬  
+   │                        ╰── Error occurred here.
+───╯

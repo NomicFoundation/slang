@@ -1,0 +1,11 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 1
+
+[TypeError 8015] Error: Invalid type for argument in the bytes.concat function call. bytes or fixed bytes type is required, but int_const 0 provided.
+   ╭─[input.sol:6:22]
+   │
+ 6 │         bytes.concat(0);
+   │                      ┬  
+   │                      ╰── Error occurred here.
+───╯

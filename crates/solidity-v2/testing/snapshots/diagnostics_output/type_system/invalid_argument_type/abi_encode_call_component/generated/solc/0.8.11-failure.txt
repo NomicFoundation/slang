@@ -1,0 +1,11 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 1
+
+[TypeError 5407] Error: Cannot implicitly convert component at position 0 from "bool" to "uint256".
+   ╭─[input.sol:6:32]
+   │
+ 6 │         abi.encodeCall(this.g, (true));
+   │                                ───┬──  
+   │                                   ╰──── Error occurred here.
+───╯

@@ -1,0 +1,14 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 2
+
+[Warning 1878] Warning: SPDX license identifier not provided in source file. Before publishing, consider adding a comment containing "SPDX-License-Identifier: <SPDX-License>" to each source file. Use "SPDX-License-Identifier: UNLICENSED" for non-open-source code. Please see https://spdx.org for more information.
+--> input.sol
+
+[TypeError 1956] Error: The first argument to "abi.decode" must be implicitly convertible to bytes memory or bytes calldata, but is of type string memory.
+   ╭─[input.sol:4:16]
+   │
+ 4 │     abi.decode(data, (uint256));
+   │                ──┬─  
+   │                  ╰─── Error occurred here.
+───╯

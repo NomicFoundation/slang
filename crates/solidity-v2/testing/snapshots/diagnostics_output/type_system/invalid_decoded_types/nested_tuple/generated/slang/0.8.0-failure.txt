@@ -1,0 +1,11 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 1
+
+[type-system/invalid-decoded-types] Error: The second argument to 'abi.decode' must be a tuple of type names.
+   ╭─[input.sol:4:22]
+   │
+ 4 │     abi.decode(data, (uint256, (bool, bool)));
+   │                      ───────────┬───────────  
+   │                                 ╰───────────── Error occurred here.
+───╯
