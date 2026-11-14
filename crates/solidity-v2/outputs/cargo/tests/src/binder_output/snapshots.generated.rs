@@ -137,6 +137,16 @@ mod built_ins {
     }
 
     #[test]
+    fn bytes_push_overload() -> Result<()> {
+        run("built_ins", "bytes_push_overload")
+    }
+
+    #[test]
+    fn empty_named_arguments() -> Result<()> {
+        run("built_ins", "empty_named_arguments")
+    }
+
+    #[test]
     fn erc7201() -> Result<()> {
         run("built_ins", "erc7201")
     }

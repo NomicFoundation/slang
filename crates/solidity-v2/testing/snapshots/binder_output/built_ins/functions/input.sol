@@ -28,7 +28,7 @@ contract BuiltInsTest {
     }
 
     function testSelfDestruct() public {
-        selfdestruct(address(0x0));
+        selfdestruct(payable(address(0x0)));
     }
 
     function testAbiFunctions() public {

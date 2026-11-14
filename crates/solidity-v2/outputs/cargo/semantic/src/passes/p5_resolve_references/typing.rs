@@ -1167,16 +1167,13 @@ impl Pass<'_> {
                 }
             }
             Typing::BuiltIn(built_in) => {
-                match self
-                    .built_ins_resolver()
-                    .type_of_function_call(&built_in, argument_types.as_deref())
-                {
-                    Ok(type_id) => Typing::Resolved(type_id),
-                    Err(error) => {
-                        self.report_built_in_call_error(node, error);
-                        Typing::Unresolved
-                    }
-                }
+                self.check_positional_arguments_of_built_in_call(
+                    node,
+                    &built_in,
+                    arguments,
+                    argument_types.as_deref(),
+                );
+                self.typing_of_built_in_call(node, &built_in, argument_types.as_deref())
             }
             Typing::Resolved(type_id) => self.typing_of_type_called_with_positional_arguments(
                 node,
@@ -1475,9 +1472,18 @@ impl Pass<'_> {
                 );
                 (typing, definition_id)
             }
-            Typing::BuiltIn(_) => {
-                // built-ins cannot be called with named arguments
-                (Typing::Unresolved, None)
+            Typing::BuiltIn(built_in) => {
+                self.check_named_arguments_of_built_in_call(node, &built_in, arguments);
+                // NOTE: the parameters of a built-in have no names, so named
+                // arguments are not supported. For compatibility with solc, an
+                // empty `{}` is still typed, as the same call without
+                // arguments.
+                let typing = if arguments.is_empty() {
+                    self.typing_of_built_in_call(node, &built_in, Some(&[]))
+                } else {
+                    Typing::Unresolved
+                };
+                (typing, None)
             }
         };
 
@@ -1617,6 +1623,26 @@ impl Pass<'_> {
     fn report_operand_not_callable(&mut self, node: &ir::FunctionCallExpression) {
         let (file_id, range) = node_location(node, self.file_node_mapper);
         self.diagnostics.push(file_id, range, ExpressionNotCallable);
+    }
+
+    /// Types a call to `built_in` with positional `argument_types`, reporting
+    /// the call if it produces no result type.
+    fn typing_of_built_in_call(
+        &mut self,
+        node: &ir::FunctionCallExpression,
+        built_in: &InternalBuiltIn,
+        argument_types: Option<&[TypeId]>,
+    ) -> Typing {
+        match self
+            .built_ins_resolver()
+            .type_of_function_call(built_in, argument_types)
+        {
+            Ok(type_id) => Typing::Resolved(type_id),
+            Err(error) => {
+                self.report_built_in_call_error(node, error);
+                Typing::Unresolved
+            }
+        }
     }
 
     /// Reports a built-in call that produced no result type, at the call site.

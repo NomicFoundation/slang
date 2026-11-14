@@ -1,0 +1,11 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 1
+
+[TypeError 8871] Error: Storage arrays with nested mappings do not support .push(<arg>).
+    ╭─[input.sol:13:9]
+    │
+ 13 │         items.push(items[0]);
+    │         ─────┬────  
+    │              ╰────── Error occurred here.
+────╯

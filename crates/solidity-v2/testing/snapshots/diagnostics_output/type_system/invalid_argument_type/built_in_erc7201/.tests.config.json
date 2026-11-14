@@ -1,0 +1,6 @@
+{
+  "override_language_versions": {
+    "specifier": { "type": "From", "from": "0.8.35" },
+    "reason": "The erc7201 built-in was introduced in 0.8.35."
+  }
+}
