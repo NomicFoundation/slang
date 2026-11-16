@@ -25,6 +25,7 @@ mod storage_layout_base_non_integer;
 mod storage_layout_base_not_constant;
 mod storage_layout_base_out_of_range;
 mod storage_layout_base_past_end;
+mod string_index_access;
 mod type_too_large_for_storage;
 mod write_to_constant;
 
@@ -56,6 +57,7 @@ pub use storage_layout_base_non_integer::StorageLayoutBaseNonInteger;
 pub use storage_layout_base_not_constant::StorageLayoutBaseNotConstant;
 pub use storage_layout_base_out_of_range::StorageLayoutBaseOutOfRange;
 pub use storage_layout_base_past_end::StorageLayoutBasePastEnd;
+pub use string_index_access::StringIndexAccess;
 pub use type_too_large_for_storage::TypeTooLargeForStorage;
 pub use write_to_constant::WriteToConstant;
 
@@ -129,6 +131,8 @@ define_diagnostic_kind! {
         IncompatibleConditionalBranches(IncompatibleConditionalBranches),
         /// An array literal has no elements to deduce its type from.
         EmptyArrayLiteral(EmptyArrayLiteral),
+        /// A `string` (or a slice of one) is indexed.
+        StringIndexAccess(StringIndexAccess),
         /// An expression in a position that is written to does not denote a
         /// writable storage location.
         ExpressionNotAnLValue(ExpressionNotAnLValue),

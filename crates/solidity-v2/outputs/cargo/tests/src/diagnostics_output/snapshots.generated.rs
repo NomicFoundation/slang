@@ -7838,6 +7838,25 @@ mod type_system {
         }
     }
 
+    mod string_index_access {
+        use super::*;
+
+        #[test]
+        fn calldata_slice() -> Result<()> {
+            run("type_system/string_index_access", "calldata_slice")
+        }
+
+        #[test]
+        fn memory_parameter() -> Result<()> {
+            run("type_system/string_index_access", "memory_parameter")
+        }
+
+        #[test]
+        fn storage_variable() -> Result<()> {
+            run("type_system/string_index_access", "storage_variable")
+        }
+    }
+
     mod type_too_large_for_storage {
         use super::*;
 

@@ -6,7 +6,7 @@ use slang_solidity_v2_common::diagnostics::kinds::resolution::{
 };
 use slang_solidity_v2_common::diagnostics::kinds::structure::DuplicateNamedArgument;
 use slang_solidity_v2_common::diagnostics::kinds::type_system::{
-    EmptyArrayLiteral, ModifierOutsideFunctionHeader,
+    EmptyArrayLiteral, ModifierOutsideFunctionHeader, StringIndexAccess,
 };
 use slang_solidity_v2_ir::ir;
 use slang_solidity_v2_ir::ir::NodeIdentity;
@@ -601,6 +601,7 @@ impl Visitor for Pass<'_> {
                             // `string` can be sliced in calldata, but not indexed.
                             self.slice_typing(operand_type_id, *location)
                         } else {
+                            self.push_diagnostic(node, StringIndexAccess);
                             Typing::Unresolved
                         }
                     }
@@ -616,6 +617,10 @@ impl Visitor for Pass<'_> {
                                     Typing::Resolved(*element_type)
                                 }
                                 Type::Bytes(_) => Typing::Resolved(self.types.bytes1()),
+                                Type::String(_) => {
+                                    self.push_diagnostic(node, StringIndexAccess);
+                                    Typing::Unresolved
+                                }
                                 _ => Typing::Unresolved,
                             }
                         }

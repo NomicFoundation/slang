@@ -1,0 +1,11 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 1
+
+[type-system/string-index-access] Error: Index access is not possible on 'string'.
+    ╭─[input.sol:10:9]
+    │
+ 10 │         s[1:][0];
+    │         ────┬───  
+    │             ╰───── Error occurred here.
+────╯
