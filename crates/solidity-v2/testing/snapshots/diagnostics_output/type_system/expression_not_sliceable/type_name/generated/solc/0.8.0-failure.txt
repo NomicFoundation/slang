@@ -1,0 +1,11 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 1
+
+[TypeError 1760] Error: Types cannot be sliced.
+   ╭─[input.sol:7:9]
+   │
+ 7 │         uint256[1:];
+   │         ─────┬─────  
+   │              ╰─────── Error occurred here.
+───╯

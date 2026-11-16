@@ -7392,6 +7392,58 @@ mod type_system {
         }
     }
 
+    mod expression_not_sliceable {
+        use super::*;
+
+        #[test]
+        fn bytes_array() -> Result<()> {
+            run("type_system/expression_not_sliceable", "bytes_array")
+        }
+
+        #[test]
+        fn fixed_bytes() -> Result<()> {
+            run("type_system/expression_not_sliceable", "fixed_bytes")
+        }
+
+        #[test]
+        fn fixed_size_calldata_array() -> Result<()> {
+            run(
+                "type_system/expression_not_sliceable",
+                "fixed_size_calldata_array",
+            )
+        }
+
+        #[test]
+        fn mapping() -> Result<()> {
+            run("type_system/expression_not_sliceable", "mapping")
+        }
+
+        #[test]
+        fn memory_array() -> Result<()> {
+            run("type_system/expression_not_sliceable", "memory_array")
+        }
+
+        #[test]
+        fn nested_array() -> Result<()> {
+            run("type_system/expression_not_sliceable", "nested_array")
+        }
+
+        #[test]
+        fn storage_string() -> Result<()> {
+            run("type_system/expression_not_sliceable", "storage_string")
+        }
+
+        #[test]
+        fn struct_array() -> Result<()> {
+            run("type_system/expression_not_sliceable", "struct_array")
+        }
+
+        #[test]
+        fn type_name() -> Result<()> {
+            run("type_system/expression_not_sliceable", "type_name")
+        }
+    }
+
     #[test]
     fn fallback_function_mutability() -> Result<()> {
         run("type_system", "fallback_function_mutability")

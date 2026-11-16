@@ -6,8 +6,8 @@ use slang_solidity_v2_common::diagnostics::kinds::resolution::{
 };
 use slang_solidity_v2_common::diagnostics::kinds::structure::DuplicateNamedArgument;
 use slang_solidity_v2_common::diagnostics::kinds::type_system::{
-    EmptyArrayLiteral, ExpressionNotIndexable, MissingIndex, ModifierOutsideFunctionHeader,
-    StringIndexAccess,
+    EmptyArrayLiteral, ExpressionNotIndexable, ExpressionNotSliceable, MissingIndex,
+    ModifierOutsideFunctionHeader, StringIndexAccess,
 };
 use slang_solidity_v2_ir::ir;
 use slang_solidity_v2_ir::ir::NodeIdentity;
@@ -572,14 +572,31 @@ impl Visitor for Pass<'_> {
                         self.push_diagnostic(node, MissingIndex);
                         Typing::Unresolved
                     }
+                    // Only a dynamically-sized array (or a slice of one) can be
+                    // sliced. A type name can only be indexed to name an array
+                    // type.
+                    Type::FixedSizeArray(_)
+                    | Type::ByteArray(_)
+                    | Type::Mapping(_)
+                    | Type::MetaType(_)
+                    | Type::UserMetaType(_)
+                        if node.is_slice =>
+                    {
+                        self.push_diagnostic(&node.operand, ExpressionNotSliceable);
+                        Typing::Unresolved
+                    }
                     Type::Array(ArrayType {
                         element_type,
                         location,
                     }) => {
                         let (element_type, location) = (*element_type, *location);
                         if node.is_slice {
-                            // A range index of a (calldata) array is a slice.
-                            self.slice_typing(operand_type_id, location)
+                            self.typing_of_slice_expression(
+                                node,
+                                operand_type_id,
+                                location,
+                                Some(element_type),
+                            )
                         } else {
                             Typing::Resolved(element_type)
                         }
@@ -587,25 +604,13 @@ impl Visitor for Pass<'_> {
                     Type::FixedSizeArray(FixedSizeArrayType { element_type, .. }) => {
                         // TODO(validation) SDR[58]: for fixed-size arrays, if the
                         // index is resolvable at compile time we should check for
-                        // out-of-bounds accesses. Fixed-size arrays aren't
-                        // dynamically sized, so they can't be sliced.
-                        let element_type = *element_type;
-                        if node.is_slice {
-                            Typing::Unresolved
-                        } else {
-                            Typing::Resolved(element_type)
-                        }
+                        // out-of-bounds accesses.
+                        Typing::Resolved(*element_type)
                     }
-                    Type::ByteArray(_) => {
-                        if node.is_slice {
-                            Typing::Unresolved
-                        } else {
-                            Typing::Resolved(self.types.bytes1())
-                        }
-                    }
+                    Type::ByteArray(_) => Typing::Resolved(self.types.bytes1()),
                     Type::Bytes(BytesType { location }) => {
                         if node.is_slice {
-                            self.slice_typing(operand_type_id, *location)
+                            self.typing_of_slice_expression(node, operand_type_id, *location, None)
                         } else {
                             Typing::Resolved(self.types.bytes1())
                         }
@@ -613,7 +618,7 @@ impl Visitor for Pass<'_> {
                     Type::String(StringType { location }) => {
                         if node.is_slice {
                             // `string` can be sliced in calldata, but not indexed.
-                            self.slice_typing(operand_type_id, *location)
+                            self.typing_of_slice_expression(node, operand_type_id, *location, None)
                         } else {
                             self.push_diagnostic(node, StringIndexAccess);
                             Typing::Unresolved
@@ -640,11 +645,7 @@ impl Visitor for Pass<'_> {
                         }
                     }
                     Type::Mapping(MappingType { value_type_id, .. }) => {
-                        if node.is_slice {
-                            Typing::Unresolved
-                        } else {
-                            Typing::Resolved(*value_type_id)
-                        }
+                        Typing::Resolved(*value_type_id)
                     }
                     // Indexing a meta-type creates the meta-type of an array,
                     // eg. the `uint[]` in `abi.decode(data, (uint[]))` or the
@@ -664,7 +665,9 @@ impl Visitor for Pass<'_> {
                         }
                     }
                     _ => {
-                        if !node.is_slice {
+                        if node.is_slice {
+                            self.push_diagnostic(&node.operand, ExpressionNotSliceable);
+                        } else {
                             self.push_diagnostic(&node.operand, ExpressionNotIndexable);
                         }
                         Typing::Unresolved

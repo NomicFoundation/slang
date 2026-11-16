@@ -5,9 +5,9 @@ use slang_solidity_v2_common::diagnostics::kinds::resolution::{
 };
 use slang_solidity_v2_common::diagnostics::kinds::type_system::{
     CannotCallViaContractTypeName, ExplicitConversionNotAllowed, ExpressionNotAValue,
-    ExpressionNotAnLValue, ExpressionNotCallable, IncompatibleConditionalBranches,
-    InvalidUtf8StringLiteral, LiteralTooLarge, NotAValueKind, PartiallyAppliedFunctionUsedAsValue,
-    WriteToConstant,
+    ExpressionNotAnLValue, ExpressionNotCallable, ExpressionNotSliceable,
+    IncompatibleConditionalBranches, InvalidUtf8StringLiteral, LiteralTooLarge, NotAValueKind,
+    PartiallyAppliedFunctionUsedAsValue, WriteToConstant,
 };
 use slang_solidity_v2_common::nodes::NodeId;
 use slang_solidity_v2_ir::ir;
@@ -15,14 +15,14 @@ use slang_solidity_v2_ir::ir::NodeIdentity;
 
 use super::Pass;
 use super::disambiguation::OverloadMatch;
-use crate::binder::{Binder, Definition, Resolution, Typing};
+use crate::binder::{Binder, Definition, RecursionKind, Resolution, Typing};
 use crate::built_ins::{BuiltInCallError, InternalBuiltIn};
 use crate::context::FileNodeMapper;
 use crate::passes::common::node_location;
 use crate::types::{
     AddressType, ArraySliceType, ArrayType, ContractType, ConversionError, DataLocation, ErrorType,
     EventType, FixedSizeArrayType, FunctionType, FunctionTypeVisibility, IntegerType, LiteralKind,
-    MetaType, NoMobileType, Number, StringType, Type, TypeId, UserMetaType, literals,
+    MetaType, NoMobileType, Number, StringType, StructType, Type, TypeId, UserMetaType, literals,
 };
 
 impl Pass<'_> {
@@ -625,18 +625,56 @@ impl Pass<'_> {
     }
 
     /// Types a range index (`a[i:j]`) whose operand is the array `array_type_id`
-    /// in `location`. Only dynamically-sized calldata arrays can be sliced, so a
-    /// calldata operand yields a [`Type::ArraySlice`] wrapping it and anything
-    /// else is left unresolved.
-    pub(super) fn slice_typing(&mut self, array_type_id: TypeId, location: DataLocation) -> Typing {
-        if location == DataLocation::Calldata {
+    /// in `location`, with elements of `element_type` (`None` for `bytes` and
+    /// `string`). Only dynamically-sized calldata arrays with fixed-size elements
+    /// can be sliced, which yields a [`Type::ArraySlice`] wrapping the
+    /// array. Anything else is reported and left unresolved.
+    pub(super) fn typing_of_slice_expression(
+        &mut self,
+        node: &ir::IndexAccessExpression,
+        array_type_id: TypeId,
+        location: DataLocation,
+        element_type: Option<TypeId>,
+    ) -> Typing {
+        if location != DataLocation::Calldata
+            || element_type.is_some_and(|element_type| !self.is_fixed_size(element_type))
+        {
+            self.push_diagnostic(&node.operand, ExpressionNotSliceable);
+            Typing::Unresolved
+        } else {
             Typing::Resolved(
                 self.types
                     .register_type(Type::ArraySlice(ArraySliceType { array_type_id })),
             )
-        } else {
-            // TODO(validation) SDR[46]: slicing a non-calldata array is invalid.
-            Typing::Unresolved
+        }
+    }
+
+    /// Whether values of `type_id` have a fixed size: anything but a
+    /// dynamically-sized array, `bytes`, `string`, or a fixed-size array or
+    /// struct holding one of those.
+    fn is_fixed_size(&self, type_id: TypeId) -> bool {
+        match self.types.get_type_by_id(type_id) {
+            Type::Array(_) | Type::Bytes(_) | Type::String(_) => false,
+            Type::FixedSizeArray(FixedSizeArrayType { element_type, .. }) => {
+                self.is_fixed_size(*element_type)
+            }
+            Type::Struct(StructType { definition_id, .. }) => {
+                match self.binder.find_definition_by_id(*definition_id) {
+                    // A struct holding itself by value is already rejected, and
+                    // walking its members would not terminate.
+                    Some(Definition::Struct(definition)) => {
+                        matches!(definition.recursive, Some(RecursionKind::ByValue))
+                            || definition.ir_node.members.iter().all(|member| {
+                                self.binder
+                                    .node_typing(member.id())
+                                    .as_type_id()
+                                    .is_none_or(|member_type| self.is_fixed_size(member_type))
+                            })
+                    }
+                    _ => true,
+                }
+            }
+            _ => true,
         }
     }
 

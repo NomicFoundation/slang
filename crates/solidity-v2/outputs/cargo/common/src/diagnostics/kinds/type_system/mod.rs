@@ -12,6 +12,7 @@ mod expression_not_a_value;
 mod expression_not_an_lvalue;
 mod expression_not_callable;
 mod expression_not_indexable;
+mod expression_not_sliceable;
 mod fallback_function_mutability;
 mod fallback_function_signature;
 mod incompatible_conditional_branches;
@@ -45,6 +46,7 @@ pub use expression_not_a_value::{ExpressionNotAValue, NotAValueKind};
 pub use expression_not_an_lvalue::ExpressionNotAnLValue;
 pub use expression_not_callable::ExpressionNotCallable;
 pub use expression_not_indexable::ExpressionNotIndexable;
+pub use expression_not_sliceable::ExpressionNotSliceable;
 pub use fallback_function_mutability::FallbackFunctionMutability;
 pub use fallback_function_signature::FallbackFunctionSignature;
 pub use incompatible_conditional_branches::IncompatibleConditionalBranches;
@@ -142,6 +144,9 @@ define_diagnostic_kind! {
         MissingIndex(MissingIndex),
         /// A `string` (or a slice of one) is indexed.
         StringIndexAccess(StringIndexAccess),
+        /// The operand of a slice is not a dynamically-sized calldata array with
+        /// fixed-size elements (or a slice of one).
+        ExpressionNotSliceable(ExpressionNotSliceable),
         /// An expression in a position that is written to does not denote a
         /// writable storage location.
         ExpressionNotAnLValue(ExpressionNotAnLValue),
