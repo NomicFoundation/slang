@@ -15,7 +15,7 @@ use slang_solidity_v2_ir::ir::NodeIdentity;
 
 use super::Pass;
 use super::disambiguation::OverloadMatch;
-use crate::binder::{Binder, Definition, RecursionKind, Resolution, Typing};
+use crate::binder::{Binder, Definition, Resolution, Typing};
 use crate::built_ins::{BuiltInCallError, InternalBuiltIn};
 use crate::context::FileNodeMapper;
 use crate::passes::common::node_location;
@@ -658,22 +658,10 @@ impl Pass<'_> {
             Type::FixedSizeArray(FixedSizeArrayType { element_type, .. }) => {
                 self.is_fixed_size(*element_type)
             }
-            Type::Struct(StructType { definition_id, .. }) => {
-                match self.binder.find_definition_by_id(*definition_id) {
-                    // A struct holding itself by value is already rejected, and
-                    // walking its members would not terminate.
-                    Some(Definition::Struct(definition)) => {
-                        matches!(definition.recursive, Some(RecursionKind::ByValue))
-                            || definition.ir_node.members.iter().all(|member| {
-                                self.binder
-                                    .node_typing(member.id())
-                                    .as_type_id()
-                                    .is_none_or(|member_type| self.is_fixed_size(member_type))
-                            })
-                    }
-                    _ => true,
-                }
-            }
+            Type::Struct(StructType { definition_id, .. }) => matches!(
+                self.binder.find_definition_by_id(*definition_id),
+                Some(Definition::Struct(definition)) if definition.is_fixed_size
+            ),
             _ => true,
         }
     }
