@@ -6,7 +6,8 @@ use slang_solidity_v2_common::diagnostics::kinds::resolution::{
 };
 use slang_solidity_v2_common::diagnostics::kinds::structure::DuplicateNamedArgument;
 use slang_solidity_v2_common::diagnostics::kinds::type_system::{
-    EmptyArrayLiteral, ModifierOutsideFunctionHeader, StringIndexAccess,
+    EmptyArrayLiteral, ExpressionNotIndexable, ModifierOutsideFunctionHeader,
+    StringIndexAccess,
 };
 use slang_solidity_v2_ir::ir;
 use slang_solidity_v2_ir::ir::NodeIdentity;
@@ -650,7 +651,9 @@ impl Visitor for Pass<'_> {
                         }
                     }
                     _ => {
-                        // TODO(validation) SDR[45]: the operand is not indexable
+                        if !node.is_slice {
+                            self.push_diagnostic(&node.operand, ExpressionNotIndexable);
+                        }
                         Typing::Unresolved
                     }
                 }

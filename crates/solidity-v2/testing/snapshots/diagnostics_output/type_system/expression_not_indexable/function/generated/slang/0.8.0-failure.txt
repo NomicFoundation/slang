@@ -1,0 +1,11 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 1
+
+[type-system/expression-not-indexable] Error: This expression is not indexable.
+   ╭─[input.sol:9:9]
+   │
+ 9 │         g[0];
+   │         ┬  
+   │         ╰── Error occurred here.
+───╯

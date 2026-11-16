@@ -7368,6 +7368,30 @@ mod type_system {
         }
     }
 
+    mod expression_not_indexable {
+        use super::*;
+
+        #[test]
+        fn function() -> Result<()> {
+            run("type_system/expression_not_indexable", "function")
+        }
+
+        #[test]
+        fn integer() -> Result<()> {
+            run("type_system/expression_not_indexable", "integer")
+        }
+
+        #[test]
+        fn string_literal() -> Result<()> {
+            run("type_system/expression_not_indexable", "string_literal")
+        }
+
+        #[test]
+        fn this_expression() -> Result<()> {
+            run("type_system/expression_not_indexable", "this_expression")
+        }
+    }
+
     #[test]
     fn fallback_function_mutability() -> Result<()> {
         run("type_system", "fallback_function_mutability")

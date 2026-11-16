@@ -11,6 +11,7 @@ mod explicit_conversion_not_allowed;
 mod expression_not_a_value;
 mod expression_not_an_lvalue;
 mod expression_not_callable;
+mod expression_not_indexable;
 mod fallback_function_mutability;
 mod fallback_function_signature;
 mod incompatible_conditional_branches;
@@ -42,6 +43,7 @@ pub use explicit_conversion_not_allowed::ExplicitConversionNotAllowed;
 pub use expression_not_a_value::{ExpressionNotAValue, NotAValueKind};
 pub use expression_not_an_lvalue::ExpressionNotAnLValue;
 pub use expression_not_callable::ExpressionNotCallable;
+pub use expression_not_indexable::ExpressionNotIndexable;
 pub use fallback_function_mutability::FallbackFunctionMutability;
 pub use fallback_function_signature::FallbackFunctionSignature;
 pub use incompatible_conditional_branches::IncompatibleConditionalBranches;
@@ -120,6 +122,9 @@ define_diagnostic_kind! {
         ExpressionNotCallable(ExpressionNotCallable),
         /// An expression references a modifier outside a function header.
         ModifierOutsideFunctionHeader(ModifierOutsideFunctionHeader),
+        /// The operand of an index access is not an array, a mapping or a type
+        /// name.
+        ExpressionNotIndexable(ExpressionNotIndexable),
         /// An expression in a position that requires a value names a built-in,
         /// `super`, or an uncalled `new` instead. Its `kind` says which.
         ExpressionNotAValue(ExpressionNotAValue),

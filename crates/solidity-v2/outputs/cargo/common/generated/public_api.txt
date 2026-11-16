@@ -3694,6 +3694,7 @@ pub slang_solidity_v2_common::diagnostics::kinds::type_system::TypeSystemDiagnos
 pub slang_solidity_v2_common::diagnostics::kinds::type_system::TypeSystemDiagnosticKind::ExpressionNotAValue(slang_solidity_v2_common::diagnostics::kinds::type_system::ExpressionNotAValue)
 pub slang_solidity_v2_common::diagnostics::kinds::type_system::TypeSystemDiagnosticKind::ExpressionNotAnLValue(slang_solidity_v2_common::diagnostics::kinds::type_system::ExpressionNotAnLValue)
 pub slang_solidity_v2_common::diagnostics::kinds::type_system::TypeSystemDiagnosticKind::ExpressionNotCallable(slang_solidity_v2_common::diagnostics::kinds::type_system::ExpressionNotCallable)
+pub slang_solidity_v2_common::diagnostics::kinds::type_system::TypeSystemDiagnosticKind::ExpressionNotIndexable(slang_solidity_v2_common::diagnostics::kinds::type_system::ExpressionNotIndexable)
 pub slang_solidity_v2_common::diagnostics::kinds::type_system::TypeSystemDiagnosticKind::FallbackFunctionMutability(slang_solidity_v2_common::diagnostics::kinds::type_system::FallbackFunctionMutability)
 pub slang_solidity_v2_common::diagnostics::kinds::type_system::TypeSystemDiagnosticKind::FallbackFunctionSignature(slang_solidity_v2_common::diagnostics::kinds::type_system::FallbackFunctionSignature)
 pub slang_solidity_v2_common::diagnostics::kinds::type_system::TypeSystemDiagnosticKind::IncompatibleConditionalBranches(slang_solidity_v2_common::diagnostics::kinds::type_system::IncompatibleConditionalBranches)
@@ -3742,6 +3743,8 @@ impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::type_syst
 pub fn slang_solidity_v2_common::diagnostics::kinds::type_system::TypeSystemDiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::type_system::ExpressionNotAnLValue) -> Self
 impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::type_system::ExpressionNotCallable> for slang_solidity_v2_common::diagnostics::kinds::type_system::TypeSystemDiagnosticKind
 pub fn slang_solidity_v2_common::diagnostics::kinds::type_system::TypeSystemDiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::type_system::ExpressionNotCallable) -> Self
+impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::type_system::ExpressionNotIndexable> for slang_solidity_v2_common::diagnostics::kinds::type_system::TypeSystemDiagnosticKind
+pub fn slang_solidity_v2_common::diagnostics::kinds::type_system::TypeSystemDiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::type_system::ExpressionNotIndexable) -> Self
 impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::type_system::FallbackFunctionMutability> for slang_solidity_v2_common::diagnostics::kinds::type_system::TypeSystemDiagnosticKind
 pub fn slang_solidity_v2_common::diagnostics::kinds::type_system::TypeSystemDiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::type_system::FallbackFunctionMutability) -> Self
 impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::type_system::FallbackFunctionSignature> for slang_solidity_v2_common::diagnostics::kinds::type_system::TypeSystemDiagnosticKind
@@ -4035,6 +4038,25 @@ impl slang_solidity_v2_common::diagnostics::DiagnosticExtensions for slang_solid
 pub fn slang_solidity_v2_common::diagnostics::kinds::type_system::ExpressionNotCallable::code(&self) -> &'static str
 pub fn slang_solidity_v2_common::diagnostics::kinds::type_system::ExpressionNotCallable::message(&self) -> alloc::string::String
 pub fn slang_solidity_v2_common::diagnostics::kinds::type_system::ExpressionNotCallable::severity(&self) -> slang_solidity_v2_common::diagnostics::DiagnosticSeverity
+pub struct slang_solidity_v2_common::diagnostics::kinds::type_system::ExpressionNotIndexable
+impl core::clone::Clone for slang_solidity_v2_common::diagnostics::kinds::type_system::ExpressionNotIndexable
+pub fn slang_solidity_v2_common::diagnostics::kinds::type_system::ExpressionNotIndexable::clone(&self) -> slang_solidity_v2_common::diagnostics::kinds::type_system::ExpressionNotIndexable
+impl core::cmp::Eq for slang_solidity_v2_common::diagnostics::kinds::type_system::ExpressionNotIndexable
+impl core::cmp::PartialEq for slang_solidity_v2_common::diagnostics::kinds::type_system::ExpressionNotIndexable
+pub fn slang_solidity_v2_common::diagnostics::kinds::type_system::ExpressionNotIndexable::eq(&self, &slang_solidity_v2_common::diagnostics::kinds::type_system::ExpressionNotIndexable) -> bool
+impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::type_system::ExpressionNotIndexable> for slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind
+pub fn slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::type_system::ExpressionNotIndexable) -> Self
+impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::type_system::ExpressionNotIndexable> for slang_solidity_v2_common::diagnostics::kinds::type_system::TypeSystemDiagnosticKind
+pub fn slang_solidity_v2_common::diagnostics::kinds::type_system::TypeSystemDiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::type_system::ExpressionNotIndexable) -> Self
+impl core::fmt::Debug for slang_solidity_v2_common::diagnostics::kinds::type_system::ExpressionNotIndexable
+pub fn slang_solidity_v2_common::diagnostics::kinds::type_system::ExpressionNotIndexable::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::StructuralPartialEq for slang_solidity_v2_common::diagnostics::kinds::type_system::ExpressionNotIndexable
+impl serde_core::ser::Serialize for slang_solidity_v2_common::diagnostics::kinds::type_system::ExpressionNotIndexable
+pub fn slang_solidity_v2_common::diagnostics::kinds::type_system::ExpressionNotIndexable::serialize<__S>(&self, __S) -> core::result::Result<<__S as serde_core::ser::Serializer>::Ok, <__S as serde_core::ser::Serializer>::Error> where __S: serde_core::ser::Serializer
+impl slang_solidity_v2_common::diagnostics::DiagnosticExtensions for slang_solidity_v2_common::diagnostics::kinds::type_system::ExpressionNotIndexable
+pub fn slang_solidity_v2_common::diagnostics::kinds::type_system::ExpressionNotIndexable::code(&self) -> &'static str
+pub fn slang_solidity_v2_common::diagnostics::kinds::type_system::ExpressionNotIndexable::message(&self) -> alloc::string::String
+pub fn slang_solidity_v2_common::diagnostics::kinds::type_system::ExpressionNotIndexable::severity(&self) -> slang_solidity_v2_common::diagnostics::DiagnosticSeverity
 pub struct slang_solidity_v2_common::diagnostics::kinds::type_system::FallbackFunctionMutability
 pub slang_solidity_v2_common::diagnostics::kinds::type_system::FallbackFunctionMutability::mutability: alloc::string::String
 impl core::clone::Clone for slang_solidity_v2_common::diagnostics::kinds::type_system::FallbackFunctionMutability
@@ -4714,6 +4736,8 @@ impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::type_syst
 pub fn slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::type_system::ExpressionNotAnLValue) -> Self
 impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::type_system::ExpressionNotCallable> for slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind
 pub fn slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::type_system::ExpressionNotCallable) -> Self
+impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::type_system::ExpressionNotIndexable> for slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind
+pub fn slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::type_system::ExpressionNotIndexable) -> Self
 impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::type_system::FallbackFunctionMutability> for slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind
 pub fn slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::type_system::FallbackFunctionMutability) -> Self
 impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::type_system::FallbackFunctionSignature> for slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind
@@ -5508,6 +5532,10 @@ impl slang_solidity_v2_common::diagnostics::DiagnosticExtensions for slang_solid
 pub fn slang_solidity_v2_common::diagnostics::kinds::type_system::ExpressionNotCallable::code(&self) -> &'static str
 pub fn slang_solidity_v2_common::diagnostics::kinds::type_system::ExpressionNotCallable::message(&self) -> alloc::string::String
 pub fn slang_solidity_v2_common::diagnostics::kinds::type_system::ExpressionNotCallable::severity(&self) -> slang_solidity_v2_common::diagnostics::DiagnosticSeverity
+impl slang_solidity_v2_common::diagnostics::DiagnosticExtensions for slang_solidity_v2_common::diagnostics::kinds::type_system::ExpressionNotIndexable
+pub fn slang_solidity_v2_common::diagnostics::kinds::type_system::ExpressionNotIndexable::code(&self) -> &'static str
+pub fn slang_solidity_v2_common::diagnostics::kinds::type_system::ExpressionNotIndexable::message(&self) -> alloc::string::String
+pub fn slang_solidity_v2_common::diagnostics::kinds::type_system::ExpressionNotIndexable::severity(&self) -> slang_solidity_v2_common::diagnostics::DiagnosticSeverity
 impl slang_solidity_v2_common::diagnostics::DiagnosticExtensions for slang_solidity_v2_common::diagnostics::kinds::type_system::FallbackFunctionMutability
 pub fn slang_solidity_v2_common::diagnostics::kinds::type_system::FallbackFunctionMutability::code(&self) -> &'static str
 pub fn slang_solidity_v2_common::diagnostics::kinds::type_system::FallbackFunctionMutability::message(&self) -> alloc::string::String
