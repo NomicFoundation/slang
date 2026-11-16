@@ -1,0 +1,11 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 1
+
+[TypeError 1267] Error: Index expression cannot be omitted.
+   ╭─[input.sol:9:9]
+   │
+ 9 │         m[];
+   │         ─┬─  
+   │          ╰─── Error occurred here.
+───╯

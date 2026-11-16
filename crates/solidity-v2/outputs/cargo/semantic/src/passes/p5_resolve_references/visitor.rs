@@ -6,7 +6,7 @@ use slang_solidity_v2_common::diagnostics::kinds::resolution::{
 };
 use slang_solidity_v2_common::diagnostics::kinds::structure::DuplicateNamedArgument;
 use slang_solidity_v2_common::diagnostics::kinds::type_system::{
-    EmptyArrayLiteral, ExpressionNotIndexable, ModifierOutsideFunctionHeader,
+    EmptyArrayLiteral, ExpressionNotIndexable, MissingIndex, ModifierOutsideFunctionHeader,
     StringIndexAccess,
 };
 use slang_solidity_v2_ir::ir;
@@ -559,6 +559,19 @@ impl Visitor for Pass<'_> {
         let typing = match self.check_type_of_value_or_type_name_expression(&node.operand) {
             Some(operand_type_id) => {
                 match self.types.get_type_by_id(operand_type_id) {
+                    // Only a type name can be indexed without an index.
+                    Type::Array(_)
+                    | Type::FixedSizeArray(_)
+                    | Type::ByteArray(_)
+                    | Type::Bytes(_)
+                    | Type::String(_)
+                    | Type::ArraySlice(_)
+                    | Type::Mapping(_)
+                        if node.start.is_none() && !node.is_slice =>
+                    {
+                        self.push_diagnostic(node, MissingIndex);
+                        Typing::Unresolved
+                    }
                     Type::Array(ArrayType {
                         element_type,
                         location,

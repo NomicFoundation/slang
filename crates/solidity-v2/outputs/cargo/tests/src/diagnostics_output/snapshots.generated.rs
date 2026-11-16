@@ -7549,6 +7549,30 @@ mod type_system {
         }
     }
 
+    mod missing_index {
+        use super::*;
+
+        #[test]
+        fn array() -> Result<()> {
+            run("type_system/missing_index", "array")
+        }
+
+        #[test]
+        fn fixed_bytes() -> Result<()> {
+            run("type_system/missing_index", "fixed_bytes")
+        }
+
+        #[test]
+        fn mapping() -> Result<()> {
+            run("type_system/missing_index", "mapping")
+        }
+
+        #[test]
+        fn string() -> Result<()> {
+            run("type_system/missing_index", "string")
+        }
+    }
+
     mod modifier_outside_function_header {
         use super::*;
 

@@ -19,6 +19,7 @@ mod incompatible_constant_operator;
 mod invalid_base;
 mod invalid_utf8_string_literal;
 mod literal_too_large;
+mod missing_index;
 mod modifier_outside_function_header;
 mod partially_applied_function_used_as_value;
 mod receive_function_parameters;
@@ -51,6 +52,7 @@ pub use incompatible_constant_operator::IncompatibleConstantOperator;
 pub use invalid_base::InvalidBase;
 pub use invalid_utf8_string_literal::InvalidUtf8StringLiteral;
 pub use literal_too_large::LiteralTooLarge;
+pub use missing_index::MissingIndex;
 pub use modifier_outside_function_header::ModifierOutsideFunctionHeader;
 pub use partially_applied_function_used_as_value::PartiallyAppliedFunctionUsedAsValue;
 pub use receive_function_parameters::ReceiveFunctionParameters;
@@ -136,6 +138,8 @@ define_diagnostic_kind! {
         IncompatibleConditionalBranches(IncompatibleConditionalBranches),
         /// An array literal has no elements to deduce its type from.
         EmptyArrayLiteral(EmptyArrayLiteral),
+        /// An index access on a value omits the index.
+        MissingIndex(MissingIndex),
         /// A `string` (or a slice of one) is indexed.
         StringIndexAccess(StringIndexAccess),
         /// An expression in a position that is written to does not denote a
