@@ -56,7 +56,6 @@ pub struct TypeRegistry {
 }
 
 /// Why a type has no mobile type.
-#[derive(Debug)]
 pub(crate) enum NoMobileType {
     /// A type name or a declaration (a module, or a function declaration
     /// reached through a contract type name) rather than a value.
@@ -839,46 +838,6 @@ impl TypeRegistry {
             return Some(right_mobile);
         }
         None
-    }
-
-    /// Return a type that can be stored in the EVM and can hold values of all
-    /// the given types. The first element dictates the type class. Returns
-    /// `None` if the types cannot be reified, they are not compatible, or they don't belong
-    /// in an array literal.
-    ///
-    /// This is used to unify types of literal arrays.
-    /// Only the first element is mobile-typed unconditionally.
-    ///
-    /// Panics if an element has no mobile type: callers must have checked, and
-    /// reported, that every element has one.
-    pub(crate) fn type_of_array_literal(&mut self, type_ids: &[TypeId]) -> Option<TypeId> {
-        let (first_id, rest) = type_ids.split_first()?;
-        if !self.get_type_by_id(*first_id).can_be_array_element() {
-            // TODO(validation) SDR[750]: Error if the element type can't be an array element
-            return None;
-        }
-        let mut element_type_id = self
-            .compute_mobile_type(*first_id)
-            .expect("the caller checks that every element has a mobile type");
-        for &item_type_id in rest {
-            if self.implicitly_convertible_to(item_type_id, element_type_id) {
-                // Item already fits the accumulator
-                continue;
-            }
-            if !self.get_type_by_id(item_type_id).can_be_array_element() {
-                // TODO(validation) SDR[750]: Error if the element type can't be an array element
-                return None;
-            }
-            let item_mobile_type_id = self
-                .compute_mobile_type(item_type_id)
-                .expect("the caller checks that every element has a mobile type");
-            if !self.implicitly_convertible_to(element_type_id, item_mobile_type_id) {
-                // TODO(validation) SDR[1741,1353]: types are not compatible
-                return None;
-            }
-            element_type_id = item_mobile_type_id;
-        }
-        Some(element_type_id)
     }
 
     // Returns true if two parameter lists are indistinguishable for the purpose
