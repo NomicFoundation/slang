@@ -265,6 +265,11 @@ mod contracts {
     use super::*;
 
     #[test]
+    fn base_names_a_struct() -> Result<()> {
+        run("contracts", "base_names_a_struct")
+    }
+
+    #[test]
     fn constructor_call_parent() -> Result<()> {
         run("contracts", "constructor_call_parent")
     }
@@ -1295,6 +1300,11 @@ mod scoping {
     #[test]
     fn statement_scope() -> Result<()> {
         run("scoping", "statement_scope")
+    }
+
+    #[test]
+    fn type_name_shadowed_by_variable() -> Result<()> {
+        run("scoping", "type_name_shadowed_by_variable")
     }
 }
 

@@ -1,0 +1,45 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics:
+[type-system/invalid-base] Error: Only a contract or interface can be used as a base.
+   ╭─[input.sol:9:15]
+   │
+ 9 │ contract C is S {}
+   │               ┬  
+   │               ╰── Error occurred here.
+───╯
+
+------------------------------------------------------------------------
+
+Definitions (3):
+- Def: #1 ["S" @ input.sol:5:8] (struct)
+- Def: #2 ["a" @ input.sol:6:13] (struct member, type: uint256)
+- Def: #3 ["C" @ input.sol:9:10] (contract)
+
+------------------------------------------------------------------------
+
+References (1):
+- Ref: ["S" @ input.sol:9:15] -> #1
+
+------------------------------------------------------------------------
+
+Unbound identifiers (0):
+
+------------------------------------------------------------------------
+
+Bindings: 
+   ╭─[input.sol:1:1]
+   │
+ 5 │ struct S {
+   │        ┬  
+   │        ╰── name: 1
+ 6 │     uint256 a;
+   │             ┬  
+   │             ╰── name: 2
+   │ 
+ 9 │ contract C is S {}
+   │          ┬    ┬  
+   │          ╰─────── name: 3
+   │               │  
+   │               ╰── ref: 1
+───╯

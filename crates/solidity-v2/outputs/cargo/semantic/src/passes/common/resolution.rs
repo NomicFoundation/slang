@@ -241,7 +241,7 @@ pub(crate) enum PathResolutionFailure {
     /// has no members, like a variable or a struct.
     NotANamespace(usize),
     /// The last identifier names a declaration of a kind the context cannot
-    /// take, reported with this diagnostic. Its reference is left unresolved.
+    /// take, reported with this diagnostic. Its reference is rejected.
     WrongKind(DiagnosticKind),
 }
 
@@ -416,12 +416,12 @@ pub(crate) fn resolve_identifier_path(
     }
 
     // A path that resolves names declarations of some kind, which the
-    // context may not take. Its reference is then left unresolved.
+    // context may not take. Its reference is then rejected.
     if matches!(failure, PathResolutionFailure::None)
         && let Err(kind) = context.check_resolution(binder, &resolution)
     {
         let last = &identifier_path[last_index];
-        binder.fixup_reference(last.id(), Resolution::Unresolved);
+        binder.reject_reference(last.id());
         resolution = Resolution::Unresolved;
         failure = PathResolutionFailure::WrongKind(kind);
     }
