@@ -1,10 +1,11 @@
-//! One traversal of the struct members computes three results, which differ in
+//! One traversal of the struct members computes four results, which differ in
 //! the references they follow from a member's type to another struct:
 //!
 //! | Property                     | Edges followed                          |
 //! |------------------------------|-----------------------------------------|
 //! | by-value dependencies (p8)   | struct members, fixed-size arrays       |
 //! | `ByReference`                | + dynamic arrays, mapping values        |
+//! | containing a mapping         | same as `ByReference`                   |
 //! | `ByFunctionType`             | + function parameter and return types   |
 //!
 //! For example, `struct S { S[] children; }` is valid and is `ByReference`,
@@ -32,6 +33,7 @@ pub(super) fn mark_recursive_structs(binder: &mut Binder, types: &TypeRegistry) 
     let by_value = graph.reaching_cycles(|kind| kind == DependencyKind::ByValue);
     let by_reference = graph.reaching_cycles(|kind| kind != DependencyKind::FunctionSignature);
     let by_function_type = graph.reaching_cycles(|_| true);
+    let containing_mapping = graph.containing_mapping();
 
     for (struct_id, node) in graph.nodes {
         let Definition::Struct(definition) = binder.get_definition_mut(struct_id) else {
@@ -47,6 +49,7 @@ pub(super) fn mark_recursive_structs(binder: &mut Binder, types: &TypeRegistry) 
             RecursionKind::NonRecursive
         });
         definition.by_value_dependencies = node.by_value.into_boxed_slice();
+        definition.contains_mapping = containing_mapping.contains(&struct_id);
     }
 }
 
@@ -57,11 +60,26 @@ enum DependencyKind {
     FunctionSignature,
 }
 
+impl DependencyKind {
+    /// The kind of a dependency reached through a dynamic array or a mapping
+    /// value: an indirect member, unless already inside a signature.
+    fn through_indirection(self) -> Self {
+        if self == Self::FunctionSignature {
+            self
+        } else {
+            Self::IndirectMember
+        }
+    }
+}
+
 #[derive(Default)]
 struct StructDependencies {
     // Reverse edges: the structs referring to this one.
     predecessors: Vec<(NodeId, DependencyKind)>,
     by_value: Vec<NodeId>,
+    // Whether a member's type holds a mapping without going through another
+    // struct.
+    holds_mapping: bool,
 }
 
 /// Holds every struct.
@@ -110,17 +128,14 @@ impl StructDependencyGraph {
                 Type::FixedSizeArray(FixedSizeArrayType { element_type, .. }) => {
                     pending.push((*element_type, kind));
                 }
-                Type::Array(ArrayType { element_type, .. })
-                | Type::Mapping(MappingType {
-                    value_type_id: element_type,
-                    ..
-                }) => {
-                    let kind = if kind == DependencyKind::FunctionSignature {
-                        kind
-                    } else {
-                        DependencyKind::IndirectMember
-                    };
-                    pending.push((*element_type, kind));
+                Type::Array(ArrayType { element_type, .. }) => {
+                    pending.push((*element_type, kind.through_indirection()));
+                }
+                Type::Mapping(MappingType { value_type_id, .. }) => {
+                    if kind != DependencyKind::FunctionSignature {
+                        self.nodes.entry(from).or_default().holds_mapping = true;
+                    }
+                    pending.push((*value_type_id, kind.through_indirection()));
                 }
                 Type::Function(FunctionType {
                     parameter_types,
@@ -142,6 +157,27 @@ impl StructDependencyGraph {
                 _ => {}
             }
         }
+    }
+
+    /// The structs that hold a mapping, themselves or through the structs they
+    /// hold, by value or in an array or a mapping. Each call runs in
+    /// O(nodes + edges) time.
+    fn containing_mapping(&self) -> Set<NodeId> {
+        let mut containing: Set<NodeId> = self
+            .nodes
+            .iter()
+            .filter(|(_, node)| node.holds_mapping)
+            .map(|(id, _)| *id)
+            .collect();
+        let mut pending: Vec<NodeId> = containing.iter().copied().collect();
+        while let Some(id) = pending.pop() {
+            for (predecessor, kind) in &self.nodes[&id].predecessors {
+                if *kind != DependencyKind::FunctionSignature && containing.insert(*predecessor) {
+                    pending.push(*predecessor);
+                }
+            }
+        }
+        containing
     }
 
     /// Repeatedly removes leaves and their incoming edges. Exactly the nodes

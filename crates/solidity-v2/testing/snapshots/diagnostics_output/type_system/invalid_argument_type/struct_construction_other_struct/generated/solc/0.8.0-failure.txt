@@ -1,0 +1,11 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 1
+
+[TypeError 9553] Error: Invalid type for argument in function call. Invalid implicit conversion from struct C.U memory to struct C.T memory requested.
+    ╭─[input.sol:18:11]
+    │
+ 18 │         S(U(1));
+    │           ──┬─  
+    │             ╰─── Error occurred here.
+────╯
