@@ -1286,6 +1286,11 @@ mod scoping {
     fn statement_scope() -> Result<()> {
         run("scoping", "statement_scope")
     }
+
+    #[test]
+    fn type_name_shadowed_by_variable() -> Result<()> {
+        run("scoping", "type_name_shadowed_by_variable")
+    }
 }
 
 mod structs {

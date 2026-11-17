@@ -288,12 +288,13 @@ impl SemanticContext {
         self.contract_data.linearised_events(contract_id)
     }
 
+    /// The declaration the reference at `node_id` names, following symbol
+    /// aliases. This includes a declaration of a kind its position cannot
+    /// take, which is reported.
     pub fn resolve_reference_identifier_to_definition_id(&self, node_id: NodeId) -> Option<NodeId> {
-        let reference = self
-            .binder()
-            .find_reference_by_identifier_node_id(node_id)?;
+        let resolution = self.binder().find_resolution_including_rejected(node_id)?;
         self.binder()
-            .follow_symbol_aliases(reference.resolution.clone())
+            .follow_symbol_aliases(resolution.clone())
             .as_definition_id()
     }
 
@@ -301,10 +302,9 @@ impl SemanticContext {
         &self,
         node_id: NodeId,
     ) -> Option<NodeId> {
-        let reference = self
-            .binder()
-            .find_reference_by_identifier_node_id(node_id)?;
-        reference.resolution.as_definition_id()
+        self.binder()
+            .find_resolution_including_rejected(node_id)?
+            .as_definition_id()
     }
 
     pub fn storage_size_of_type_id(&self, type_id: TypeId) -> Option<StorageSize> {

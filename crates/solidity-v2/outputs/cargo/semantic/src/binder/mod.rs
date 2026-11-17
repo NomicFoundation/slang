@@ -124,6 +124,11 @@ pub struct Binder {
     definitions_by_identifier: Map<NodeId, NodeId>,
     /// `Reference` objects (identifier + `Resolution`), indexed by identifier `NodeId`
     references: Map<NodeId, Reference>,
+    /// What a reference names when its position cannot take that kind of
+    /// declaration, indexed by identifier `NodeId`. Its `Reference` is left
+    /// unresolved so the analysis does not build on it, but tooling can still
+    /// navigate to the declaration.
+    rejected_references: Map<NodeId, Resolution>,
     /// User-defined operator functions, indexed by the `NodeId` of the
     /// operator expression that invokes them
     operator_functions: Map<NodeId, NodeId>,
@@ -235,6 +240,7 @@ impl Binder {
             linearisations: Map::default_with_capacity(capacities.linearisations),
             assembly_blocks: Map::default_with_capacity(capacities.assembly_blocks),
             scopes_by_file_id: Map::default(),
+            rejected_references: Map::default(),
             global_using_directives: Vec::new(),
             operator_functions: Map::default(),
             definitions_to_references: Map::default(),
@@ -401,8 +407,41 @@ impl Binder {
         reference.resolution = resolution;
     }
 
+    /// Leaves the reference at `node_id` unresolved, as it names a declaration
+    /// its position cannot take, which is reported on its own. What it names
+    /// stays available to tooling, see `Self::find_resolution_including_rejected`.
+    pub(crate) fn reject_reference(&mut self, node_id: NodeId) {
+        let reference = self.references.get_mut(&node_id).unwrap();
+        let resolution = std::mem::replace(&mut reference.resolution, Resolution::Unresolved);
+        self.rejected_references.insert(node_id, resolution);
+    }
+
     pub fn find_reference_by_identifier_node_id(&self, node_id: NodeId) -> Option<&Reference> {
         self.references.get(&node_id)
+    }
+
+    /// What the reference at `node_id` names, even when its position rejects
+    /// it. The analysis reads `Reference::resolution` instead.
+    pub(crate) fn find_resolution_including_rejected(
+        &self,
+        node_id: NodeId,
+    ) -> Option<&Resolution> {
+        let resolution = &self.references.get(&node_id)?.resolution;
+        Some(self.resolution_or_rejected(resolution, node_id))
+    }
+
+    /// `resolution`, or what the reference at `node_id` names if its position
+    /// rejected it. Only an unresolved reference can have been rejected.
+    #[inline]
+    fn resolution_or_rejected<'a>(
+        &'a self,
+        resolution: &'a Resolution,
+        node_id: NodeId,
+    ) -> &'a Resolution {
+        match resolution {
+            Resolution::Unresolved => self.rejected_references.get(&node_id).unwrap_or(resolution),
+            _ => resolution,
+        }
     }
 
     pub fn references(&self) -> &Map<NodeId, Reference> {
@@ -424,7 +463,7 @@ impl Binder {
         let mut definitions: Map<NodeId, Vec<NodeId>> =
             Map::default_with_capacity(self.definitions.len());
         for (reference_id, reference) in &self.references {
-            match &reference.resolution {
+            match self.resolution_or_rejected(&reference.resolution, *reference_id) {
                 Resolution::Definition(node_id) => {
                     if let Some(references) = definitions.get_mut(node_id) {
                         references.push(*reference_id);

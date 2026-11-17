@@ -1,0 +1,57 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics:
+[resolution/identifier-not-type-name] Error: Identifier does not name a type.
+    ╭─[input.sol:12:9]
+    │
+ 12 │         S memory s;
+    │         ┬  
+    │         ╰── Error occurred here.
+────╯
+
+------------------------------------------------------------------------
+
+Definitions (6):
+- Def: #1 ["S" @ input.sol:5:8] (struct)
+- Def: #2 ["a" @ input.sol:6:13] (struct member, type: uint256)
+- Def: #3 ["C" @ input.sol:9:10] (contract)
+- Def: #4 ["f" @ input.sol:10:14] (function, type: function () returns ())
+- Def: #5 ["S" @ input.sol:11:17] (variable, type: uint256)
+- Def: #6 ["s" @ input.sol:12:18] (variable, type: unresolved)
+
+------------------------------------------------------------------------
+
+References (1):
+- Ref: ["S" @ input.sol:12:9] -> #5
+
+------------------------------------------------------------------------
+
+Unbound identifiers (0):
+
+------------------------------------------------------------------------
+
+Bindings: 
+    ╭─[input.sol:1:1]
+    │
+  5 │ struct S {
+    │        ┬  
+    │        ╰── name: 1
+  6 │     uint256 a;
+    │             ┬  
+    │             ╰── name: 2
+    │ 
+  9 │ contract C {
+    │          ┬  
+    │          ╰── name: 3
+ 10 │     function f() public pure {
+    │              ┬  
+    │              ╰── name: 4
+ 11 │         uint256 S;
+    │                 ┬  
+    │                 ╰── name: 5
+ 12 │         S memory s;
+    │         ┬        ┬  
+    │         ╰─────────── ref: 5
+    │                  │  
+    │                  ╰── name: 6
+────╯

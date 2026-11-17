@@ -19,7 +19,9 @@ impl IdentifierStruct {
 
     /// Attempts to resolve the identifier to a definition, following symbol
     /// aliases (import deconstructions). Returns `None` if the identifier is
-    /// not acting as a reference, or the reference cannot be resolved.
+    /// not acting as a reference, or the reference cannot be resolved. A
+    /// reference to a declaration of a kind its position cannot take, which
+    /// is reported, still resolves to it.
     pub fn resolve_to_definition(&self) -> Option<Definition> {
         let definition_id = self
             .semantic
