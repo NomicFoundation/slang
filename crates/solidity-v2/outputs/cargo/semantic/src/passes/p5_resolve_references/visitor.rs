@@ -6,7 +6,7 @@ use slang_solidity_v2_common::diagnostics::kinds::resolution::{
 };
 use slang_solidity_v2_common::diagnostics::kinds::structure::DuplicateNamedArgument;
 use slang_solidity_v2_common::diagnostics::kinds::type_system::{
-    EmptyArrayLiteral, ModifierOutsideFunctionHeader,
+    CallOptionsAlreadySet, CallOptionsNotAllowed, EmptyArrayLiteral, ModifierOutsideFunctionHeader,
 };
 use slang_solidity_v2_ir::ir;
 use slang_solidity_v2_ir::ir::NodeIdentity;
@@ -19,8 +19,8 @@ use crate::passes::common::{
     IdentifierPathTarget, filter_overridden_definitions, filter_overridden_definitions_by_selector,
 };
 use crate::types::{
-    AddressType, ArraySliceType, ArrayType, BytesType, FixedSizeArrayType, MappingType, MetaType,
-    Number, StringType, TupleType, Type, UserMetaType,
+    AddressType, ArraySliceType, ArrayType, BytesType, CallMode, FixedSizeArrayType, MappingType,
+    MetaType, Number, StringType, TupleType, Type, UserMetaType,
 };
 
 impl Visitor for Pass<'_> {
@@ -703,30 +703,42 @@ impl Visitor for Pass<'_> {
         // overload set has to survive to the enclosing call.
         let operand_typing = self.raw_typing_of_expression(&node.operand).clone();
 
-        // Pre-applying call options (eg. `foo{value: 3}`) partially applies the
-        // function.
-        let typing = match operand_typing.as_type_id() {
-            Some(type_id) => match self.types.get_type_by_id(type_id) {
-                // TODO(validation) SDR[828]: call options only apply to external
-                // calls, so neither a bound function nor a library call can take
-                // them. They keep their call mode meanwhile, so that a bound one
-                // still passes one argument less.
-                Type::Function(function_type)
-                    if function_type.call_mode.is_bound()
-                        || function_type.call_mode.is_delegate() =>
-                {
-                    operand_typing
+        let operand_typing = match self.call_options_allowed(&operand_typing) {
+            Some(true) => {
+                if is_call_options_expression(&node.operand) {
+                    self.push_diagnostic(node, CallOptionsAlreadySet);
                 }
-                Type::Function(function_type) => {
-                    let function_type = function_type.clone();
-                    Typing::Resolved(
-                        self.types
-                            .function_type_with_call_options_applied(function_type),
-                    )
-                }
-                _ => operand_typing,
-            },
+                operand_typing
+            }
+            Some(false) => {
+                self.push_diagnostic(node, CallOptionsNotAllowed);
+                operand_typing
+            }
+            // The operand is not a function at all (eg. `a{gas: 1}` on a value).
+            // It is not passed on, or the enclosing call would report it again.
+            None if !matches!(operand_typing, Typing::Unresolved) => {
+                self.push_diagnostic(node, CallOptionsNotAllowed);
+                Typing::Unresolved
+            }
             None => operand_typing,
+        };
+
+        // Pre-applying call options to an external function (eg. `c.f{value: 3}`)
+        // partially applies it. Any other operand keeps its typing.
+        let typing = match operand_typing
+            .as_type_id()
+            .map(|type_id| self.types.get_type_by_id(type_id))
+        {
+            Some(Type::Function(function_type))
+                if function_type.call_mode == CallMode::External =>
+            {
+                let function_type = function_type.clone();
+                Typing::Resolved(
+                    self.types
+                        .function_type_with_call_options_applied(function_type),
+                )
+            }
+            _ => operand_typing,
         };
         self.binder.set_node_typing(node.id(), typing);
     }
@@ -930,5 +942,17 @@ impl Visitor for Pass<'_> {
             }
         }
         true
+    }
+}
+
+/// Whether `node` is a call options expression, seen through parentheses.
+fn is_call_options_expression(node: &ir::Expression) -> bool {
+    match node {
+        ir::Expression::CallOptionsExpression(_) => true,
+        ir::Expression::TupleExpression(tuple) if tuple.items.len() == 1 => tuple.items[0]
+            .expression
+            .as_ref()
+            .is_some_and(is_call_options_expression),
+        _ => false,
     }
 }
