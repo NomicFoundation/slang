@@ -393,11 +393,6 @@ impl<S: Source> CstToIrBuilder<'_, S> {
             input::ContractMember::ReceiveFunctionDefinition(receive) => {
                 output::ContractMember::FunctionDefinition(self.build_receive_as_function(receive))
             }
-            input::ContractMember::ModifierDefinition(modifier) => {
-                output::ContractMember::FunctionDefinition(
-                    self.build_modifier_as_function(modifier),
-                )
-            }
             input::ContractMember::StateVariableDefinition(state_variable_definition) => {
                 let output = self.build_state_variable_definition(state_variable_definition);
                 if matches!(
@@ -516,7 +511,7 @@ impl<S: Source> CstToIrBuilder<'_, S> {
     }
 
     //
-    // Constructor / Fallback / Receive / Modifier → FunctionDefinition
+    // Constructor / Fallback / Receive → FunctionDefinition
     //
 
     fn build_constructor_as_function(
@@ -597,31 +592,27 @@ impl<S: Source> CstToIrBuilder<'_, S> {
         })
     }
 
-    fn build_modifier_as_function(
+    fn build_modifier_definition(
         &mut self,
         source: &input::ModifierDefinition,
-    ) -> output::FunctionDefinition {
-        let id = self.next_id(output::NodeKind::FunctionDefinition);
+    ) -> output::ModifierDefinition {
+        let id = self.next_id(output::NodeKind::ModifierDefinition);
         let range = source.calculate_text_range().unwrap_or_default();
-        let kind = output::FunctionKind::Modifier;
-        let name = Some(self.build_identifier(&source.name));
+        let name = self.build_identifier(&source.name);
         let parameters = source
             .parameters
             .as_ref()
             .map(|parameter| self.build_parameters_declaration(parameter))
             .unwrap_or_default();
         let attributes = self.build_modifier_attributes(&source.attributes);
-        let returns = None;
         let body = self.build_function_body(&source.body);
 
-        Arc::new(output::FunctionDefinitionStruct {
+        Arc::new(output::ModifierDefinitionStruct {
             id,
             range,
-            kind,
             name,
             parameters,
             attributes,
-            returns,
             body,
         })
     }

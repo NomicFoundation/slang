@@ -1,0 +1,11 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 1
+
+[TypeError 9574] Error: Type modifier (uint256) is not implicitly convertible to expected type uint256.
+    ╭─[input.sol:10:9]
+    │
+ 10 │         uint256 y = m;
+    │         ──────┬──────  
+    │               ╰──────── Error occurred here.
+────╯

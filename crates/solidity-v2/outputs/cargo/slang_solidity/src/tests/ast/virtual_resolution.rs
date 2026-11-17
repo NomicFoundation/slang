@@ -5,7 +5,8 @@
 
 use crate::ast::visitor::Visitor;
 use crate::ast::{
-    self, ContractDefinition, Definition, Expression, FunctionDefinition, ModifierInvocation,
+    self, ContractDefinition, Definition, Expression, FunctionDefinition, ModifierDefinition,
+    ModifierInvocation,
 };
 use crate::compilation::CompilationUnit;
 use crate::define_fixture;
@@ -89,7 +90,7 @@ fn function(unit: &CompilationUnit, owner: &str, name: &str, arity: usize) -> Fu
 }
 
 /// The one modifier the contract `owner` declares.
-fn modifier(unit: &CompilationUnit, owner: &str) -> FunctionDefinition {
+fn modifier(unit: &CompilationUnit, owner: &str) -> ModifierDefinition {
     contract(unit, owner)
         .modifiers()
         .into_iter()

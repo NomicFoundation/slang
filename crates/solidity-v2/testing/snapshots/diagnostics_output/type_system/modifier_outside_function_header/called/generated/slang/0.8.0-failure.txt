@@ -2,10 +2,10 @@
 
 Diagnostics: 1
 
-[type-system/expression-not-callable] Error: This expression is not callable.
+[type-system/modifier-outside-function-header] Error: A modifier can only be referenced in a function header.
     ╭─[input.sol:11:17]
     │
  11 │     uint256 a = m(1000);
-    │                 ───┬───  
-    │                    ╰───── Error occurred here.
+    │                 ┬  
+    │                 ╰── Error occurred here.
 ────╯

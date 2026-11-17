@@ -19,19 +19,14 @@ impl SemanticContext {
     /// themselves, including unimplemented members of abstract contracts.
     ///
     /// Returns `None` unless `contract_id` identifies a linearised contract and
-    /// `function` is a function or modifier declared in its hierarchy.
-    /// Constructors and free or library functions are not accepted.
+    /// `function` is a function declared in its hierarchy. Constructors and
+    /// free or library functions are not accepted.
     pub fn resolve_virtual<'a>(
         &'a self,
         contract_id: NodeId,
         function: &'a ir::FunctionDefinition,
     ) -> Option<VirtualTarget<'a>> {
-        let (bases, member) = self.dispatch_member(contract_id, function)?;
-        if member.is_modifier() {
-            return Some(VirtualTarget::Function(
-                self.dispatch_modifier(bases, function),
-            ));
-        }
+        let (bases, member) = self.dispatch_function(contract_id, function)?;
         if !member.is_virtual() {
             return Some(VirtualTarget::Function(function));
         }
@@ -73,7 +68,7 @@ impl SemanticContext {
         function: &'a ir::FunctionDefinition,
         enclosing_contract: NodeId,
     ) -> Option<&'a ir::FunctionDefinition> {
-        let (bases, member) = self.dispatch_member(contract_id, function)?;
+        let (bases, member) = self.dispatch_function(contract_id, function)?;
         if member.function_kind() != ir::FunctionKind::Regular
             || !matches!(
                 self.binder.find_definition_by_id(enclosing_contract),
@@ -97,7 +92,7 @@ impl SemanticContext {
         &self,
         contract_id: NodeId,
         invocation: &ir::ModifierInvocation,
-    ) -> Option<&ir::FunctionDefinition> {
+    ) -> Option<&ir::ModifierDefinition> {
         let name = invocation
             .name
             .last()
@@ -113,7 +108,7 @@ impl SemanticContext {
         else {
             return None;
         };
-        let (bases, _) = self.dispatch_member(contract_id, &modifier.ir_node)?;
+        let (bases, _) = self.dispatch_bases(contract_id, modifier.ir_node.id())?;
         Some(if invocation.is_qualified() {
             &modifier.ir_node
         } else {
@@ -126,8 +121,8 @@ impl SemanticContext {
     fn dispatch_modifier<'a>(
         &'a self,
         bases: &[NodeId],
-        modifier: &'a ir::FunctionDefinition,
-    ) -> &'a ir::FunctionDefinition {
+        modifier: &'a ir::ModifierDefinition,
+    ) -> &'a ir::ModifierDefinition {
         let member = Overridable::Modifier(modifier);
         if !member.is_virtual() {
             return modifier;
@@ -136,11 +131,19 @@ impl SemanticContext {
             .expect("a virtual modifier is at least its own target")
     }
 
-    fn dispatch_member<'a>(
+    fn dispatch_function<'a>(
         &'a self,
         contract_id: NodeId,
         function: &'a ir::FunctionDefinition,
     ) -> Option<(&'a [NodeId], Overridable<'a>)> {
+        let (bases, in_interface) = self.dispatch_bases(contract_id, function.id())?;
+        Some((bases, Overridable::of_function(function, in_interface)?))
+    }
+
+    /// The linearised bases of `contract_id`, and whether the member
+    /// `member_id` is declared in an interface. `None` unless the member is
+    /// declared in one of those bases.
+    fn dispatch_bases(&self, contract_id: NodeId, member_id: NodeId) -> Option<(&[NodeId], bool)> {
         if !matches!(
             self.binder.find_definition_by_id(contract_id),
             Some(Definition::Contract(_))
@@ -151,10 +154,10 @@ impl SemanticContext {
             .binder
             .get_linearised_bases(contract_id)
             .expect("p2 linearises every contract");
-        let scope_id = self.binder.scope_id_for_node_id(function.id())?;
+        let scope_id = self.binder.scope_id_for_node_id(member_id)?;
         let parent_scope_id = match self.binder.get_scope_by_id(scope_id) {
             Scope::Function(function_scope) => function_scope.parent_scope_id,
-            Scope::Modifier(modifier_scope) => modifier_scope.parent_scope_id,
+            Scope::Signature(signature_scope) => signature_scope.parent_scope_id,
             _ => return None,
         };
         let enclosing_node_id = self.binder.get_scope_by_id(parent_scope_id).node_id();
@@ -165,7 +168,7 @@ impl SemanticContext {
             self.binder.find_definition_by_id(enclosing_node_id),
             Some(Definition::Interface(_))
         );
-        Some((bases, Overridable::of_function(function, in_interface)?))
+        Some((bases, in_interface))
     }
 }
 
@@ -189,7 +192,7 @@ pub(crate) fn modifier_target<'a>(
     types: &'a TypeRegistry,
     bases: &[NodeId],
     member: Overridable<'a>,
-) -> Option<&'a ir::FunctionDefinition> {
+) -> Option<&'a ir::ModifierDefinition> {
     bases
         .iter()
         .flat_map(|base| Overridable::members_of(binder, *base))

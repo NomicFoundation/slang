@@ -88,12 +88,15 @@ impl<'a> HierarchyChecker<'a> {
     /// Reports the rules `overriding` breaks by overriding `overridden`.
     #[allow(clippy::too_many_lines)]
     fn check_override(&mut self, overriding: &Overridable<'a>, overridden: &Overridable<'a>) {
-        if overriding.is_modifier()
-            && let (Some(overriding_type), Some(overridden_type)) = (
-                overriding.function_type(self.binder, self.types),
-                overridden.function_type(self.binder, self.types),
+        if let (
+            Overridable::Modifier(overriding_modifier),
+            Overridable::Modifier(overridden_modifier),
+        ) = (overriding, overridden)
+            && let (Some(overriding_types), Some(overridden_types)) = (
+                Overridable::modifier_parameter_types(self.binder, overriding_modifier),
+                Overridable::modifier_parameter_types(self.binder, overridden_modifier),
             )
-            && overriding_type.parameter_types != overridden_type.parameter_types
+            && overriding_types != overridden_types
         {
             self.report(overriding, OverrideChangesModifierSignature);
         }
@@ -132,7 +135,8 @@ impl<'a> HierarchyChecker<'a> {
             if overridden.visibility() != ir::FunctionVisibility::External {
                 self.report(overriding, PublicStateVariableOverridesNonExternal);
             }
-        } else if overriding.visibility() != overridden.visibility()
+        } else if overriding.is_function()
+            && overriding.visibility() != overridden.visibility()
             // Widening an external function to public is the one allowed change.
             && !(overridden.visibility() == ir::FunctionVisibility::External
                 && overriding.visibility() == ir::FunctionVisibility::Public)

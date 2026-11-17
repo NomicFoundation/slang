@@ -10,7 +10,7 @@ use slang_solidity_v2_common::nodes::NodeId;
 use slang_solidity_v2_ir::ir;
 
 use crate::binder::{Binder, Definition, DefinitionIds, Reference, Resolution, ScopeId, Typing};
-use crate::types::{FunctionType, Type, TypeRegistry};
+use crate::types::{FunctionType, Type, TypeId, TypeRegistry};
 
 /// The kind of declaration an `IdentifierPath` is expected to name. Mostly
 /// declarative for now with only some variants having semantic impact when
@@ -369,7 +369,7 @@ pub(crate) enum Overridable<'a> {
         /// in an interface is implicitly `virtual`.
         in_interface: bool,
     },
-    Modifier(&'a ir::FunctionDefinition),
+    Modifier(&'a ir::ModifierDefinition),
     /// A `public` state variable.
     StateVariable(&'a ir::StateVariableDefinition),
 }
@@ -397,6 +397,7 @@ impl<'a> Overridable<'a> {
             ir::ContractMember::FunctionDefinition(definition) => {
                 Self::of_function(definition, in_interface)
             }
+            ir::ContractMember::ModifierDefinition(definition) => Some(Self::Modifier(definition)),
             ir::ContractMember::StateVariableDefinition(state_variable)
                 if matches!(
                     state_variable.attributes.visibility,
@@ -409,9 +410,9 @@ impl<'a> Overridable<'a> {
         }
     }
 
-    /// The overridable view of a function or modifier definition, for callers
-    /// that hold one directly rather than a contract member. `None` for a
-    /// constructor, which takes no part in overriding.
+    /// The overridable view of a function definition, for callers that hold
+    /// one directly rather than a contract member. `None` for a constructor,
+    /// which takes no part in overriding.
     pub(crate) fn of_function(
         definition: &'a ir::FunctionDefinition,
         in_interface: bool,
@@ -423,30 +424,32 @@ impl<'a> Overridable<'a> {
                     in_interface,
                 })
             }
-            ir::FunctionKind::Modifier => Some(Self::Modifier(definition)),
             ir::FunctionKind::Constructor => None,
         }
     }
 
     /// Whether this member and `other` occupy the same override slot. They
-    /// match on name and function kind, and regular functions and getters also
-    /// need indistinguishable parameter lists. The relation is symmetric, so
-    /// which of the two overrides the other does not matter here.
+    /// match on name and kind (modifier, or function kind), and regular
+    /// functions and getters also need indistinguishable parameter lists. The
+    /// relation is symmetric, so which of the two overrides the other does not
+    /// matter here.
     pub(crate) fn overrides(
         &self,
         binder: &'a Binder,
         types: &'a TypeRegistry,
         other: &Self,
     ) -> bool {
+        if self.is_modifier() || other.is_modifier() {
+            // Modifiers cannot be overloaded, so the name is enough.
+            return self.is_modifier() && other.is_modifier() && self.name() == other.name();
+        }
         if self.function_kind() != other.function_kind() || self.name() != other.name() {
             return false;
         }
         match self.function_kind() {
-            // Modifiers cannot be overloaded, and a fallback or receive has no
-            // selector, so name and kind are enough.
-            ir::FunctionKind::Modifier | ir::FunctionKind::Fallback | ir::FunctionKind::Receive => {
-                true
-            }
+            // A fallback or receive has no selector, so name and kind are
+            // enough.
+            ir::FunctionKind::Fallback | ir::FunctionKind::Receive => true,
             // A member whose parameters aren't all typed is reported on its
             // own. Treating it as matching anything here would invent an
             // override.
@@ -468,7 +471,8 @@ impl<'a> Overridable<'a> {
 
     pub(crate) fn node_id(&self) -> NodeId {
         match self {
-            Self::Function { definition, .. } | Self::Modifier(definition) => definition.id(),
+            Self::Function { definition, .. } => definition.id(),
+            Self::Modifier(definition) => definition.id(),
             Self::StateVariable(state_variable) => state_variable.id(),
         }
     }
@@ -476,9 +480,10 @@ impl<'a> Overridable<'a> {
     /// The name, or `None` for a fallback or receive.
     pub(crate) fn name(&self) -> Option<&'a str> {
         match self {
-            Self::Function { definition, .. } | Self::Modifier(definition) => {
+            Self::Function { definition, .. } => {
                 definition.name.as_ref().map(|name| name.unparse())
             }
+            Self::Modifier(definition) => Some(definition.name.unparse()),
             Self::StateVariable(state_variable) => Some(state_variable.name.unparse()),
         }
     }
@@ -494,7 +499,8 @@ impl<'a> Overridable<'a> {
     /// The function kind. A getter is a regular function.
     pub(crate) fn function_kind(&self) -> ir::FunctionKind {
         match self {
-            Self::Function { definition, .. } | Self::Modifier(definition) => definition.kind,
+            Self::Function { definition, .. } => definition.kind,
+            Self::Modifier(_) => unreachable!("modifiers have no function kind"),
             Self::StateVariable(_) => ir::FunctionKind::Regular,
         }
     }
@@ -519,9 +525,8 @@ impl<'a> Overridable<'a> {
 
     pub(crate) fn has_override_specifier(&self) -> bool {
         match self {
-            Self::Function { definition, .. } | Self::Modifier(definition) => {
-                definition.attributes.override_specifier.is_some()
-            }
+            Self::Function { definition, .. } => definition.attributes.override_specifier.is_some(),
+            Self::Modifier(definition) => definition.attributes.override_specifier.is_some(),
             Self::StateVariable(state_variable) => {
                 state_variable.attributes.override_specifier.is_some()
             }
@@ -541,9 +546,8 @@ impl<'a> Overridable<'a> {
 
     pub(crate) fn visibility(&self) -> ir::FunctionVisibility {
         match self {
-            Self::Function { definition, .. } | Self::Modifier(definition) => {
-                definition.attributes.visibility
-            }
+            Self::Function { definition, .. } => definition.attributes.visibility,
+            Self::Modifier(_) => unreachable!("modifiers have no visibility"),
             Self::StateVariable(_) => ir::FunctionVisibility::External,
         }
     }
@@ -567,24 +571,25 @@ impl<'a> Overridable<'a> {
 
     pub(crate) fn is_implemented(&self) -> bool {
         match self {
-            Self::Function { definition, .. } | Self::Modifier(definition) => {
-                definition.body.is_some()
-            }
+            Self::Function { definition, .. } => definition.body.is_some(),
+            Self::Modifier(definition) => definition.body.is_some(),
             Self::StateVariable(_) => true,
         }
     }
 
     /// The declared function type, or the getter's type for a state variable.
-    /// `None` when it couldn't be computed, which is reported elsewhere.
+    /// `None` when it couldn't be computed, which is reported elsewhere. A
+    /// modifier has no type: see `modifier_parameter_types`.
     pub(crate) fn function_type(
         &self,
         binder: &'a Binder,
         types: &'a TypeRegistry,
     ) -> Option<&'a FunctionType> {
         let type_id = match self {
-            Self::Function { definition, .. } | Self::Modifier(definition) => {
+            Self::Function { definition, .. } => {
                 binder.node_typing(definition.id()).as_type_id()?
             }
+            Self::Modifier(_) => unreachable!("modifiers have no type"),
             Self::StateVariable(state_variable) => {
                 match binder.find_definition_by_id(state_variable.id()) {
                     Some(Definition::StateVariable(definition)) => definition.getter_type_id?,
@@ -598,11 +603,23 @@ impl<'a> Overridable<'a> {
         Some(function_type)
     }
 
+    /// The parameter types of a modifier. `None` when one couldn't be
+    /// computed, which is reported elsewhere.
+    pub(crate) fn modifier_parameter_types(
+        binder: &Binder,
+        definition: &ir::ModifierDefinition,
+    ) -> Option<Vec<TypeId>> {
+        definition
+            .parameters
+            .iter()
+            .map(|parameter| binder.node_typing(parameter.id()).as_type_id())
+            .collect()
+    }
+
     pub(crate) fn range(&self) -> Range<usize> {
         match self {
-            Self::Function { definition, .. } | Self::Modifier(definition) => {
-                definition.signature_text_range()
-            }
+            Self::Function { definition, .. } => definition.signature_text_range(),
+            Self::Modifier(definition) => definition.signature_text_range(),
             Self::StateVariable(state_variable) => state_variable.range.clone(),
         }
     }

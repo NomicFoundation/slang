@@ -4,6 +4,7 @@ mod event_definition;
 mod function_definition;
 mod interface_definition;
 mod library_definition;
+mod modifier_definition;
 mod parameters;
 mod source_unit;
 mod state_variable_definition;

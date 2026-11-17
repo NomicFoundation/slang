@@ -754,12 +754,6 @@ impl Binder {
                     Resolution::Definition,
                 )
                 .or_else(|| self.resolve_in_scope(function_scope.parent_scope_id, symbol)),
-            Scope::Modifier(modifier_scope) => {
-                modifier_scope.definitions.get(symbol).copied().map_or_else(
-                    || self.resolve_in_scope(modifier_scope.parent_scope_id, symbol),
-                    Resolution::Definition,
-                )
-            }
             Scope::Parameters(parameters_scope) => {
                 parameters_scope.lookup_definition(symbol).into()
             }
@@ -970,7 +964,6 @@ impl Binder {
             Scope::Block(_)
             | Scope::Chained(_)
             | Scope::Function(_)
-            | Scope::Modifier(_)
             | Scope::Signature(_)
             | Scope::YulBlock(_)
             | Scope::YulFunction(_) => Resolution::Unresolved,
@@ -1037,8 +1030,33 @@ impl Binder {
             Definition::Function(function_definition) => {
                 Some(function_definition.parameters_scope_id)
             }
+            Definition::Modifier(modifier_definition) => {
+                Some(modifier_definition.parameters_scope_id)
+            }
             Definition::Struct(_) => self.scope_id_for_node_id(definition_id),
             _ => None,
         }
+    }
+
+    /// Records the types already computed for `parameters` in the parameters
+    /// scope of `definition_id`, for overload disambiguation and argument
+    /// checks.
+    pub(crate) fn set_parameter_types_of_definition(
+        &mut self,
+        definition_id: NodeId,
+        parameters: &ir::Parameters,
+    ) {
+        let parameter_types: Vec<_> = parameters
+            .iter()
+            .map(|parameter| self.node_typing(parameter.id()).as_type_id())
+            .collect();
+        let Some(parameters_scope_id) = self.get_parameters_scope_for_definition(definition_id)
+        else {
+            unreachable!("definition does not have an associated parameters scope");
+        };
+        let Scope::Parameters(parameters_scope) = self.get_scope_mut(parameters_scope_id) else {
+            unreachable!("scope is not a ParametersScope");
+        };
+        parameters_scope.set_parameter_types(&parameter_types);
     }
 }
