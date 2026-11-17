@@ -22,6 +22,7 @@ mod invalid_base;
 mod invalid_utf8_string_literal;
 mod literal_too_large;
 mod modifier_outside_function_header;
+mod named_arguments_in_conversion;
 mod partially_applied_function_used_as_value;
 mod receive_function_parameters;
 mod storage_layout_base_non_integer;
@@ -33,6 +34,7 @@ mod type_too_large_for_storage;
 mod unknown_named_argument;
 mod write_to_constant;
 mod wrong_argument_count;
+mod wrong_argument_count_in_conversion;
 
 pub use array_length_fractional::ArrayLengthFractional;
 pub use array_length_negative::ArrayLengthNegative;
@@ -58,6 +60,7 @@ pub use invalid_base::InvalidBase;
 pub use invalid_utf8_string_literal::InvalidUtf8StringLiteral;
 pub use literal_too_large::LiteralTooLarge;
 pub use modifier_outside_function_header::ModifierOutsideFunctionHeader;
+pub use named_arguments_in_conversion::NamedArgumentsInConversion;
 pub use partially_applied_function_used_as_value::PartiallyAppliedFunctionUsedAsValue;
 pub use receive_function_parameters::ReceiveFunctionParameters;
 use serde::Serialize;
@@ -70,6 +73,7 @@ pub use type_too_large_for_storage::TypeTooLargeForStorage;
 pub use unknown_named_argument::UnknownNamedArgument;
 pub use write_to_constant::WriteToConstant;
 pub use wrong_argument_count::WrongArgumentCount;
+pub use wrong_argument_count_in_conversion::WrongArgumentCountInConversion;
 
 use crate::diagnostics::kinds::DiagnosticKind;
 use crate::diagnostics::kinds::utils::define_diagnostic_kind;
@@ -144,6 +148,10 @@ define_diagnostic_kind! {
         InvalidArgumentType(InvalidArgumentType),
         /// A named argument of a call names none of the callee's parameters.
         UnknownNamedArgument(UnknownNamedArgument),
+        /// An explicit type conversion is not given exactly one argument.
+        WrongArgumentCountInConversion(WrongArgumentCountInConversion),
+        /// An explicit type conversion is given named arguments.
+        NamedArgumentsInConversion(NamedArgumentsInConversion),
         /// A struct containing a mapping is constructed.
         StructWithMappingConstructed(StructWithMappingConstructed),
         /// An expression in a position that requires a value names a built-in,
