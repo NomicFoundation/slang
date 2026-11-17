@@ -6,10 +6,11 @@ mod binding_rules;
 #[path = "built_ins.generated.rs"]
 mod built_ins;
 
+use std::cell::LazyCell;
 use std::rc::Rc;
 
 use built_ins::define_built_ins;
-use metaslang_bindings::ScopeGraphBuilder;
+use metaslang_bindings::{BindingRulesFile, ScopeGraphBuilder};
 use metaslang_cst::text_index::TextIndex;
 use semver::Version;
 
@@ -72,15 +73,21 @@ pub(crate) fn create_with_resolver_internal(
     version: &Version,
     resolver: Rc<dyn metaslang_bindings::PathResolver<KindTypes>>,
 ) -> BindingGraphBuilder {
-    let mut binding_graph = BindingGraphBuilder::create(
-        version.clone(),
-        binding_rules::BINDING_RULES_SOURCE,
-        resolver,
-    );
+    let binding_rules_file = BINDING_RULES_FILE.with(|file| Rc::clone(file));
+
+    let mut binding_graph =
+        BindingGraphBuilder::create(version.clone(), binding_rules_file, resolver);
 
     add_built_ins(&mut binding_graph, version);
 
     binding_graph
+}
+
+thread_local! {
+    /// The binding rules don't depend on the language version or on the source files, so they are
+    /// parsed once per thread and shared by every binding graph built on it.
+    static BINDING_RULES_FILE: LazyCell<Rc<BindingRulesFile<KindTypes>>> =
+        const { LazyCell::new(|| BindingRulesFile::create(binding_rules::BINDING_RULES_SOURCE)) };
 }
 
 #[cfg(feature = "__private_testing_utils")]
