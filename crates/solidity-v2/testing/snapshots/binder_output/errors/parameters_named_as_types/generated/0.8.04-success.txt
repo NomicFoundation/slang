@@ -9,17 +9,17 @@ Definitions (12):
 - Def: #6 ["StructType" @ input.sol:7:12] (struct)
 - Def: #7 ["x" @ input.sol:8:14] (struct member, type: uint256)
 - Def: #8 ["E1" @ input.sol:11:11] (error)
-- Def: #9 ["StructType" @ input.sol:11:25] (parameter, type: StructType memory)
+- Def: #9 ["StructType" @ input.sol:11:25] (parameter, type: unresolved)
 - Def: #10 ["E2" @ input.sol:12:11] (error)
-- Def: #11 ["StructType" @ input.sol:12:23] (parameter, type: EnumType)
-- Def: #12 ["EnumType" @ input.sol:12:46] (parameter, type: StructType memory)
+- Def: #11 ["StructType" @ input.sol:12:23] (parameter, type: unresolved)
+- Def: #12 ["EnumType" @ input.sol:12:46] (parameter, type: unresolved)
 
 ------------------------------------------------------------------------
 
 References (3):
-- Ref: ["StructType" @ input.sol:11:14] -> #6
-- Ref: ["EnumType" @ input.sol:12:14] -> #2
-- Ref: ["StructType" @ input.sol:12:35] -> #6
+- Ref: ["StructType" @ input.sol:11:14] -> #9
+- Ref: ["EnumType" @ input.sol:12:14] -> #12
+- Ref: ["StructType" @ input.sol:12:35] -> #11
 
 ------------------------------------------------------------------------
 
@@ -54,18 +54,18 @@ Bindings:
     │           ─┬ ─────┬──── ─────┬────  
     │            ╰──────────────────────── name: 8
     │                   │          │      
-    │                   ╰───────────────── ref: 6
+    │                   ╰───────────────── ref: 9
     │                              │      
     │                              ╰────── name: 9
  12 │     error E2(EnumType StructType, StructType EnumType);
     │           ─┬ ────┬─── ─────┬────  ─────┬──── ────┬───  
     │            ╰─────────────────────────────────────────── name: 10
     │                  │         │           │         │     
-    │                  ╰───────────────────────────────────── ref: 2
+    │                  ╰───────────────────────────────────── ref: 12
     │                            │           │         │     
     │                            ╰─────────────────────────── name: 11
     │                                        │         │     
-    │                                        ╰─────────────── ref: 6
+    │                                        ╰─────────────── ref: 11
     │                                                  │     
     │                                                  ╰───── name: 12
 ────╯
