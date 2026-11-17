@@ -78,9 +78,7 @@ impl Pass<'_> {
     /// The type of `node` in a position that requires a value. On top of
     /// [`Self::check_type_of_value_or_type_name_expression`], an expression
     /// that denotes a type or a module is not a value either, and neither is a
-    /// tuple with a component that does.
-    // __SLANG_VALUE_TYPING__ keep the typings that denote a value in sync with
-    // the guard in `Self::check_lvalues_under`
+    /// tuple with a component that does, or with an omitted component.
     #[inline]
     pub(super) fn check_type_of_value_expression(
         &mut self,
@@ -89,12 +87,37 @@ impl Pass<'_> {
         // A tuple is typed even when its components name types, as the second
         // argument of `abi.decode` needs, so those are only rejected here. They
         // are looked for first, since a tuple with another component that
-        // failed has no type at all.
+        // failed has no type at all. An omitted component is already reported
+        // where it is written, so it is rejected silently.
+        if let ir::Expression::TupleExpression(tuple) = node
+            && (self.report_type_names_in_tuple(tuple) || tuple.has_omitted_component())
+        {
+            return None;
+        }
+        self.check_type_of_value_typing(node)
+    }
+
+    /// The type of the target of an assignment, which is a value position
+    /// where a tuple may omit components, eg. `(x, ) = f()`.
+    pub(super) fn check_type_of_assignment_target(
+        &mut self,
+        node: &ir::Expression,
+    ) -> Option<TypeId> {
         if let ir::Expression::TupleExpression(tuple) = node
             && self.report_type_names_in_tuple(tuple)
         {
             return None;
         }
+        self.check_type_of_value_typing(node)
+    }
+
+    /// The shared tail of [`Self::check_type_of_value_expression`] and
+    /// [`Self::check_type_of_assignment_target`], once a tuple's components
+    /// have been checked.
+    // __SLANG_VALUE_TYPING__ keep the typings that denote a value in sync with
+    // the guard in `Self::check_lvalues_under`
+    #[inline]
+    fn check_type_of_value_typing(&mut self, node: &ir::Expression) -> Option<TypeId> {
         let type_id = self.check_type_of_value_or_type_name_expression(node)?;
         if self.types.get_type_by_id(type_id).is_meta_type() {
             self.report_expression_not_a_value(node, NotAValueKind::TypeOrModule);
@@ -187,7 +210,7 @@ impl Pass<'_> {
         // Only an expression that typed as a value is judged: one that did not
         // is either unresolved or already reported as not a value.
         // __SLANG_VALUE_TYPING__ keep in sync with the typings
-        // `Self::check_type_of_value_expression` accepts. The two cannot share
+        // `Self::check_type_of_value_typing` accepts. The two cannot share
         // an accessor on `Typing`: this one only asks whether there is a value,
         // while that one also tells an unresolved typing, which reports
         // nothing, from one naming something that is not a value, which does.
@@ -1153,7 +1176,9 @@ impl Pass<'_> {
             Typing::Resolved(type_id) => self.typing_of_type_called_with_positional_arguments(
                 node,
                 type_id,
+                arguments,
                 argument_types.as_deref(),
+                false,
             ),
             Typing::Undetermined(type_ids) => {
                 // No overload can accept an argument that has no type, so the
@@ -1176,10 +1201,13 @@ impl Pass<'_> {
                     // when calling it turns out to be invalid
                     self.fixup_operand_expression(&node.operand, candidate_type_id);
 
+                    // The selected overload already accepts the arguments.
                     self.typing_of_type_called_with_positional_arguments(
                         node,
                         candidate_type_id,
+                        arguments,
                         Some(&argument_types),
+                        true,
                     )
                 } else {
                     Typing::Unresolved
@@ -1227,15 +1255,30 @@ impl Pass<'_> {
     /// construction), and the user meta type of a function is a non-callable
     /// declaration reached through a contract/interface type name.
     /// `argument_types` remains optional because there are cascading
-    /// diagnostics that are worth reporting regardless.
+    /// diagnostics that are worth reporting regardless. `skip_arguments_check`
+    /// is set when the arguments are already known to be accepted, eg. after
+    /// selecting an overload by them.
     fn typing_of_type_called_with_positional_arguments(
         &mut self,
         node: &ir::FunctionCallExpression,
         type_id: TypeId,
+        arguments: &[ir::Expression],
         argument_types: Option<&[TypeId]>,
+        skip_arguments_check: bool,
     ) -> Typing {
         match self.types.get_type_by_id(type_id) {
-            Type::Function(FunctionType { return_type, .. }) => Typing::Resolved(*return_type),
+            Type::Function(FunctionType { return_type, .. }) => {
+                let return_type = *return_type;
+                if !skip_arguments_check {
+                    self.check_positional_arguments_of_function_call(
+                        node,
+                        type_id,
+                        arguments,
+                        argument_types,
+                    );
+                }
+                Typing::Resolved(return_type)
+            }
             Type::MetaType(MetaType {
                 type_id: target_type_id,
             }) => {
@@ -1349,19 +1392,23 @@ impl Pass<'_> {
                 self.report_operand_not_callable(node);
                 (Typing::Unresolved, None)
             }
-            Typing::Resolved(type_id) => {
-                self.typing_of_type_called_with_named_arguments(node, type_id)
-            }
+            Typing::Resolved(type_id) => self.typing_of_type_called_with_named_arguments(
+                node,
+                type_id,
+                arguments,
+                argument_types.as_deref(),
+                false,
+            ),
             Typing::Undetermined(type_ids) => {
                 // As in the positional form, an argument without a type cannot
                 // select an overload, and reporting the call would only cascade.
-                match argument_types {
+                match argument_types.as_deref() {
                     None => (Typing::Unresolved, None),
                     Some(argument_types) => {
                         let receiver_type_id = self.type_id_of_value_receiver(&node.operand);
                         let overload_match = self.lookup_function_matching_named_arguments(
                             &type_ids,
-                            &argument_types,
+                            argument_types,
                             receiver_type_id,
                         );
                         let candidate = self.select_overload(&node.operand, overload_match);
@@ -1371,7 +1418,14 @@ impl Pass<'_> {
                             // even when calling it turns out to be invalid
                             self.fixup_operand_expression(&node.operand, candidate_type_id);
 
-                            self.typing_of_type_called_with_named_arguments(node, candidate_type_id)
+                            // The selected overload already accepts the arguments.
+                            self.typing_of_type_called_with_named_arguments(
+                                node,
+                                candidate_type_id,
+                                arguments,
+                                Some(argument_types),
+                                true,
+                            )
                         } else {
                             (Typing::Unresolved, None)
                         }
@@ -1407,18 +1461,34 @@ impl Pass<'_> {
     /// function and of an event are non-callable declarations, reached through
     /// a contract/interface type name and outside an `emit` statement
     /// respectively. Anything else, including the alias of an imported file, is
-    /// not callable at all.
+    /// not callable at all. `skip_arguments_check` is set when the arguments
+    /// are already known to be accepted, eg. after selecting an overload by
+    /// them.
     fn typing_of_type_called_with_named_arguments(
         &mut self,
         node: &ir::FunctionCallExpression,
         type_id: TypeId,
+        arguments: &[ir::NamedArgument],
+        argument_types: Option<&[(&str, TypeId)]>,
+        skip_arguments_check: bool,
     ) -> (Typing, Option<NodeId>) {
         match self.types.get_type_by_id(type_id) {
             Type::Function(FunctionType {
                 definition_id,
                 return_type,
                 ..
-            }) => (Typing::Resolved(*return_type), *definition_id),
+            }) => {
+                let (definition_id, return_type) = (*definition_id, *return_type);
+                if !skip_arguments_check {
+                    self.check_named_arguments_of_function_call(
+                        node,
+                        type_id,
+                        arguments,
+                        argument_types,
+                    );
+                }
+                (Typing::Resolved(return_type), definition_id)
+            }
             Type::MetaType(_) => {
                 // This is a cast to the given type and is not valid with named arguments
                 (Typing::Unresolved, None)

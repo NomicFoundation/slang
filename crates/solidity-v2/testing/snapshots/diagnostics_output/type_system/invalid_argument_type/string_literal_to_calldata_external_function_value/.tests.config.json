@@ -1,0 +1,11 @@
+{
+  "expected_solc_divergence": [
+    {
+      "specifier": {
+        "type": "From",
+        "from": "0.8.0"
+      },
+      "reason": "Slang accepts the call. #2369 stops string literals from converting to calldata outside external calls. Until it is merged, the literal converts and the call is accepted."
+    }
+  ]
+}
