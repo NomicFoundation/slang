@@ -1,7 +1,7 @@
 use indexmap::IndexSet;
 use language_v2_definition::model::{
-    Field, Item, Language, LexicalContext, Section, StructItem, TokenDefinition, TokenItem,
-    TokenScanner, Topic,
+    BuiltInContext, BuiltInDefinition, BuiltInScope, Field, Item, Language, LexicalContext,
+    Section, StructItem, TokenDefinition, TokenItem, TokenScanner, Topic,
 };
 use semver::Version;
 
@@ -9,7 +9,7 @@ language_v2_macros::compile!(Language(
     name = Tiny,
     root_item = Foo,
     versions = ["1.0.0", "2.0.0", "3.0.0"],
-    evm_targets = [],
+    evm_targets = [Cancun],
     contexts = [LexicalContext(
         name = Tiny,
         sections = [Section(
@@ -40,10 +40,17 @@ language_v2_macros::compile!(Language(
             )]
         )]
     )],
-    built_ins = []
+    built_ins = [BuiltInContext(
+        name = Globals,
+        scopes = [BuiltInScope(
+            name = Global,
+            definitions = [BuiltInDefinition(name = MyBuiltIn)]
+        )]
+    )]
 ));
 
 #[test]
+#[allow(clippy::too_many_lines)] // asserts the full expected definition
 fn definition() {
     assert_eq!(
         tiny::TinyDefinition::create(),
@@ -56,7 +63,7 @@ fn definition() {
                 Version::parse("3.0.0").unwrap(),
             ]
             .into(),
-            evm_targets: IndexSet::default(),
+            evm_targets: IndexSet::from(["Cancun".into()]),
             contexts: vec![LexicalContext {
                 name: "Tiny".into(),
                 identifier_token: None,
@@ -133,7 +140,18 @@ fn definition() {
                     }],
                 }],
             }],
-            built_ins: vec![],
+            built_ins: vec![BuiltInContext {
+                name: "Globals".into(),
+                scopes: vec![BuiltInScope {
+                    name: "Global".into(),
+                    definitions: vec![BuiltInDefinition {
+                        name: "MyBuiltIn".into(),
+                        enabled: None,
+                        evm_enabled: None,
+                        internal_parameter: None,
+                    }],
+                }],
+            }],
         }
         .into(),
     );

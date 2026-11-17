@@ -1,0 +1,17 @@
+error: Expected a non-empty collection.
+ --> src/fail/p0_parsing/empty_collection/test.rs:7:19
+  |
+7 |     evm_targets = [],
+  |                   ^^
+
+error: Expected a non-empty collection.
+  --> src/fail/p0_parsing/empty_collection/test.rs:14:54
+   |
+14 |                 items = [Struct(name = Bar, fields = ())]
+   |                                                      ^^
+
+error: Expected a non-empty collection.
+  --> src/fail/p0_parsing/empty_collection/test.rs:18:17
+   |
+18 |     built_ins = []
+   |                 ^^
