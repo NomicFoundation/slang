@@ -1,0 +1,11 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 1
+
+[TypeError 1956] Error: The first argument to "abi.decode" must be implicitly convertible to bytes memory or bytes calldata, but is of type string memory.
+   ╭─[input.sol:5:16]
+   │
+ 5 │     abi.decode(data, (uint256));
+   │                ──┬─  
+   │                  ╰─── Error occurred here.
+───╯

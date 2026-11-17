@@ -1,0 +1,11 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 1
+
+[TypeError 6219] Error: Expected two arguments: a function pointer followed by a tuple.
+   ╭─[input.sol:6:9]
+   │
+ 6 │         abi.encodeCall(this.g);
+   │         ───────────┬──────────  
+   │                    ╰──────────── Error occurred here.
+───╯
