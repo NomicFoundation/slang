@@ -14,7 +14,7 @@ use slang_solidity_v2_ir::ir;
 use slang_solidity_v2_ir::ir::{NodeIdentity, TextRange};
 
 use super::Pass;
-use crate::binder::{Definition, Resolution, ScopeId};
+use crate::binder::{Definition, Resolution, Scope, ScopeId};
 use crate::passes::common::constant_evaluator::{
     ConstantResolver, EvaluationError, evaluate_compile_time_constant,
 };
@@ -32,11 +32,25 @@ impl Pass<'_> {
         &mut self,
         identifier_path: &ir::IdentifierPath,
     ) -> PathResolution {
-        resolve_identifier_path_as_type_in_scope(
-            self.binder,
-            identifier_path,
-            self.current_scope_id(),
-        )
+        let scope_id = self.type_name_scope_id();
+        resolve_identifier_path_as_type_in_scope(self.binder, identifier_path, scope_id)
+    }
+
+    /// The scope type names resolve in. Same as the current lexical scope,
+    /// except in an event or error signature, whose parameters are visible to
+    /// array lengths but not to type names (eg. `error E(S S)` is valid).
+    fn type_name_scope_id(&self) -> ScopeId {
+        let scope_id = self.current_scope_id();
+        if let Scope::Signature(signature_scope) = self.binder.get_scope_by_id(scope_id)
+            && matches!(
+                self.binder.find_definition_by_id(signature_scope.node_id),
+                Some(Definition::Event(_) | Definition::Error(_))
+            )
+        {
+            signature_scope.parent_scope_id
+        } else {
+            scope_id
+        }
     }
 
     /// Resolves an `IdentifierPath` in a type context starting at the current

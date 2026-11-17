@@ -1,0 +1,71 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Definitions (12):
+- Def: #1 ["C" @ input.sol:4:10] (contract)
+- Def: #2 ["EnumType" @ input.sol:5:10] (enum)
+- Def: #3 ["A" @ input.sol:5:20] (enum member of EnumType)
+- Def: #4 ["B" @ input.sol:5:23] (enum member of EnumType)
+- Def: #5 ["C" @ input.sol:5:26] (enum member of EnumType)
+- Def: #6 ["StructType" @ input.sol:7:12] (struct)
+- Def: #7 ["x" @ input.sol:8:14] (struct member, type: uint256)
+- Def: #8 ["E1" @ input.sol:11:11] (event)
+- Def: #9 ["StructType" @ input.sol:11:25] (parameter, type: StructType memory)
+- Def: #10 ["E2" @ input.sol:12:11] (event)
+- Def: #11 ["StructType" @ input.sol:12:23] (parameter, type: EnumType)
+- Def: #12 ["EnumType" @ input.sol:12:46] (parameter, type: StructType memory)
+
+------------------------------------------------------------------------
+
+References (3):
+- Ref: ["StructType" @ input.sol:11:14] -> #6
+- Ref: ["EnumType" @ input.sol:12:14] -> #2
+- Ref: ["StructType" @ input.sol:12:35] -> #6
+
+------------------------------------------------------------------------
+
+Unbound identifiers (0):
+
+------------------------------------------------------------------------
+
+Bindings: 
+    ╭─[input.sol:1:1]
+    │
+  4 │ contract C {
+    │          ┬  
+    │          ╰── name: 1
+  5 │     enum EnumType {A, B, C}
+    │          ────┬───  ┬  ┬  ┬  
+    │              ╰────────────── name: 2
+    │                    │  │  │  
+    │                    ╰──────── name: 3
+    │                       │  │  
+    │                       ╰───── name: 4
+    │                          │  
+    │                          ╰── name: 5
+    │ 
+  7 │     struct StructType {
+    │            ─────┬────  
+    │                 ╰────── name: 6
+  8 │         uint x;
+    │              ┬  
+    │              ╰── name: 7
+    │ 
+ 11 │     event E1(StructType StructType);
+    │           ─┬ ─────┬──── ─────┬────  
+    │            ╰──────────────────────── name: 8
+    │                   │          │      
+    │                   ╰───────────────── ref: 6
+    │                              │      
+    │                              ╰────── name: 9
+ 12 │     event E2(EnumType StructType, StructType EnumType);
+    │           ─┬ ────┬─── ─────┬────  ─────┬──── ────┬───  
+    │            ╰─────────────────────────────────────────── name: 10
+    │                  │         │           │         │     
+    │                  ╰───────────────────────────────────── ref: 2
+    │                            │           │         │     
+    │                            ╰─────────────────────────── name: 11
+    │                                        │         │     
+    │                                        ╰─────────────── ref: 6
+    │                                                  │     
+    │                                                  ╰───── name: 12
+────╯

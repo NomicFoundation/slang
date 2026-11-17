@@ -627,6 +627,11 @@ mod errors {
     }
 
     #[test]
+    fn parameters_named_as_types() -> Result<()> {
+        run("errors", "parameters_named_as_types")
+    }
+
+    #[test]
     fn revert_as_function() -> Result<()> {
         run("errors", "revert_as_function")
     }
@@ -693,6 +698,11 @@ mod events {
     #[test]
     fn overload_selection_alias() -> Result<()> {
         run("events", "overload_selection_alias")
+    }
+
+    #[test]
+    fn parameters_named_as_types() -> Result<()> {
+        run("events", "parameters_named_as_types")
     }
 
     #[test]
