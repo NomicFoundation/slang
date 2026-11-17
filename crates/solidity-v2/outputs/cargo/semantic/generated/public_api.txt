@@ -145,6 +145,7 @@ pub slang_solidity_v2_semantic::built_ins::InternalBuiltIn::BlockPrevrandao
 pub slang_solidity_v2_semantic::built_ins::InternalBuiltIn::BlockSlotnum
 pub slang_solidity_v2_semantic::built_ins::InternalBuiltIn::BlockTimestamp
 pub slang_solidity_v2_semantic::built_ins::InternalBuiltIn::Blockhash
+pub slang_solidity_v2_semantic::built_ins::InternalBuiltIn::ByteArrayLength
 pub slang_solidity_v2_semantic::built_ins::InternalBuiltIn::BytesConcat
 pub slang_solidity_v2_semantic::built_ins::InternalBuiltIn::CallOptionGas
 pub slang_solidity_v2_semantic::built_ins::InternalBuiltIn::CallOptionSalt

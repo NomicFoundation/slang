@@ -308,7 +308,7 @@ impl<'a> BuiltInsResolver<'a> {
             Type::ArraySlice(_) => None,
             Type::Boolean => None,
             Type::ByteArray(_) => match symbol {
-                "length" => Some(InternalBuiltIn::Length),
+                "length" => Some(InternalBuiltIn::ByteArrayLength),
                 _ => None,
             },
             Type::Bytes(BytesType { location }) => match symbol {
@@ -420,6 +420,7 @@ impl<'a> BuiltInsResolver<'a> {
             InternalBuiltIn::BlockPrevrandao => Typing::Resolved(self.types.uint256()),
             InternalBuiltIn::BlockSlotnum => Typing::Resolved(self.types.uint64()),
             InternalBuiltIn::BlockTimestamp => Typing::Resolved(self.types.uint256()),
+            InternalBuiltIn::ByteArrayLength => Typing::Resolved(self.types.uint8()),
             InternalBuiltIn::Length => Typing::Resolved(self.types.uint256()),
             InternalBuiltIn::MsgData => Typing::Resolved(self.types.bytes_calldata()),
             InternalBuiltIn::MsgSender => Typing::Resolved(self.types.address()),

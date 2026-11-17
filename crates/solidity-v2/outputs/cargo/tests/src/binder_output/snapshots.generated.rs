@@ -132,6 +132,11 @@ mod built_ins {
     }
 
     #[test]
+    fn byte_array_length() -> Result<()> {
+        run("built_ins", "byte_array_length")
+    }
+
+    #[test]
     fn bytes() -> Result<()> {
         run("built_ins", "bytes")
     }

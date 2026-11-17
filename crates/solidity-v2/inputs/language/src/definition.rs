@@ -4856,6 +4856,7 @@ IdentifierPathTailElement: (Period, IdentifierPathElement) = {
                         BuiltInDefinition(name = CallOptionSalt),
                         BuiltInDefinition(name = CallOptionValue),
                         BuiltInDefinition(name = Length),
+                        BuiltInDefinition(name = ByteArrayLength),
                         BuiltInDefinition(name = ModifierUnderscore),
                         BuiltInDefinition(name = ErrorSelector, enabled = From("0.8.4")),
                         BuiltInDefinition(name = EventSelector, enabled = From("0.8.15")),
