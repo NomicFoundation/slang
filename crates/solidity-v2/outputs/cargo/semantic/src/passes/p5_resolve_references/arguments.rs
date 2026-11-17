@@ -2,6 +2,7 @@ use std::sync::Arc;
 
 use slang_solidity_v2_common::diagnostics::DiagnosticCollection;
 use slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind;
+use slang_solidity_v2_common::diagnostics::kinds::semantic::BaseConstructorCallWithoutParentheses;
 use slang_solidity_v2_common::diagnostics::kinds::type_system::{
     InvalidArgumentType, StructWithMappingConstructed, UnknownNamedArgument, WrongArgumentCount,
 };
@@ -10,7 +11,7 @@ use slang_solidity_v2_ir::ir;
 use slang_solidity_v2_ir::ir::{NodeIdentity, TextRange};
 
 use super::Pass;
-use crate::binder::{Binder, Definition, ParameterDefinition, Scope};
+use crate::binder::{Binder, Definition, ParameterDefinition, Resolution, Scope};
 use crate::context::FileNodeMapper;
 use crate::passes::common::node_location;
 use crate::types::{CallMode, ContractType, DataLocation, Type, TypeId, TypeRegistry};
@@ -267,6 +268,62 @@ impl Pass<'_> {
         checker.check_named(node, &members, false, arguments, argument_types);
     }
 
+    /// Checks the `arguments` of the modifier invocation `node` against the
+    /// parameters of the modifier, or on a constructor, of the base
+    /// constructor it names. A base constructor call without parentheses is
+    /// reported instead.
+    pub(super) fn check_arguments_of_modifier_invocation(
+        &mut self,
+        node: &ir::ModifierInvocation,
+        arguments: &[ir::Expression],
+        argument_types: Option<&[TypeId]>,
+    ) {
+        let identifier = node.name.last().expect("an identifier path is not empty");
+        let Some(Resolution::Definition(definition_id)) =
+            self.followed_resolution_of_reference(identifier.id())
+        else {
+            return;
+        };
+        let (binder, mut checker) = self.arguments_checker();
+        if let Some(Definition::Modifier(_)) = binder.find_definition_by_id(definition_id) {
+            let Some(parameters) = declared_parameters(binder, Some(definition_id)) else {
+                unreachable!("a modifier declares its parameters");
+            };
+            checker.check_positional(node, parameters, false, arguments, argument_types);
+        } else if let Some(parameters) = base_constructor_parameters(binder, definition_id) {
+            // Even without arguments, a base constructor call needs
+            // parentheses. The missing arguments are not checked.
+            if node.arguments.is_none() {
+                checker.report(node, BaseConstructorCallWithoutParentheses);
+            } else {
+                checker.check_positional(node, parameters, false, arguments, argument_types);
+            }
+        }
+    }
+
+    /// Checks the `arguments` of the base `node` in an inheritance list, eg.
+    /// `is B(1)`, against the parameters of its constructor.
+    pub(super) fn check_arguments_of_inheritance_type(
+        &mut self,
+        node: &ir::InheritanceType,
+        arguments: &[ir::Expression],
+        argument_types: Option<&[TypeId]>,
+    ) {
+        let identifier = node
+            .type_name
+            .last()
+            .expect("an identifier path is not empty");
+        let Some(Resolution::Definition(definition_id)) =
+            self.followed_resolution_of_reference(identifier.id())
+        else {
+            return;
+        };
+        let (binder, mut checker) = self.arguments_checker();
+        if let Some(parameters) = base_constructor_parameters(binder, definition_id) {
+            checker.check_positional(node, parameters, false, arguments, argument_types);
+        }
+    }
+
     /// The members of the struct `definition_id`, with their types in memory,
     /// where the struct is constructed. Returns `None`, reported at `node`,
     /// when the struct cannot be constructed at all.
@@ -509,6 +566,23 @@ fn creation_parameters<'a>(
         }
         Type::Array(_) | Type::Bytes(_) | Type::String(_) => {
             Some(CreationParameters::Length(types.uint256()))
+        }
+        _ => None,
+    }
+}
+
+/// The parameters of the constructor of the base `definition_id`, if it is a
+/// contract or an interface. Only the base's own constructor counts: without
+/// one, the base takes no arguments, even if it inherits a constructor that
+/// does. Surprisingly, an interface can also be invoked as a base constructor,
+/// and like a contract without a constructor, it takes no arguments.
+fn base_constructor_parameters(
+    binder: &Binder,
+    definition_id: NodeId,
+) -> Option<&[ParameterDefinition]> {
+    match binder.find_definition_by_id(definition_id)? {
+        Definition::Contract(_) | Definition::Interface(_) => {
+            Some(declared_parameters(binder, Some(definition_id)).unwrap_or_default())
         }
         _ => None,
     }

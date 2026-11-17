@@ -1,0 +1,19 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 2
+
+[DeclarationError 1563] Error: Modifier-style base constructor call without arguments.
+   ╭─[input.sol:9:19]
+   │
+ 9 │     constructor() B {}
+   │                   ┬  
+   │                   ╰── Error occurred here.
+───╯
+
+[TypeError 2973] Error: Wrong argument count for modifier invocation: 0 arguments given but expected 1.
+   ╭─[input.sol:9:19]
+   │
+ 9 │     constructor() B {}
+   │                   ┬  
+   │                   ╰── Error occurred here.
+───╯
