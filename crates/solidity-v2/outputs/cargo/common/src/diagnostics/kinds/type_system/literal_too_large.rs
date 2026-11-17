@@ -3,9 +3,8 @@ use serde::Serialize;
 use crate::diagnostics::extensions::DiagnosticExtensions;
 use crate::diagnostics::severity::DiagnosticSeverity;
 
-/// Diagnostic emitted when a number literal used as a value (eg. as a branch
-/// of a conditional) is too large for any EVM type: an integer needing more
-/// than 256 bits, such as `2**9999`.
+/// Diagnostic emitted when a number literal is too large for any EVM type: an
+/// integer needing more than 256 bits.
 #[derive(Clone, Debug, Eq, PartialEq, Serialize)]
 pub struct LiteralTooLarge;
 

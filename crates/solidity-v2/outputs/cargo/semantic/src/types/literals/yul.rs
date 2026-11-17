@@ -1,4 +1,5 @@
 use ruint::aliases::U256;
+use ruint::{BaseConvertError, ParseError};
 use slang_solidity_v2_ir::ir;
 
 use super::strings::{value_of_hex_string_literals, value_of_string_literals};
@@ -8,19 +9,19 @@ use super::strings::{value_of_hex_string_literals, value_of_string_literals};
 /// Number literals are parsed as integers, booleans as `1`/`0`, and string
 /// literals as their bytes left-aligned into a 256-bit word.
 ///
-/// Returns `None` when the literal cannot be parsed (e.g. it overflows 256
-/// bits).
+/// Returns `None` only for a decimal or hex literal whose value does not fit
+/// into 256 bits (leading zeros don't count). Every other literal has a value.
 pub fn yul_literal_value(literal: &ir::YulLiteral) -> Option<U256> {
     match literal {
         ir::YulLiteral::TrueKeyword(_) => Some(U256::ONE),
         ir::YulLiteral::FalseKeyword(_) => Some(U256::ZERO),
         ir::YulLiteral::DecimalLiteral(literal) => {
             // Yul number literals don't allow `_` separators (unlike Solidity).
-            U256::from_str_radix(literal.unparse(), 10).ok()
+            parse_number(literal.unparse(), 10)
         }
         ir::YulLiteral::HexLiteral(literal) => {
             // Skip the `0x` prefix. Yul hex literals don't allow `_` separators.
-            U256::from_str_radix(&literal.unparse()[2..], 16).ok()
+            parse_number(&literal.unparse()[2..], 16)
         }
         ir::YulLiteral::StringLiteral(literal) => Some(string_bytes_to_value(
             &value_of_string_literals(std::slice::from_ref(literal)),
@@ -28,6 +29,18 @@ pub fn yul_literal_value(literal: &ir::YulLiteral) -> Option<U256> {
         ir::YulLiteral::HexStringLiteral(literal) => Some(string_bytes_to_value(
             &value_of_hex_string_literals(std::slice::from_ref(literal)),
         )),
+    }
+}
+
+/// Parses the digits of a Yul number literal, returning `None` only when the
+/// value overflows 256 bits.
+fn parse_number(digits: &str, radix: u64) -> Option<U256> {
+    match U256::from_str_radix(digits, radix) {
+        Ok(value) => Some(value),
+        Err(ParseError::BaseConvertError(BaseConvertError::Overflow)) => None,
+        Err(error) => unreachable!(
+            "the lexer only produces valid base-{radix} digits, got {digits:?}: {error}"
+        ),
     }
 }
 

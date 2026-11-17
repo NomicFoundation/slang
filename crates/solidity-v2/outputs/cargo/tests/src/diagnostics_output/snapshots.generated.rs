@@ -7460,6 +7460,16 @@ mod type_system {
         fn conditional_branch() -> Result<()> {
             run("type_system/literal_too_large", "conditional_branch")
         }
+
+        #[test]
+        fn yul_max_value() -> Result<()> {
+            run("type_system/literal_too_large", "yul_max_value")
+        }
+
+        #[test]
+        fn yul_too_large() -> Result<()> {
+            run("type_system/literal_too_large", "yul_too_large")
+        }
     }
 
     mod partially_applied_function_used_as_value {
