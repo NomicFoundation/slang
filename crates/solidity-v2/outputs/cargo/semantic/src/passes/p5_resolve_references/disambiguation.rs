@@ -120,7 +120,10 @@ impl Pass<'_> {
             else {
                 return false;
             };
-            let external_call = function_type.is_externally_visible();
+            // Only a call that crosses an external boundary (an external or
+            // delegate call) reads a calldata parameter as memory.
+            let external_call =
+                function_type.call_mode.is_external() || function_type.call_mode.is_delegate();
             if let Some(receiver_type_id) = receiver_type_id {
                 // we have a receiver type, so either check for an implicit
                 // receiver type, or the first parameter type
@@ -151,9 +154,9 @@ impl Pass<'_> {
                 {
                     // matches attached functions (these can only be
                     // free-functions or library functions) with a compatible
-                    // first argument. An externally visible one reads a
-                    // calldata reference as memory, so the receiver converts
-                    // under the same rules as the remaining arguments.
+                    // first argument. A delegate-called one reads a calldata
+                    // reference as memory, so the receiver converts under the
+                    // same rules as the remaining arguments.
                     parameters_match(&parameters[1..], external_call)
                 } else {
                     false
