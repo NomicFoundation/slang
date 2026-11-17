@@ -1,0 +1,6 @@
+{
+  "override_language_versions": {
+    "specifier": { "type": "From", "from": "0.8.4" },
+    "reason": "Custom errors were introduced in 0.8.4."
+  }
+}

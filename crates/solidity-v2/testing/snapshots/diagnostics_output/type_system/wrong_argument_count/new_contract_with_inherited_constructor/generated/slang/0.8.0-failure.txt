@@ -1,0 +1,11 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 1
+
+[type-system/wrong-argument-count] Error: Wrong argument count: 1 arguments given but expected 0.
+    ╭─[input.sol:12:9]
+    │
+ 12 │         new C(1);
+    │         ────┬───  
+    │             ╰───── Error occurred here.
+────╯

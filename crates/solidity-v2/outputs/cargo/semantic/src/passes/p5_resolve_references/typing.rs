@@ -1156,6 +1156,12 @@ impl Pass<'_> {
                     // or a dynamic `bytes`/`string` (`new bytes(n)`), yielding a
                     // value of that type.
                     Type::Array(_) | Type::Contract(_) | Type::Bytes(_) | Type::String(_) => {
+                        self.check_positional_arguments_of_creation(
+                            node,
+                            type_id,
+                            arguments,
+                            argument_types.as_deref(),
+                        );
                         Typing::Resolved(type_id)
                     }
                     _ => Typing::Unresolved,
@@ -1312,6 +1318,12 @@ impl Pass<'_> {
                         // TODO(validation): an error instance is only valid in
                         // a `revert` statement or as the second parameter of a
                         // `require`/`assert`. See SDR[1504]
+                        self.check_positional_arguments_of_event_or_error(
+                            node,
+                            definition_id,
+                            arguments,
+                            argument_types,
+                        );
                         let type_id = self
                             .types
                             .register_type(Type::Error(ErrorType { definition_id }));
@@ -1320,6 +1332,12 @@ impl Pass<'_> {
                     Some(Definition::Event(_)) => {
                         // TODO(validation) SDR[950]: an event invocation has
                         // to be prefixed by `emit`.
+                        self.check_positional_arguments_of_event_or_error(
+                            node,
+                            definition_id,
+                            arguments,
+                            argument_types,
+                        );
                         let type_id = self
                             .types
                             .register_type(Type::Event(EventType { definition_id }));
@@ -1433,14 +1451,23 @@ impl Pass<'_> {
                 }
             }
             Typing::NewExpression(type_id) => {
-                if let Type::Contract(ContractType { definition_id }) =
-                    self.types.get_type_by_id(type_id)
-                {
-                    (Typing::Resolved(type_id), Some(*definition_id))
-                } else {
-                    // only contracts can be created with `new`
-                    (Typing::Unresolved, None)
-                }
+                // The arguments of a contract creation name the parameters of
+                // its constructor; those of any other creation name nothing.
+                let (typing, definition_id) = match self.types.get_type_by_id(type_id) {
+                    Type::Contract(ContractType { definition_id }) => {
+                        (Typing::Resolved(type_id), Some(*definition_id))
+                    }
+                    // only contracts can be created with `new` and named
+                    // arguments
+                    _ => (Typing::Unresolved, None),
+                };
+                self.check_named_arguments_of_creation(
+                    node,
+                    type_id,
+                    arguments,
+                    argument_types.as_deref(),
+                );
+                (typing, definition_id)
             }
             Typing::BuiltIn(_) => {
                 // built-ins cannot be called with named arguments
@@ -1509,6 +1536,12 @@ impl Pass<'_> {
                         // TODO(validation): an error instance is only valid in
                         // a `revert` statement or as the second parameter of a
                         // `require`/`assert`
+                        self.check_named_arguments_of_event_or_error(
+                            node,
+                            definition_id,
+                            arguments,
+                            argument_types,
+                        );
                         let type_id = self
                             .types
                             .register_type(Type::Error(ErrorType { definition_id }));
@@ -1518,6 +1551,12 @@ impl Pass<'_> {
                         // TODO(validation) SDR[950]: an event invocation has to
                         // be prefixed by `emit` so this type is not valid in
                         // any other position.
+                        self.check_named_arguments_of_event_or_error(
+                            node,
+                            definition_id,
+                            arguments,
+                            argument_types,
+                        );
                         let type_id = self
                             .types
                             .register_type(Type::Event(EventType { definition_id }));
@@ -1591,6 +1630,22 @@ impl Pass<'_> {
             Resolution::Ambiguous(definition_ids) => definition_ids.iter().all(is_modifier),
             Resolution::BuiltIn(_) | Resolution::Unresolved => false,
         }
+    }
+
+    /// Whether `definition_id` is an event.
+    pub(super) fn is_event_definition(&self, definition_id: NodeId) -> bool {
+        matches!(
+            self.binder.find_definition_by_id(definition_id),
+            Some(Definition::Event(_))
+        )
+    }
+
+    /// Whether `definition_id` is an error.
+    pub(super) fn is_error_definition(&self, definition_id: NodeId) -> bool {
+        matches!(
+            self.binder.find_definition_by_id(definition_id),
+            Some(Definition::Error(_))
+        )
     }
 
     /// Whether a callee typed as `typing` can take call options: only a

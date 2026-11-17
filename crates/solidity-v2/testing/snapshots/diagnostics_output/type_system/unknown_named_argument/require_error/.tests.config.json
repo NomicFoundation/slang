@@ -1,0 +1,6 @@
+{
+  "override_language_versions": {
+    "specifier": { "type": "From", "from": "0.8.26" },
+    "reason": "Custom errors in 'require' were introduced in 0.8.26."
+  }
+}
