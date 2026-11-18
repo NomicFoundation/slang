@@ -102,6 +102,46 @@ fn test_getter_internal_signature_qualifies_a_nested_key() {
     );
 }
 
+define_fixture!(
+    Modifiers,
+    file: "main.sol", r#"
+pragma solidity *;
+contract C {
+    struct S { uint256 x; }
+
+    S s;
+
+    modifier bare { _; }
+    modifier withArgs(uint256 a, S storage b) { _; }
+
+    function f() public bare withArgs(1, s) {}
+}
+"#,
+);
+
+#[test]
+fn test_compute_internal_signature_of_modifier() {
+    let unit = Modifiers::build_compilation_unit();
+    let modifiers = unit
+        .find_contract_by_name("C")
+        .next()
+        .expect("contract can be found")
+        .modifiers();
+    let [bare, with_args] = modifiers.as_slice() else {
+        panic!("expected the contract to declare two modifiers");
+    };
+
+    // Without a parameter list, a modifier still spells empty parentheses.
+    assert_eq!(
+        bare.compute_internal_signature(),
+        Some("bare()".to_string())
+    );
+    assert_eq!(
+        with_args.compute_internal_signature(),
+        Some("withArgs(uint256,C.S)".to_string())
+    );
+}
+
 #[test]
 fn test_compute_internal_signature_of_library_member() {
     let unit = super::LibraryAbi::build_compilation_unit();

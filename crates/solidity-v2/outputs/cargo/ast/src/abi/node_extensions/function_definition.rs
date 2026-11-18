@@ -56,7 +56,6 @@ impl FunctionDefinitionStruct {
                 node_id,
                 state_mutability,
             })),
-            ir::FunctionKind::Modifier => None,
         }
     }
 
@@ -78,11 +77,11 @@ impl FunctionDefinitionStruct {
     /// types that cannot be ABI-encoded.
     pub fn compute_internal_signature(&self) -> Option<String> {
         let name = match self.ir_node.kind {
-            ir::FunctionKind::Regular | ir::FunctionKind::Modifier => self
+            ir::FunctionKind::Regular => self
                 .ir_node
                 .name
                 .as_ref()
-                .expect("regular functions and modifiers must have a name")
+                .expect("regular functions must have a name")
                 .unparse(),
             ir::FunctionKind::Constructor => "@constructor",
             ir::FunctionKind::Fallback => "fallback",

@@ -21,6 +21,7 @@ pub fn build_v2_ir_model(language: &Language) -> ModelWithBuilder {
     unify_function_types(&mut mutator);
     normalize_catch_clauses(&mut mutator);
     flatten_function_attributes(&mut mutator);
+    flatten_modifier_attributes(&mut mutator);
     flatten_state_variable_attributes(&mut mutator);
     transmute_constant_state_variables(&mut mutator);
     collapse_redundant_node_types(&mut mutator);
@@ -94,7 +95,7 @@ fn unify_function_types(mutator: &mut IrModelMutator) {
     // Unifiy function definition types
     mutator.add_enum_type(
         "FunctionKind",
-        &["Regular", "Constructor", "Fallback", "Receive", "Modifier"],
+        &["Regular", "Constructor", "Fallback", "Receive"],
     );
 
     // Add the kind to the FunctionDefinition type, which will now hold all kinds
@@ -119,10 +120,6 @@ fn unify_function_types(mutator: &mut IrModelMutator) {
     mutator.remove_type("ReceiveFunctionAttributes");
     mutator.remove_type("ReceiveFunctionAttribute");
 
-    mutator.remove_type("ModifierDefinition");
-    mutator.remove_type("ModifierAttributes");
-    mutator.remove_type("ModifierAttribute");
-
     // This also requires modifying the name and body fields
     mutator.remove_sequence_field("FunctionDefinition", "name");
     mutator.insert_sequence_field_before(
@@ -140,6 +137,40 @@ fn unify_function_types(mutator: &mut IrModelMutator) {
     mutator.collapse_choice("FunctionName", "Identifier");
     // We don't need FunctionBody anymore
     mutator.remove_type("FunctionBody");
+    mutator.add_sequence_field("ModifierDefinition", "body", "Block", true);
+}
+
+fn flatten_modifier_attributes(mutator: &mut IrModelMutator) {
+    // Modifiers keep their own definition type, with their attributes reduced
+    // to the two they accept
+    mutator.remove_type("ModifierAttributes");
+    mutator.remove_type("ModifierAttribute");
+
+    mutator.add_sequence_type("ModifierAttributes");
+    mutator.add_sequence_boolean("ModifierAttributes", "is_virtual");
+    mutator.add_sequence_field(
+        "ModifierAttributes",
+        "override_specifier",
+        "OverridePaths",
+        true,
+    );
+
+    // Parameters are optional in the source, but empty when omitted
+    mutator.remove_sequence_field("ModifierDefinition", "parameters");
+    mutator.insert_sequence_field_before(
+        "ModifierDefinition",
+        "parameters",
+        "Parameters",
+        false,
+        "body",
+    );
+    mutator.insert_sequence_field_before(
+        "ModifierDefinition",
+        "attributes",
+        "ModifierAttributes",
+        false,
+        "body",
+    );
 }
 
 fn normalize_catch_clauses(mutator: &mut IrModelMutator) {

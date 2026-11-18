@@ -5,7 +5,9 @@ use slang_solidity_v2_common::diagnostics::kinds::resolution::{
     IdentifierNotFound, MemberNotFound,
 };
 use slang_solidity_v2_common::diagnostics::kinds::structure::DuplicateNamedArgument;
-use slang_solidity_v2_common::diagnostics::kinds::type_system::EmptyArrayLiteral;
+use slang_solidity_v2_common::diagnostics::kinds::type_system::{
+    EmptyArrayLiteral, ModifierOutsideFunctionHeader,
+};
 use slang_solidity_v2_ir::ir;
 use slang_solidity_v2_ir::ir::NodeIdentity;
 use slang_solidity_v2_ir::ir::visitor::Visitor;
@@ -99,6 +101,15 @@ impl Visitor for Pass<'_> {
     }
 
     fn leave_function_definition(&mut self, node: &ir::FunctionDefinition) {
+        self.leave_scope_for_node_id(node.id());
+    }
+
+    fn enter_modifier_definition(&mut self, node: &ir::ModifierDefinition) -> bool {
+        self.enter_scope_for_node_id(node.id());
+        true
+    }
+
+    fn leave_modifier_definition(&mut self, node: &ir::ModifierDefinition) {
         self.leave_scope_for_node_id(node.id());
     }
 
@@ -213,6 +224,11 @@ impl Visitor for Pass<'_> {
                 // follow through in order to get to the actual typing.
                 let followed_resolution = self.binder.follow_symbol_aliases(resolution.clone());
                 let typing = self.typing_of_resolution(&followed_resolution);
+                if matches!(typing, Typing::Unresolved)
+                    && self.resolves_to_modifier(&followed_resolution)
+                {
+                    self.push_diagnostic(identifier, ModifierOutsideFunctionHeader);
+                }
                 self.binder.set_node_typing(identifier.id(), typing);
 
                 // Finally, create the reference for the identifier.
@@ -484,6 +500,9 @@ impl Visitor for Pass<'_> {
         } else {
             self.typing_of_resolution(&resolution)
         };
+        if matches!(typing, Typing::Unresolved) && self.resolves_to_modifier(&resolution) {
+            self.push_diagnostic(node, ModifierOutsideFunctionHeader);
+        }
 
         // Special cases: see `adjust_member_access_type_for_operand`
         let typing = match typing {

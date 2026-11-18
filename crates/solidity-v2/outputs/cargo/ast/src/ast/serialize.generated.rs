@@ -637,6 +637,34 @@ impl Serialize for MemberAccessExpressionStruct {
     }
 }
 
+impl Serialize for ModifierAttributesStruct {
+    fn serialize<S: Serializer>(&self, serializer: S) -> Result<S::Ok, S::Error> {
+        let mut map = serializer.serialize_map(Some(6))?;
+        map.serialize_entry("id", &self.node_id())?;
+        map.serialize_entry("type", "ModifierAttributes")?;
+        map.serialize_entry("range", &SerializeRange(self.get_text_range()))?;
+        map.serialize_entry("file", self.get_file_id())?;
+        map.serialize_entry("is_virtual", &self.is_virtual())?;
+        map.serialize_entry("override_specifier", &self.override_specifier())?;
+        map.end()
+    }
+}
+
+impl Serialize for ModifierDefinitionStruct {
+    fn serialize<S: Serializer>(&self, serializer: S) -> Result<S::Ok, S::Error> {
+        let mut map = serializer.serialize_map(Some(8))?;
+        map.serialize_entry("id", &self.node_id())?;
+        map.serialize_entry("type", "ModifierDefinition")?;
+        map.serialize_entry("range", &SerializeRange(self.get_text_range()))?;
+        map.serialize_entry("file", self.get_file_id())?;
+        map.serialize_entry("name", &self.name())?;
+        map.serialize_entry("parameters", &self.parameters())?;
+        map.serialize_entry("attributes", &self.attributes())?;
+        map.serialize_entry("body", &self.body())?;
+        map.end()
+    }
+}
+
 impl Serialize for ModifierInvocationStruct {
     fn serialize<S: Serializer>(&self, serializer: S) -> Result<S::Ok, S::Error> {
         let mut map = serializer.serialize_map(Some(6))?;
@@ -1360,6 +1388,7 @@ impl Serialize for ContractMember {
         match self {
             ContractMember::UsingDirective(inner) => inner.serialize(serializer),
             ContractMember::FunctionDefinition(inner) => inner.serialize(serializer),
+            ContractMember::ModifierDefinition(inner) => inner.serialize(serializer),
             ContractMember::StructDefinition(inner) => inner.serialize(serializer),
             ContractMember::EnumDefinition(inner) => inner.serialize(serializer),
             ContractMember::EventDefinition(inner) => inner.serialize(serializer),
@@ -1504,11 +1533,6 @@ impl Serialize for FunctionKind {
             FunctionKind::Receive => {
                 let mut map = serializer.serialize_map(Some(1))?;
                 map.serialize_entry("type", "FunctionKind::Receive")?;
-                map.end()
-            }
-            FunctionKind::Modifier => {
-                let mut map = serializer.serialize_map(Some(1))?;
-                map.serialize_entry("type", "FunctionKind::Modifier")?;
                 map.end()
             }
         }

@@ -133,87 +133,83 @@ impl<F: SemanticFile> Visitor for Pass<'_, F> {
     }
 
     fn enter_function_definition(&mut self, node: &ir::FunctionDefinition) -> bool {
-        match node.kind {
-            ir::FunctionKind::Regular
-            | ir::FunctionKind::Constructor
-            | ir::FunctionKind::Fallback
-            | ir::FunctionKind::Receive => {
-                if matches!(node.kind, ir::FunctionKind::Constructor) {
-                    self.check_constructor_attributes(node);
-                } else {
-                    self.check_function_attributes(node);
-                }
+        if matches!(node.kind, ir::FunctionKind::Constructor) {
+            self.check_constructor_attributes(node);
+        } else {
+            self.check_function_attributes(node);
+        }
 
-                let parameters_scope_id = self.collect_parameters(&node.parameters);
+        let parameters_scope_id = self.collect_parameters(&node.parameters);
 
-                if let Some(name) = &node.name {
-                    let definition = Definition::new_function(node, parameters_scope_id);
+        if let Some(name) = &node.name {
+            let definition = Definition::new_function(node, parameters_scope_id);
 
-                    let enclosing_definition = self.enclosing_definition();
-                    let enclosing_container_name = enclosing_definition
-                        .filter(|enclosing_definition| {
-                            matches!(
-                                enclosing_definition,
-                                Definition::Contract(_)
-                                    | Definition::Interface(_)
-                                    | Definition::Library(_)
-                            )
-                        })
-                        .map(|definition| definition.identifier().unparse());
+            let enclosing_definition = self.enclosing_definition();
+            let enclosing_container_name = enclosing_definition
+                .filter(|enclosing_definition| {
+                    matches!(
+                        enclosing_definition,
+                        Definition::Contract(_) | Definition::Interface(_) | Definition::Library(_)
+                    )
+                })
+                .map(|definition| definition.identifier().unparse());
 
-                    if enclosing_container_name
-                        .is_some_and(|container_name| container_name == name.unparse())
-                    {
-                        self.report(node, FunctionNameMatchesContainer);
+            if enclosing_container_name
+                .is_some_and(|container_name| container_name == name.unparse())
+            {
+                self.report(node, FunctionNameMatchesContainer);
 
-                        // Skip registering the function symbol in the current scope
-                        // to avoid interference with resolution.
-                        self.binder.insert_definition_no_scope(definition);
-                    } else {
-                        self.insert_definition_in_current_scope(definition);
-                    }
-                } else if matches!(node.kind, ir::FunctionKind::Constructor) {
-                    // Register the constructor to resolve named parameters when
-                    // constructing this contract
-                    self.register_constructor(node, parameters_scope_id);
-                }
-
-                self.check_constructor_or_function_body(node);
-
-                let function_scope =
-                    Scope::new_function(node.id(), self.current_scope_id(), parameters_scope_id);
-                let function_scope_id = self.enter_scope(function_scope);
-
-                if let Some(returns) = &node.returns {
-                    self.collect_named_parameters_into_scope(returns, function_scope_id);
-                }
-            }
-
-            ir::FunctionKind::Modifier => {
-                self.check_modifier_attributes(node);
-
-                // An implemented modifier (i.e. one with a body) must contain a
-                // placeholder statement (`_`). Start tracking whether one is
-                // seen while its body is traversed.
-                if node.body.is_some() {
-                    self.modifier_placeholder_found = Some(false);
-                }
-
-                let definition = Definition::new_modifier(node);
+                // Skip registering the function symbol in the current scope
+                // to avoid interference with resolution.
+                self.binder.insert_definition_no_scope(definition);
+            } else {
                 self.insert_definition_in_current_scope(definition);
-
-                let modifier_scope = Scope::new_modifier(node.id(), self.current_scope_id());
-                let modifier_scope_id = self.enter_scope(modifier_scope);
-                self.collect_named_parameters_into_scope(&node.parameters, modifier_scope_id);
             }
+        } else if matches!(node.kind, ir::FunctionKind::Constructor) {
+            // Register the constructor to resolve named parameters when
+            // constructing this contract
+            self.register_constructor(node, parameters_scope_id);
+        }
+
+        self.check_constructor_or_function_body(node);
+
+        let function_scope =
+            Scope::new_function(node.id(), self.current_scope_id(), parameters_scope_id);
+        let function_scope_id = self.enter_scope(function_scope);
+
+        if let Some(returns) = &node.returns {
+            self.collect_named_parameters_into_scope(returns, function_scope_id);
         }
         true
     }
 
     fn leave_function_definition(&mut self, node: &ir::FunctionDefinition) {
-        // If we were tracking an implemented modifier's body and no placeholder
-        // statement (`_`) was found, flag it. `take()` also clears the state for
-        // any non-modifier function (where it is already `None`).
+        self.leave_scope_for_node_id(node.id());
+    }
+
+    fn enter_modifier_definition(&mut self, node: &ir::ModifierDefinition) -> bool {
+        self.check_modifier_attributes(node);
+
+        // An implemented modifier (i.e. one with a body) must contain a
+        // placeholder statement (`_`). Start tracking whether one is
+        // seen while its body is traversed.
+        if node.body.is_some() {
+            self.modifier_placeholder_found = Some(false);
+        }
+
+        let parameters_scope_id = self.collect_parameters(&node.parameters);
+        let definition = Definition::new_modifier(node, parameters_scope_id);
+        self.insert_definition_in_current_scope(definition);
+
+        let signature_scope =
+            Scope::new_signature(node.id(), self.current_scope_id(), parameters_scope_id);
+        self.enter_scope(signature_scope);
+        true
+    }
+
+    fn leave_modifier_definition(&mut self, node: &ir::ModifierDefinition) {
+        // If no placeholder statement (`_`) was found in an implemented
+        // modifier's body, flag it.
         if self.modifier_placeholder_found.take() == Some(false) {
             self.report(node, ModifierBodyWithoutPlaceholder);
         }

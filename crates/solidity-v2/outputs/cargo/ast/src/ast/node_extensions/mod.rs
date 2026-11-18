@@ -18,6 +18,7 @@ mod identifier;
 mod identifier_path;
 mod interface_definition;
 mod library_definition;
+mod modifier_definition;
 mod source_unit;
 mod state_variable_definition;
 mod string_expression;

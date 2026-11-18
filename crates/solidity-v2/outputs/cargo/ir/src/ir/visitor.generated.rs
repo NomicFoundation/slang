@@ -236,6 +236,16 @@ pub trait Visitor {
     }
     fn leave_member_access_expression(&mut self, _node: &MemberAccessExpression) {}
 
+    fn enter_modifier_attributes(&mut self, _node: &ModifierAttributes) -> bool {
+        true
+    }
+    fn leave_modifier_attributes(&mut self, _node: &ModifierAttributes) {}
+
+    fn enter_modifier_definition(&mut self, _node: &ModifierDefinition) -> bool {
+        true
+    }
+    fn leave_modifier_definition(&mut self, _node: &ModifierDefinition) {}
+
     fn enter_modifier_invocation(&mut self, _node: &ModifierInvocation) -> bool {
         true
     }
@@ -1501,6 +1511,29 @@ pub fn accept_member_access_expression(node: &MemberAccessExpression, visitor: &
     visitor.leave_member_access_expression(node);
 }
 
+pub fn accept_modifier_attributes(node: &ModifierAttributes, visitor: &mut impl Visitor) {
+    if !visitor.enter_modifier_attributes(node) {
+        return;
+    }
+    if let Some(override_specifier) = &node.override_specifier {
+        accept_override_paths(override_specifier, visitor);
+    }
+    visitor.leave_modifier_attributes(node);
+}
+
+pub fn accept_modifier_definition(node: &ModifierDefinition, visitor: &mut impl Visitor) {
+    if !visitor.enter_modifier_definition(node) {
+        return;
+    }
+    visitor.visit_identifier(&node.name);
+    accept_parameters(&node.parameters, visitor);
+    accept_modifier_attributes(&node.attributes, visitor);
+    if let Some(body) = &node.body {
+        accept_block(body, visitor);
+    }
+    visitor.leave_modifier_definition(node);
+}
+
 pub fn accept_modifier_invocation(node: &ModifierInvocation, visitor: &mut impl Visitor) {
     if !visitor.enter_modifier_invocation(node) {
         return;
@@ -2128,6 +2161,9 @@ pub fn accept_contract_member(node: &ContractMember, visitor: &mut impl Visitor)
         ContractMember::FunctionDefinition(function_definition) => {
             accept_function_definition(function_definition, visitor);
         }
+        ContractMember::ModifierDefinition(modifier_definition) => {
+            accept_modifier_definition(modifier_definition, visitor);
+        }
         ContractMember::StructDefinition(struct_definition) => {
             accept_struct_definition(struct_definition, visitor);
         }
@@ -2372,7 +2408,6 @@ pub fn accept_function_kind(node: &FunctionKind, visitor: &mut impl Visitor) {
         FunctionKind::Constructor => {}
         FunctionKind::Fallback => {}
         FunctionKind::Receive => {}
-        FunctionKind::Modifier => {}
     }
     visitor.leave_function_kind(node);
 }

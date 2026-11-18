@@ -811,6 +811,42 @@ impl MemberAccessExpressionStruct {
     }
 }
 
+pub type ModifierAttributes = Arc<ModifierAttributesStruct>;
+
+#[derive(Debug)]
+#[cfg_attr(feature = "__private_testing_utils", derive(Eq, PartialEq))]
+pub struct ModifierAttributesStruct {
+    pub(crate) id: NodeId,
+    pub range: Range<usize>,
+    pub is_virtual: bool,
+    pub override_specifier: Option<OverridePaths>,
+}
+
+impl ModifierAttributesStruct {
+    pub fn id(&self) -> NodeId {
+        self.id
+    }
+}
+
+pub type ModifierDefinition = Arc<ModifierDefinitionStruct>;
+
+#[derive(Debug)]
+#[cfg_attr(feature = "__private_testing_utils", derive(Eq, PartialEq))]
+pub struct ModifierDefinitionStruct {
+    pub(crate) id: NodeId,
+    pub range: Range<usize>,
+    pub name: Identifier,
+    pub parameters: Parameters,
+    pub attributes: ModifierAttributes,
+    pub body: Option<Block>,
+}
+
+impl ModifierDefinitionStruct {
+    pub fn id(&self) -> NodeId {
+        self.id
+    }
+}
+
 pub type ModifierInvocation = Arc<ModifierInvocationStruct>;
 
 #[derive(Debug)]
@@ -1722,6 +1758,7 @@ pub enum CatchClauseKind {
 pub enum ContractMember {
     UsingDirective(UsingDirective),
     FunctionDefinition(FunctionDefinition),
+    ModifierDefinition(ModifierDefinition),
     StructDefinition(StructDefinition),
     EnumDefinition(EnumDefinition),
     EventDefinition(EventDefinition),
@@ -1827,7 +1864,6 @@ pub enum FunctionKind {
     Constructor,
     Fallback,
     Receive,
-    Modifier,
 }
 
 #[derive(Clone, Copy, Debug, Eq, Hash, PartialEq)]

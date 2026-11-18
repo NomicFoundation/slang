@@ -315,6 +315,18 @@ impl TextRange for MemberAccessExpressionStruct {
     }
 }
 
+impl TextRange for ModifierAttributesStruct {
+    fn calculate_text_range(&self) -> Option<Range<usize>> {
+        Some(self.range.clone())
+    }
+}
+
+impl TextRange for ModifierDefinitionStruct {
+    fn calculate_text_range(&self) -> Option<Range<usize>> {
+        Some(self.range.clone())
+    }
+}
+
 impl TextRange for ModifierInvocationStruct {
     fn calculate_text_range(&self) -> Option<Range<usize>> {
         Some(self.range.clone())
@@ -694,6 +706,8 @@ impl TextRange for ContractMember {
 
             ContractMember::FunctionDefinition(inner) => inner.calculate_text_range(),
 
+            ContractMember::ModifierDefinition(inner) => inner.calculate_text_range(),
+
             ContractMember::StructDefinition(inner) => inner.calculate_text_range(),
 
             ContractMember::EnumDefinition(inner) => inner.calculate_text_range(),
@@ -863,8 +877,6 @@ impl TextRange for FunctionKind {
             FunctionKind::Fallback => None,
 
             FunctionKind::Receive => None,
-
-            FunctionKind::Modifier => None,
         }
     }
 }

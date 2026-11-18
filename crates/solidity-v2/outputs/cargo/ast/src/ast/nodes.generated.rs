@@ -2154,6 +2154,108 @@ impl MemberAccessExpressionStruct {
     }
 }
 
+pub type ModifierAttributes = ModifierAttributesStruct;
+
+#[derive(Clone)]
+pub struct ModifierAttributesStruct {
+    pub(crate) ir_node: ir::ModifierAttributes,
+    pub(crate) semantic: Arc<SemanticContext>,
+}
+
+pub fn create_modifier_attributes(
+    ir_node: &ir::ModifierAttributes,
+    semantic: &Arc<SemanticContext>,
+) -> ModifierAttributes {
+    ModifierAttributesStruct {
+        ir_node: Arc::clone(ir_node),
+        semantic: Arc::clone(semantic),
+    }
+}
+
+impl ModifierAttributesStruct {
+    pub fn node_id(&self) -> NodeId {
+        self.ir_node.id()
+    }
+
+    pub fn is_virtual(&self) -> bool {
+        self.ir_node.is_virtual
+    }
+
+    pub fn override_specifier(&self) -> Option<OverridePaths> {
+        self.ir_node
+            .override_specifier
+            .as_ref()
+            .map(|ir_node| create_override_paths(ir_node, &self.semantic))
+    }
+
+    pub fn get_type(&self) -> Option<Type> {
+        Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
+    }
+
+    pub fn get_file_id(&self) -> &FileId {
+        self.semantic.file_id_from_node_id(self.ir_node.id())
+    }
+
+    pub fn get_text_range(&self) -> &Range<usize> {
+        &self.ir_node.range
+    }
+}
+
+pub type ModifierDefinition = ModifierDefinitionStruct;
+
+#[derive(Clone)]
+pub struct ModifierDefinitionStruct {
+    pub(crate) ir_node: ir::ModifierDefinition,
+    pub(crate) semantic: Arc<SemanticContext>,
+}
+
+pub fn create_modifier_definition(
+    ir_node: &ir::ModifierDefinition,
+    semantic: &Arc<SemanticContext>,
+) -> ModifierDefinition {
+    ModifierDefinitionStruct {
+        ir_node: Arc::clone(ir_node),
+        semantic: Arc::clone(semantic),
+    }
+}
+
+impl ModifierDefinitionStruct {
+    pub fn node_id(&self) -> NodeId {
+        self.ir_node.id()
+    }
+
+    pub fn name(&self) -> Identifier {
+        create_identifier(&self.ir_node.name, &self.semantic)
+    }
+
+    pub fn parameters(&self) -> Parameters {
+        create_parameters(&self.ir_node.parameters, &self.semantic)
+    }
+
+    pub fn attributes(&self) -> ModifierAttributes {
+        create_modifier_attributes(&self.ir_node.attributes, &self.semantic)
+    }
+
+    pub fn body(&self) -> Option<Block> {
+        self.ir_node
+            .body
+            .as_ref()
+            .map(|ir_node| create_block(ir_node, &self.semantic))
+    }
+
+    pub fn get_type(&self) -> Option<Type> {
+        Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
+    }
+
+    pub fn get_file_id(&self) -> &FileId {
+        self.semantic.file_id_from_node_id(self.ir_node.id())
+    }
+
+    pub fn get_text_range(&self) -> &Range<usize> {
+        &self.ir_node.range
+    }
+}
+
 pub type ModifierInvocation = ModifierInvocationStruct;
 
 #[derive(Clone)]
@@ -4486,6 +4588,7 @@ pub(crate) fn create_catch_clause_kind(
 pub enum ContractMember {
     UsingDirective(UsingDirective),
     FunctionDefinition(FunctionDefinition),
+    ModifierDefinition(ModifierDefinition),
     StructDefinition(StructDefinition),
     EnumDefinition(EnumDefinition),
     EventDefinition(EventDefinition),
@@ -4508,6 +4611,9 @@ pub(crate) fn create_contract_member(
         }
         ir::ContractMember::FunctionDefinition(variant) => {
             ContractMember::FunctionDefinition(create_function_definition(variant, semantic))
+        }
+        ir::ContractMember::ModifierDefinition(variant) => {
+            ContractMember::ModifierDefinition(create_modifier_definition(variant, semantic))
         }
         ir::ContractMember::StructDefinition(variant) => {
             ContractMember::StructDefinition(create_struct_definition(variant, semantic))
@@ -4839,7 +4945,6 @@ pub enum FunctionKind {
     Constructor,
     Fallback,
     Receive,
-    Modifier,
 }
 
 #[allow(clippy::clone_on_copy)]
@@ -4854,7 +4959,6 @@ pub(crate) fn create_function_kind(
         ir::FunctionKind::Constructor => FunctionKind::Constructor,
         ir::FunctionKind::Fallback => FunctionKind::Fallback,
         ir::FunctionKind::Receive => FunctionKind::Receive,
-        ir::FunctionKind::Modifier => FunctionKind::Modifier,
     }
 }
 

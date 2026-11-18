@@ -1,6 +1,7 @@
 mod arguments_declaration;
 mod expression;
 mod function_definition;
+mod modifier_definition;
 mod modifier_invocation;
 mod parameter;
 mod version_pragma;
