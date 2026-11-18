@@ -85,6 +85,8 @@ impl slang_solidity_v2_semantic::binder::Typing
 pub fn slang_solidity_v2_semantic::binder::Typing::as_type_id(&self) -> core::option::Option<slang_solidity_v2_semantic::types::TypeId>
 impl core::clone::Clone for slang_solidity_v2_semantic::binder::Typing
 pub fn slang_solidity_v2_semantic::binder::Typing::clone(&self) -> slang_solidity_v2_semantic::binder::Typing
+impl core::convert::From<alloc::vec::Vec<slang_solidity_v2_semantic::types::TypeId>> for slang_solidity_v2_semantic::binder::Typing
+pub fn slang_solidity_v2_semantic::binder::Typing::from(alloc::vec::Vec<slang_solidity_v2_semantic::types::TypeId>) -> Self
 impl core::fmt::Debug for slang_solidity_v2_semantic::binder::Typing
 pub fn slang_solidity_v2_semantic::binder::Typing::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
 pub struct slang_solidity_v2_semantic::binder::Binder

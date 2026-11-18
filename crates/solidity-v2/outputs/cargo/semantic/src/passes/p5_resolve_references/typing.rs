@@ -755,12 +755,8 @@ impl Pass<'_> {
                         type_ids.push(type_id);
                     }
                 }
-                // None of them is typed, eg. the overrides of a modifier.
-                if type_ids.is_empty() {
-                    Typing::Unresolved
-                } else {
-                    Typing::Undetermined(type_ids)
-                }
+                // This is `Unresolved` if none of them is typed, eg. the overrides of a modifier
+                Typing::from(type_ids)
             }
         }
     }

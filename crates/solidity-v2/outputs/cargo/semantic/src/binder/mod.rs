@@ -92,6 +92,16 @@ impl Typing {
     }
 }
 
+impl From<Vec<TypeId>> for Typing {
+    fn from(value: Vec<TypeId>) -> Self {
+        match value.len() {
+            0 => Self::Unresolved,
+            1 => Self::Resolved(value[0]),
+            _ => Self::Undetermined(value),
+        }
+    }
+}
+
 /// The `Binder` contains binding information for all definitions and references
 /// in the `CompilationUnit`, typing information for relevant AST nodes, as well
 /// as other semantic information (such as scopes and linearisations).
