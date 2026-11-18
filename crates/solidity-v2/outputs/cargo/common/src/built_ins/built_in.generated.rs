@@ -75,6 +75,7 @@ pub enum BuiltIn {
     CallOptionSalt,
     CallOptionValue,
     Length,
+    ByteArrayLength,
     ModifierUnderscore,
     ErrorSelector,
     EventSelector,

@@ -36,6 +36,7 @@ pub slang_solidity_v2_common::built_ins::BuiltIn::BlockPrevrandao
 pub slang_solidity_v2_common::built_ins::BuiltIn::BlockSlotnum
 pub slang_solidity_v2_common::built_ins::BuiltIn::BlockTimestamp
 pub slang_solidity_v2_common::built_ins::BuiltIn::Blockhash
+pub slang_solidity_v2_common::built_ins::BuiltIn::ByteArrayLength
 pub slang_solidity_v2_common::built_ins::BuiltIn::BytesConcat
 pub slang_solidity_v2_common::built_ins::BuiltIn::CallOptionGas
 pub slang_solidity_v2_common::built_ins::BuiltIn::CallOptionSalt
