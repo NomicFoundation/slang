@@ -1,0 +1,27 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 3
+
+[TypeError 4156] Error: Calldata structs are read-only.
+    ╭─[input.sol:19:5]
+    │
+ 19 │     outer.value = 1;
+    │     ─────┬─────  
+    │          ╰─────── Error occurred here.
+────╯
+
+[TypeError 4156] Error: Calldata structs are read-only.
+    ╭─[input.sol:20:5]
+    │
+ 20 │     outer.inner.value = 2;
+    │     ────────┬────────  
+    │             ╰────────── Error occurred here.
+────╯
+
+[TypeError 6182] Error: Calldata arrays are read-only.
+    ╭─[input.sol:21:5]
+    │
+ 21 │     outer.items[0] = 3;
+    │     ───────┬──────  
+    │            ╰──────── Error occurred here.
+────╯
