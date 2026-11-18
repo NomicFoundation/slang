@@ -5,6 +5,7 @@ use slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind;
 use slang_solidity_v2_common::diagnostics::kinds::resolution::{
     AmbiguousReference, MemberNotFound, NoMatchingCallableDeclaration,
 };
+use slang_solidity_v2_common::diagnostics::kinds::type_system::PartiallyAppliedFunctionUsedAsValue;
 
 use super::support::diagnostic_kinds;
 use super::{Analyse, Analysis, expression, expression_statement_types, expressions};
@@ -378,9 +379,15 @@ fn test_partially_applied_function_does_not_unify_into_array() {
         }
         "#;
 
-    let analysis = Analysis::of_source(source)
-        .run(Analyse::References)
-        .expect_no_diagnostics();
+    let analysis = Analysis::of_source(source).run(Analyse::References);
+    // Each partially applied item is reported, as it has no mobile type.
+    assert_eq!(
+        vec![
+            DiagnosticKind::from(PartiallyAppliedFunctionUsedAsValue),
+            DiagnosticKind::from(PartiallyAppliedFunctionUsedAsValue)
+        ],
+        diagnostic_kinds(&analysis.diagnostics)
+    );
     let mut typings = statement_types(&analysis, "Test", "__test").into_iter();
 
     // Control: plain function pointers of the same signature still unify into a

@@ -1,0 +1,11 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 1
+
+[TypeError 9656] Error: Unable to deduce nameable type for array elements. Try adding explicit type conversion for the first element.
+   ╭─[input.sol:8:9]
+   │
+ 8 │         [type(C)];
+   │         ────┬────  
+   │             ╰────── Error occurred here.
+───╯
