@@ -227,8 +227,7 @@ impl Pass<'_> {
         if let Some((identifier, kind)) = path_resolution.diagnostic(identifier_path) {
             self.push_diagnostic(identifier, kind);
         } else if let Some(member) = self.unreachable_qualified_member(identifier_path) {
-            self.binder
-                .fixup_reference(member.id(), Resolution::Unresolved);
+            self.binder.reject_reference(member.id());
             let kind = namespace_member_not_found(identifier_path, identifier_path.len() - 1);
             self.push_diagnostic(member, kind);
         }

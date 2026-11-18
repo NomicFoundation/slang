@@ -207,6 +207,28 @@ impl Pass<'_> {
         }
     }
 
+    /// What a member that resolved to nothing in `context` names anyway: a
+    /// member of a foreign contract's name that is not reachable from outside
+    /// its hierarchy. Only looked up once the member is known to be missing.
+    // TODO: members hidden inside the binder lookup are not recovered yet: an
+    // internal member through a contract value (`ResolveOptions::External`)
+    // and a private one through its contract's name (`ResolveOptions::Declared`).
+    pub(super) fn hidden_member(&self, context: MemberContext, symbol: &str) -> Option<Resolution> {
+        let MemberContext::TypeName {
+            definition_id,
+            is_foreign: true,
+            ..
+        } = context
+        else {
+            return None;
+        };
+        let scope_id = find_definition_namespace_scope_id(self.binder, definition_id)?;
+        let resolution = self
+            .binder
+            .resolve_in_scope_as_expression_member(scope_id, symbol);
+        (!matches!(resolution, Resolution::Unresolved)).then_some(resolution)
+    }
+
     /// The externally visible members of the contract or library `this`
     /// names, starting at it in the linearisation.
     // TODO(validation) SDR[34]: for `this` resolutions we need to check that

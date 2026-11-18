@@ -28,7 +28,7 @@ References (6):
 - Ref: ["level" @ input.sol:16:14] -> #7
 - Ref: ["name" @ input.sol:16:24] -> #6
 - Ref: ["Other" @ input.sol:17:9] -> #1
-- Ref: ["Warn" @ input.sol:17:15] -> unresolved
+- Ref: ["Warn" @ input.sol:17:15] -> #2
 - Ref: ["reason" @ input.sol:17:21] -> unresolved
 
 ------------------------------------------------------------------------
@@ -77,7 +77,7 @@ Bindings:
     │         ──┬── ──┬─  ───┬──  
     │           ╰───────────────── ref: 1
     │                 │      │    
-    │                 ╰─────────── unresolved
+    │                 ╰─────────── ref: 2
     │                        │    
     │                        ╰──── unresolved
 ────╯

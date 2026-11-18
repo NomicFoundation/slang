@@ -414,6 +414,12 @@ impl Binder {
     pub(crate) fn reject_reference(&mut self, node_id: NodeId) {
         let reference = self.references.get_mut(&node_id).unwrap();
         let resolution = std::mem::replace(&mut reference.resolution, Resolution::Unresolved);
+        self.insert_rejected_resolution(node_id, resolution);
+    }
+
+    /// Records what the unresolved reference at `node_id` names, when its
+    /// position hides every declaration found, which is reported on its own.
+    pub(crate) fn insert_rejected_resolution(&mut self, node_id: NodeId, resolution: Resolution) {
         self.rejected_references.insert(node_id, resolution);
     }
 

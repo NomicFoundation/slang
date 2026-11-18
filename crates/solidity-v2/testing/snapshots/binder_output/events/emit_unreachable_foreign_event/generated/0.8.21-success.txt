@@ -1,0 +1,42 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Definitions (4):
+- Def: #1 ["A" @ input.sol:5:10] (contract)
+- Def: #2 ["E" @ input.sol:6:11] (event)
+- Def: #3 ["B" @ input.sol:9:10] (contract)
+- Def: #4 ["f" @ input.sol:10:14] (function, type: function () returns ())
+
+------------------------------------------------------------------------
+
+References (2):
+- Ref: ["A" @ input.sol:11:14] -> #1
+- Ref: ["E" @ input.sol:11:16] -> #2
+
+------------------------------------------------------------------------
+
+Unbound identifiers (0):
+
+------------------------------------------------------------------------
+
+Bindings: 
+    ╭─[input.sol:1:1]
+    │
+  5 │ contract A {
+    │          ┬  
+    │          ╰── name: 1
+  6 │     event E();
+    │           ┬  
+    │           ╰── name: 2
+    │ 
+  9 │ contract B {
+    │          ┬  
+    │          ╰── name: 3
+ 10 │     function f() public {
+    │              ┬  
+    │              ╰── name: 4
+ 11 │         emit A.E();
+    │              ┬ ┬  
+    │              ╰──── ref: 1
+    │                │  
+    │                ╰── ref: 2
+────╯

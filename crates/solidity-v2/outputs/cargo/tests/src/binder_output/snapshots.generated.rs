@@ -310,6 +310,11 @@ mod contracts {
     }
 
     #[test]
+    fn foreign_internal_member_through_name() -> Result<()> {
+        run("contracts", "foreign_internal_member_through_name")
+    }
+
+    #[test]
     fn functions_named_receive_fallback() -> Result<()> {
         run("contracts", "functions_named_receive_fallback")
     }
@@ -711,6 +716,11 @@ mod events {
     #[test]
     fn emit_stmt() -> Result<()> {
         run("events", "emit_stmt")
+    }
+
+    #[test]
+    fn emit_unreachable_foreign_event() -> Result<()> {
+        run("events", "emit_unreachable_foreign_event")
     }
 
     #[test]

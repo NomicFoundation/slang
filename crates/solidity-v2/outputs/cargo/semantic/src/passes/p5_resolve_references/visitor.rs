@@ -503,6 +503,10 @@ impl Visitor for Pass<'_> {
         // not resolve is already reported, so it is not reported again here.
         if matches!(resolution, Resolution::Unresolved) && !operand_is_unresolved {
             let name = node.member.unparse().to_owned();
+            if let Some(hidden) = self.hidden_member(context, &name) {
+                self.binder
+                    .insert_rejected_resolution(node.member.id(), hidden);
+            }
             self.push_diagnostic(&node.member, MemberNotFound { name });
         }
 
