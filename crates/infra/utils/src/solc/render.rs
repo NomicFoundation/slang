@@ -7,7 +7,7 @@ use semver::Version;
 
 use crate::paths::PathExtensions;
 use crate::snapshot_markers::{
-    CURRENT_SOLC_BUILD_VERSION, CURRENT_SOLC_EVM_VERSION, replace_marker,
+    CURRENT_SOLC_BUILD_VERSION, CURRENT_SOLC_EVM_VERSION, CURRENT_SOLC_VERSION, replace_marker,
 };
 use crate::solc::{Error, Severity};
 
@@ -31,6 +31,14 @@ pub fn render_solc_error_for_snapshot(
             version = regex::escape(&version),
         ),
         CURRENT_SOLC_BUILD_VERSION,
+    );
+
+    // Must run after the build version above so they don't conflict.
+    let message = replace_marker(
+        &message,
+        &version,
+        &format!(r"\b{}\b", regex::escape(&version)),
+        CURRENT_SOLC_VERSION,
     );
 
     let message = replace_marker(
