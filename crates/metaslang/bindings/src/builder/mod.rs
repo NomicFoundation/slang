@@ -19,6 +19,24 @@ pub(crate) type FileHandle =
 
 pub use crate::graph::BindingGraph;
 
+/// Binding rules that have already been parsed.
+///
+/// Parsing is expensive, and the result depends on neither the language version nor the source
+/// files, so callers that build many graphs can parse once and share the result between several
+/// [`BindingGraphBuilder`] instances.
+pub struct BindingRulesFile<KT: KindTypes + 'static> {
+    file: File<KT>,
+}
+
+impl<KT: KindTypes + 'static> BindingRulesFile<KT> {
+    /// Parses the given binding rules.
+    pub fn create(source: &str) -> Rc<Self> {
+        let file = File::from_str(source).expect("Bindings stack graph builder parse error");
+
+        Rc::new(Self { file })
+    }
+}
+
 pub(crate) struct DefinitionBindingInfo<KT: KindTypes + 'static> {
     cursor: Cursor<KT>,
     definiens: Cursor<KT>,
@@ -33,7 +51,7 @@ pub(crate) struct ReferenceBindingInfo<KT: KindTypes + 'static> {
 }
 
 pub struct BindingGraphBuilder<KT: KindTypes + 'static> {
-    graph_builder_file: File<KT>,
+    binding_rules: Rc<BindingRulesFile<KT>>,
     functions: Functions<KT>,
     graph: ExtendedStackGraph<KT>,
 }
@@ -113,16 +131,14 @@ pub trait PathResolver<KT: KindTypes + 'static> {
 impl<KT: KindTypes + 'static> BindingGraphBuilder<KT> {
     pub fn create(
         version: Version,
-        binding_rules: &str,
+        binding_rules: Rc<BindingRulesFile<KT>>,
         path_resolver: Rc<dyn PathResolver<KT>>,
     ) -> Self {
-        let graph_builder_file =
-            File::from_str(binding_rules).expect("Bindings stack graph builder parse error");
         let stack_graph = StackGraph::new();
         let functions = loader::default_functions(version, path_resolver);
 
         Self {
-            graph_builder_file,
+            binding_rules,
             functions,
             graph: ExtendedStackGraph {
                 stack_graph,
@@ -165,7 +181,7 @@ impl<KT: KindTypes + 'static> BindingGraphBuilder<KT> {
 
     fn add_file_internal(&mut self, file: FileHandle, tree_cursor: Cursor<KT>) -> LoadResult<KT> {
         let loader = Loader::new(
-            &self.graph_builder_file,
+            &self.binding_rules.file,
             &self.functions,
             &mut self.graph.stack_graph,
             file,
