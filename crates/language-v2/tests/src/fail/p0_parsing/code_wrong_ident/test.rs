@@ -4,7 +4,7 @@ language_v2_macros::compile!(Language(
     name = Foo,
     root_item = Bar,
     versions = ["1.0.0"],
-    evm_targets = [],
+    evm_targets = [Cancun],
     contexts = [LexicalContext(
         name = Foo,
         sections = [Section(
@@ -22,7 +22,13 @@ language_v2_macros::compile!(Language(
             )]
         )]
     )],
-    built_ins = []
+    built_ins = [BuiltInContext(
+        name = Globals,
+        scopes = [BuiltInScope(
+            name = Global,
+            definitions = [BuiltInDefinition(name = MyBuiltIn)]
+        )]
+    )]
 ));
 
 fn main() {}

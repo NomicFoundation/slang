@@ -27,7 +27,7 @@ impl ParseHelpers {
         input: ParseStream<'_>,
         errors: &mut ErrorsCollection,
     ) -> Vec<T> {
-        Self::delimited(Delimiter::Bracket, input, |_, inner_input| {
+        Self::delimited(Delimiter::Bracket, input, |span, inner_input| {
             let mut result = Vec::new();
 
             while !inner_input.is_empty() {
@@ -42,6 +42,10 @@ impl ParseHelpers {
                 }
             }
 
+            if result.is_empty() {
+                errors.add(&Spanned::new(span.join(), ()), &Errors::EmptyCollection);
+            }
+
             Ok(result)
         })
         .unwrap_or_else(|error| {
@@ -54,7 +58,7 @@ impl ParseHelpers {
         input: ParseStream<'_>,
         errors: &mut ErrorsCollection,
     ) -> indexmap::IndexMap<K, V> {
-        Self::delimited(Delimiter::Parenthesis, input, |_, inner_input| {
+        Self::delimited(Delimiter::Parenthesis, input, |span, inner_input| {
             let mut result = IndexMap::new();
 
             while !inner_input.is_empty() {
@@ -77,6 +81,10 @@ impl ParseHelpers {
                 } else {
                     result.insert(key.into_value(), value);
                 }
+            }
+
+            if result.is_empty() {
+                errors.add(&Spanned::new(span.join(), ()), &Errors::EmptyCollection);
             }
 
             Ok(result)
@@ -147,4 +155,6 @@ enum Errors<'err> {
     DuplicateMapKey,
     #[error("Trailing commas are not allowed.")]
     TrailingComma,
+    #[error("Expected a non-empty collection.")]
+    EmptyCollection,
 }
