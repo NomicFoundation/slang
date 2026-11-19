@@ -7368,6 +7368,77 @@ mod type_system {
         }
     }
 
+    mod expression_not_indexable {
+        use super::*;
+
+        #[test]
+        fn function() -> Result<()> {
+            run("type_system/expression_not_indexable", "function")
+        }
+
+        #[test]
+        fn integer() -> Result<()> {
+            run("type_system/expression_not_indexable", "integer")
+        }
+
+        #[test]
+        fn this_expression() -> Result<()> {
+            run("type_system/expression_not_indexable", "this_expression")
+        }
+    }
+
+    mod expression_not_sliceable {
+        use super::*;
+
+        #[test]
+        fn bytes_array() -> Result<()> {
+            run("type_system/expression_not_sliceable", "bytes_array")
+        }
+
+        #[test]
+        fn fixed_bytes() -> Result<()> {
+            run("type_system/expression_not_sliceable", "fixed_bytes")
+        }
+
+        #[test]
+        fn fixed_size_calldata_array() -> Result<()> {
+            run(
+                "type_system/expression_not_sliceable",
+                "fixed_size_calldata_array",
+            )
+        }
+
+        #[test]
+        fn mapping() -> Result<()> {
+            run("type_system/expression_not_sliceable", "mapping")
+        }
+
+        #[test]
+        fn memory_array() -> Result<()> {
+            run("type_system/expression_not_sliceable", "memory_array")
+        }
+
+        #[test]
+        fn nested_array() -> Result<()> {
+            run("type_system/expression_not_sliceable", "nested_array")
+        }
+
+        #[test]
+        fn storage_string() -> Result<()> {
+            run("type_system/expression_not_sliceable", "storage_string")
+        }
+
+        #[test]
+        fn struct_array() -> Result<()> {
+            run("type_system/expression_not_sliceable", "struct_array")
+        }
+
+        #[test]
+        fn type_name() -> Result<()> {
+            run("type_system/expression_not_sliceable", "type_name")
+        }
+    }
+
     #[test]
     fn fallback_function_mutability() -> Result<()> {
         run("type_system", "fallback_function_mutability")
@@ -7522,6 +7593,30 @@ mod type_system {
         #[test]
         fn yul_too_large() -> Result<()> {
             run("type_system/literal_too_large", "yul_too_large")
+        }
+    }
+
+    mod missing_index {
+        use super::*;
+
+        #[test]
+        fn array() -> Result<()> {
+            run("type_system/missing_index", "array")
+        }
+
+        #[test]
+        fn bytes_slice() -> Result<()> {
+            run("type_system/missing_index", "bytes_slice")
+        }
+
+        #[test]
+        fn fixed_bytes() -> Result<()> {
+            run("type_system/missing_index", "fixed_bytes")
+        }
+
+        #[test]
+        fn mapping() -> Result<()> {
+            run("type_system/missing_index", "mapping")
         }
     }
 
@@ -7835,6 +7930,40 @@ mod type_system {
         #[test]
         fn valid() -> Result<()> {
             run("type_system/storage_layout_base_slot", "valid")
+        }
+    }
+
+    mod string_index_access {
+        use super::*;
+
+        #[test]
+        fn calldata_slice() -> Result<()> {
+            run("type_system/string_index_access", "calldata_slice")
+        }
+
+        #[test]
+        fn memory_parameter() -> Result<()> {
+            run("type_system/string_index_access", "memory_parameter")
+        }
+
+        #[test]
+        fn omitted_index() -> Result<()> {
+            run("type_system/string_index_access", "omitted_index")
+        }
+
+        #[test]
+        fn omitted_index_on_slice() -> Result<()> {
+            run("type_system/string_index_access", "omitted_index_on_slice")
+        }
+
+        #[test]
+        fn storage_variable() -> Result<()> {
+            run("type_system/string_index_access", "storage_variable")
+        }
+
+        #[test]
+        fn string_literal() -> Result<()> {
+            run("type_system/string_index_access", "string_literal")
         }
     }
 

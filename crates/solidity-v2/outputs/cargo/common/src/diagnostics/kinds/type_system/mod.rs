@@ -11,6 +11,8 @@ mod explicit_conversion_not_allowed;
 mod expression_not_a_value;
 mod expression_not_an_lvalue;
 mod expression_not_callable;
+mod expression_not_indexable;
+mod expression_not_sliceable;
 mod fallback_function_mutability;
 mod fallback_function_signature;
 mod incompatible_conditional_branches;
@@ -18,6 +20,7 @@ mod incompatible_constant_operator;
 mod invalid_base;
 mod invalid_utf8_string_literal;
 mod literal_too_large;
+mod missing_index;
 mod modifier_outside_function_header;
 mod partially_applied_function_used_as_value;
 mod receive_function_parameters;
@@ -25,6 +28,7 @@ mod storage_layout_base_non_integer;
 mod storage_layout_base_not_constant;
 mod storage_layout_base_out_of_range;
 mod storage_layout_base_past_end;
+mod string_index_access;
 mod type_too_large_for_storage;
 mod write_to_constant;
 
@@ -41,6 +45,8 @@ pub use explicit_conversion_not_allowed::ExplicitConversionNotAllowed;
 pub use expression_not_a_value::{ExpressionNotAValue, NotAValueKind};
 pub use expression_not_an_lvalue::ExpressionNotAnLValue;
 pub use expression_not_callable::ExpressionNotCallable;
+pub use expression_not_indexable::ExpressionNotIndexable;
+pub use expression_not_sliceable::ExpressionNotSliceable;
 pub use fallback_function_mutability::FallbackFunctionMutability;
 pub use fallback_function_signature::FallbackFunctionSignature;
 pub use incompatible_conditional_branches::IncompatibleConditionalBranches;
@@ -48,6 +54,7 @@ pub use incompatible_constant_operator::IncompatibleConstantOperator;
 pub use invalid_base::InvalidBase;
 pub use invalid_utf8_string_literal::InvalidUtf8StringLiteral;
 pub use literal_too_large::LiteralTooLarge;
+pub use missing_index::MissingIndex;
 pub use modifier_outside_function_header::ModifierOutsideFunctionHeader;
 pub use partially_applied_function_used_as_value::PartiallyAppliedFunctionUsedAsValue;
 pub use receive_function_parameters::ReceiveFunctionParameters;
@@ -56,6 +63,7 @@ pub use storage_layout_base_non_integer::StorageLayoutBaseNonInteger;
 pub use storage_layout_base_not_constant::StorageLayoutBaseNotConstant;
 pub use storage_layout_base_out_of_range::StorageLayoutBaseOutOfRange;
 pub use storage_layout_base_past_end::StorageLayoutBasePastEnd;
+pub use string_index_access::StringIndexAccess;
 pub use type_too_large_for_storage::TypeTooLargeForStorage;
 pub use write_to_constant::WriteToConstant;
 
@@ -118,6 +126,9 @@ define_diagnostic_kind! {
         ExpressionNotCallable(ExpressionNotCallable),
         /// An expression references a modifier outside a function header.
         ModifierOutsideFunctionHeader(ModifierOutsideFunctionHeader),
+        /// The operand of an index access is not an array, a mapping or a type
+        /// name.
+        ExpressionNotIndexable(ExpressionNotIndexable),
         /// An expression in a position that requires a value names a built-in,
         /// `super`, or an uncalled `new` instead. Its `kind` says which.
         ExpressionNotAValue(ExpressionNotAValue),
@@ -129,6 +140,13 @@ define_diagnostic_kind! {
         IncompatibleConditionalBranches(IncompatibleConditionalBranches),
         /// An array literal has no elements to deduce its type from.
         EmptyArrayLiteral(EmptyArrayLiteral),
+        /// An index access on a value omits the index.
+        MissingIndex(MissingIndex),
+        /// A `string` (or a slice of one) is indexed.
+        StringIndexAccess(StringIndexAccess),
+        /// The operand of a slice is not a dynamically-sized calldata array with
+        /// fixed-size elements (or a slice of one).
+        ExpressionNotSliceable(ExpressionNotSliceable),
         /// An expression in a position that is written to does not denote a
         /// writable storage location.
         ExpressionNotAnLValue(ExpressionNotAnLValue),

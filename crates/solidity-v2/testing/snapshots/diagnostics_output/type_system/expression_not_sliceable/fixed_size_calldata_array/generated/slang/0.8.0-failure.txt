@@ -1,0 +1,11 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 1
+
+[type-system/expression-not-sliceable] Error: Only dynamically-sized calldata arrays with fixed-size elements can be sliced.
+   ╭─[input.sol:7:9]
+   │
+ 7 │         a[1:];
+   │         ┬  
+   │         ╰── Error occurred here.
+───╯

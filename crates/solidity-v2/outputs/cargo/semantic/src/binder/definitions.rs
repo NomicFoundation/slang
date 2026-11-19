@@ -161,6 +161,10 @@ pub enum RecursionKind {
 pub struct StructDefinition {
     pub ir_node: ir::StructDefinition,
     pub recursive: Option<RecursionKind>,
+    /// Whether the struct has a fixed size: it holds no dynamically-sized
+    /// array, `bytes` or `string`, in a member or nested in a member's struct or
+    /// fixed-size array type. False until p3.
+    pub(crate) is_fixed_size: bool,
     /// The structs held by value (directly or through fixed-size arrays), in
     /// member declaration order. Empty until p3.
     pub(crate) by_value_dependencies: Box<[NodeId]>,
@@ -557,6 +561,7 @@ impl Definition {
         Self::Struct(StructDefinition {
             ir_node: Arc::clone(ir_node),
             recursive: None,
+            is_fixed_size: false,
             by_value_dependencies: Box::default(),
         })
     }

@@ -5,9 +5,9 @@ use slang_solidity_v2_common::diagnostics::kinds::resolution::{
 };
 use slang_solidity_v2_common::diagnostics::kinds::type_system::{
     CannotCallViaContractTypeName, ExplicitConversionNotAllowed, ExpressionNotAValue,
-    ExpressionNotAnLValue, ExpressionNotCallable, IncompatibleConditionalBranches,
-    InvalidUtf8StringLiteral, LiteralTooLarge, NotAValueKind, PartiallyAppliedFunctionUsedAsValue,
-    WriteToConstant,
+    ExpressionNotAnLValue, ExpressionNotCallable, ExpressionNotIndexable, ExpressionNotSliceable,
+    IncompatibleConditionalBranches, InvalidUtf8StringLiteral, LiteralTooLarge, MissingIndex,
+    NotAValueKind, PartiallyAppliedFunctionUsedAsValue, StringIndexAccess, WriteToConstant,
 };
 use slang_solidity_v2_common::nodes::NodeId;
 use slang_solidity_v2_ir::ir;
@@ -20,9 +20,10 @@ use crate::built_ins::{BuiltInCallError, InternalBuiltIn};
 use crate::context::FileNodeMapper;
 use crate::passes::common::node_location;
 use crate::types::{
-    AddressType, ArraySliceType, ArrayType, ContractType, ConversionError, DataLocation, ErrorType,
-    EventType, FixedSizeArrayType, FunctionType, FunctionTypeVisibility, IntegerType, LiteralKind,
-    MetaType, NoMobileType, Number, StringType, Type, TypeId, UserMetaType, literals,
+    AddressType, ArraySliceType, ArrayType, BytesType, ContractType, ConversionError, DataLocation,
+    ErrorType, EventType, FixedSizeArrayType, FunctionType, FunctionTypeVisibility, IntegerType,
+    LiteralKind, MappingType, MetaType, NoMobileType, Number, StringType, StructType, Type, TypeId,
+    UserMetaType, literals,
 };
 
 impl Pass<'_> {
@@ -624,19 +625,122 @@ impl Pass<'_> {
         }
     }
 
-    /// Types a range index (`a[i:j]`) whose operand is the array `array_type_id`
-    /// in `location`. Only dynamically-sized calldata arrays can be sliced, so a
-    /// calldata operand yields a [`Type::ArraySlice`] wrapping it and anything
-    /// else is left unresolved.
-    pub(super) fn slice_typing(&mut self, array_type_id: TypeId, location: DataLocation) -> Typing {
-        if location == DataLocation::Calldata {
-            Typing::Resolved(
-                self.types
-                    .register_type(Type::ArraySlice(ArraySliceType { array_type_id })),
-            )
+    /// Types an index access (`a[i]`) whose operand is of `operand_type_id`. On
+    /// a type name it names an array type instead (eg. `uint[]` or `uint[3]`).
+    pub(super) fn typing_of_index_expression(
+        &mut self,
+        node: &ir::IndexAccessExpression,
+        operand_type_id: TypeId,
+    ) -> Typing {
+        match self.types.get_type_by_id(operand_type_id) {
+            // Only a type name can be indexed without an index.
+            Type::Array(_)
+            | Type::FixedSizeArray(_)
+            | Type::ByteArray(_)
+            | Type::Bytes(_)
+            | Type::Mapping(_)
+                if node.start.is_none() =>
+            {
+                self.push_diagnostic(node, MissingIndex);
+                Typing::Unresolved
+            }
+            // TODO(validation) SDR[58]: for fixed-size arrays, if the index is
+            // resolvable at compile time we should check for out-of-bounds
+            // accesses.
+            Type::Array(ArrayType { element_type, .. })
+            | Type::FixedSizeArray(FixedSizeArrayType { element_type, .. }) => {
+                Typing::Resolved(*element_type)
+            }
+            Type::ByteArray(_) | Type::Bytes(_) => Typing::Resolved(self.types.bytes1()),
+            Type::String(_) | Type::Literal(LiteralKind::String { .. }) => {
+                self.push_diagnostic(node, StringIndexAccess);
+                Typing::Unresolved
+            }
+            // Indexing a slice yields its array's element type.
+            Type::ArraySlice(ArraySliceType { array_type_id }) => {
+                match self.types.get_type_by_id(*array_type_id) {
+                    Type::Array(_) | Type::Bytes(_) if node.start.is_none() => {
+                        self.push_diagnostic(node, MissingIndex);
+                        Typing::Unresolved
+                    }
+                    Type::Array(ArrayType { element_type, .. }) => Typing::Resolved(*element_type),
+                    Type::Bytes(_) => Typing::Resolved(self.types.bytes1()),
+                    Type::String(_) => {
+                        self.push_diagnostic(node, StringIndexAccess);
+                        Typing::Unresolved
+                    }
+                    _ => Typing::Unresolved,
+                }
+            }
+            Type::Mapping(MappingType { value_type_id, .. }) => Typing::Resolved(*value_type_id),
+            // Indexing a meta-type creates the meta-type of an array, eg. the
+            // `uint[]` in `abi.decode(data, (uint[]))` or the fixed-size `uint[3]`.
+            Type::MetaType(MetaType {
+                type_id: element_type,
+            }) => self.typing_of_indexed_meta_type(*element_type, node.start.as_ref()),
+            // Indexing a user meta-type likewise creates the meta-type of an
+            // array (eg. `MyStruct[]`).
+            Type::UserMetaType(UserMetaType { definition_id }) => {
+                if let Some(operand_type) = self.type_of_definition(*definition_id) {
+                    let element_type = self.types.register_type(operand_type);
+                    self.typing_of_indexed_meta_type(element_type, node.start.as_ref())
+                } else {
+                    Typing::Unresolved
+                }
+            }
+            _ => {
+                self.push_diagnostic(&node.operand, ExpressionNotIndexable);
+                Typing::Unresolved
+            }
+        }
+    }
+
+    /// Types a range index (`a[i:j]`) whose operand is of `operand_type_id`.
+    /// Only dynamically-sized calldata arrays with fixed-size elements (and
+    /// slices of them) can be sliced, which yields a [`Type::ArraySlice`]
+    /// wrapping the array. Anything else, including a type name, is reported
+    /// and left unresolved.
+    pub(super) fn typing_of_slice_expression(
+        &mut self,
+        node: &ir::IndexAccessExpression,
+        operand_type_id: TypeId,
+    ) -> Typing {
+        let is_sliceable = match self.types.get_type_by_id(operand_type_id) {
+            // Re-slicing a slice yields the same slice type.
+            Type::ArraySlice(_) => return Typing::Resolved(operand_type_id),
+            Type::Array(ArrayType {
+                element_type,
+                location,
+            }) => *location == DataLocation::Calldata && self.is_fixed_size(*element_type),
+            Type::Bytes(BytesType { location }) | Type::String(StringType { location }) => {
+                *location == DataLocation::Calldata
+            }
+            _ => false,
+        };
+        if is_sliceable {
+            Typing::Resolved(self.types.register_type(Type::ArraySlice(ArraySliceType {
+                array_type_id: operand_type_id,
+            })))
         } else {
-            // TODO(validation) SDR[46]: slicing a non-calldata array is invalid.
+            self.push_diagnostic(&node.operand, ExpressionNotSliceable);
             Typing::Unresolved
+        }
+    }
+
+    /// Whether values of `type_id` have a fixed size: anything but a
+    /// dynamically-sized array, `bytes`, `string`, or a fixed-size array or
+    /// struct holding one of those.
+    fn is_fixed_size(&self, type_id: TypeId) -> bool {
+        match self.types.get_type_by_id(type_id) {
+            Type::Array(_) | Type::Bytes(_) | Type::String(_) => false,
+            Type::FixedSizeArray(FixedSizeArrayType { element_type, .. }) => {
+                self.is_fixed_size(*element_type)
+            }
+            Type::Struct(StructType { definition_id, .. }) => matches!(
+                self.binder.find_definition_by_id(*definition_id),
+                Some(Definition::Struct(definition)) if definition.is_fixed_size
+            ),
+            _ => true,
         }
     }
 

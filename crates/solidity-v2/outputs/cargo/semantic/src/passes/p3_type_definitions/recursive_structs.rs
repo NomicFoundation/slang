@@ -1,9 +1,10 @@
-//! One traversal of the struct members computes three results, which differ in
+//! One traversal of the struct members computes four results, which differ in
 //! the references they follow from a member's type to another struct:
 //!
 //! | Property                     | Edges followed                          |
 //! |------------------------------|-----------------------------------------|
 //! | by-value dependencies (p8)   | struct members, fixed-size arrays       |
+//! | fixed size                   | same as by-value dependencies           |
 //! | `ByReference`                | + dynamic arrays, mapping values        |
 //! | `ByFunctionType`             | + function parameter and return types   |
 //!
@@ -29,6 +30,7 @@ use crate::types::{
 
 pub(super) fn mark_recursive_structs(binder: &mut Binder, types: &TypeRegistry) {
     let graph = StructDependencyGraph::build(binder, types);
+    let dynamically_sized = graph.dynamically_sized();
     let by_value = graph.reaching_cycles(|kind| kind == DependencyKind::ByValue);
     let by_reference = graph.reaching_cycles(|kind| kind != DependencyKind::FunctionSignature);
     let by_function_type = graph.reaching_cycles(|_| true);
@@ -37,6 +39,7 @@ pub(super) fn mark_recursive_structs(binder: &mut Binder, types: &TypeRegistry) 
         let Definition::Struct(definition) = binder.get_definition_mut(struct_id) else {
             unreachable!("definition is not a struct");
         };
+        definition.is_fixed_size = !dynamically_sized.contains(&struct_id);
         definition.recursive = Some(if by_value.contains(&struct_id) {
             RecursionKind::ByValue
         } else if by_reference.contains(&struct_id) {
@@ -61,6 +64,9 @@ enum DependencyKind {
 struct StructDependencies {
     // Reverse edges: the structs referring to this one.
     predecessors: Vec<(NodeId, DependencyKind)>,
+    // Whether a member's type holds a dynamically-sized value by value, without
+    // going through another struct.
+    holds_dynamically_sized: bool,
     by_value: Vec<NodeId>,
 }
 
@@ -102,7 +108,16 @@ impl StructDependencyGraph {
     fn add_type_dependencies(&mut self, types: &TypeRegistry, from: NodeId, type_id: TypeId) {
         let mut pending = vec![(type_id, DependencyKind::ByValue)];
         while let Some((type_id, kind)) = pending.pop() {
-            match types.get_type_by_id(type_id) {
+            let member_type = types.get_type_by_id(type_id);
+            if kind == DependencyKind::ByValue
+                && matches!(
+                    member_type,
+                    Type::Array(_) | Type::Bytes(_) | Type::String(_)
+                )
+            {
+                self.nodes.entry(from).or_default().holds_dynamically_sized = true;
+            }
+            match member_type {
                 // Stop at structs; their members are visited separately.
                 Type::Struct(StructType { definition_id, .. }) => {
                     self.add_dependency(from, *definition_id, kind);
@@ -182,6 +197,26 @@ impl StructDependencyGraph {
             .filter(|(_, count)| *count > 0)
             .map(|(id, _)| id)
             .collect()
+    }
+
+    /// The structs that hold a dynamically-sized value, themselves or through
+    /// the structs they hold by value. Each call runs in O(nodes + edges) time.
+    fn dynamically_sized(&self) -> Set<NodeId> {
+        let mut dynamically_sized: Set<NodeId> = self
+            .nodes
+            .iter()
+            .filter(|(_, node)| node.holds_dynamically_sized)
+            .map(|(id, _)| *id)
+            .collect();
+        let mut pending: Vec<NodeId> = dynamically_sized.iter().copied().collect();
+        while let Some(id) = pending.pop() {
+            for (predecessor, kind) in &self.nodes[&id].predecessors {
+                if *kind == DependencyKind::ByValue && dynamically_sized.insert(*predecessor) {
+                    pending.push(*predecessor);
+                }
+            }
+        }
+        dynamically_sized
     }
 }
 

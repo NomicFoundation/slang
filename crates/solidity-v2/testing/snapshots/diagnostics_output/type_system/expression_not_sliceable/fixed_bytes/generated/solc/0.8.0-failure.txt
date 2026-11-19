@@ -1,0 +1,11 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 1
+
+[TypeError 4781] Error: Index range access is only possible for arrays and array slices.
+   ╭─[input.sol:8:9]
+   │
+ 8 │         b[0:1];
+   │         ───┬──  
+   │            ╰──── Error occurred here.
+───╯

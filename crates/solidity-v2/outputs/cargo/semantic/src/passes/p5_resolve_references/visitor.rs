@@ -18,10 +18,7 @@ use crate::built_ins::InternalBuiltIn;
 use crate::passes::common::{
     IdentifierPathTarget, filter_overridden_definitions, filter_overridden_definitions_by_selector,
 };
-use crate::types::{
-    AddressType, ArraySliceType, ArrayType, BytesType, FixedSizeArrayType, MappingType, MetaType,
-    Number, StringType, TupleType, Type, UserMetaType,
-};
+use crate::types::{AddressType, Number, TupleType, Type};
 
 impl Visitor for Pass<'_> {
     fn enter_source_unit(&mut self, node: &ir::SourceUnit) -> bool {
@@ -556,100 +553,10 @@ impl Visitor for Pass<'_> {
         // The operand may name a type, in which case indexing it names the
         // array type of it (eg. the `uint[]` in `abi.decode(data, (uint[]))`).
         let typing = match self.check_type_of_value_or_type_name_expression(&node.operand) {
-            Some(operand_type_id) => {
-                match self.types.get_type_by_id(operand_type_id) {
-                    Type::Array(ArrayType {
-                        element_type,
-                        location,
-                    }) => {
-                        let (element_type, location) = (*element_type, *location);
-                        if node.is_slice {
-                            // A range index of a (calldata) array is a slice.
-                            self.slice_typing(operand_type_id, location)
-                        } else {
-                            Typing::Resolved(element_type)
-                        }
-                    }
-                    Type::FixedSizeArray(FixedSizeArrayType { element_type, .. }) => {
-                        // TODO(validation) SDR[58]: for fixed-size arrays, if the
-                        // index is resolvable at compile time we should check for
-                        // out-of-bounds accesses. Fixed-size arrays aren't
-                        // dynamically sized, so they can't be sliced.
-                        let element_type = *element_type;
-                        if node.is_slice {
-                            Typing::Unresolved
-                        } else {
-                            Typing::Resolved(element_type)
-                        }
-                    }
-                    Type::ByteArray(_) => {
-                        if node.is_slice {
-                            Typing::Unresolved
-                        } else {
-                            Typing::Resolved(self.types.bytes1())
-                        }
-                    }
-                    Type::Bytes(BytesType { location }) => {
-                        if node.is_slice {
-                            self.slice_typing(operand_type_id, *location)
-                        } else {
-                            Typing::Resolved(self.types.bytes1())
-                        }
-                    }
-                    Type::String(StringType { location }) => {
-                        if node.is_slice {
-                            // `string` can be sliced in calldata, but not indexed.
-                            self.slice_typing(operand_type_id, *location)
-                        } else {
-                            Typing::Unresolved
-                        }
-                    }
-                    Type::ArraySlice(ArraySliceType { array_type_id }) => {
-                        let array_type_id = *array_type_id;
-                        if node.is_slice {
-                            // Re-slicing a slice yields the same slice type.
-                            Typing::Resolved(operand_type_id)
-                        } else {
-                            // Indexing a slice yields its array's element type.
-                            match self.types.get_type_by_id(array_type_id) {
-                                Type::Array(ArrayType { element_type, .. }) => {
-                                    Typing::Resolved(*element_type)
-                                }
-                                Type::Bytes(_) => Typing::Resolved(self.types.bytes1()),
-                                _ => Typing::Unresolved,
-                            }
-                        }
-                    }
-                    Type::Mapping(MappingType { value_type_id, .. }) => {
-                        if node.is_slice {
-                            Typing::Unresolved
-                        } else {
-                            Typing::Resolved(*value_type_id)
-                        }
-                    }
-                    // Indexing a meta-type creates the meta-type of an array,
-                    // eg. the `uint[]` in `abi.decode(data, (uint[]))` or the
-                    // fixed-size `uint[3]`.
-                    Type::MetaType(MetaType {
-                        type_id: element_type,
-                    }) => self.typing_of_indexed_meta_type(*element_type, node.start.as_ref()),
-                    // Indexing a user meta-type likewise creates the meta-type
-                    // of an array (eg. `MyStruct[]`).
-                    Type::UserMetaType(UserMetaType { definition_id }) => {
-                        let definition_id = *definition_id;
-                        if let Some(operand_type) = self.type_of_definition(definition_id) {
-                            let element_type = self.types.register_type(operand_type);
-                            self.typing_of_indexed_meta_type(element_type, node.start.as_ref())
-                        } else {
-                            Typing::Unresolved
-                        }
-                    }
-                    _ => {
-                        // TODO(validation) SDR[45]: the operand is not indexable
-                        Typing::Unresolved
-                    }
-                }
+            Some(operand_type_id) if node.is_slice => {
+                self.typing_of_slice_expression(node, operand_type_id)
             }
+            Some(operand_type_id) => self.typing_of_index_expression(node, operand_type_id),
             None => Typing::Unresolved,
         };
         self.binder.set_node_typing(node.id(), typing);

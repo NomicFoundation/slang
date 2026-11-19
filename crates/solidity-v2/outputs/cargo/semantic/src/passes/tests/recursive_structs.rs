@@ -1,6 +1,8 @@
 //! Tests for the struct recursion kinds p3 sets on struct definitions: which
 //! references each follows, and the by-value dependencies recorded for p8.
 
+use std::fmt::Write;
+
 use super::support::{Analyse, Analysis};
 use crate::binder::{Definition, RecursionKind, StructDefinition};
 
@@ -157,6 +159,52 @@ fn unresolved_members_are_skipped() {
     )
     .run(Analyse::Types);
     assert_recursion(&analysis, &[("Recursive", RecursionKind::ByReference)]);
+}
+
+#[test]
+fn structs_holding_a_dynamically_sized_value_are_not_fixed_size() {
+    let analysis = analyse(
+        "pragma solidity *;
+        struct Plain { uint256 a; }
+        struct Direct { uint256[] values; }
+        struct InStruct { Plain p; Direct d; }
+        struct InFixedArray { Direct[2] items; }
+        struct InArray { Direct[] items; }
+        struct InMapping { mapping(uint256 => Direct) m; }
+        struct InSignature { function(Direct memory) internal f; }
+        struct Shared { Plain a; Plain b; }",
+    );
+    for (name, is_fixed_size) in [
+        ("Plain", true),
+        ("Direct", false),
+        ("InStruct", false),
+        ("InFixedArray", false),
+        ("InArray", false),
+        ("InMapping", true),
+        ("InSignature", true),
+        ("Shared", true),
+    ] {
+        let definition = struct_named(&analysis, name);
+        assert_eq!(definition.is_fixed_size, is_fixed_size, "{name}");
+    }
+}
+
+#[test]
+fn slicing_an_array_of_shared_nested_structs_is_linear() {
+    // Each struct holds the previous one twice, so walking the members of every
+    // field would visit `S0` 2**40 times. This is a unit test rather than a
+    // diagnostics snapshot because solc's memory usage blows up on this input.
+    let mut source = String::from("pragma solidity *;\ncontract C {\nstruct S0 { uint256 x; }\n");
+    for i in 1..=40 {
+        let previous = i - 1;
+        writeln!(source, "struct S{i} {{ S{previous} a; S{previous} b; }}").unwrap();
+    }
+    source.push_str("function f(S40[] calldata s) public pure { s[1:]; }\n}\n");
+
+    let analysis = Analysis::of_source(&source)
+        .run(Analyse::References)
+        .expect_no_diagnostics();
+    assert!(struct_named(&analysis, "S40").is_fixed_size);
 }
 
 #[test]
