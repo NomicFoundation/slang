@@ -178,7 +178,9 @@
   ],
   "labels": ["dependencies"],
   "configMigration": true,
-  "dependencyDashboard": false,
+  "dependencyDashboard": {
+    "enabled": false
+  },
   "osvVulnerabilityAlerts": true,
   "vulnerabilityAlerts": {
     "enabled": true
