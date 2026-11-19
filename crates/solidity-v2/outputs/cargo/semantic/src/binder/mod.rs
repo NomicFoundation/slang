@@ -20,7 +20,7 @@ pub(crate) use capacities::BinderCapacities;
 pub(crate) use definitions::{
     ContractDefinition, InterfaceDefinition, ResolvedDefinitions, StructDefinition,
 };
-pub use definitions::{Definition, Getter, RecursionKind};
+pub use definitions::{Definition, RecursionKind, StateVariableGetter};
 pub use references::{Reference, Resolution};
 use scopes::ContractScope;
 pub use scopes::ParameterDefinition;
@@ -272,7 +272,8 @@ impl Binder {
         }
 
         if let Scope::Parameters(parameters_scope) = &scope {
-            // parameters scope don't have an associated node ID
+            // parameters scope don't have an associated node ID, so skip the
+            // insertion in the lookup map
             self.debug_assert_named_parameters_are_definitions(&parameters_scope.parameters);
         } else {
             let node_id = scope.node_id();

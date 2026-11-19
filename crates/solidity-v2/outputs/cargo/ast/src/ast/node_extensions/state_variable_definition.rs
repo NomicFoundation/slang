@@ -4,7 +4,7 @@ use slang_solidity_v2_semantic::types::TypeId;
 use super::super::{Definition, StateVariableDefinitionStruct, StructMember, Type};
 
 impl StateVariableDefinitionStruct {
-    fn getter(&self) -> Option<&binder::Getter> {
+    fn getter(&self) -> Option<&binder::StateVariableGetter> {
         let Some(binder::Definition::StateVariable(definition)) = self
             .semantic
             .binder()

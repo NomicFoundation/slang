@@ -142,7 +142,7 @@ pub struct StateVariableDefinition {
     pub ir_node: ir::StateVariableDefinition,
     /// The generated getter. Only a public variable has one, and only once
     /// its type can be computed.
-    pub getter: Option<Getter>,
+    pub getter: Option<StateVariableGetter>,
     // This is the scope the variable is defined in, and is used to change the
     // resolution context in the `CompileConstantEvaluator`.
     pub(crate) enclosing_scope_id: ScopeId,
@@ -156,7 +156,7 @@ impl StateVariableDefinition {
 
 /// The getter generated for a public state variable.
 #[derive(Debug)]
-pub struct Getter {
+pub struct StateVariableGetter {
     /// The getter's function type.
     pub type_id: TypeId,
     /// The getter's inputs, one per mapping key or array index, in nesting

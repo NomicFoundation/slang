@@ -5,7 +5,7 @@ use slang_solidity_v2_common::nodes::NodeId;
 use slang_solidity_v2_common::versions::LanguageVersion;
 use slang_solidity_v2_ir::ir;
 
-use crate::binder::{Binder, Definition, Getter, Scope, ScopeId};
+use crate::binder::{Binder, Definition, Scope, ScopeId, StateVariableGetter};
 use crate::context::{FileNodeMapper, SemanticFile, StorageAnalyzer};
 use crate::passes::common::ScopeStack;
 use crate::types::{ContractType, Type, TypeId, TypeRegistry, UserMetaType};
@@ -201,7 +201,7 @@ impl<'a> Pass<'a> {
                 else {
                     unreachable!("definition is not a state variable");
                 };
-                definition.getter = Some(Getter {
+                definition.getter = Some(StateVariableGetter {
                     type_id: getter_type_id,
                     parameters_scope_id,
                     return_parameters,

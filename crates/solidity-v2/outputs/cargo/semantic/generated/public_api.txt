@@ -106,11 +106,6 @@ pub fn slang_solidity_v2_semantic::binder::Binder::references(&self) -> &slang_s
 pub fn slang_solidity_v2_semantic::binder::Binder::resolved_operator_function(&self, slang_solidity_v2_common::nodes::NodeId) -> core::option::Option<slang_solidity_v2_common::nodes::NodeId>
 impl core::default::Default for slang_solidity_v2_semantic::binder::Binder
 pub fn slang_solidity_v2_semantic::binder::Binder::default() -> slang_solidity_v2_semantic::binder::Binder
-pub struct slang_solidity_v2_semantic::binder::Getter
-pub slang_solidity_v2_semantic::binder::Getter::return_parameters: alloc::vec::Vec<slang_solidity_v2_semantic::binder::ParameterDefinition>
-pub slang_solidity_v2_semantic::binder::Getter::type_id: slang_solidity_v2_semantic::types::TypeId
-impl core::fmt::Debug for slang_solidity_v2_semantic::binder::Getter
-pub fn slang_solidity_v2_semantic::binder::Getter::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
 pub struct slang_solidity_v2_semantic::binder::ParameterDefinition
 impl slang_solidity_v2_semantic::binder::ParameterDefinition
 pub fn slang_solidity_v2_semantic::binder::ParameterDefinition::definition_id(&self) -> core::option::Option<slang_solidity_v2_common::nodes::NodeId>
@@ -126,6 +121,11 @@ impl slang_solidity_v2_semantic::binder::Reference
 pub fn slang_solidity_v2_semantic::binder::Reference::node_id(&self) -> slang_solidity_v2_common::nodes::NodeId
 impl core::fmt::Debug for slang_solidity_v2_semantic::binder::Reference
 pub fn slang_solidity_v2_semantic::binder::Reference::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+pub struct slang_solidity_v2_semantic::binder::StateVariableGetter
+pub slang_solidity_v2_semantic::binder::StateVariableGetter::return_parameters: alloc::vec::Vec<slang_solidity_v2_semantic::binder::ParameterDefinition>
+pub slang_solidity_v2_semantic::binder::StateVariableGetter::type_id: slang_solidity_v2_semantic::types::TypeId
+impl core::fmt::Debug for slang_solidity_v2_semantic::binder::StateVariableGetter
+pub fn slang_solidity_v2_semantic::binder::StateVariableGetter::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
 pub mod slang_solidity_v2_semantic::built_ins
 pub enum slang_solidity_v2_semantic::built_ins::InternalBuiltIn
 pub slang_solidity_v2_semantic::built_ins::InternalBuiltIn::Abi
