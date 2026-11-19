@@ -4,6 +4,7 @@ mod array_length_not_constant;
 mod array_length_too_large;
 mod array_length_zero;
 mod cannot_call_via_contract_type_name;
+mod compound_assignment_to_tuple;
 mod constant_arithmetic_error;
 mod contract_too_large_for_storage;
 mod empty_array_literal;
@@ -34,6 +35,7 @@ pub use array_length_not_constant::ArrayLengthNotConstant;
 pub use array_length_too_large::ArrayLengthTooLarge;
 pub use array_length_zero::ArrayLengthZero;
 pub use cannot_call_via_contract_type_name::CannotCallViaContractTypeName;
+pub use compound_assignment_to_tuple::CompoundAssignmentToTuple;
 pub use constant_arithmetic_error::ConstantArithmeticError;
 pub use contract_too_large_for_storage::ContractTooLargeForStorage;
 pub use empty_array_literal::EmptyArrayLiteral;
@@ -134,6 +136,8 @@ define_diagnostic_kind! {
         ExpressionNotAnLValue(ExpressionNotAnLValue),
         /// A `constant` declaration is written to.
         WriteToConstant(WriteToConstant),
+        /// A compound assignment has a tuple on its left hand side.
+        CompoundAssignmentToTuple(CompoundAssignmentToTuple),
         /// An explicit type conversion is not allowed from the type of its
         /// argument to the target type.
         ExplicitConversionNotAllowed(ExplicitConversionNotAllowed),

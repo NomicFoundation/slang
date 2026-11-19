@@ -6,7 +6,7 @@ use slang_solidity_v2_common::diagnostics::kinds::resolution::{
 };
 use slang_solidity_v2_common::diagnostics::kinds::structure::DuplicateNamedArgument;
 use slang_solidity_v2_common::diagnostics::kinds::type_system::{
-    EmptyArrayLiteral, ModifierOutsideFunctionHeader,
+    CompoundAssignmentToTuple, EmptyArrayLiteral, ModifierOutsideFunctionHeader,
 };
 use slang_solidity_v2_ir::ir;
 use slang_solidity_v2_ir::ir::NodeIdentity;
@@ -287,6 +287,16 @@ impl Visitor for Pass<'_> {
     fn leave_assignment_expression(&mut self, node: &ir::AssignmentExpression) {
         let type_id = self.check_type_of_value_expression(&node.left_operand);
         self.check_lvalues_under(&node.left_operand);
+
+        // Only a plain assignment destructures a tuple.
+        // A target that failed to type has been reported already.
+        if !matches!(node.operator, ir::AssignmentExpressionOperator::Equal(_))
+            && type_id
+                .is_some_and(|type_id| matches!(self.types.get_type_by_id(type_id), Type::Tuple(_)))
+        {
+            self.push_diagnostic(node, CompoundAssignmentToTuple);
+        }
+
         self.check_type_of_value_expression(&node.right_operand);
         // TODO(validation) SDR[59]: check that the type of right_operand can be applied
         // to the left by means of the operator
