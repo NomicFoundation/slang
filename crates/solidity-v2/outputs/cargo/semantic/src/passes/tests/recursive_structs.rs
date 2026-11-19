@@ -169,7 +169,7 @@ fn structs_holding_a_dynamically_sized_value_are_not_fixed_size() {
         struct Direct { uint256[] values; }
         struct InStruct { Plain p; Direct d; }
         struct InFixedArray { Direct[2] items; }
-        struct InArray { Plain[] items; }
+        struct InArray { Direct[] items; }
         struct InMapping { mapping(uint256 => Direct) m; }
         struct InSignature { function(Direct memory) internal f; }
         struct Shared { Plain a; Plain b; }",

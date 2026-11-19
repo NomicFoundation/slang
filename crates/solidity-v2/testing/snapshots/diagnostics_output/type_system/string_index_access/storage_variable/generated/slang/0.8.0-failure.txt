@@ -2,7 +2,7 @@
 
 Diagnostics: 1
 
-[type-system/string-index-access] Error: Index access is not possible on 'string'.
+[type-system/string-index-access] Error: Index access is not possible on a string.
    ╭─[input.sol:9:9]
    │
  9 │         s[0];

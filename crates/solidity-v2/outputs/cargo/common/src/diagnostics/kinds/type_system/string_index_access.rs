@@ -18,6 +18,6 @@ impl DiagnosticExtensions for StringIndexAccess {
     }
 
     fn message(&self) -> String {
-        "Index access is not possible on 'string'.".to_owned()
+        "Index access is not possible on a string.".to_owned()
     }
 }

@@ -7382,11 +7382,6 @@ mod type_system {
         }
 
         #[test]
-        fn string_literal() -> Result<()> {
-            run("type_system/expression_not_indexable", "string_literal")
-        }
-
-        #[test]
         fn this_expression() -> Result<()> {
             run("type_system/expression_not_indexable", "this_expression")
         }
@@ -7610,6 +7605,11 @@ mod type_system {
         }
 
         #[test]
+        fn bytes_slice() -> Result<()> {
+            run("type_system/missing_index", "bytes_slice")
+        }
+
+        #[test]
         fn fixed_bytes() -> Result<()> {
             run("type_system/missing_index", "fixed_bytes")
         }
@@ -7617,11 +7617,6 @@ mod type_system {
         #[test]
         fn mapping() -> Result<()> {
             run("type_system/missing_index", "mapping")
-        }
-
-        #[test]
-        fn string() -> Result<()> {
-            run("type_system/missing_index", "string")
         }
     }
 
@@ -7952,8 +7947,23 @@ mod type_system {
         }
 
         #[test]
+        fn omitted_index() -> Result<()> {
+            run("type_system/string_index_access", "omitted_index")
+        }
+
+        #[test]
+        fn omitted_index_on_slice() -> Result<()> {
+            run("type_system/string_index_access", "omitted_index_on_slice")
+        }
+
+        #[test]
         fn storage_variable() -> Result<()> {
             run("type_system/string_index_access", "storage_variable")
+        }
+
+        #[test]
+        fn string_literal() -> Result<()> {
+            run("type_system/string_index_access", "string_literal")
         }
     }
 

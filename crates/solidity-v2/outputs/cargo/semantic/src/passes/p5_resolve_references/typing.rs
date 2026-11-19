@@ -638,8 +638,6 @@ impl Pass<'_> {
             | Type::FixedSizeArray(_)
             | Type::ByteArray(_)
             | Type::Bytes(_)
-            | Type::String(_)
-            | Type::ArraySlice(_)
             | Type::Mapping(_)
                 if node.start.is_none() =>
             {
@@ -654,13 +652,17 @@ impl Pass<'_> {
                 Typing::Resolved(*element_type)
             }
             Type::ByteArray(_) | Type::Bytes(_) => Typing::Resolved(self.types.bytes1()),
-            Type::String(_) => {
+            Type::String(_) | Type::Literal(LiteralKind::String { .. }) => {
                 self.push_diagnostic(node, StringIndexAccess);
                 Typing::Unresolved
             }
             // Indexing a slice yields its array's element type.
             Type::ArraySlice(ArraySliceType { array_type_id }) => {
                 match self.types.get_type_by_id(*array_type_id) {
+                    Type::Array(_) | Type::Bytes(_) if node.start.is_none() => {
+                        self.push_diagnostic(node, MissingIndex);
+                        Typing::Unresolved
+                    }
                     Type::Array(ArrayType { element_type, .. }) => Typing::Resolved(*element_type),
                     Type::Bytes(_) => Typing::Resolved(self.types.bytes1()),
                     Type::String(_) => {

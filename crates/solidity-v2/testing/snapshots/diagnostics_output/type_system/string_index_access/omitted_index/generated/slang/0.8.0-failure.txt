@@ -2,10 +2,10 @@
 
 Diagnostics: 1
 
-[type-system/missing-index] Error: Index expression cannot be omitted.
-   ╭─[input.sol:8:9]
+[type-system/string-index-access] Error: Index access is not possible on a string.
+   ╭─[input.sol:7:9]
    │
- 8 │         s[];
+ 7 │         s[];
    │         ─┬─  
    │          ╰─── Error occurred here.
 ───╯

@@ -5,7 +5,7 @@ Diagnostics: 1
 [TypeError 9689] Error: Index expression cannot be omitted.
    ╭─[input.sol:8:9]
    │
- 8 │         s[];
-   │         ─┬─  
-   │          ╰─── Error occurred here.
+ 8 │         s[1:][];
+   │         ───┬───  
+   │            ╰───── Error occurred here.
 ───╯
