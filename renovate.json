@@ -10,9 +10,7 @@
       "description": "cargo-cooldown-check: custom hermit source, point Renovate at its index release",
       "matchManagers": ["hermit"],
       "matchPackageNames": ["cargo-cooldown-check"],
-      "registryUrls": [
-        "https://github.com/NomicFoundation/cargo-cooldown-check"
-      ]
+      "registryUrls": ["https://github.com/NomicFoundation/cargo-cooldown-check"]
     },
     {
       "description": "Extra cooldown for majors (matches Dependabot semver-major-days: 30)",
@@ -118,12 +116,7 @@
     },
     {
       "description": "Benchmark comparison deps: grouped so version changes that affect perf baselines land in one PR. Must come after per-manager grouping rules so this groupName takes precedence.",
-      "matchPackageNames": [
-        "tree-sitter",
-        "tree-sitter-solidity",
-        "solar",
-        "solar-compiler"
-      ],
+      "matchPackageNames": ["tree-sitter", "tree-sitter-solidity", "solar", "solar-compiler"],
       "groupName": "benchmark deps",
       "labels": ["ci:perf"]
     },
@@ -141,11 +134,7 @@
     },
     {
       "description": "changesets: the action hard-validates the CLI major and refuses to run on a mismatch (action v1 requires CLI v2, action v2 requires CLI v3), and changelog-github moved to ESM together with CLI v3, so the three must move in one PR. Nothing in PR CI runs publish.yml's changesets job, so a mismatch would first surface on a push to main. Must come after per-manager grouping rules so this groupName takes precedence.",
-      "matchPackageNames": [
-        "changesets/action",
-        "@changesets/cli",
-        "@changesets/changelog-github"
-      ],
+      "matchPackageNames": ["changesets/action", "@changesets/cli", "@changesets/changelog-github"],
       "groupName": "changesets"
     },
     {
