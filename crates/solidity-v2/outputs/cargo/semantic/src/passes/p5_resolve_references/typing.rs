@@ -954,7 +954,12 @@ impl Pass<'_> {
         if let Some(member_type_id) =
             match self.binder.find_definition_by_id(definition_id).unwrap() {
                 Definition::StateVariable(state_var_definition) => {
-                    state_var_definition.getter_type_id()
+                    // A state variable without a getter is not externally visible, so
+                    // member lookup never resolves to it through a contract value.
+                    let Some(type_id) = state_var_definition.getter_type_id() else {
+                        unreachable!("a state variable without a getter is not externally visible")
+                    };
+                    Some(type_id)
                 }
                 Definition::Function(function_definition) => {
                     function_definition.externalized_type_id
