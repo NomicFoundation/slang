@@ -1,6 +1,6 @@
 pragma solidity *;
 
-// Error parameters are not visible to the parameter type names.
+// From 0.8.5, error parameters are not visible to the parameter type names.
 contract C {
     enum EnumType {A, B, C}
 
