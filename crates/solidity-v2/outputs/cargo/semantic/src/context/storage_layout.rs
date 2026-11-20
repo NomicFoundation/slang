@@ -288,7 +288,7 @@ impl<'a> StorageAnalyzer<'a> {
             )),
 
             Type::Function(function_type) => {
-                if function_type.is_externally_visible() {
+                if function_type.call_mode.is_external() {
                     Ok(Bytes(Self::ADDRESS_BYTE_SIZE + Self::SELECTOR_SIZE))
                 } else {
                     // NOTE: an internal function ref type is 8 bytes long, it's

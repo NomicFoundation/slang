@@ -1,0 +1,11 @@
+{
+  "expected_solc_divergence": [
+    {
+      "specifier": {
+        "type": "Till",
+        "till": "0.8.21"
+      },
+      "reason": "Before '0.8.21' solc keeps the declaration of the first element of an array literal, so `[f, g][1].selector` is accepted and evaluates to the selector of `f`, not `g`. Slang implements the '0.8.21' semantics for every version: an array element never names a declaration, so it also rejects this program on '0.8.0' to '0.8.20'."
+    }
+  ]
+}

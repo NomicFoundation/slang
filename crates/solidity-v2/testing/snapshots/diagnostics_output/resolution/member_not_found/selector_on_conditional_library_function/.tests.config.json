@@ -1,0 +1,11 @@
+{
+  "expected_solc_divergence": [
+    {
+      "specifier": {
+        "type": "Till",
+        "till": "0.8.21"
+      },
+      "reason": "Before '0.8.21' solc keeps the declaration of the true branch on a conditional, so `(b ? f : g).selector` is accepted and always evaluates to the selector of `f`, whatever `b` is. Slang implements the '0.8.21' semantics for every version: a conditional never names a declaration, so it also rejects this program on '0.8.0' to '0.8.20'."
+    }
+  ]
+}
