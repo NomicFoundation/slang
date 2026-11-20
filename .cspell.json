@@ -2,7 +2,9 @@
   "$schema": "https://raw.githubusercontent.com/streetsidesoftware/cspell/v9.1.2/cspell.schema.json",
   "language": "en-US",
   "files": ["**/*.md"],
-  "ignorePaths": ["submodules/**", "**/generated/**", "**/*.generated.*", "CHANGELOG.md"],
+  // Temporary workaround for https://github.com/streetsidesoftware/cspell/issues/9645,
+  // remove `.hermit/**` once the issue is closed.
+  "ignorePaths": [".hermit/**", "submodules/**", "**/generated/**", "**/*.generated.*", "CHANGELOG.md"],
   "ignoreWords": [
     // Alphabetically sorted list of "allowed" words to ignore:
     "abicoder",
