@@ -2385,6 +2385,14 @@ mod resolution {
         }
 
         #[test]
+        fn selector_on_array_literal_base_function() -> Result<()> {
+            run(
+                "resolution/member_not_found",
+                "selector_on_array_literal_base_function",
+            )
+        }
+
+        #[test]
         fn selector_on_conditional_base_function() -> Result<()> {
             run(
                 "resolution/member_not_found",
