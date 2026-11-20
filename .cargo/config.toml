@@ -1,7 +1,6 @@
 [profile.bench]
 build-override = { debug = true }
 debug = true
-incremental = true
 strip = false
 
 [profile.dev]
