@@ -9,7 +9,9 @@ use slang_solidity_v2_common::nodes::NodeId;
 use slang_solidity_v2_common::versions::LanguageVersion;
 use slang_solidity_v2_ir::ir;
 
-use crate::binder::{Binder, Definition, FileScope, ParametersScope, Scope, ScopeId};
+use crate::binder::{
+    Binder, Definition, FileScope, ParameterSlot, ParametersScope, Scope, ScopeId,
+};
 use crate::context::SemanticFile;
 use crate::passes::common::ScopeStack;
 
@@ -228,9 +230,11 @@ impl<'a, F: SemanticFile> Pass<'a, F> {
                     self.report(name, IdentifierRedeclaration);
                 }
                 let definition = Definition::new_parameter(parameter);
+                scope.add_parameter(ParameterSlot::named(&definition));
                 self.binder.insert_definition_no_scope(definition);
+            } else {
+                scope.add_parameter(ParameterSlot::unnamed(parameter.id()));
             }
-            scope.add_parameter(parameter.name.as_ref().map(|id| &id.text), parameter.id());
         }
         self.binder.insert_scope(Scope::Parameters(scope))
     }

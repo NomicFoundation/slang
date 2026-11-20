@@ -23,7 +23,7 @@ pub(crate) use definitions::{
 pub use definitions::{Definition, RecursionKind, StateVariableGetter};
 pub use references::{Reference, Resolution};
 use scopes::ContractScope;
-pub use scopes::ParameterDefinition;
+pub use scopes::ParameterSlot;
 pub(crate) use scopes::{
     DefaultImport, FileScope, OperatorMapping, ParametersScope, Scope, ScopeDefinitionIds,
     UsingDirective, UsingOperator,
@@ -242,21 +242,6 @@ impl Binder {
         self.enclosing_definitions.get(&node_id).copied()
     }
 
-    /// Checks the invariant behind [`ParameterDefinition::definition_id`]: a
-    /// named parameter's node is a definition already in the binder.
-    pub(crate) fn debug_assert_named_parameters_are_definitions(
-        &self,
-        parameters: &[ParameterDefinition],
-    ) {
-        debug_assert!(
-            parameters
-                .iter()
-                .filter_map(ParameterDefinition::definition_id)
-                .all(|definition_id| self.definitions.contains_key(&definition_id)),
-            "named parameter without a definition"
-        );
-    }
-
     pub(crate) fn insert_scope(&mut self, scope: Scope) -> ScopeId {
         let scope_id = ScopeId(self.scopes.len());
 
@@ -271,11 +256,9 @@ impl Binder {
             }
         }
 
-        if let Scope::Parameters(parameters_scope) = &scope {
-            // parameters scope don't have an associated node ID, so skip the
-            // insertion in the lookup map
-            self.debug_assert_named_parameters_are_definitions(&parameters_scope.parameters);
-        } else {
+        // parameters scope don't have an associated node ID, so skip the
+        // insertion in the lookup map
+        if !matches!(scope, Scope::Parameters(_)) {
             let node_id = scope.node_id();
             if self.scopes_by_node_id.insert(node_id, scope_id).is_some() {
                 unreachable!("attempt to insert duplicate file scope for node {node_id:?}");
@@ -1096,10 +1079,7 @@ impl Binder {
     /// modifier, constructor (via its contract), event, error, or a public
     /// state variable's getter. `None` for anything else, including structs, whose
     /// members are not held as parameters.
-    pub fn get_parameters_for_definition(
-        &self,
-        definition_id: NodeId,
-    ) -> Option<&[ParameterDefinition]> {
+    pub fn get_parameters_for_definition(&self, definition_id: NodeId) -> Option<&[ParameterSlot]> {
         let scope_id = self.get_parameters_scope_for_definition(definition_id)?;
         match self.get_scope_by_id(scope_id) {
             Scope::Parameters(parameters_scope) => Some(&parameters_scope.parameters),

@@ -21,7 +21,7 @@ impl StateVariableDefinitionStruct {
 
     /// The getter's inputs, one per mapping key or array index, or `None` if
     /// the variable has no getter.
-    pub(crate) fn getter_parameters(&self) -> Option<&[binder::ParameterDefinition]> {
+    pub(crate) fn getter_parameters(&self) -> Option<&[binder::ParameterSlot]> {
         self.semantic
             .binder()
             .get_parameters_for_definition(self.ir_node.id())
@@ -29,7 +29,7 @@ impl StateVariableDefinitionStruct {
 
     /// The getter's outputs, matching its return type, or `None` if the
     /// variable has no getter.
-    pub(crate) fn getter_return_parameters(&self) -> Option<&[binder::ParameterDefinition]> {
+    pub(crate) fn getter_return_parameters(&self) -> Option<&[binder::ParameterSlot]> {
         self.getter()
             .map(|getter| getter.return_parameters.as_slice())
     }

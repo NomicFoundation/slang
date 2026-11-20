@@ -194,8 +194,6 @@ impl<'a> Pass<'a> {
                     continue;
                 };
                 debug_assert!(!return_parameters.is_empty(), "getter without outputs");
-                self.binder
-                    .debug_assert_named_parameters_are_definitions(&return_parameters);
                 let parameters_scope_id = self.binder.insert_scope(Scope::Parameters(parameters));
                 let Definition::StateVariable(definition) = self.binder.get_definition_mut(node_id)
                 else {

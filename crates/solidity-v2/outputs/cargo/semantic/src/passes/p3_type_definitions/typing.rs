@@ -5,7 +5,7 @@ use slang_solidity_v2_common::nodes::NodeId;
 use slang_solidity_v2_ir::ir;
 
 use super::Pass;
-use crate::binder::{Definition, ParameterDefinition, ParametersScope};
+use crate::binder::{Definition, ParameterSlot, ParametersScope};
 use crate::types::{
     AddressType, ArrayType, CallMode, ContractType, DataLocation, EnumType, FixedSizeArrayType,
     FunctionType, FunctionTypeMutability, InterfaceType, LibraryType, MappingType, StringType,
@@ -244,14 +244,14 @@ impl Pass<'_> {
         receiver_type_id: Option<TypeId>,
         state_variable: &ir::StateVariableDefinition,
         type_id: TypeId,
-    ) -> Option<(TypeId, ParametersScope, Vec<ParameterDefinition>)> {
+    ) -> Option<(TypeId, ParametersScope, Vec<ParameterSlot>)> {
         let (inputs, target) = self.collect_getter_inputs(state_variable, type_id);
         let (return_type, outputs) = self.collect_getter_outputs(state_variable, &target)?;
 
         let parameter_types = inputs
             .parameters
             .iter()
-            .map(|input| input.type_id.expect("getter inputs are typed"))
+            .map(|input| input.type_id().expect("getter inputs are typed"))
             .collect();
         let getter_type = Type::Function(FunctionType {
             definition_id: Some(state_variable.id()),
@@ -295,7 +295,7 @@ impl Pass<'_> {
                         unreachable!("a mapping type is declared by a mapping type name");
                     };
                     let key = &mapping_type.key_type;
-                    inputs.add_typed_parameter(key.name_as_string(), key.id(), *key_type_id);
+                    inputs.add_parameter(self.typed_getter_slot(key, *key_type_id));
 
                     target.type_id = *value_type_id;
                     target.mapping_value = Some(&mapping_type.value_type);
@@ -307,7 +307,10 @@ impl Pass<'_> {
                         unreachable!("an array type is declared by an array type name");
                     };
                     // The index has no node of its own: link it to its array.
-                    inputs.add_typed_parameter(None, array_type_name.id(), self.types.uint256());
+                    inputs.add_parameter(ParameterSlot::typed_unnamed(
+                        array_type_name.id(),
+                        self.types.uint256(),
+                    ));
 
                     target.type_id = *element_type;
                     // Array items of a mapping value keep their name in the
@@ -326,7 +329,7 @@ impl Pass<'_> {
         &mut self,
         state_variable: &ir::StateVariableDefinition,
         target: &GetterTarget<'_>,
-    ) -> Option<(TypeId, Vec<ParameterDefinition>)> {
+    ) -> Option<(TypeId, Vec<ParameterSlot>)> {
         let return_type = match self.types.get_type_by_id(target.type_id) {
             Type::Address(_)
             | Type::Boolean
@@ -365,16 +368,8 @@ impl Pass<'_> {
         // The output is a single value: it's declared by the mapping value, if
         // any, or else by the state variable itself.
         let output = match target.mapping_value {
-            Some(parameter) => ParameterDefinition {
-                name: parameter.name_as_string(),
-                node_id: parameter.id(),
-                type_id: Some(return_type),
-            },
-            None => ParameterDefinition {
-                name: None,
-                node_id: state_variable.id(),
-                type_id: Some(return_type),
-            },
+            Some(parameter) => self.typed_getter_slot(parameter, return_type),
+            None => ParameterSlot::typed_unnamed(state_variable.id(), return_type),
         };
         Some((return_type, vec![output]))
     }
@@ -386,7 +381,7 @@ impl Pass<'_> {
     fn collect_getter_struct_outputs(
         &mut self,
         definition_id: NodeId,
-    ) -> Option<(TypeId, Vec<ParameterDefinition>)> {
+    ) -> Option<(TypeId, Vec<ParameterSlot>)> {
         let Some(Definition::Struct(struct_definition)) =
             self.binder.find_definition_by_id(definition_id)
         else {
@@ -412,25 +407,39 @@ impl Pass<'_> {
                 self.types
                     .register_type_with_data_location(member_type, DataLocation::Memory)
             };
-            outputs.push(ParameterDefinition {
-                name: Some(member.name.text.clone()),
-                node_id: member.id(),
-                type_id: Some(member_type_id),
-            });
+            let Some(member_definition) = self.binder.find_definition_by_id(member.id()) else {
+                unreachable!("struct member has no definition");
+            };
+            outputs.push(ParameterSlot::typed_named(
+                member_definition,
+                member_type_id,
+            ));
         }
 
         let return_type = match outputs.as_slice() {
             [] => return None,
-            [output] => output.type_id.expect("getter output is typed"),
+            [output] => output.type_id().expect("getter output is typed"),
             _ => {
                 let types = outputs
                     .iter()
-                    .map(|output| output.type_id.expect("getter output is typed"))
+                    .map(|output| output.type_id().expect("getter output is typed"))
                     .collect();
                 self.types.register_type(Type::Tuple(TupleType { types }))
             }
         };
         Some((return_type, outputs))
+    }
+
+    /// The getter slot declared by a mapping's key or value `parameter`,
+    /// named after its definition if it has a name.
+    fn typed_getter_slot(&self, parameter: &ir::Parameter, type_id: TypeId) -> ParameterSlot {
+        if parameter.name.is_none() {
+            return ParameterSlot::typed_unnamed(parameter.id(), type_id);
+        }
+        let Some(definition) = self.binder.find_definition_by_id(parameter.id()) else {
+            unreachable!("named parameter has no definition");
+        };
+        ParameterSlot::typed_named(definition, type_id)
     }
 
     pub(super) fn visit_parameters(&mut self, parameters: &ir::Parameters) {

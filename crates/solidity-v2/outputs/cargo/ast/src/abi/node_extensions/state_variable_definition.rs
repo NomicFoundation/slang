@@ -29,7 +29,7 @@ impl StateVariableDefinitionStruct {
 
     /// The getter's ABI inputs and outputs.
     fn extract_getter_type_parameters_abi(&self) -> Option<(Vec<Parameter>, Vec<Parameter>)> {
-        let to_abi = |parameters: &[binder::ParameterDefinition]| {
+        let to_abi = |parameters: &[binder::ParameterSlot]| {
             parameters
                 .iter()
                 .map(|parameter| {

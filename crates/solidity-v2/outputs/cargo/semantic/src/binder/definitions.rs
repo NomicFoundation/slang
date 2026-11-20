@@ -164,7 +164,7 @@ pub struct StateVariableGetter {
     pub(crate) parameters_scope_id: ScopeId,
     /// The getter's outputs, matching its return type: one per returned struct
     /// member, or the single returned value. Never empty.
-    pub return_parameters: Vec<super::scopes::ParameterDefinition>,
+    pub return_parameters: Vec<super::scopes::ParameterSlot>,
 }
 
 #[derive(Debug, Eq, Ord, PartialEq, PartialOrd)]

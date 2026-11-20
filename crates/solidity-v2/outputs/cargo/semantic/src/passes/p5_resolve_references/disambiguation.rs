@@ -1,7 +1,7 @@
 use slang_solidity_v2_common::nodes::NodeId;
 
 use super::Pass;
-use crate::binder::{Definition, ParameterDefinition, Scope};
+use crate::binder::{Definition, ParameterSlot, Scope};
 use crate::types::{FunctionType, Type, TypeId, UserMetaType};
 
 /// The outcome of selecting one overload out of a set of candidates.
@@ -33,7 +33,7 @@ impl Pass<'_> {
     fn get_function_definition_parameters(
         &self,
         definition_id: Option<NodeId>,
-    ) -> Option<&[ParameterDefinition]> {
+    ) -> Option<&[ParameterSlot]> {
         let Some(Definition::Function(function_definition)) =
             self.binder.find_definition_by_id(definition_id?)
         else {
@@ -109,7 +109,7 @@ impl Pass<'_> {
         type_ids: &[TypeId],
         argument_count: usize,
         receiver_type_id: Option<TypeId>,
-        parameters_match: impl Fn(&[ParameterDefinition], bool) -> bool,
+        parameters_match: impl Fn(&[ParameterSlot], bool) -> bool,
     ) -> OverloadMatch<TypeId> {
         OverloadMatch::from_matches(type_ids.iter().copied().filter(|type_id| {
             let Some(function_type) = self.candidate_function_type(*type_id) else {
@@ -143,7 +143,7 @@ impl Pass<'_> {
                 } else if parameters.len() == argument_count + 1
                     && function_type.implicit_receiver_type.is_none()
                     && parameters.first().is_some_and(|parameter| {
-                        parameter.type_id.is_some_and(|parameter_type| {
+                        parameter.type_id().is_some_and(|parameter_type| {
                             self.parameter_type_matches_argument_type(
                                 parameter_type,
                                 receiver_type_id,
@@ -192,7 +192,7 @@ impl Pass<'_> {
 
     fn parameters_match_positional_arguments(
         &self,
-        parameters: &[ParameterDefinition],
+        parameters: &[ParameterSlot],
         argument_types: &[TypeId],
         external_call: bool,
     ) -> bool {
@@ -200,7 +200,7 @@ impl Pass<'_> {
             .iter()
             .zip(argument_types)
             .all(|(parameter, argument_type)| {
-                parameter.type_id.is_some_and(|type_id| {
+                parameter.type_id().is_some_and(|type_id| {
                     self.parameter_type_matches_argument_type(
                         type_id,
                         *argument_type,
@@ -231,7 +231,10 @@ impl Pass<'_> {
             argument_types.len(),
             receiver_type_id,
             |parameters, external_call| {
-                if parameters.iter().any(|parameter| parameter.name.is_none()) {
+                if parameters
+                    .iter()
+                    .any(|parameter| parameter.name().is_none())
+                {
                     // function has an unnamed parameter and we cannot use it
                     // for matching named arguments
                     return false;
@@ -243,29 +246,24 @@ impl Pass<'_> {
 
     fn parameters_match_named_arguments(
         &self,
-        parameters: &[ParameterDefinition],
+        parameters: &[ParameterSlot],
         argument_types: &[(&str, TypeId)],
         external_call: bool,
     ) -> bool {
         argument_types.iter().all(|(argument_name, argument_type)| {
-            let Some(parameter) = parameters.iter().find(|parameter| {
-                parameter
-                    .name
-                    .as_ref()
-                    .is_some_and(|name| name == argument_name)
-            }) else {
+            let Some(parameter) = parameters
+                .iter()
+                .find(|parameter| parameter.name() == Some(*argument_name))
+            else {
                 return false;
             };
-            parameter.type_id.is_some_and(|type_id| {
+            parameter.type_id().is_some_and(|type_id| {
                 self.parameter_type_matches_argument_type(type_id, *argument_type, external_call)
             })
         })
     }
 
-    fn get_event_definition_parameters(
-        &self,
-        definition_id: NodeId,
-    ) -> Option<&[ParameterDefinition]> {
+    fn get_event_definition_parameters(&self, definition_id: NodeId) -> Option<&[ParameterSlot]> {
         let Some(Definition::Event(event_definition)) =
             self.binder.find_definition_by_id(definition_id)
         else {
@@ -306,7 +304,7 @@ impl Pass<'_> {
                 return false;
             };
             // cannot match if any parameter is unnamed
-            parameters.iter().all(|parameter| parameter.name.is_some())
+            parameters.iter().all(|parameter| parameter.name().is_some())
                 // argument count matches, check that all types are implicitly convertible
                 && parameters.len() == argument_types.len()
                 && self.parameters_match_named_arguments(parameters, argument_types, false)
