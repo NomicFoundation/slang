@@ -1,0 +1,11 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 1
+
+[TypeError 6744] Error: Internal or recursive type is not allowed for public state variables.
+    ╭─[input.sol:10:5]
+    │
+ 10 │     S public s;
+    │     ─────┬────  
+    │          ╰────── Error occurred here.
+────╯

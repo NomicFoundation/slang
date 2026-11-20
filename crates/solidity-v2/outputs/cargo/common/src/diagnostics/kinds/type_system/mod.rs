@@ -18,9 +18,11 @@ mod expression_not_indexable;
 mod expression_not_sliceable;
 mod fallback_function_mutability;
 mod fallback_function_signature;
+mod getter_without_return_values;
 mod incompatible_conditional_branches;
 mod incompatible_constant_operator;
 mod invalid_base;
+mod invalid_getter_return_type;
 mod invalid_utf8_string_literal;
 mod literal_too_large;
 mod missing_index;
@@ -56,9 +58,11 @@ pub use expression_not_indexable::ExpressionNotIndexable;
 pub use expression_not_sliceable::ExpressionNotSliceable;
 pub use fallback_function_mutability::FallbackFunctionMutability;
 pub use fallback_function_signature::FallbackFunctionSignature;
+pub use getter_without_return_values::GetterWithoutReturnValues;
 pub use incompatible_conditional_branches::IncompatibleConditionalBranches;
 pub use incompatible_constant_operator::IncompatibleConstantOperator;
 pub use invalid_base::InvalidBase;
+pub use invalid_getter_return_type::InvalidGetterReturnType;
 pub use invalid_utf8_string_literal::InvalidUtf8StringLiteral;
 pub use literal_too_large::LiteralTooLarge;
 pub use missing_index::MissingIndex;
@@ -125,6 +129,12 @@ define_diagnostic_kind! {
         StorageLayoutBasePastEnd(StorageLayoutBasePastEnd),
         /// A state variable stores a type that extends past the end of storage.
         TypeTooLargeForStorage(TypeTooLargeForStorage),
+        /// The getter of a public state variable would return a value with no
+        /// external representation.
+        InvalidGetterReturnType(InvalidGetterReturnType),
+        /// The getter of a public state variable would return a struct with
+        /// all its members omitted.
+        GetterWithoutReturnValues(GetterWithoutReturnValues),
         /// A contract's state variables extend past the end of storage.
         ContractTooLargeForStorage(ContractTooLargeForStorage),
         /// A function is called through a contract/interface type name (eg.

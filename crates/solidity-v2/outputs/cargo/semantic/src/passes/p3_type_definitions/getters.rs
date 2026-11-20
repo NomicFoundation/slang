@@ -4,11 +4,33 @@ use slang_solidity_v2_common::nodes::NodeId;
 use slang_solidity_v2_ir::ir;
 
 use super::Pass;
-use crate::binder::{Definition, ParameterSlot, ParametersScope};
+use crate::binder::{Definition, ParameterSlot, ParametersScope, RecursionKind};
 use crate::types::{
     ArrayType, CallMode, DataLocation, FixedSizeArrayType, FunctionType, FunctionTypeMutability,
     MappingType, StructType, TupleType, Type, TypeId,
 };
+
+/// Why a public state variable has no getter.
+pub(super) enum GetterError {
+    /// A type it needs is unresolved, or is a library, which is not valid for
+    /// a variable. Neither is a problem of the getter itself.
+    Unresolved,
+    /// It would return a value with no external representation.
+    InvalidReturnType,
+    /// It would return a struct with all its members omitted.
+    NoReturnValues,
+}
+
+/// The storage element a getter reads, reached by indexing the state variable
+/// with the getter's inputs.
+struct GetterTarget<'a> {
+    /// The element's type, before moving it to memory.
+    type_id: TypeId,
+    /// The value parameter of the innermost mapping indexed through, which
+    /// names and declares the single output. It is kept when arrays are
+    /// indexed after it, and is `None` if there are no mappings.
+    mapping_value: Option<&'a ir::Parameter>,
+}
 
 impl Pass<'_> {
     /// Computes the type of the getter generated for the public state variable
@@ -18,14 +40,13 @@ impl Pass<'_> {
     /// The getter takes one input parameter per mapping key or array index
     /// needed to reach a value that is not indexed further, and returns that
     /// value: a tuple of values per returnable member if it is a struct, or a
-    /// single output otherwise. Returns `None` if the value is a library, or a
-    /// struct with an unresolved member type or with no returnable member.
+    /// single output otherwise. Returns why there's no getter otherwise.
     pub(super) fn compute_getter_type(
         &mut self,
         receiver_type_id: Option<TypeId>,
         state_variable: &ir::StateVariableDefinition,
         type_id: TypeId,
-    ) -> Option<(TypeId, ParametersScope, Vec<ParameterSlot>)> {
+    ) -> Result<(TypeId, ParametersScope, Vec<ParameterSlot>), GetterError> {
         let (inputs, target) = self.collect_getter_inputs(state_variable, type_id);
         let (return_type, outputs) = self.collect_getter_outputs(state_variable, &target)?;
 
@@ -42,7 +63,7 @@ impl Pass<'_> {
             mutability: FunctionTypeMutability::View,
             call_mode: CallMode::External,
         });
-        Some((self.types.register_type(getter_type), inputs, outputs))
+        Ok((self.types.register_type(getter_type), inputs, outputs))
     }
 
     /// Peels the mappings and arrays off the type of `state_variable`, adding
@@ -110,7 +131,7 @@ impl Pass<'_> {
         &mut self,
         state_variable: &ir::StateVariableDefinition,
         target: &GetterTarget<'_>,
-    ) -> Option<(TypeId, Vec<ParameterSlot>)> {
+    ) -> Result<(TypeId, Vec<ParameterSlot>), GetterError> {
         let return_type = match self.types.get_type_by_id(target.type_id) {
             Type::Address(_)
             | Type::Boolean
@@ -118,10 +139,15 @@ impl Pass<'_> {
             | Type::Contract(_)
             | Type::Enum(_)
             | Type::FixedPointNumber(_)
-            | Type::Function(_)
             | Type::Integer(_)
             | Type::Interface(_)
             | Type::UserDefinedValue(_) => target.type_id,
+            Type::Function(function_type) => {
+                if !function_type.call_mode.is_external() {
+                    return Err(GetterError::InvalidReturnType);
+                }
+                target.type_id
+            }
             Type::Bytes(_) => self.types.bytes_memory(),
             Type::String(_) => self.types.string_memory(),
 
@@ -135,7 +161,7 @@ impl Pass<'_> {
             }
             // A library is resolved as a type, but it's not a valid one for a
             // variable, so there's no getter to compute.
-            Type::Library(_) => return None,
+            Type::Library(_) => return Err(GetterError::Unresolved),
             // Cannot be the type of a state variable.
             Type::ArraySlice(_)
             | Type::Error(_)
@@ -154,17 +180,17 @@ impl Pass<'_> {
             Some(parameter) => self.typed_getter_slot(parameter, return_type),
             None => ParameterSlot::typed_unnamed(state_variable.id(), return_type),
         };
-        Some((return_type, vec![output]))
+        Ok((return_type, vec![output]))
     }
 
     /// Returns a tuple of the members of the struct `definition_id` that a
-    /// getter can return (mappings and arrays are skipped), in declaration
+    /// getter returns (mappings and arrays are omitted), in declaration
     /// order, with one output slot per member. A single member is returned
     /// as itself rather than as a one-element tuple.
     fn collect_getter_struct_outputs(
         &mut self,
         definition_id: NodeId,
-    ) -> Option<(TypeId, Vec<ParameterSlot>)> {
+    ) -> Result<(TypeId, Vec<ParameterSlot>), GetterError> {
         let Some(Definition::Struct(struct_definition)) =
             self.binder.find_definition_by_id(definition_id)
         else {
@@ -175,11 +201,18 @@ impl Pass<'_> {
 
         let mut outputs = Vec::new();
         for member in struct_node.members.iter() {
-            let member_type_id = self.binder.node_typing(member.id()).as_type_id()?;
+            let Some(member_type_id) = self.binder.node_typing(member.id()).as_type_id() else {
+                return Err(GetterError::Unresolved);
+            };
             let member_type = self.types.get_type_by_id(member_type_id);
-            if !member_type.can_return_from_getter_directly() {
+            if matches!(
+                member_type,
+                Type::Array(_) | Type::FixedSizeArray(_) | Type::Mapping(_)
+            ) {
                 continue;
             }
+            self.check_getter_can_return_whole(member_type_id)?;
+            let member_type = self.types.get_type_by_id(member_type_id);
             let member_type_id = if member_type
                 .data_location()
                 .is_none_or(|location| location == DataLocation::Memory)
@@ -200,7 +233,7 @@ impl Pass<'_> {
         }
 
         let return_type = match outputs.as_slice() {
-            [] => return None,
+            [] => return Err(GetterError::NoReturnValues),
             [output] => output.type_id().expect("getter output is typed"),
             _ => {
                 let types = outputs
@@ -210,7 +243,75 @@ impl Pass<'_> {
                 self.types.register_type(Type::Tuple(TupleType { types }))
             }
         };
-        Some((return_type, outputs))
+        Ok((return_type, outputs))
+    }
+
+    /// Checks that a getter can return a value of type `type_id` as a whole,
+    /// as it does a struct member: it needs an external representation, which
+    /// an internal function, a mapping or a recursive struct doesn't have.
+    fn check_getter_can_return_whole(&self, type_id: TypeId) -> Result<(), GetterError> {
+        match self.types.get_type_by_id(type_id) {
+            Type::Address(_)
+            | Type::Boolean
+            | Type::ByteArray(_)
+            | Type::Bytes(_)
+            | Type::Contract(_)
+            | Type::Enum(_)
+            | Type::FixedPointNumber(_)
+            | Type::Integer(_)
+            | Type::Interface(_)
+            | Type::String(_)
+            | Type::UserDefinedValue(_) => Ok(()),
+            Type::Function(function_type) => {
+                if function_type.call_mode.is_external() {
+                    Ok(())
+                } else {
+                    Err(GetterError::InvalidReturnType)
+                }
+            }
+            Type::Array(ArrayType { element_type, .. })
+            | Type::FixedSizeArray(FixedSizeArrayType { element_type, .. }) => {
+                self.check_getter_can_return_whole(*element_type)
+            }
+            Type::Mapping(_) => Err(GetterError::InvalidReturnType),
+            Type::Struct(StructType { definition_id, .. }) => {
+                let Some(Definition::Struct(struct_definition)) =
+                    self.binder.find_definition_by_id(*definition_id)
+                else {
+                    unreachable!("struct type does not refer to a struct definition");
+                };
+                // A struct recursive only through function types is accepted,
+                // and checking its members terminates, as the parameters of a
+                // function type are not looked into.
+                if matches!(
+                    struct_definition.recursive,
+                    Some(RecursionKind::ByReference | RecursionKind::ByValue)
+                ) {
+                    return Err(GetterError::InvalidReturnType);
+                }
+                for member in struct_definition.ir_node.members.iter() {
+                    let Some(member_type_id) = self.binder.node_typing(member.id()).as_type_id()
+                    else {
+                        return Err(GetterError::Unresolved);
+                    };
+                    self.check_getter_can_return_whole(member_type_id)?;
+                }
+                Ok(())
+            }
+            // A library is resolved as a type, but it's not a valid one for a
+            // variable.
+            Type::Library(_) => Err(GetterError::Unresolved),
+            // Cannot be the type of a struct member.
+            Type::ArraySlice(_)
+            | Type::Error(_)
+            | Type::Event(_)
+            | Type::Literal(_)
+            | Type::MetaType(_)
+            | Type::Tuple(_)
+            | Type::UserMetaType(_) => {
+                unreachable!("cannot be the type of a struct member: {type_id:?}")
+            }
+        }
     }
 
     /// The getter slot declared by a mapping's key or value `parameter`,
@@ -224,15 +325,4 @@ impl Pass<'_> {
         };
         ParameterSlot::typed_named(definition, type_id)
     }
-}
-
-/// The storage element a getter reads, reached by indexing the state variable
-/// with the getter's inputs.
-struct GetterTarget<'a> {
-    /// The element's type, before moving it to memory.
-    type_id: TypeId,
-    /// The value parameter of the innermost mapping indexed through, which
-    /// names and declares the single output. It is kept when arrays are
-    /// indexed after it, and is `None` if there are no mappings.
-    mapping_value: Option<&'a ir::Parameter>,
 }
