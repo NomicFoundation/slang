@@ -382,7 +382,7 @@ impl<'a> BuiltInsResolver<'a> {
                 "length" => Some(InternalBuiltIn::Length),
                 "pop" if *location == DataLocation::Storage => Some(InternalBuiltIn::ArrayPop),
                 "push" if *location == DataLocation::Storage => {
-                    Some(InternalBuiltIn::ArrayPush(self.types.uint8()))
+                    Some(InternalBuiltIn::ArrayPush(self.types.bytes1()))
                 }
                 _ => None,
             },

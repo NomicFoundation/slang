@@ -142,6 +142,11 @@ mod built_ins {
     }
 
     #[test]
+    fn bytes_push() -> Result<()> {
+        run("built_ins", "bytes_push")
+    }
+
+    #[test]
     fn erc7201() -> Result<()> {
         run("built_ins", "erc7201")
     }
