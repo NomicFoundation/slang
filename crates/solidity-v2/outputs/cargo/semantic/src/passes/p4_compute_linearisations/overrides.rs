@@ -104,7 +104,7 @@ impl<'a> HierarchyChecker<'a> {
         // From 0.8.8 the specifier is optional when overriding an interface
         // function.
         if !overriding.has_override_specifier()
-            && (self.language_version < LanguageVersion::V0_8_8
+            && (self.binder.language_version() < LanguageVersion::V0_8_8
                 || !overridden.is_interface_function())
         {
             self.report(
@@ -147,7 +147,8 @@ impl<'a> HierarchyChecker<'a> {
         // Before 0.8.5 this only applies when the overridden member is a function.
         if !overriding.is_implemented()
             && overridden.is_implemented()
-            && (overridden.is_function() || self.language_version >= LanguageVersion::V0_8_5)
+            && (overridden.is_function()
+                || self.binder.language_version() >= LanguageVersion::V0_8_5)
         {
             self.report(
                 overriding,
@@ -187,7 +188,7 @@ impl<'a> HierarchyChecker<'a> {
             // Two functions match even if a parameter or return value is
             // calldata in one and memory in the other. From 0.8.14 that is only
             // allowed when the overridden function is external.
-            if self.language_version >= LanguageVersion::V0_8_14
+            if self.binder.language_version() >= LanguageVersion::V0_8_14
                 && overriding.is_function()
                 && !return_types_differ
                 && overridden.visibility() != ir::FunctionVisibility::External

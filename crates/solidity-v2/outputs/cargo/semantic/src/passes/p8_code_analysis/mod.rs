@@ -5,7 +5,6 @@ mod receive_functions;
 
 use slang_solidity_v2_common::diagnostics::DiagnosticCollection;
 use slang_solidity_v2_common::evm_targets::EvmTarget;
-use slang_solidity_v2_common::versions::LanguageVersion;
 
 use crate::binder::Binder;
 use crate::context::{ContractData, FileNodeMapper};
@@ -17,7 +16,6 @@ use crate::types::TypeRegistry;
 pub fn run(
     binder: &Binder,
     contract_data: &ContractData,
-    language_version: LanguageVersion,
     evm_target: EvmTarget,
     file_node_mapper: &FileNodeMapper,
     types: &TypeRegistry,
@@ -25,13 +23,7 @@ pub fn run(
 ) {
     cycle_detection::run(binder, contract_data, file_node_mapper, diagnostics);
 
-    built_ins::validate_built_in_references(
-        binder,
-        language_version,
-        evm_target,
-        file_node_mapper,
-        diagnostics,
-    );
+    built_ins::validate_built_in_references(binder, evm_target, file_node_mapper, diagnostics);
 
     fallback_functions::check_fallback_functions(binder, types, file_node_mapper, diagnostics);
     receive_functions::check_receive_functions(binder, types, file_node_mapper, diagnostics);

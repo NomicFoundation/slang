@@ -6,7 +6,6 @@ use slang_solidity_v2_common::diagnostics::kinds::structure::{
 };
 use slang_solidity_v2_common::files::FileId;
 use slang_solidity_v2_common::nodes::NodeId;
-use slang_solidity_v2_common::versions::LanguageVersion;
 use slang_solidity_v2_ir::ir;
 
 use crate::binder::{Binder, Definition, FileScope, ParametersScope, Scope, ScopeId};
@@ -26,20 +25,13 @@ mod visitor;
 pub fn run(
     files: &[impl SemanticFile],
     binder: &mut Binder,
-    language_version: LanguageVersion,
     diagnostics: &mut DiagnosticCollection,
 ) {
     // Import aliases are noted as they are declared, so that the alias
     // resolution below doesn't have to look for them among all definitions.
     let mut imported_symbol_ids = Vec::new();
     for file in files {
-        Pass::visit_file(
-            file,
-            binder,
-            language_version,
-            diagnostics,
-            &mut imported_symbol_ids,
-        );
+        Pass::visit_file(file, binder, diagnostics, &mut imported_symbol_ids);
     }
 
     // The default-import graph is now final. Precompute each file's transitive
@@ -82,7 +74,6 @@ struct Pass<'a, F: SemanticFile> {
     // placeholder.
     modifier_placeholder_found: Option<bool>,
     binder: &'a mut Binder,
-    language_version: LanguageVersion,
     diagnostics: &'a mut DiagnosticCollection,
     // Accumulates the node ids of the import aliases declared while visiting,
     // across all the files of the compilation unit, for `run` to resolve once
@@ -94,7 +85,6 @@ impl<'a, F: SemanticFile> Pass<'a, F> {
     fn visit_file(
         file: &'a F,
         binder: &'a mut Binder,
-        language_version: LanguageVersion,
         diagnostics: &'a mut DiagnosticCollection,
         imported_symbol_ids: &'a mut Vec<NodeId>,
     ) {
@@ -105,7 +95,6 @@ impl<'a, F: SemanticFile> Pass<'a, F> {
             unchecked_depth: 0,
             modifier_placeholder_found: None,
             binder,
-            language_version,
             diagnostics,
             imported_symbol_ids,
         };

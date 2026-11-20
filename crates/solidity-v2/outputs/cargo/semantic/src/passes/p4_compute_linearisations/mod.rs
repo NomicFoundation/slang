@@ -10,7 +10,6 @@ use std::sync::Arc;
 use slang_solidity_v2_common::collections::{DefaultWithCapacity, Map, Set};
 use slang_solidity_v2_common::diagnostics::DiagnosticCollection;
 use slang_solidity_v2_common::nodes::NodeId;
-use slang_solidity_v2_common::versions::LanguageVersion;
 use slang_solidity_v2_ir::ir;
 use slang_solidity_v2_ir::ir::NodeIdentity;
 
@@ -60,7 +59,6 @@ use crate::types::TypeRegistry;
 pub fn run(
     binder: &Binder,
     types: &TypeRegistry,
-    language_version: LanguageVersion,
     file_node_mapper: &FileNodeMapper,
     diagnostics: &mut DiagnosticCollection,
 ) -> ContractData {
@@ -94,7 +92,6 @@ pub fn run(
         HierarchyChecker::check(
             binder,
             types,
-            language_version,
             file_node_mapper,
             diagnostics,
             &mut reported_redeclaration,
@@ -135,9 +132,6 @@ pub fn run(
 struct HierarchyChecker<'a> {
     binder: &'a Binder,
     types: &'a TypeRegistry,
-    /// The version being compiled for. Some override rules only apply from a
-    /// given version on.
-    language_version: LanguageVersion,
     file_node_mapper: &'a FileNodeMapper,
     diagnostics: &'a mut DiagnosticCollection,
     reported_redeclaration: &'a mut Set<NodeId>,
@@ -172,7 +166,6 @@ impl<'a> HierarchyChecker<'a> {
     fn check(
         binder: &'a Binder,
         types: &'a TypeRegistry,
-        language_version: LanguageVersion,
         file_node_mapper: &'a FileNodeMapper,
         diagnostics: &'a mut DiagnosticCollection,
         reported_redeclaration: &'a mut Set<NodeId>,
@@ -216,7 +209,6 @@ impl<'a> HierarchyChecker<'a> {
         let mut checker = HierarchyChecker {
             binder,
             types,
-            language_version,
             file_node_mapper,
             diagnostics,
             reported_redeclaration,

@@ -43,7 +43,7 @@ impl Pass<'_> {
     /// valid).
     fn type_name_scope_id(&self) -> ScopeId {
         let scope_id = self.current_scope_id();
-        if self.language_version >= LanguageVersion::V0_8_5
+        if self.binder.language_version() >= LanguageVersion::V0_8_5
             && let Scope::Signature(signature_scope) = self.binder.get_scope_by_id(scope_id)
             && matches!(
                 self.binder.find_definition_by_id(signature_scope.node_id),
