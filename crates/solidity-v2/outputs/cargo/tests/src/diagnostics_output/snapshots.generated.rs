@@ -6339,6 +6339,23 @@ mod type_system {
         }
     }
 
+    mod compound_assignment_to_tuple {
+        use super::*;
+
+        #[test]
+        fn accepted_parenthesised() -> Result<()> {
+            run(
+                "type_system/compound_assignment_to_tuple",
+                "accepted_parenthesised",
+            )
+        }
+
+        #[test]
+        fn tuple() -> Result<()> {
+            run("type_system/compound_assignment_to_tuple", "tuple")
+        }
+    }
+
     mod contract_too_large_for_storage {
         use super::*;
 
