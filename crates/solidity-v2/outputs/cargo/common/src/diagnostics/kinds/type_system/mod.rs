@@ -31,6 +31,7 @@ mod storage_layout_base_out_of_range;
 mod storage_layout_base_past_end;
 mod string_index_access;
 mod type_too_large_for_storage;
+mod write_to_calldata;
 mod write_to_constant;
 
 pub use array_length_fractional::ArrayLengthFractional;
@@ -67,6 +68,7 @@ pub use storage_layout_base_out_of_range::StorageLayoutBaseOutOfRange;
 pub use storage_layout_base_past_end::StorageLayoutBasePastEnd;
 pub use string_index_access::StringIndexAccess;
 pub use type_too_large_for_storage::TypeTooLargeForStorage;
+pub use write_to_calldata::{CalldataWriteKind, WriteToCalldata};
 pub use write_to_constant::WriteToConstant;
 
 use crate::diagnostics::kinds::DiagnosticKind;
@@ -156,6 +158,9 @@ define_diagnostic_kind! {
         WriteToConstant(WriteToConstant),
         /// A compound assignment has a tuple on its left hand side.
         CompoundAssignmentToTuple(CompoundAssignmentToTuple),
+        /// An element of a calldata array or a member of a calldata struct is
+        /// written to.
+        WriteToCalldata(WriteToCalldata),
         /// An explicit type conversion is not allowed from the type of its
         /// argument to the target type.
         ExplicitConversionNotAllowed(ExplicitConversionNotAllowed),

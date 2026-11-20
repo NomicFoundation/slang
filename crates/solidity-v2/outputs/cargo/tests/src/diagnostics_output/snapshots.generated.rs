@@ -7283,6 +7283,14 @@ mod type_system {
         }
 
         #[test]
+        fn fixed_bytes_element_delete() -> Result<()> {
+            run(
+                "type_system/expression_not_an_lvalue",
+                "fixed_bytes_element_delete",
+            )
+        }
+
+        #[test]
         fn function_name() -> Result<()> {
             run("type_system/expression_not_an_lvalue", "function_name")
         }
@@ -8037,6 +8045,30 @@ mod type_system {
         #[test]
         fn struct_variable() -> Result<()> {
             run("type_system/type_too_large_for_storage", "struct_variable")
+        }
+    }
+
+    mod write_to_calldata {
+        use super::*;
+
+        #[test]
+        fn accepted_copies() -> Result<()> {
+            run("type_system/write_to_calldata", "accepted_copies")
+        }
+
+        #[test]
+        fn array_element() -> Result<()> {
+            run("type_system/write_to_calldata", "array_element")
+        }
+
+        #[test]
+        fn struct_member() -> Result<()> {
+            run("type_system/write_to_calldata", "struct_member")
+        }
+
+        #[test]
+        fn tuple_component() -> Result<()> {
+            run("type_system/write_to_calldata", "tuple_component")
         }
     }
 

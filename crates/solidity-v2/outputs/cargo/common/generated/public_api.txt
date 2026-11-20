@@ -3664,6 +3664,20 @@ pub fn slang_solidity_v2_common::diagnostics::kinds::syntax::UnsupportedExperime
 pub fn slang_solidity_v2_common::diagnostics::kinds::syntax::UnsupportedExperimentalSolidity::message(&self) -> alloc::string::String
 pub fn slang_solidity_v2_common::diagnostics::kinds::syntax::UnsupportedExperimentalSolidity::severity(&self) -> slang_solidity_v2_common::diagnostics::DiagnosticSeverity
 pub mod slang_solidity_v2_common::diagnostics::kinds::type_system
+pub enum slang_solidity_v2_common::diagnostics::kinds::type_system::CalldataWriteKind
+pub slang_solidity_v2_common::diagnostics::kinds::type_system::CalldataWriteKind::ArrayElement
+pub slang_solidity_v2_common::diagnostics::kinds::type_system::CalldataWriteKind::StructMember
+impl core::clone::Clone for slang_solidity_v2_common::diagnostics::kinds::type_system::CalldataWriteKind
+pub fn slang_solidity_v2_common::diagnostics::kinds::type_system::CalldataWriteKind::clone(&self) -> slang_solidity_v2_common::diagnostics::kinds::type_system::CalldataWriteKind
+impl core::cmp::Eq for slang_solidity_v2_common::diagnostics::kinds::type_system::CalldataWriteKind
+impl core::cmp::PartialEq for slang_solidity_v2_common::diagnostics::kinds::type_system::CalldataWriteKind
+pub fn slang_solidity_v2_common::diagnostics::kinds::type_system::CalldataWriteKind::eq(&self, &slang_solidity_v2_common::diagnostics::kinds::type_system::CalldataWriteKind) -> bool
+impl core::fmt::Debug for slang_solidity_v2_common::diagnostics::kinds::type_system::CalldataWriteKind
+pub fn slang_solidity_v2_common::diagnostics::kinds::type_system::CalldataWriteKind::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::Copy for slang_solidity_v2_common::diagnostics::kinds::type_system::CalldataWriteKind
+impl core::marker::StructuralPartialEq for slang_solidity_v2_common::diagnostics::kinds::type_system::CalldataWriteKind
+impl serde_core::ser::Serialize for slang_solidity_v2_common::diagnostics::kinds::type_system::CalldataWriteKind
+pub fn slang_solidity_v2_common::diagnostics::kinds::type_system::CalldataWriteKind::serialize<__S>(&self, __S) -> core::result::Result<<__S as serde_core::ser::Serializer>::Ok, <__S as serde_core::ser::Serializer>::Error> where __S: serde_core::ser::Serializer
 pub enum slang_solidity_v2_common::diagnostics::kinds::type_system::NotAValueKind
 pub slang_solidity_v2_common::diagnostics::kinds::type_system::NotAValueKind::BuiltIn
 pub slang_solidity_v2_common::diagnostics::kinds::type_system::NotAValueKind::Super
@@ -3714,6 +3728,7 @@ pub slang_solidity_v2_common::diagnostics::kinds::type_system::TypeSystemDiagnos
 pub slang_solidity_v2_common::diagnostics::kinds::type_system::TypeSystemDiagnosticKind::StorageLayoutBasePastEnd(slang_solidity_v2_common::diagnostics::kinds::type_system::StorageLayoutBasePastEnd)
 pub slang_solidity_v2_common::diagnostics::kinds::type_system::TypeSystemDiagnosticKind::StringIndexAccess(slang_solidity_v2_common::diagnostics::kinds::type_system::StringIndexAccess)
 pub slang_solidity_v2_common::diagnostics::kinds::type_system::TypeSystemDiagnosticKind::TypeTooLargeForStorage(slang_solidity_v2_common::diagnostics::kinds::type_system::TypeTooLargeForStorage)
+pub slang_solidity_v2_common::diagnostics::kinds::type_system::TypeSystemDiagnosticKind::WriteToCalldata(slang_solidity_v2_common::diagnostics::kinds::type_system::WriteToCalldata)
 pub slang_solidity_v2_common::diagnostics::kinds::type_system::TypeSystemDiagnosticKind::WriteToConstant(slang_solidity_v2_common::diagnostics::kinds::type_system::WriteToConstant)
 impl core::clone::Clone for slang_solidity_v2_common::diagnostics::kinds::type_system::TypeSystemDiagnosticKind
 pub fn slang_solidity_v2_common::diagnostics::kinds::type_system::TypeSystemDiagnosticKind::clone(&self) -> slang_solidity_v2_common::diagnostics::kinds::type_system::TypeSystemDiagnosticKind
@@ -3788,6 +3803,8 @@ impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::type_syst
 pub fn slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::type_system::TypeSystemDiagnosticKind) -> Self
 impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::type_system::TypeTooLargeForStorage> for slang_solidity_v2_common::diagnostics::kinds::type_system::TypeSystemDiagnosticKind
 pub fn slang_solidity_v2_common::diagnostics::kinds::type_system::TypeSystemDiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::type_system::TypeTooLargeForStorage) -> Self
+impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::type_system::WriteToCalldata> for slang_solidity_v2_common::diagnostics::kinds::type_system::TypeSystemDiagnosticKind
+pub fn slang_solidity_v2_common::diagnostics::kinds::type_system::TypeSystemDiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::type_system::WriteToCalldata) -> Self
 impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::type_system::WriteToConstant> for slang_solidity_v2_common::diagnostics::kinds::type_system::TypeSystemDiagnosticKind
 pub fn slang_solidity_v2_common::diagnostics::kinds::type_system::TypeSystemDiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::type_system::WriteToConstant) -> Self
 impl core::fmt::Debug for slang_solidity_v2_common::diagnostics::kinds::type_system::TypeSystemDiagnosticKind
@@ -4433,6 +4450,26 @@ impl slang_solidity_v2_common::diagnostics::DiagnosticExtensions for slang_solid
 pub fn slang_solidity_v2_common::diagnostics::kinds::type_system::TypeTooLargeForStorage::code(&self) -> &'static str
 pub fn slang_solidity_v2_common::diagnostics::kinds::type_system::TypeTooLargeForStorage::message(&self) -> alloc::string::String
 pub fn slang_solidity_v2_common::diagnostics::kinds::type_system::TypeTooLargeForStorage::severity(&self) -> slang_solidity_v2_common::diagnostics::DiagnosticSeverity
+pub struct slang_solidity_v2_common::diagnostics::kinds::type_system::WriteToCalldata
+pub slang_solidity_v2_common::diagnostics::kinds::type_system::WriteToCalldata::kind: slang_solidity_v2_common::diagnostics::kinds::type_system::CalldataWriteKind
+impl core::clone::Clone for slang_solidity_v2_common::diagnostics::kinds::type_system::WriteToCalldata
+pub fn slang_solidity_v2_common::diagnostics::kinds::type_system::WriteToCalldata::clone(&self) -> slang_solidity_v2_common::diagnostics::kinds::type_system::WriteToCalldata
+impl core::cmp::Eq for slang_solidity_v2_common::diagnostics::kinds::type_system::WriteToCalldata
+impl core::cmp::PartialEq for slang_solidity_v2_common::diagnostics::kinds::type_system::WriteToCalldata
+pub fn slang_solidity_v2_common::diagnostics::kinds::type_system::WriteToCalldata::eq(&self, &slang_solidity_v2_common::diagnostics::kinds::type_system::WriteToCalldata) -> bool
+impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::type_system::WriteToCalldata> for slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind
+pub fn slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::type_system::WriteToCalldata) -> Self
+impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::type_system::WriteToCalldata> for slang_solidity_v2_common::diagnostics::kinds::type_system::TypeSystemDiagnosticKind
+pub fn slang_solidity_v2_common::diagnostics::kinds::type_system::TypeSystemDiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::type_system::WriteToCalldata) -> Self
+impl core::fmt::Debug for slang_solidity_v2_common::diagnostics::kinds::type_system::WriteToCalldata
+pub fn slang_solidity_v2_common::diagnostics::kinds::type_system::WriteToCalldata::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::StructuralPartialEq for slang_solidity_v2_common::diagnostics::kinds::type_system::WriteToCalldata
+impl serde_core::ser::Serialize for slang_solidity_v2_common::diagnostics::kinds::type_system::WriteToCalldata
+pub fn slang_solidity_v2_common::diagnostics::kinds::type_system::WriteToCalldata::serialize<__S>(&self, __S) -> core::result::Result<<__S as serde_core::ser::Serializer>::Ok, <__S as serde_core::ser::Serializer>::Error> where __S: serde_core::ser::Serializer
+impl slang_solidity_v2_common::diagnostics::DiagnosticExtensions for slang_solidity_v2_common::diagnostics::kinds::type_system::WriteToCalldata
+pub fn slang_solidity_v2_common::diagnostics::kinds::type_system::WriteToCalldata::code(&self) -> &'static str
+pub fn slang_solidity_v2_common::diagnostics::kinds::type_system::WriteToCalldata::message(&self) -> alloc::string::String
+pub fn slang_solidity_v2_common::diagnostics::kinds::type_system::WriteToCalldata::severity(&self) -> slang_solidity_v2_common::diagnostics::DiagnosticSeverity
 pub struct slang_solidity_v2_common::diagnostics::kinds::type_system::WriteToConstant
 impl core::clone::Clone for slang_solidity_v2_common::diagnostics::kinds::type_system::WriteToConstant
 pub fn slang_solidity_v2_common::diagnostics::kinds::type_system::WriteToConstant::clone(&self) -> slang_solidity_v2_common::diagnostics::kinds::type_system::WriteToConstant
@@ -4844,6 +4881,8 @@ impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::type_syst
 pub fn slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::type_system::TypeSystemDiagnosticKind) -> Self
 impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::type_system::TypeTooLargeForStorage> for slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind
 pub fn slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::type_system::TypeTooLargeForStorage) -> Self
+impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::type_system::WriteToCalldata> for slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind
+pub fn slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::type_system::WriteToCalldata) -> Self
 impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::type_system::WriteToConstant> for slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind
 pub fn slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::type_system::WriteToConstant) -> Self
 impl core::fmt::Debug for slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind
@@ -5688,6 +5727,10 @@ impl slang_solidity_v2_common::diagnostics::DiagnosticExtensions for slang_solid
 pub fn slang_solidity_v2_common::diagnostics::kinds::type_system::TypeTooLargeForStorage::code(&self) -> &'static str
 pub fn slang_solidity_v2_common::diagnostics::kinds::type_system::TypeTooLargeForStorage::message(&self) -> alloc::string::String
 pub fn slang_solidity_v2_common::diagnostics::kinds::type_system::TypeTooLargeForStorage::severity(&self) -> slang_solidity_v2_common::diagnostics::DiagnosticSeverity
+impl slang_solidity_v2_common::diagnostics::DiagnosticExtensions for slang_solidity_v2_common::diagnostics::kinds::type_system::WriteToCalldata
+pub fn slang_solidity_v2_common::diagnostics::kinds::type_system::WriteToCalldata::code(&self) -> &'static str
+pub fn slang_solidity_v2_common::diagnostics::kinds::type_system::WriteToCalldata::message(&self) -> alloc::string::String
+pub fn slang_solidity_v2_common::diagnostics::kinds::type_system::WriteToCalldata::severity(&self) -> slang_solidity_v2_common::diagnostics::DiagnosticSeverity
 impl slang_solidity_v2_common::diagnostics::DiagnosticExtensions for slang_solidity_v2_common::diagnostics::kinds::type_system::WriteToConstant
 pub fn slang_solidity_v2_common::diagnostics::kinds::type_system::WriteToConstant::code(&self) -> &'static str
 pub fn slang_solidity_v2_common::diagnostics::kinds::type_system::WriteToConstant::message(&self) -> alloc::string::String
