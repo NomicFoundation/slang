@@ -10,6 +10,7 @@ use crate::context::{FileNodeMapper, SemanticFile, StorageAnalyzer};
 use crate::passes::common::ScopeStack;
 use crate::types::{ContractType, Type, TypeId, TypeRegistry, UserMetaType};
 
+mod getters;
 mod recursive_structs;
 mod resolution;
 mod typing;
