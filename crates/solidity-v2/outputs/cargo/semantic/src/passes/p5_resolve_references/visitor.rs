@@ -504,7 +504,7 @@ impl Visitor for Pass<'_> {
         // type, then resolve the member typing as a contract member. This
         // handles public getters and visibility changes for public methods.
         let typing = if self.typing_is_contract_reference(&operand_typing) {
-            self.typing_of_resolution_as_contract_member(&resolution)
+            self.typing_of_resolution_as_contract_value_member(&resolution)
         } else {
             self.typing_of_resolution(&resolution)
         };
