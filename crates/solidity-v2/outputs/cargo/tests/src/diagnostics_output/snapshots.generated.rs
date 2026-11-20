@@ -2488,6 +2488,14 @@ mod resolution {
         }
 
         #[test]
+        fn state_variable_without_getter() -> Result<()> {
+            run(
+                "resolution/member_not_found",
+                "state_variable_without_getter",
+            )
+        }
+
+        #[test]
         fn string_length() -> Result<()> {
             run("resolution/member_not_found", "string_length")
         }

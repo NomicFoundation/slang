@@ -401,11 +401,14 @@ impl Definition {
             Self::Function(function_definition) => {
                 function_definition.ir_node.is_externally_visible()
             }
+            // From outside the contract a state variable can only be reached
+            // through its getter, so a public one is not visible if its getter
+            // couldn't be computed.
             Self::StateVariable(variable_definition) => {
                 matches!(
                     variable_definition.ir_node.attributes.visibility,
                     ir::StateVariableVisibility::Public
-                )
+                ) && variable_definition.getter.is_some()
             }
             _ => true,
         }
