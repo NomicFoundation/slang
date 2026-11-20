@@ -3715,9 +3715,11 @@ pub slang_solidity_v2_common::diagnostics::kinds::type_system::TypeSystemDiagnos
 pub slang_solidity_v2_common::diagnostics::kinds::type_system::TypeSystemDiagnosticKind::ExpressionNotSliceable(slang_solidity_v2_common::diagnostics::kinds::type_system::ExpressionNotSliceable)
 pub slang_solidity_v2_common::diagnostics::kinds::type_system::TypeSystemDiagnosticKind::FallbackFunctionMutability(slang_solidity_v2_common::diagnostics::kinds::type_system::FallbackFunctionMutability)
 pub slang_solidity_v2_common::diagnostics::kinds::type_system::TypeSystemDiagnosticKind::FallbackFunctionSignature(slang_solidity_v2_common::diagnostics::kinds::type_system::FallbackFunctionSignature)
+pub slang_solidity_v2_common::diagnostics::kinds::type_system::TypeSystemDiagnosticKind::GetterWithoutReturnValues(slang_solidity_v2_common::diagnostics::kinds::type_system::GetterWithoutReturnValues)
 pub slang_solidity_v2_common::diagnostics::kinds::type_system::TypeSystemDiagnosticKind::IncompatibleConditionalBranches(slang_solidity_v2_common::diagnostics::kinds::type_system::IncompatibleConditionalBranches)
 pub slang_solidity_v2_common::diagnostics::kinds::type_system::TypeSystemDiagnosticKind::IncompatibleConstantOperator(slang_solidity_v2_common::diagnostics::kinds::type_system::IncompatibleConstantOperator)
 pub slang_solidity_v2_common::diagnostics::kinds::type_system::TypeSystemDiagnosticKind::InvalidBase(slang_solidity_v2_common::diagnostics::kinds::type_system::InvalidBase)
+pub slang_solidity_v2_common::diagnostics::kinds::type_system::TypeSystemDiagnosticKind::InvalidGetterReturnType(slang_solidity_v2_common::diagnostics::kinds::type_system::InvalidGetterReturnType)
 pub slang_solidity_v2_common::diagnostics::kinds::type_system::TypeSystemDiagnosticKind::InvalidUtf8StringLiteral(slang_solidity_v2_common::diagnostics::kinds::type_system::InvalidUtf8StringLiteral)
 pub slang_solidity_v2_common::diagnostics::kinds::type_system::TypeSystemDiagnosticKind::LiteralTooLarge(slang_solidity_v2_common::diagnostics::kinds::type_system::LiteralTooLarge)
 pub slang_solidity_v2_common::diagnostics::kinds::type_system::TypeSystemDiagnosticKind::MissingIndex(slang_solidity_v2_common::diagnostics::kinds::type_system::MissingIndex)
@@ -3777,12 +3779,16 @@ impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::type_syst
 pub fn slang_solidity_v2_common::diagnostics::kinds::type_system::TypeSystemDiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::type_system::FallbackFunctionMutability) -> Self
 impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::type_system::FallbackFunctionSignature> for slang_solidity_v2_common::diagnostics::kinds::type_system::TypeSystemDiagnosticKind
 pub fn slang_solidity_v2_common::diagnostics::kinds::type_system::TypeSystemDiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::type_system::FallbackFunctionSignature) -> Self
+impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::type_system::GetterWithoutReturnValues> for slang_solidity_v2_common::diagnostics::kinds::type_system::TypeSystemDiagnosticKind
+pub fn slang_solidity_v2_common::diagnostics::kinds::type_system::TypeSystemDiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::type_system::GetterWithoutReturnValues) -> Self
 impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::type_system::IncompatibleConditionalBranches> for slang_solidity_v2_common::diagnostics::kinds::type_system::TypeSystemDiagnosticKind
 pub fn slang_solidity_v2_common::diagnostics::kinds::type_system::TypeSystemDiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::type_system::IncompatibleConditionalBranches) -> Self
 impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::type_system::IncompatibleConstantOperator> for slang_solidity_v2_common::diagnostics::kinds::type_system::TypeSystemDiagnosticKind
 pub fn slang_solidity_v2_common::diagnostics::kinds::type_system::TypeSystemDiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::type_system::IncompatibleConstantOperator) -> Self
 impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::type_system::InvalidBase> for slang_solidity_v2_common::diagnostics::kinds::type_system::TypeSystemDiagnosticKind
 pub fn slang_solidity_v2_common::diagnostics::kinds::type_system::TypeSystemDiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::type_system::InvalidBase) -> Self
+impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::type_system::InvalidGetterReturnType> for slang_solidity_v2_common::diagnostics::kinds::type_system::TypeSystemDiagnosticKind
+pub fn slang_solidity_v2_common::diagnostics::kinds::type_system::TypeSystemDiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::type_system::InvalidGetterReturnType) -> Self
 impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::type_system::InvalidUtf8StringLiteral> for slang_solidity_v2_common::diagnostics::kinds::type_system::TypeSystemDiagnosticKind
 pub fn slang_solidity_v2_common::diagnostics::kinds::type_system::TypeSystemDiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::type_system::InvalidUtf8StringLiteral) -> Self
 impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::type_system::LiteralTooLarge> for slang_solidity_v2_common::diagnostics::kinds::type_system::TypeSystemDiagnosticKind
@@ -4204,6 +4210,25 @@ impl slang_solidity_v2_common::diagnostics::DiagnosticExtensions for slang_solid
 pub fn slang_solidity_v2_common::diagnostics::kinds::type_system::FallbackFunctionSignature::code(&self) -> &'static str
 pub fn slang_solidity_v2_common::diagnostics::kinds::type_system::FallbackFunctionSignature::message(&self) -> alloc::string::String
 pub fn slang_solidity_v2_common::diagnostics::kinds::type_system::FallbackFunctionSignature::severity(&self) -> slang_solidity_v2_common::diagnostics::DiagnosticSeverity
+pub struct slang_solidity_v2_common::diagnostics::kinds::type_system::GetterWithoutReturnValues
+impl core::clone::Clone for slang_solidity_v2_common::diagnostics::kinds::type_system::GetterWithoutReturnValues
+pub fn slang_solidity_v2_common::diagnostics::kinds::type_system::GetterWithoutReturnValues::clone(&self) -> slang_solidity_v2_common::diagnostics::kinds::type_system::GetterWithoutReturnValues
+impl core::cmp::Eq for slang_solidity_v2_common::diagnostics::kinds::type_system::GetterWithoutReturnValues
+impl core::cmp::PartialEq for slang_solidity_v2_common::diagnostics::kinds::type_system::GetterWithoutReturnValues
+pub fn slang_solidity_v2_common::diagnostics::kinds::type_system::GetterWithoutReturnValues::eq(&self, &slang_solidity_v2_common::diagnostics::kinds::type_system::GetterWithoutReturnValues) -> bool
+impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::type_system::GetterWithoutReturnValues> for slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind
+pub fn slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::type_system::GetterWithoutReturnValues) -> Self
+impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::type_system::GetterWithoutReturnValues> for slang_solidity_v2_common::diagnostics::kinds::type_system::TypeSystemDiagnosticKind
+pub fn slang_solidity_v2_common::diagnostics::kinds::type_system::TypeSystemDiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::type_system::GetterWithoutReturnValues) -> Self
+impl core::fmt::Debug for slang_solidity_v2_common::diagnostics::kinds::type_system::GetterWithoutReturnValues
+pub fn slang_solidity_v2_common::diagnostics::kinds::type_system::GetterWithoutReturnValues::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::StructuralPartialEq for slang_solidity_v2_common::diagnostics::kinds::type_system::GetterWithoutReturnValues
+impl serde_core::ser::Serialize for slang_solidity_v2_common::diagnostics::kinds::type_system::GetterWithoutReturnValues
+pub fn slang_solidity_v2_common::diagnostics::kinds::type_system::GetterWithoutReturnValues::serialize<__S>(&self, __S) -> core::result::Result<<__S as serde_core::ser::Serializer>::Ok, <__S as serde_core::ser::Serializer>::Error> where __S: serde_core::ser::Serializer
+impl slang_solidity_v2_common::diagnostics::DiagnosticExtensions for slang_solidity_v2_common::diagnostics::kinds::type_system::GetterWithoutReturnValues
+pub fn slang_solidity_v2_common::diagnostics::kinds::type_system::GetterWithoutReturnValues::code(&self) -> &'static str
+pub fn slang_solidity_v2_common::diagnostics::kinds::type_system::GetterWithoutReturnValues::message(&self) -> alloc::string::String
+pub fn slang_solidity_v2_common::diagnostics::kinds::type_system::GetterWithoutReturnValues::severity(&self) -> slang_solidity_v2_common::diagnostics::DiagnosticSeverity
 pub struct slang_solidity_v2_common::diagnostics::kinds::type_system::IncompatibleConditionalBranches
 impl core::clone::Clone for slang_solidity_v2_common::diagnostics::kinds::type_system::IncompatibleConditionalBranches
 pub fn slang_solidity_v2_common::diagnostics::kinds::type_system::IncompatibleConditionalBranches::clone(&self) -> slang_solidity_v2_common::diagnostics::kinds::type_system::IncompatibleConditionalBranches
@@ -4264,6 +4289,25 @@ impl slang_solidity_v2_common::diagnostics::DiagnosticExtensions for slang_solid
 pub fn slang_solidity_v2_common::diagnostics::kinds::type_system::InvalidBase::code(&self) -> &'static str
 pub fn slang_solidity_v2_common::diagnostics::kinds::type_system::InvalidBase::message(&self) -> alloc::string::String
 pub fn slang_solidity_v2_common::diagnostics::kinds::type_system::InvalidBase::severity(&self) -> slang_solidity_v2_common::diagnostics::DiagnosticSeverity
+pub struct slang_solidity_v2_common::diagnostics::kinds::type_system::InvalidGetterReturnType
+impl core::clone::Clone for slang_solidity_v2_common::diagnostics::kinds::type_system::InvalidGetterReturnType
+pub fn slang_solidity_v2_common::diagnostics::kinds::type_system::InvalidGetterReturnType::clone(&self) -> slang_solidity_v2_common::diagnostics::kinds::type_system::InvalidGetterReturnType
+impl core::cmp::Eq for slang_solidity_v2_common::diagnostics::kinds::type_system::InvalidGetterReturnType
+impl core::cmp::PartialEq for slang_solidity_v2_common::diagnostics::kinds::type_system::InvalidGetterReturnType
+pub fn slang_solidity_v2_common::diagnostics::kinds::type_system::InvalidGetterReturnType::eq(&self, &slang_solidity_v2_common::diagnostics::kinds::type_system::InvalidGetterReturnType) -> bool
+impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::type_system::InvalidGetterReturnType> for slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind
+pub fn slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::type_system::InvalidGetterReturnType) -> Self
+impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::type_system::InvalidGetterReturnType> for slang_solidity_v2_common::diagnostics::kinds::type_system::TypeSystemDiagnosticKind
+pub fn slang_solidity_v2_common::diagnostics::kinds::type_system::TypeSystemDiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::type_system::InvalidGetterReturnType) -> Self
+impl core::fmt::Debug for slang_solidity_v2_common::diagnostics::kinds::type_system::InvalidGetterReturnType
+pub fn slang_solidity_v2_common::diagnostics::kinds::type_system::InvalidGetterReturnType::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::StructuralPartialEq for slang_solidity_v2_common::diagnostics::kinds::type_system::InvalidGetterReturnType
+impl serde_core::ser::Serialize for slang_solidity_v2_common::diagnostics::kinds::type_system::InvalidGetterReturnType
+pub fn slang_solidity_v2_common::diagnostics::kinds::type_system::InvalidGetterReturnType::serialize<__S>(&self, __S) -> core::result::Result<<__S as serde_core::ser::Serializer>::Ok, <__S as serde_core::ser::Serializer>::Error> where __S: serde_core::ser::Serializer
+impl slang_solidity_v2_common::diagnostics::DiagnosticExtensions for slang_solidity_v2_common::diagnostics::kinds::type_system::InvalidGetterReturnType
+pub fn slang_solidity_v2_common::diagnostics::kinds::type_system::InvalidGetterReturnType::code(&self) -> &'static str
+pub fn slang_solidity_v2_common::diagnostics::kinds::type_system::InvalidGetterReturnType::message(&self) -> alloc::string::String
+pub fn slang_solidity_v2_common::diagnostics::kinds::type_system::InvalidGetterReturnType::severity(&self) -> slang_solidity_v2_common::diagnostics::DiagnosticSeverity
 pub struct slang_solidity_v2_common::diagnostics::kinds::type_system::InvalidUtf8StringLiteral
 pub slang_solidity_v2_common::diagnostics::kinds::type_system::InvalidUtf8StringLiteral::position: usize
 impl core::clone::Clone for slang_solidity_v2_common::diagnostics::kinds::type_system::InvalidUtf8StringLiteral
@@ -4897,12 +4941,16 @@ impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::type_syst
 pub fn slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::type_system::FallbackFunctionMutability) -> Self
 impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::type_system::FallbackFunctionSignature> for slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind
 pub fn slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::type_system::FallbackFunctionSignature) -> Self
+impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::type_system::GetterWithoutReturnValues> for slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind
+pub fn slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::type_system::GetterWithoutReturnValues) -> Self
 impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::type_system::IncompatibleConditionalBranches> for slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind
 pub fn slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::type_system::IncompatibleConditionalBranches) -> Self
 impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::type_system::IncompatibleConstantOperator> for slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind
 pub fn slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::type_system::IncompatibleConstantOperator) -> Self
 impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::type_system::InvalidBase> for slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind
 pub fn slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::type_system::InvalidBase) -> Self
+impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::type_system::InvalidGetterReturnType> for slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind
+pub fn slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::type_system::InvalidGetterReturnType) -> Self
 impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::type_system::InvalidUtf8StringLiteral> for slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind
 pub fn slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::type_system::InvalidUtf8StringLiteral) -> Self
 impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::type_system::LiteralTooLarge> for slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind
@@ -5719,6 +5767,10 @@ impl slang_solidity_v2_common::diagnostics::DiagnosticExtensions for slang_solid
 pub fn slang_solidity_v2_common::diagnostics::kinds::type_system::FallbackFunctionSignature::code(&self) -> &'static str
 pub fn slang_solidity_v2_common::diagnostics::kinds::type_system::FallbackFunctionSignature::message(&self) -> alloc::string::String
 pub fn slang_solidity_v2_common::diagnostics::kinds::type_system::FallbackFunctionSignature::severity(&self) -> slang_solidity_v2_common::diagnostics::DiagnosticSeverity
+impl slang_solidity_v2_common::diagnostics::DiagnosticExtensions for slang_solidity_v2_common::diagnostics::kinds::type_system::GetterWithoutReturnValues
+pub fn slang_solidity_v2_common::diagnostics::kinds::type_system::GetterWithoutReturnValues::code(&self) -> &'static str
+pub fn slang_solidity_v2_common::diagnostics::kinds::type_system::GetterWithoutReturnValues::message(&self) -> alloc::string::String
+pub fn slang_solidity_v2_common::diagnostics::kinds::type_system::GetterWithoutReturnValues::severity(&self) -> slang_solidity_v2_common::diagnostics::DiagnosticSeverity
 impl slang_solidity_v2_common::diagnostics::DiagnosticExtensions for slang_solidity_v2_common::diagnostics::kinds::type_system::IncompatibleConditionalBranches
 pub fn slang_solidity_v2_common::diagnostics::kinds::type_system::IncompatibleConditionalBranches::code(&self) -> &'static str
 pub fn slang_solidity_v2_common::diagnostics::kinds::type_system::IncompatibleConditionalBranches::message(&self) -> alloc::string::String
@@ -5731,6 +5783,10 @@ impl slang_solidity_v2_common::diagnostics::DiagnosticExtensions for slang_solid
 pub fn slang_solidity_v2_common::diagnostics::kinds::type_system::InvalidBase::code(&self) -> &'static str
 pub fn slang_solidity_v2_common::diagnostics::kinds::type_system::InvalidBase::message(&self) -> alloc::string::String
 pub fn slang_solidity_v2_common::diagnostics::kinds::type_system::InvalidBase::severity(&self) -> slang_solidity_v2_common::diagnostics::DiagnosticSeverity
+impl slang_solidity_v2_common::diagnostics::DiagnosticExtensions for slang_solidity_v2_common::diagnostics::kinds::type_system::InvalidGetterReturnType
+pub fn slang_solidity_v2_common::diagnostics::kinds::type_system::InvalidGetterReturnType::code(&self) -> &'static str
+pub fn slang_solidity_v2_common::diagnostics::kinds::type_system::InvalidGetterReturnType::message(&self) -> alloc::string::String
+pub fn slang_solidity_v2_common::diagnostics::kinds::type_system::InvalidGetterReturnType::severity(&self) -> slang_solidity_v2_common::diagnostics::DiagnosticSeverity
 impl slang_solidity_v2_common::diagnostics::DiagnosticExtensions for slang_solidity_v2_common::diagnostics::kinds::type_system::InvalidUtf8StringLiteral
 pub fn slang_solidity_v2_common::diagnostics::kinds::type_system::InvalidUtf8StringLiteral::code(&self) -> &'static str
 pub fn slang_solidity_v2_common::diagnostics::kinds::type_system::InvalidUtf8StringLiteral::message(&self) -> alloc::string::String

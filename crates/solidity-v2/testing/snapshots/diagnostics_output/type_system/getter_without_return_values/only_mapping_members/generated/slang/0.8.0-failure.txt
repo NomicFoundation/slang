@@ -1,0 +1,11 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 1
+
+[type-system/getter-without-return-values] Error: The getter of a public state variable cannot return any values, as all the members of its struct are omitted.
+    ╭─[input.sol:10:5]
+    │
+ 10 │     S public s;
+    │     ─────┬─────  
+    │          ╰─────── Error occurred here.
+────╯

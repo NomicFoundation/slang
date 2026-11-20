@@ -446,49 +446,6 @@ impl Type {
             .is_some_and(|location| location == DataLocation::Inherited)
     }
 
-    /// This function determines whether a type can be returned directly from
-    /// a getter function without any extra parameter.
-    ///
-    /// Arrays and mapping can't
-    pub fn can_return_from_getter_directly(&self) -> bool {
-        match self {
-            Type::Address(_)
-            | Type::Boolean
-            | Type::ByteArray(_)
-            | Type::Bytes(_)
-            | Type::Contract(_)
-            | Type::Enum(_)
-            | Type::FixedPointNumber(_)
-            | Type::Integer(_)
-            | Type::Interface(_)
-            | Type::String(_)
-            | Type::Struct(_)
-            | Type::UserDefinedValue(_) => true,
-            Type::Function(FunctionType { call_mode, .. }) => {
-                // Function types can only be returned if they're external
-                call_mode.is_external()
-            }
-
-            // Can be returned, just not inside a struct
-            Type::Array(_)
-            | Type::ArraySlice(_)
-            | Type::FixedSizeArray(_)
-            | Type::Mapping(_)
-            // Actually can't return from a getter
-            // TODO(validation) SDR[1394]: Not sure if this is the best place for this check,
-            // but it's related.
-            | Type::Literal(_)
-            | Type::Library(_)
-            | Type::Tuple(_)
-            // Meta-types are not real values and can never be returned.
-            | Type::MetaType(_)
-            | Type::UserMetaType(_)
-            // Neither are error/event instantiations.
-            | Type::Error(_)
-            | Type::Event(_) => false,
-        }
-    }
-
     pub fn is_literal_number(&self) -> bool {
         matches!(
             self,
