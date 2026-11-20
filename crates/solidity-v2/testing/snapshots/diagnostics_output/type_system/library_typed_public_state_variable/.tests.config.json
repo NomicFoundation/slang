@@ -1,0 +1,8 @@
+{
+  "expected_solc_divergence": [
+    {
+      "specifier": { "type": "From", "from": "0.8.0" },
+      "reason": "TODO(validation) SDR[706]: a library is not a valid variable type. solc rejects it; slang does not report it yet, and only skips computing the getter."
+    }
+  ]
+}

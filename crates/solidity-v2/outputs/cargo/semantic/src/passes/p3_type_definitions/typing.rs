@@ -237,8 +237,8 @@ impl Pass<'_> {
     /// The getter takes one input parameter per mapping key or array index
     /// needed to reach a value that is not indexed further, and returns that
     /// value: a tuple of values per returnable member if it is a struct, or a
-    /// single output otherwise. Returns `None` if the value is a struct with an
-    /// unresolved member type or with no returnable member.
+    /// single output otherwise. Returns `None` if the value is a library, or a
+    /// struct with an unresolved member type or with no returnable member.
     pub(super) fn compute_getter_type(
         &mut self,
         receiver_type_id: Option<TypeId>,
@@ -352,9 +352,11 @@ impl Pass<'_> {
             Type::Array(_) | Type::FixedSizeArray(_) | Type::Mapping(_) => {
                 unreachable!("getter target is still indexable")
             }
+            // A library is resolved as a type, but it's not a valid one for a
+            // variable, so there's no getter to compute.
+            Type::Library(_) => return None,
             // Cannot be the type of a state variable.
-            Type::Library(_)
-            | Type::ArraySlice(_)
+            Type::ArraySlice(_)
             | Type::Error(_)
             | Type::Event(_)
             | Type::Literal(_)
