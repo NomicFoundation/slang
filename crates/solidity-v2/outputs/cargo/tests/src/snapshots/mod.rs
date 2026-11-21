@@ -6,7 +6,7 @@ use std::path::Path;
 
 use anyhow::Result;
 pub use config::{TestCase, TestConfig};
-use infra_utils::codegen::CodegenFileSystem;
+use infra_utils::codegen::{CodegenFileSystem, snapshot_version_name};
 use slang_solidity_v2_common::diagnostics::{DiagnosticCollection, DiagnosticSeverity};
 use slang_solidity_v2_common::evm_targets::EvmTarget;
 use slang_solidity_v2_common::versions::LanguageVersion;
@@ -65,7 +65,8 @@ where
 
         if last_contents.as_ref() != Some(&outcome.contents) {
             let filename = format!(
-                "{version}-{status}.{extension}",
+                "{version_name}-{status}.{extension}",
+                version_name = snapshot_version_name(&version.into()),
                 status = outcome.status,
                 extension = outcome.extension,
             );
