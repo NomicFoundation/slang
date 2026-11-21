@@ -1,0 +1,11 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 1
+
+[type-system/invalid-getter-return-type] Error: The getter of a public state variable cannot return an internal function, a mapping or a recursive type.
+   ╭─[input.sol:6:5]
+   │
+ 6 │     function() internal public f;
+   │     ──────────────┬──────────────  
+   │                   ╰──────────────── Error occurred here.
+───╯

@@ -619,7 +619,6 @@ pub slang_solidity_v2_semantic::types::Type::Tuple(slang_solidity_v2_semantic::t
 pub slang_solidity_v2_semantic::types::Type::UserDefinedValue(slang_solidity_v2_semantic::types::UserDefinedValueType)
 pub slang_solidity_v2_semantic::types::Type::UserMetaType(slang_solidity_v2_semantic::types::UserMetaType)
 impl slang_solidity_v2_semantic::types::Type
-pub fn slang_solidity_v2_semantic::types::Type::can_return_from_getter_directly(&self) -> bool
 pub fn slang_solidity_v2_semantic::types::Type::data_location(&self) -> core::option::Option<slang_solidity_v2_semantic::types::DataLocation>
 pub fn slang_solidity_v2_semantic::types::Type::is_contract_or_interface(&self) -> bool
 pub fn slang_solidity_v2_semantic::types::Type::is_inherited_location(&self) -> bool
