@@ -7820,6 +7820,31 @@ mod type_system {
         }
     }
 
+    mod library_typed_public_state_variable {
+        use super::*;
+
+        #[test]
+        fn array_element() -> Result<()> {
+            run(
+                "type_system/library_typed_public_state_variable",
+                "array_element",
+            )
+        }
+
+        #[test]
+        fn direct() -> Result<()> {
+            run("type_system/library_typed_public_state_variable", "direct")
+        }
+
+        #[test]
+        fn mapping_value() -> Result<()> {
+            run(
+                "type_system/library_typed_public_state_variable",
+                "mapping_value",
+            )
+        }
+    }
+
     mod literal_too_large {
         use super::*;
 

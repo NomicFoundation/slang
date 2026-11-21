@@ -32,7 +32,7 @@ use slang_solidity_v2_common::nodes::NodeId;
 use smallvec::SmallVec;
 
 use super::HierarchyChecker;
-use crate::binder::{Binder, Definition, FileScope, Scope};
+use crate::binder::{Binder, Definition, FileScope, ParameterSlot, Scope};
 use crate::context::FileNodeMapper;
 use crate::passes::common::conflicts::underlying_declarations;
 use crate::types::{Type, TypeId, TypeRegistry};
@@ -341,7 +341,7 @@ fn parameter_types_of(
             parameters_scope
                 .parameters
                 .iter()
-                .map(|parameter| parameter.type_id)
+                .map(ParameterSlot::type_id)
                 .collect()
         }
         _ => None,
