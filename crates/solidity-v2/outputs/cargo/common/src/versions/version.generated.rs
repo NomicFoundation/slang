@@ -50,6 +50,7 @@ pub enum LanguageVersion {
     V0_8_36,
     V0_8_37,
     V0_8_38,
+    V0_8_39,
 }
 
 impl LanguageVersion {
@@ -57,10 +58,10 @@ impl LanguageVersion {
     pub const EARLIEST: Self = Self::V0_8_0;
 
     /// The latest supported version of `Solidity`.
-    pub const LATEST: Self = Self::V0_8_38;
+    pub const LATEST: Self = Self::V0_8_39;
 
     /// All supported versions of `Solidity`, in order.
-    pub const ALL: &'static [LanguageVersion; 39] = &[
+    pub const ALL: &'static [LanguageVersion; 40] = &[
         LanguageVersion::V0_8_0,
         LanguageVersion::V0_8_1,
         LanguageVersion::V0_8_2,
@@ -100,6 +101,7 @@ impl LanguageVersion {
         LanguageVersion::V0_8_36,
         LanguageVersion::V0_8_37,
         LanguageVersion::V0_8_38,
+        LanguageVersion::V0_8_39,
     ];
 }
 
@@ -168,6 +170,7 @@ impl TryFrom<Version> for LanguageVersion {
             (0, 8, 36) => LanguageVersion::V0_8_36,
             (0, 8, 37) => LanguageVersion::V0_8_37,
             (0, 8, 38) => LanguageVersion::V0_8_38,
+            (0, 8, 39) => LanguageVersion::V0_8_39,
             _ => return Err(LanguageVersionConversionError::UnsupportedVersion),
         })
     }
@@ -215,6 +218,7 @@ impl From<LanguageVersion> for Version {
             LanguageVersion::V0_8_36 => Version::new(0, 8, 36),
             LanguageVersion::V0_8_37 => Version::new(0, 8, 37),
             LanguageVersion::V0_8_38 => Version::new(0, 8, 38),
+            LanguageVersion::V0_8_39 => Version::new(0, 8, 39),
         }
     }
 }
@@ -261,6 +265,7 @@ impl Display for LanguageVersion {
             LanguageVersion::V0_8_36 => write!(f, "0.8.36"),
             LanguageVersion::V0_8_37 => write!(f, "0.8.37"),
             LanguageVersion::V0_8_38 => write!(f, "0.8.38"),
+            LanguageVersion::V0_8_39 => write!(f, "0.8.39"),
         }
     }
 }
