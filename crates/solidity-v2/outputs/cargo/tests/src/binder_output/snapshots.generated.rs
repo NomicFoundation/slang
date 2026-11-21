@@ -423,6 +423,16 @@ mod contracts {
     }
 
     #[test]
+    fn public_getter_overloaded_named() -> Result<()> {
+        run("contracts", "public_getter_overloaded_named")
+    }
+
+    #[test]
+    fn public_getter_overloaded_positional() -> Result<()> {
+        run("contracts", "public_getter_overloaded_positional")
+    }
+
+    #[test]
     fn public_getter_selector() -> Result<()> {
         run("contracts", "public_getter_selector")
     }
