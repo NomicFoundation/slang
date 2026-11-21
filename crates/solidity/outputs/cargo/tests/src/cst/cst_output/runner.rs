@@ -2,7 +2,7 @@ use std::str::FromStr;
 
 use anyhow::Result;
 use infra_utils::cargo::CargoWorkspace;
-use infra_utils::codegen::CodegenFileSystem;
+use infra_utils::codegen::{CodegenFileSystem, snapshot_version_name};
 use infra_utils::paths::PathExtensions;
 use slang_solidity::cst::NonterminalKind;
 use slang_solidity::parser::Parser;
@@ -74,10 +74,12 @@ pub fn run(parser_name: &str, test_name: &str) -> Result<()> {
             "{snapshot}"
         );
 
+        let version_name = snapshot_version_name(&version);
+
         // Test did not assign a bad edge label, so save the snapshot to the expected file
         let snapshot_path = test_dir
             .join("generated")
-            .join(format!("{version}-{status}.yml"));
+            .join(format!("{version_name}-{status}.yml"));
 
         fs.write_file_raw(snapshot_path, &snapshot)?;
     }
