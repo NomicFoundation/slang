@@ -3,7 +3,7 @@ use std::rc::Rc;
 
 use anyhow::Result;
 use infra_utils::cargo::CargoWorkspace;
-use infra_utils::codegen::CodegenFileSystem;
+use infra_utils::codegen::{CodegenFileSystem, snapshot_version_name};
 use infra_utils::paths::PathExtensions;
 use metaslang_graph_builder::graph::Graph;
 use slang_solidity::bindings;
@@ -69,6 +69,7 @@ pub(crate) fn run(group_name: &str, test_name: &str) -> Result<()> {
         let (bindings_output, all_resolved) = render_bindings(&binding_graph, &parsed_parts)?;
 
         let parse_success = parsed_parts.iter().all(|part| part.parse_output.is_valid());
+        let version_name = snapshot_version_name(version);
         let status = if parse_success && all_resolved {
             "success"
         } else {
@@ -84,13 +85,13 @@ pub(crate) fn run(group_name: &str, test_name: &str) -> Result<()> {
             match last_graph_output {
                 Some(ref last) if last == &graph_output => (),
                 _ => {
-                    let snapshot_path = target_dir.join(format!("{version}-{status}.mmd"));
+                    let snapshot_path = target_dir.join(format!("{version_name}-{status}.mmd"));
 
                     fs::write(snapshot_path, &graph_output)?;
                     last_graph_output = Some(graph_output);
 
                     let dot_output = render_graphviz_graph(&parsed_parts);
-                    let dot_output_path = target_dir.join(format!("{version}-{status}.dot"));
+                    let dot_output_path = target_dir.join(format!("{version_name}-{status}.dot"));
                     fs::write(dot_output_path, &dot_output)?;
                 }
             }
@@ -101,7 +102,7 @@ pub(crate) fn run(group_name: &str, test_name: &str) -> Result<()> {
             _ => {
                 let snapshot_path = test_dir
                     .join("generated")
-                    .join(format!("{version}-{status}.txt"));
+                    .join(format!("{version_name}-{status}.txt"));
 
                 fs.write_file_raw(snapshot_path, &bindings_output)?;
                 last_bindings_output = Some(bindings_output);
