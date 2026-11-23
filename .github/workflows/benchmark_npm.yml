@@ -33,44 +33,18 @@ concurrency:
 
 jobs:
   benchmark:
-    runs-on: "ubuntu-24.04" # _SLANG_DEV_CONTAINER_BASE_IMAGE_ (keep in sync)
-
     permissions:
       contents: "read"
       pull-requests: "write"
       checks: "write"
 
-    # Skip fork PRs (can't access GitHub Actions secrets). For non-PR events, only run on the main repo.
-    if: >-
-      ${{
-        (github.event_name == 'pull_request' && github.event.pull_request.head.repo.full_name == github.repository)
-        || (github.event_name != 'pull_request' && (github.repository == 'NomicFoundation/slang' || inputs.dryRun == true))
-      }}
-
-    steps:
-      - name: "Checkout Repository"
-        uses: "actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1" # v7.0.1
-        with:
-          persist-credentials: false
-          fetch-depth: 0 # Full history is needed by 'git/restore-mtime' to find each file's last commit time.
-
-      - name: "Setup"
-        uses: "./.github/actions/common-setup"
-        with:
-          task-setup-args: "setup:cargo setup:npm"
-          sfw-optional: "true"
-
-      - name: "task check:npm"
-        run: "${SFW_PREFIX:-} ./bin/task check:npm"
-
-      - name: "Smoke Test > infra perf npm --smoke"
-        if: "${{ github.event_name == 'pull_request' && !contains(github.event.pull_request.labels.*.name, 'ci:perf') }}"
-        run: "./scripts/bin/infra perf npm --smoke"
-
-      - name: "Benchmark > infra perf npm"
-        if: "${{ github.event_name != 'pull_request' || contains(github.event.pull_request.labels.*.name, 'ci:perf') }}"
-        run: "./scripts/bin/infra perf npm ${{ github.event_name == 'pull_request' && '--pr-benchmark' || (inputs.dryRun == true && '--dry-run' || '') }}"
-        env:
-          BENCHER_API_KEY: "${{ secrets.BENCHER_API_KEY__NPM }}"
-          BENCHER_PR_HEAD_HASH: "${{ github.event.pull_request.head.sha }}"
-          GITHUB_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
+    uses: "./.github/workflows/benchmark_suite.yml"
+    with:
+      infra-command: "npm"
+      setup-args: "setup:cargo setup:npm"
+      check-npm: true
+      pr-benchmark: "${{ contains(github.event.pull_request.labels.*.name, 'ci:perf') }}"
+      upload-gungraun-data: false
+      dry-run: "${{ inputs.dryRun == true }}"
+    secrets:
+      bencher-api-key: "${{ secrets.BENCHER_API_KEY__NPM }}"
