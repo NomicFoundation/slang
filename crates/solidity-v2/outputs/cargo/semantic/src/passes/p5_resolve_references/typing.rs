@@ -923,21 +923,23 @@ impl Pass<'_> {
         }
     }
 
-    pub(super) fn typing_of_resolution_as_contract_member(
+    pub(super) fn typing_of_resolution_as_contract_value_member(
         &mut self,
         resolution: &Resolution,
     ) -> Typing {
         match resolution {
             Resolution::Definition(definition_id) => self.typing_of_contract_member(*definition_id),
-            // Each overload is accessed externally, as a single member is.
-            Resolution::Ambiguous(definition_ids) => Typing::Undetermined(
-                definition_ids
+            // Overloads, eg. a getter and a function attached to the contract
+            // type: each one is reached the same way as on its own.
+            Resolution::Ambiguous(definition_ids) => {
+                let type_ids: Vec<_> = definition_ids
                     .iter()
                     .filter_map(|definition_id| {
                         self.typing_of_contract_member(*definition_id).as_type_id()
                     })
-                    .collect(),
-            ),
+                    .collect();
+                Typing::from(type_ids)
+            }
             Resolution::Unresolved | Resolution::BuiltIn(_) => {
                 self.typing_of_resolution(resolution)
             }
@@ -952,7 +954,12 @@ impl Pass<'_> {
         if let Some(member_type_id) =
             match self.binder.find_definition_by_id(definition_id).unwrap() {
                 Definition::StateVariable(state_var_definition) => {
-                    state_var_definition.getter_type_id()
+                    // A state variable without a getter is not externally visible, so
+                    // member lookup never resolves to it through a contract value.
+                    let Some(type_id) = state_var_definition.getter_type_id() else {
+                        unreachable!("a state variable without a getter is not externally visible")
+                    };
+                    Some(type_id)
                 }
                 Definition::Function(function_definition) => {
                     function_definition.externalized_type_id

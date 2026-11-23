@@ -30,23 +30,19 @@ impl<T> OverloadMatch<T> {
 
 /// Disambiguation functions that require typing (aka overload resolution)
 impl Pass<'_> {
+    /// The parameters of a function or a state variable's getter.
     fn get_function_definition_parameters(
         &self,
         definition_id: Option<NodeId>,
     ) -> Option<&[ParameterSlot]> {
-        let Some(Definition::Function(function_definition)) =
-            self.binder.find_definition_by_id(definition_id?)
-        else {
+        let definition_id = definition_id?;
+        if !matches!(
+            self.binder.find_definition_by_id(definition_id)?,
+            Definition::Function(_) | Definition::StateVariable(_)
+        ) {
             return None;
-        };
-
-        let Scope::Parameters(parameters_scope) = self
-            .binder
-            .get_scope_by_id(function_definition.parameters_scope_id)
-        else {
-            unreachable!("incorrect scope kind, expected parameters");
-        };
-        Some(&parameters_scope.parameters)
+        }
+        self.binder.get_parameters_for_definition(definition_id)
     }
 
     /// Fetch the `FunctionType` defined by `type_id`. It can be a direct
