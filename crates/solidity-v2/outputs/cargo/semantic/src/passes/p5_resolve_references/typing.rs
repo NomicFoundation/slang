@@ -949,15 +949,17 @@ impl Pass<'_> {
     fn typing_of_contract_member(&mut self, definition_id: NodeId) -> Typing {
         // Check if the target is a state variable with a getter or a function
         // with an externalized type; the member is accessed through that type.
-        if let Some(member_type_id) = match self
-            .binder
-            .find_definition_by_id(definition_id)
-            .unwrap()
+        if let Some(member_type_id) =
+            match self.binder.find_definition_by_id(definition_id).unwrap() {
+                Definition::StateVariable(state_var_definition) => {
+                    state_var_definition.getter_type_id()
+                }
+                Definition::Function(function_definition) => {
+                    function_definition.externalized_type_id
+                }
+                _ => None,
+            }
         {
-            Definition::StateVariable(state_var_definition) => state_var_definition.getter_type_id,
-            Definition::Function(function_definition) => function_definition.externalized_type_id,
-            _ => None,
-        } {
             return Typing::Resolved(member_type_id);
         }
 

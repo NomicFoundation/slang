@@ -5,11 +5,12 @@ use slang_solidity_v2_common::nodes::NodeId;
 use slang_solidity_v2_common::versions::LanguageVersion;
 use slang_solidity_v2_ir::ir;
 
-use crate::binder::{Binder, Definition, ScopeId};
+use crate::binder::{Binder, Definition, Scope, ScopeId, StateVariableGetter};
 use crate::context::{FileNodeMapper, SemanticFile, StorageAnalyzer};
 use crate::passes::common::ScopeStack;
 use crate::types::{ContractType, Type, TypeId, TypeRegistry, UserMetaType};
 
+mod getters;
 mod recursive_structs;
 mod resolution;
 mod typing;
@@ -188,17 +189,22 @@ impl<'a> Pass<'a> {
                     continue;
                 }
 
-                let Some((getter_type_id, getter_member_ids)) =
-                    self.compute_getter_type(receiver_type_id, node_id, type_id)
+                let Some((getter_type_id, parameters, return_parameters)) =
+                    self.compute_getter_type(receiver_type_id, state_var_definition, type_id)
                 else {
                     continue;
                 };
+                debug_assert!(!return_parameters.is_empty(), "getter without outputs");
+                let parameters_scope_id = self.binder.insert_scope(Scope::Parameters(parameters));
                 let Definition::StateVariable(definition) = self.binder.get_definition_mut(node_id)
                 else {
                     unreachable!("definition is not a state variable");
                 };
-                definition.getter_type_id = Some(getter_type_id);
-                definition.getter_member_ids = getter_member_ids;
+                definition.getter = Some(StateVariableGetter {
+                    type_id: getter_type_id,
+                    parameters_scope_id,
+                    return_parameters,
+                });
             }
         }
     }
