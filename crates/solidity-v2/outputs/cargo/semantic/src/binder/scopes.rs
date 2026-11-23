@@ -120,8 +120,8 @@ pub struct ParameterSlot {
     /// [`ParameterSlot::definition_id`].
     node_id: NodeId,
     /// The type of the parameter, or `None` if it's not yet computed or cannot
-    /// be computed. For some parameter containers (eg. errors) it's never
-    /// computed.
+    /// be computed. For some parameter containers (eg. the returns of a `try`
+    /// statement) it's never computed.
     type_id: Option<TypeId>,
 }
 

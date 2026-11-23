@@ -1,0 +1,11 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 1
+
+[TypeError 4974] Error: Named argument "length" does not match function declaration.
+   ╭─[input.sol:6:9]
+   │
+ 6 │         new uint256[]({length: 1});
+   │         ─────────────┬────────────  
+   │                      ╰────────────── Error occurred here.
+───╯
