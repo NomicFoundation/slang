@@ -7710,6 +7710,31 @@ mod type_system {
         run("type_system", "fallback_function_signature")
     }
 
+    mod getter_without_return_values {
+        use super::*;
+
+        #[test]
+        fn mapping_value() -> Result<()> {
+            run("type_system/getter_without_return_values", "mapping_value")
+        }
+
+        #[test]
+        fn only_array_members() -> Result<()> {
+            run(
+                "type_system/getter_without_return_values",
+                "only_array_members",
+            )
+        }
+
+        #[test]
+        fn only_mapping_members() -> Result<()> {
+            run(
+                "type_system/getter_without_return_values",
+                "only_mapping_members",
+            )
+        }
+    }
+
     mod incompatible_conditional_branches {
         use super::*;
 
@@ -7805,6 +7830,74 @@ mod type_system {
         #[test]
         fn library() -> Result<()> {
             run("type_system/invalid_base", "library")
+        }
+    }
+
+    mod invalid_getter_return_type {
+        use super::*;
+
+        #[test]
+        fn external_function_valid() -> Result<()> {
+            run(
+                "type_system/invalid_getter_return_type",
+                "external_function_valid",
+            )
+        }
+
+        #[test]
+        fn internal_function() -> Result<()> {
+            run(
+                "type_system/invalid_getter_return_type",
+                "internal_function",
+            )
+        }
+
+        #[test]
+        fn internal_function_mapping_value() -> Result<()> {
+            run(
+                "type_system/invalid_getter_return_type",
+                "internal_function_mapping_value",
+            )
+        }
+
+        #[test]
+        fn internal_function_struct_member() -> Result<()> {
+            run(
+                "type_system/invalid_getter_return_type",
+                "internal_function_struct_member",
+            )
+        }
+
+        #[test]
+        fn nested_struct_with_mapping() -> Result<()> {
+            run(
+                "type_system/invalid_getter_return_type",
+                "nested_struct_with_mapping",
+            )
+        }
+
+        #[test]
+        fn recursive_nested_struct() -> Result<()> {
+            run(
+                "type_system/invalid_getter_return_type",
+                "recursive_nested_struct",
+            )
+        }
+
+        #[test]
+        fn recursive_struct_valid() -> Result<()> {
+            run(
+                "type_system/invalid_getter_return_type",
+                "recursive_struct_valid",
+            )
+        }
+
+        #[test]
+        fn recursive_through_function_type_valid() -> Result<()> {
+            run(
+                "type_system/invalid_getter_return_type",
+                "recursive_through_function_type_valid",
+            )
         }
     }
 

@@ -1,10 +1,13 @@
 use slang_solidity_v2_common::collections::Set;
 use slang_solidity_v2_common::diagnostics::DiagnosticCollection;
-use slang_solidity_v2_common::diagnostics::kinds::type_system::TypeTooLargeForStorage;
+use slang_solidity_v2_common::diagnostics::kinds::type_system::{
+    GetterWithoutReturnValues, InvalidGetterReturnType, TypeTooLargeForStorage,
+};
 use slang_solidity_v2_common::nodes::NodeId;
 use slang_solidity_v2_common::versions::LanguageVersion;
 use slang_solidity_v2_ir::ir;
 
+use self::getters::GetterError;
 use crate::binder::{Binder, Definition, Scope, ScopeId, StateVariableGetter};
 use crate::context::{FileNodeMapper, SemanticFile, StorageAnalyzer};
 use crate::passes::common::ScopeStack;
@@ -189,10 +192,19 @@ impl<'a> Pass<'a> {
                     continue;
                 }
 
-                let Some((getter_type_id, parameters, return_parameters)) =
-                    self.compute_getter_type(receiver_type_id, state_var_definition, type_id)
-                else {
-                    continue;
+                let (getter_type_id, parameters, return_parameters) = match self
+                    .compute_getter_type(receiver_type_id, state_var_definition, type_id)
+                {
+                    Ok(getter) => getter,
+                    Err(GetterError::Unresolved) => continue,
+                    Err(GetterError::InvalidReturnType) => {
+                        self.push_diagnostic(state_var_definition, InvalidGetterReturnType);
+                        continue;
+                    }
+                    Err(GetterError::NoReturnValues) => {
+                        self.push_diagnostic(state_var_definition, GetterWithoutReturnValues);
+                        continue;
+                    }
                 };
                 debug_assert!(!return_parameters.is_empty(), "getter without outputs");
                 let parameters_scope_id = self.binder.insert_scope(Scope::Parameters(parameters));

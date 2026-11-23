@@ -1,6 +1,14 @@
 # This file is generated automatically by infrastructure scripts. Please don't edit by hand.
 
-Diagnostics: 1
+Diagnostics: 2
+
+[type-system/invalid-getter-return-type] Error: The getter of a public state variable cannot return an internal function, a mapping or a recursive type.
+   ╭─[input.sol:8:5]
+   │
+ 8 │     function() internal public external x;
+   │     ───────────────────┬──────────────────  
+   │                        ╰──────────────────── Error occurred here.
+───╯
 
 [syntax/invalid-visibility] Error: Invalid visibility for this definition. Expected 'PublicKeyword' or 'InternalKeyword' or 'PrivateKeyword'.
    ╭─[input.sol:8:32]

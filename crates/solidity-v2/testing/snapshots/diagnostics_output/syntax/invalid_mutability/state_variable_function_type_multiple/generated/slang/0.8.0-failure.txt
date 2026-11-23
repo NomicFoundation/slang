@@ -1,6 +1,14 @@
 # This file is generated automatically by infrastructure scripts. Please don't edit by hand.
 
-Diagnostics: 3
+Diagnostics: 4
+
+[type-system/invalid-getter-return-type] Error: The getter of a public state variable cannot return an internal function, a mapping or a recursive type.
+   ╭─[input.sol:7:5]
+   │
+ 7 │     function() internal public payable pure external x;
+   │     ─────────────────────────┬─────────────────────────  
+   │                              ╰─────────────────────────── Error occurred here.
+───╯
 
 [syntax/invalid-mutability] Error: Invalid mutability for this definition. Expected 'ConstantKeyword' or 'ImmutableKeyword'.
    ╭─[input.sol:7:32]

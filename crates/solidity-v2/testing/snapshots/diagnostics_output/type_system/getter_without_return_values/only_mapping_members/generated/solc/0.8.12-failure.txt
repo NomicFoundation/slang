@@ -1,0 +1,11 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 1
+
+[TypeError 5359] Error: The struct has all its members omitted, therefore the getter cannot return any values.
+    ╭─[input.sol:10:5]
+    │
+ 10 │     S public s;
+    │     ─────┬────  
+    │          ╰────── Error occurred here.
+────╯
