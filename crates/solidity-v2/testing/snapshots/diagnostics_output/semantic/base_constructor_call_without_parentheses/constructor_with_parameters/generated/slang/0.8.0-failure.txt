@@ -1,0 +1,11 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 1
+
+[semantic/base-constructor-call-without-parentheses] Error: Modifier-style base constructor call without parentheses.
+   ╭─[input.sol:9:19]
+   │
+ 9 │     constructor() B {}
+   │                   ┬  
+   │                   ╰── Error occurred here.
+───╯

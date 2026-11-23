@@ -3403,6 +3403,42 @@ mod semantic {
         }
     }
 
+    mod base_constructor_call_without_parentheses {
+        use super::*;
+
+        #[test]
+        fn constructor_with_parameters() -> Result<()> {
+            run(
+                "semantic/base_constructor_call_without_parentheses",
+                "constructor_with_parameters",
+            )
+        }
+
+        #[test]
+        fn constructor_without_parameters() -> Result<()> {
+            run(
+                "semantic/base_constructor_call_without_parentheses",
+                "constructor_without_parameters",
+            )
+        }
+
+        #[test]
+        fn interface() -> Result<()> {
+            run(
+                "semantic/base_constructor_call_without_parentheses",
+                "interface",
+            )
+        }
+
+        #[test]
+        fn without_constructor() -> Result<()> {
+            run(
+                "semantic/base_constructor_call_without_parentheses",
+                "without_constructor",
+            )
+        }
+    }
+
     mod bytecode_cycles {
         use super::*;
 
@@ -7795,6 +7831,14 @@ mod type_system {
         use super::*;
 
         #[test]
+        fn base_constructor_invocation() -> Result<()> {
+            run(
+                "type_system/invalid_argument_type",
+                "base_constructor_invocation",
+            )
+        }
+
+        #[test]
         fn emit_event() -> Result<()> {
             run("type_system/invalid_argument_type", "emit_event")
         }
@@ -7836,6 +7880,11 @@ mod type_system {
         }
 
         #[test]
+        fn inheritance_type() -> Result<()> {
+            run("type_system/invalid_argument_type", "inheritance_type")
+        }
+
+        #[test]
         fn internal_function() -> Result<()> {
             run("type_system/invalid_argument_type", "internal_function")
         }
@@ -7858,6 +7907,19 @@ mod type_system {
             run(
                 "type_system/invalid_argument_type",
                 "memory_to_calldata_internal",
+            )
+        }
+
+        #[test]
+        fn modifier_invocation() -> Result<()> {
+            run("type_system/invalid_argument_type", "modifier_invocation")
+        }
+
+        #[test]
+        fn modifier_invocation_calldata_parameter() -> Result<()> {
+            run(
+                "type_system/invalid_argument_type",
+                "modifier_invocation_calldata_parameter",
             )
         }
 
@@ -8724,6 +8786,38 @@ mod type_system {
         use super::*;
 
         #[test]
+        fn bare_modifier_invocation() -> Result<()> {
+            run(
+                "type_system/wrong_argument_count",
+                "bare_modifier_invocation",
+            )
+        }
+
+        #[test]
+        fn base_constructor_invocation() -> Result<()> {
+            run(
+                "type_system/wrong_argument_count",
+                "base_constructor_invocation",
+            )
+        }
+
+        #[test]
+        fn base_constructor_invocation_of_interface() -> Result<()> {
+            run(
+                "type_system/wrong_argument_count",
+                "base_constructor_invocation_of_interface",
+            )
+        }
+
+        #[test]
+        fn base_constructor_invocation_without_constructor() -> Result<()> {
+            run(
+                "type_system/wrong_argument_count",
+                "base_constructor_invocation_without_constructor",
+            )
+        }
+
+        #[test]
         fn bound_function() -> Result<()> {
             run("type_system/wrong_argument_count", "bound_function")
         }
@@ -8762,8 +8856,42 @@ mod type_system {
         }
 
         #[test]
+        fn inheritance_type() -> Result<()> {
+            run("type_system/wrong_argument_count", "inheritance_type")
+        }
+
+        #[test]
+        fn inheritance_type_empty_parentheses() -> Result<()> {
+            run(
+                "type_system/wrong_argument_count",
+                "inheritance_type_empty_parentheses",
+            )
+        }
+
+        #[test]
+        fn inheritance_type_of_interface() -> Result<()> {
+            run(
+                "type_system/wrong_argument_count",
+                "inheritance_type_of_interface",
+            )
+        }
+
+        #[test]
+        fn inheritance_type_without_constructor() -> Result<()> {
+            run(
+                "type_system/wrong_argument_count",
+                "inheritance_type_without_constructor",
+            )
+        }
+
+        #[test]
         fn invalid_argument_types() -> Result<()> {
             run("type_system/wrong_argument_count", "invalid_argument_types")
+        }
+
+        #[test]
+        fn modifier_invocation() -> Result<()> {
+            run("type_system/wrong_argument_count", "modifier_invocation")
         }
 
         #[test]
