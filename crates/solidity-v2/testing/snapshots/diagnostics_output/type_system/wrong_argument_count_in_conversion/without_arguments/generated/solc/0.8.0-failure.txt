@@ -1,0 +1,11 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 1
+
+[TypeError 2558] Error: Exactly one argument expected for explicit type conversion.
+   ╭─[input.sol:6:9]
+   │
+ 6 │         uint256();
+   │         ────┬────  
+   │             ╰────── Error occurred here.
+───╯
