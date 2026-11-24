@@ -3977,11 +3977,15 @@ TupleValues: TupleValues = {
                                                     Optional(Fragment(DecimalExponent))
                                                 ])
                                             ]),
-                                            reject_suffix = Fragment(IdentifierScanner)
+                                            reject_suffix = Choice([
+                                                Fragment(IdentifierScanner),
+                                                // A digit matched after it means a leading zero in the exponent, like in `1e010`:
+                                                Range(inclusive_start = '0', inclusive_end = '9')
+                                            ])
                                         )
                                     ]
                                 ),
-                                // Unlike the fraction and the exponent, the integer part cannot have leading zeros:
+                                // Unlike the fraction, the integer part and the exponent cannot have leading zeros:
                                 Fragment(
                                     name = DecimalInteger,
                                     scanner = Choice([
@@ -4023,7 +4027,8 @@ TupleValues: TupleValues = {
                                     scanner = Sequence([
                                         Choice([Atom("e"), Atom("E")]),
                                         Optional(Atom("-")),
-                                        Fragment(DecimalDigits)
+                                        // We don't allow a leading `0` on the exponent
+                                        Fragment(DecimalInteger)
                                     ])
                                 ),
                                 Enum(

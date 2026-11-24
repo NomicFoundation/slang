@@ -5968,6 +5968,20 @@ mod syntax {
         }
     }
 
+    mod octal_exponent {
+        use super::*;
+
+        #[test]
+        fn octal_literal() -> Result<()> {
+            run("syntax/octal_exponent", "octal_literal")
+        }
+
+        #[test]
+        fn out_of_bounds_index() -> Result<()> {
+            run("syntax/octal_exponent", "out_of_bounds_index")
+        }
+    }
+
     #[test]
     fn unexpected_eof() -> Result<()> {
         run("syntax", "unexpected_eof")

@@ -425,6 +425,11 @@ mod decimal_number_expression {
     }
 
     #[test]
+    fn exponent_zero_forms() -> Result<()> {
+        run("DecimalNumberExpression", "exponent_zero_forms")
+    }
+
+    #[test]
     fn float() -> Result<()> {
         run("DecimalNumberExpression", "float")
     }
@@ -564,6 +569,34 @@ mod decimal_number_expression {
             "DecimalNumberExpression",
             "leading_period_with_negative_exponent",
         )
+    }
+
+    #[test]
+    fn octal_exponent() -> Result<()> {
+        run("DecimalNumberExpression", "octal_exponent")
+    }
+
+    #[test]
+    fn octal_exponent_with_fraction() -> Result<()> {
+        run("DecimalNumberExpression", "octal_exponent_with_fraction")
+    }
+
+    #[test]
+    fn octal_exponent_with_leading_period() -> Result<()> {
+        run(
+            "DecimalNumberExpression",
+            "octal_exponent_with_leading_period",
+        )
+    }
+
+    #[test]
+    fn octal_exponent_with_separator() -> Result<()> {
+        run("DecimalNumberExpression", "octal_exponent_with_separator")
+    }
+
+    #[test]
+    fn octal_negative_exponent() -> Result<()> {
+        run("DecimalNumberExpression", "octal_negative_exponent")
     }
 
     #[test]
