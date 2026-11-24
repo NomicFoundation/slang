@@ -2,7 +2,7 @@
 
 Diagnostics: 1
 
-[type-system/wrong-argument-count] Error: Wrong argument count: 1 arguments given but expected 2.
+[type-system/wrong-argument-count] Error: Wrong argument count: 1 argument given but expected 2.
    ╭─[input.sol:8:9]
    │
  8 │         f({a: 1});

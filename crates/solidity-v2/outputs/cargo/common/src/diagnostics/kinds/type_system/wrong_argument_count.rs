@@ -21,8 +21,9 @@ impl DiagnosticExtensions for WrongArgumentCount {
     }
 
     fn message(&self) -> String {
+        let s = if self.given == 1 { "" } else { "s" };
         format!(
-            "Wrong argument count: {} arguments given but expected {}.",
+            "Wrong argument count: {} argument{s} given but expected {}.",
             self.given, self.expected
         )
     }

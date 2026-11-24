@@ -1,3 +1,10 @@
+//! Signatures of the built-in functions, used to check the arguments of a call
+//! to one. A built-in with a single, fixed signature lists its parameter types;
+//! a variadic one, such as `abi.encodeWithSelector`, lists only the leading
+//! parameters it requires before any number of others; and an overloaded one,
+//! such as `require` or `push`, matches the argument types against each of its
+//! overloads.
+
 use slang_solidity_v2_common::versions::LanguageVersion;
 use smallvec::{SmallVec, smallvec};
 
@@ -28,8 +35,6 @@ impl From<bool> for BuiltInOverloadMatch {
     }
 }
 
-/// The parameters of the built-in functions, which their arguments are checked
-/// against.
 impl BuiltInsResolver<'_> {
     /// The parameter types of `built_in`, for the built-in functions with a
     /// single, fixed signature. The others are overloaded, take any number of

@@ -21,8 +21,9 @@ impl DiagnosticExtensions for TooFewArguments {
     }
 
     fn message(&self) -> String {
+        let s = if self.given == 1 { "" } else { "s" };
         format!(
-            "Too few arguments: {} arguments given but expected at least {}.",
+            "Too few arguments: {} argument{s} given but expected at least {}.",
             self.given, self.minimum
         )
     }
