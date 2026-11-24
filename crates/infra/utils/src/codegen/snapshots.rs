@@ -1,6 +1,7 @@
 use std::path::{Path, PathBuf};
 
 use itertools::Itertools;
+use semver::Version;
 use serde::Serialize;
 
 use crate::paths::PathExtensions;
@@ -27,6 +28,19 @@ pub fn collect_snapshot_tests(data_dir: &Path) -> Vec<SnapshotEntry> {
             panic!("Snapshots root must contain at least one test: {data_dir:?}")
         }
     }
+}
+
+/// Renders a version for use in generated snapshot file names.
+///
+/// The patch number is zero-padded, so that file names sort in version order:
+/// `0.5.03` before `0.5.14`, instead of the other way around.
+pub fn snapshot_version_name(version: &Version) -> String {
+    format!(
+        "{major}.{minor}.{patch:02}",
+        major = version.major,
+        minor = version.minor,
+        patch = version.patch,
+    )
 }
 
 fn walk(parent_dir: &Path) -> Option<SnapshotEntry> {
