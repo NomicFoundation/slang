@@ -10,6 +10,7 @@ use slang_solidity_v2_common::diagnostics::kinds::type_system::{
     ArrayLengthZero, StorageLayoutBaseNonInteger, StorageLayoutBaseNotConstant,
     StorageLayoutBaseOutOfRange,
 };
+use slang_solidity_v2_common::versions::LanguageVersion;
 use slang_solidity_v2_ir::ir;
 use slang_solidity_v2_ir::ir::{NodeIdentity, TextRange};
 
@@ -37,11 +38,13 @@ impl Pass<'_> {
     }
 
     /// The scope type names resolve in. Same as the current lexical scope,
-    /// except in an event or error signature, whose parameters are visible to
-    /// array lengths but not to type names (eg. `error E(S S)` is valid).
+    /// except in an event or error signature from 0.8.5, whose parameters are
+    /// visible to array lengths but not to type names (eg. `error E(S S)` is
+    /// valid).
     fn type_name_scope_id(&self) -> ScopeId {
         let scope_id = self.current_scope_id();
-        if let Scope::Signature(signature_scope) = self.binder.get_scope_by_id(scope_id)
+        if self.language_version >= LanguageVersion::V0_8_5
+            && let Scope::Signature(signature_scope) = self.binder.get_scope_by_id(scope_id)
             && matches!(
                 self.binder.find_definition_by_id(signature_scope.node_id),
                 Some(Definition::Event(_) | Definition::Error(_))
