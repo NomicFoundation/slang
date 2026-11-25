@@ -9,6 +9,8 @@ use infra_utils::github::GitHub;
 // 2. pr-benchmark: uploads to a temporary PR branch in bencher, compares against the base branch
 //    with inline thresholds (percentage), and posts results as a PR comment. Mutually exclusive with dry-run.
 // 3. normal (neither flag): uploads results to the main branch on the bencher dashboard.
+//
+// Every upload (2. and 3.) is dated at the commit time of HEAD, rather than the upload time.
 
 #[derive(Copy, Clone, Debug, PartialEq, Eq, ValueEnum)]
 pub(crate) enum BencherProject {
@@ -138,6 +140,20 @@ pub(crate) fn run_bench(
         let github_token =
             std::env::var("GITHUB_TOKEN").expect("GITHUB_TOKEN must be set for --pr-benchmark");
         command = command.property("--github-actions", &github_token);
+    }
+
+    if !dry_run {
+        // Main commits are benchmarked in parallel, so their reports can be uploaded out of order. Bencher numbers
+        // versions in upload order (and backdating doesn't change that), but the dashboard plots are by date, which
+        // follows the report's time. Dating it at the commit (its merge time on main) instead of the upload keeps
+        // the plots in commit order. PR uploads are dated the same way, for uniformity: their HEAD is GitHub's test
+        // merge commit, created when the PR event fired.
+        let commit_time = Command::new("git")
+            .args(["show", "--no-patch", "--format=%ct", "HEAD"])
+            .evaluate()
+            .expect("Failed to read the commit time of HEAD");
+
+        command = command.property("--backdate", commit_time.trim());
     }
 
     // Has to be the last argument:

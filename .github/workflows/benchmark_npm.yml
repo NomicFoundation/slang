@@ -26,9 +26,11 @@ on:
 
 permissions: {}
 
-# Queue benchmark workflows for the same branch (main pushes queue for ordered results; PR runs cancel stale ones):
+# PR runs cancel stale runs of the same PR. Every other run (main pushes, manual triggers) gets a group of its own,
+# so main commits are all benchmarked, in parallel. Their reports are dated at the commit time ('infra perf' uses
+# 'bencher run --backdate'), so the dashboard stays in commit order whatever order they finish in.
 concurrency:
-  group: "${{ github.workflow }}-${{ github.ref_name }}"
+  group: "${{ github.workflow }}-${{ github.event_name == 'pull_request' && github.ref_name || github.run_id }}"
   cancel-in-progress: "${{ github.event_name == 'pull_request' }}"
 
 jobs:
