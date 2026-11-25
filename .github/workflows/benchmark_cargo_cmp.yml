@@ -33,49 +33,18 @@ concurrency:
 
 jobs:
   benchmark:
-    runs-on: "ubuntu-24.04" # _SLANG_DEV_CONTAINER_BASE_IMAGE_ (keep in sync)
-
     permissions:
       contents: "read"
       pull-requests: "write"
       checks: "write"
 
-    # Skip fork PRs (can't access GitHub Actions secrets). For non-PR events, only run on the main repo.
-    if: >-
-      ${{
-        (github.event_name == 'pull_request' && github.event.pull_request.head.repo.full_name == github.repository)
-        || (github.event_name != 'pull_request' && (github.repository == 'NomicFoundation/slang' || inputs.dryRun == true))
-      }}
-
-    steps:
-      - name: "Checkout Repository"
-        uses: "actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1" # v7.0.1
-        with:
-          persist-credentials: false
-          fetch-depth: 0 # Full history is needed by 'git/restore-mtime' to find each file's last commit time.
-
-      - name: "Setup"
-        uses: "./.github/actions/common-setup"
-        with:
-          task-setup-args: "setup:cargo setup:pipenv"
-          sfw-optional: "true"
-
-      - name: "Smoke Test > infra perf cargo --smoke comparison"
-        if: "${{ github.event_name == 'pull_request' && !contains(github.event.pull_request.labels.*.name, 'ci:perf') && !contains(github.event.pull_request.labels.*.name, 'ci:perf:full') }}"
-        run: "./scripts/bin/infra perf cargo --smoke comparison"
-
-      - name: "Benchmark > infra perf cargo comparison"
-        if: "${{ github.event_name != 'pull_request' || contains(github.event.pull_request.labels.*.name, 'ci:perf') || contains(github.event.pull_request.labels.*.name, 'ci:perf:full') }}"
-        run: "./scripts/bin/infra perf cargo ${{ github.event_name == 'pull_request' && (contains(github.event.pull_request.labels.*.name, 'ci:perf:full') && '--pr-benchmark=full' || '--pr-benchmark') || (inputs.dryRun == true && '--dry-run' || '') }} comparison"
-        env:
-          BENCHER_API_KEY: "${{ secrets.BENCHER_API_KEY__CARGO_CMP }}"
-          BENCHER_PR_HEAD_HASH: "${{ github.event.pull_request.head.sha }}"
-          GITHUB_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
-
-      - name: "Benchmark > Upload Benchmarking Data"
-        if: "${{ github.event_name != 'pull_request' || contains(github.event.pull_request.labels.*.name, 'ci:perf') || contains(github.event.pull_request.labels.*.name, 'ci:perf:full') }}"
-        uses: "actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9" # v7.0.2
-        with:
-          name: "benchmarking-data"
-          path: "target/gungraun"
-          if-no-files-found: "error"
+    uses: "./.github/workflows/benchmark_suite.yml"
+    with:
+      infra-command: "cargo"
+      infra-suite: "comparison"
+      setup-args: "setup:cargo setup:pipenv"
+      pr-benchmark: "${{ contains(github.event.pull_request.labels.*.name, 'ci:perf') || contains(github.event.pull_request.labels.*.name, 'ci:perf:full') }}"
+      pr-benchmark-flag: "${{ contains(github.event.pull_request.labels.*.name, 'ci:perf:full') && '--pr-benchmark=full' || '--pr-benchmark' }}"
+      dry-run: "${{ inputs.dryRun == true }}"
+    secrets:
+      bencher-api-key: "${{ secrets.BENCHER_API_KEY__CARGO_CMP }}"

@@ -1,0 +1,109 @@
+name: "benchmark_suite"
+
+# The job shared by the 'benchmark_*' workflows: each one runs a single 'infra perf' suite with it, and keeps
+# its own triggers and concurrency.
+on:
+  workflow_call:
+    inputs:
+      infra-command:
+        description: "The 'infra perf' command to run: 'cargo' or 'npm'."
+        type: "string"
+        required: true
+      infra-suite:
+        description: "The suite argument of that command (e.g. 'slang-v2'), if it takes one."
+        type: "string"
+        required: false
+        default: ""
+      setup-args:
+        description: "Arguments to 'task setup'."
+        type: "string"
+        required: true
+      check-npm:
+        description: "Run 'task check:npm' before benchmarking."
+        type: "boolean"
+        required: false
+        default: false
+      pr-benchmark:
+        description: "Whether this PR runs the full benchmark (uploaded and compared on bencher), instead of a smoke test."
+        type: "boolean"
+        required: false
+        default: false
+      pr-benchmark-flag:
+        description: "The '--pr-benchmark' flag to pass to 'infra perf', with its mode if any."
+        type: "string"
+        required: false
+        default: "--pr-benchmark"
+      upload-gungraun-data:
+        description: "Upload the 'target/gungraun' reports as a workflow artifact."
+        type: "boolean"
+        required: false
+        default: true
+      dry-run:
+        description: "Run the benchmarks without updating the bencher dashboard."
+        type: "boolean"
+        required: false
+        default: false
+    secrets:
+      bencher-api-key:
+        description: "The bencher project's API key."
+        required: true
+
+permissions: {}
+
+jobs:
+  benchmark:
+    runs-on: "ubuntu-24.04" # _SLANG_DEV_CONTAINER_BASE_IMAGE_ (keep in sync)
+
+    permissions:
+      contents: "read"
+      pull-requests: "write"
+      checks: "write"
+
+    # Skip fork PRs (can't access GitHub Actions secrets). For non-PR events, only run on the main repo.
+    if: >-
+      ${{
+        (github.event_name == 'pull_request' && github.event.pull_request.head.repo.full_name == github.repository)
+        || (github.event_name != 'pull_request' && (github.repository == 'NomicFoundation/slang' || inputs.dry-run))
+      }}
+
+    env:
+      INFRA_COMMAND: "${{ inputs.infra-command }}"
+      INFRA_SUITE: "${{ inputs.infra-suite }}"
+
+    steps:
+      - name: "Checkout Repository"
+        uses: "actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1" # v7.0.1
+        with:
+          persist-credentials: false
+          fetch-depth: 0 # Full history is needed by 'git/restore-mtime' to find each file's last commit time.
+
+      - name: "Setup"
+        uses: "./.github/actions/common-setup"
+        with:
+          task-setup-args: "${{ inputs.setup-args }}"
+          sfw-optional: "true"
+
+      - name: "task check:npm"
+        if: "${{ inputs.check-npm }}"
+        run: "${SFW_PREFIX:-} ./bin/task check:npm"
+
+      - name: "Smoke Test > infra perf ${{ inputs.infra-command }} --smoke ${{ inputs.infra-suite }}"
+        if: "${{ github.event_name == 'pull_request' && !inputs.pr-benchmark }}"
+        run: './scripts/bin/infra perf "${INFRA_COMMAND}" --smoke ${INFRA_SUITE:+"${INFRA_SUITE}"}'
+
+      - name: "Benchmark > infra perf ${{ inputs.infra-command }} ${{ inputs.infra-suite }}"
+        if: "${{ github.event_name != 'pull_request' || inputs.pr-benchmark }}"
+        run: './scripts/bin/infra perf "${INFRA_COMMAND}" ${MODE_FLAG:+"${MODE_FLAG}"} ${INFRA_SUITE:+"${INFRA_SUITE}"}'
+        env:
+          MODE_FLAG: "${{ github.event_name == 'pull_request' && inputs.pr-benchmark-flag || (inputs.dry-run && '--dry-run' || '') }}"
+          BENCHER_API_KEY: "${{ secrets.bencher-api-key }}"
+          BENCHER_PR_HEAD_HASH: "${{ github.event.pull_request.head.sha }}"
+          GITHUB_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
+
+      - name: "Benchmark > Upload Benchmarking Data"
+        if: "${{ inputs.upload-gungraun-data && (github.event_name != 'pull_request' || inputs.pr-benchmark) }}"
+        uses: "actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9" # v7.0.2
+        with:
+          name: "benchmarking-data"
+          path: "target/gungraun"
+          if-no-files-found: "error"
