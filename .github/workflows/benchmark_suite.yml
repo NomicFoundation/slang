@@ -83,7 +83,7 @@ jobs:
         if: "${{ github.event_name == 'pull_request' && inputs.pr-benchmark }}"
         run: './scripts/bencher/check-base-report.sh "${INFRA_COMMAND}" ${INFRA_SUITE:+"${INFRA_SUITE}"}'
         env:
-          # Not 'github.base_ref', which is 'main' even for stacked PRs:
+          # Not 'github.base_ref', which is 'main' even for PRs in a GitHub stack:
           BENCHER_BASE_REF: "${{ github.event.pull_request.base.ref }}"
           BENCHER_PR_HEAD_HASH: "${{ github.event.pull_request.head.sha }}"
 

@@ -17,11 +17,15 @@ on:
       - "main"
 
   # Run on every pull request (full benchmark, non-blocking):
+  # Only PRs targeting 'main', which includes every PR of a GitHub stack based on 'main' (they trigger as if they
+  # targeted the stack's base). A PR based on another branch outside a stack has no base report to compare against.
   pull_request:
     types:
       - "opened"
       - "synchronize"
       - "reopened"
+    branches:
+      - "main"
 
 permissions: {}
 

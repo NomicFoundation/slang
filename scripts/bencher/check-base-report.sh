@@ -47,10 +47,11 @@ if [[ "${merged_hash}" != "${pr_head_hash}" ]]; then
   fail "Expected HEAD to be GitHub's test merge commit of the PR head ${pr_head_hash}, but its second parent is '${merged_hash}'."
 fi
 
-# Its first parent is what this PR is compared against: the base branch commit for a PR on 'main'. For a stacked PR,
-# GitHub builds it on the base PR's own test merge commit instead (the base PR head merged into 'main'), which is
-# exactly the commit the base PR's report measured, and is labeled with (see 'run_bench' in infra). So finding a report
-# for this hash also ensures both were merged into the same 'main' commit.
+# Its first parent is what this PR is compared against: the base branch commit for a PR on 'main'. For a PR in a
+# GitHub stack (the only stacked PRs benchmarked: see the workflows' 'branches' filter), GitHub builds it on the base
+# PR's own test merge commit instead (the base PR head merged into 'main'), which is exactly the commit the base PR's
+# report measured, and is labeled with (see 'run_bench' in infra). So finding a report for this hash also ensures both
+# were merged into the same 'main' commit.
 base_hash="$(git rev-parse "HEAD^1")"
 echo "Comparing against '${base_ref}' at ${base_hash}."
 
@@ -86,9 +87,9 @@ fi
 # is a group of reports. `main` has a single head to which we add reports, but PR branches have a new head for each
 # benchmark run ('--start-point-reset').
 #
-# There's a race condition here, the base branch can get a new head between this check and the upload, particularly
-# on stacked PRs. We can't avoid this from our side, but the risk is small and is only problematic on non rebased
-# stacked PRs.
+# There's a race condition here, the base branch can get a new head between this check and the upload. That only
+# happens for a PR in a GitHub stack whose base PR is benchmarked again (e.g. after a push) during this run. We can't
+# avoid this from our side, but the risk is small.
 if ! head_uuid="$(curl --silent --show-error --fail --retry 3 "${api}/branches/${branch_uuid}" | jq --raw-output '.head.uuid')"; then
   fail "Couldn't read the '${base_ref}' branch of '${project}' on bencher. Re-run this job later."
 fi

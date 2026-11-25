@@ -104,7 +104,7 @@ pub(crate) fn run_bench(
     if pr_benchmark {
         let head_ref = std::env::var("GITHUB_HEAD_REF")
             .expect("GITHUB_HEAD_REF must be set for --pr-benchmark (are you running in a PR?)");
-        // Not 'GITHUB_BASE_REF', which is 'main' even for stacked PRs:
+        // Not 'GITHUB_BASE_REF', which is 'main' even for PRs in a GitHub stack:
         let base_ref = std::env::var("BENCHER_BASE_REF")
             .expect("BENCHER_BASE_REF must be set for --pr-benchmark (to the PR's base branch)");
         // Label the report with the current commit
