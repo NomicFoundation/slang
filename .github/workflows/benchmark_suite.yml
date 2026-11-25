@@ -77,6 +77,14 @@ jobs:
           persist-credentials: false
           fetch-depth: 0 # Full history is needed by 'git/restore-mtime' to find each file's last commit time.
 
+      # Before anything else, to fail fast if the base branch commit has no report to compare against yet:
+      - name: "Benchmark > Check the base branch report"
+        id: "base-report"
+        if: "${{ github.event_name == 'pull_request' && inputs.pr-benchmark }}"
+        run: './scripts/bencher/check-base-report.sh "${INFRA_COMMAND}" ${INFRA_SUITE:+"${INFRA_SUITE}"}'
+        env:
+          BENCHER_PR_HEAD_HASH: "${{ github.event.pull_request.head.sha }}"
+
       - name: "Setup"
         uses: "./.github/actions/common-setup"
         with:
@@ -98,6 +106,7 @@ jobs:
           MODE_FLAG: "${{ github.event_name == 'pull_request' && inputs.pr-benchmark-flag || (inputs.dry-run && '--dry-run' || '') }}"
           BENCHER_API_KEY: "${{ secrets.bencher-api-key }}"
           BENCHER_PR_HEAD_HASH: "${{ github.event.pull_request.head.sha }}"
+          BENCHER_START_POINT_HASH: "${{ steps.base-report.outputs.hash }}"
           GITHUB_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
 
       - name: "Benchmark > Upload Benchmarking Data"

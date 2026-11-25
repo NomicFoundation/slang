@@ -79,6 +79,7 @@ const PACKAGE: &str = "solidity_testing_perf_cargo";
 impl CargoController {
     pub fn execute(&self) -> Result<()> {
         match &self.bench {
+            // __SLANG_INFRA_BENCHER_PROJECTS__ (keep in sync)
             Benches::Comparison => self.run_gungraun_suite("comparison", BencherProject::CargoCmp),
             Benches::Slang => self.run_gungraun_suite("slang", BencherProject::CargoSlang),
             Benches::SlangV2 => self.run_gungraun_suite("slang_v2", BencherProject::CargoSlangV2),

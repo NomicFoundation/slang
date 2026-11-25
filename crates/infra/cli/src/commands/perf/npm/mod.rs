@@ -46,7 +46,7 @@ impl NpmController {
         run_bench(
             self.dry_run.get(),
             self.pr_benchmark,
-            BencherProject::Npm,
+            BencherProject::Npm, // __SLANG_INFRA_BENCHER_PROJECTS__ (keep in sync)
             "json",
             &[BencherThreshold::new("duration", "0.15")],
             &[],

@@ -6,8 +6,9 @@ use infra_utils::github::GitHub;
 
 // Three modes:
 // 1. dry-run: runs benchmarks locally, without authenticating or uploading anything to bencher.
-// 2. pr-benchmark: uploads to a temporary PR branch in bencher, compares against the base branch
-//    with inline thresholds (percentage), and posts results as a PR comment. Mutually exclusive with dry-run.
+// 2. pr-benchmark: uploads to a temporary PR branch in bencher, compares against the base branch's report for
+//    the exact commit the PR was merged with (see `scripts/bencher/check-base-report.sh`), with inline
+//    thresholds (percentage), and posts results as a PR comment. Mutually exclusive with dry-run.
 // 3. normal (neither flag): uploads results to the main branch on the bencher dashboard.
 //
 // Every upload (2. and 3.) is dated at the commit time of HEAD, rather than the upload time.
@@ -108,9 +109,17 @@ pub(crate) fn run_bench(
         let head_hash = std::env::var("BENCHER_PR_HEAD_HASH")
             .expect("BENCHER_PR_HEAD_HASH must be set for --pr-benchmark");
 
+        // Bencher silently falls back to the base branch's latest report when the start point hash has none,
+        // so CI first checks that it does.
+        let base_hash = std::env::var("BENCHER_START_POINT_HASH")
+            .ok()
+            .filter(|hash| !hash.is_empty())
+            .expect("BENCHER_START_POINT_HASH must be set for --pr-benchmark");
+
         command = command
             .property("--branch", &head_ref)
             .property("--start-point", &base_ref)
+            .property("--start-point-hash", &base_hash)
             .flag("--start-point-reset")
             .property("--hash", &head_hash);
 
