@@ -106,8 +106,11 @@ pub(crate) fn run_bench(
             .expect("GITHUB_HEAD_REF must be set for --pr-benchmark (are you running in a PR?)");
         let base_ref = std::env::var("GITHUB_BASE_REF")
             .expect("GITHUB_BASE_REF must be set for --pr-benchmark (are you running in a PR?)");
-        let head_hash = std::env::var("BENCHER_PR_HEAD_HASH")
-            .expect("BENCHER_PR_HEAD_HASH must be set for --pr-benchmark");
+        // Label the report with the current commit
+        let measured_hash = Command::new("git")
+            .args(["rev-parse", "HEAD"])
+            .evaluate()
+            .expect("Failed to read the hash of HEAD");
 
         // Bencher silently falls back to the base branch's latest report when the start point hash has none,
         // so CI first checks that it does.
@@ -121,7 +124,7 @@ pub(crate) fn run_bench(
             .property("--start-point", &base_ref)
             .property("--start-point-hash", &base_hash)
             .flag("--start-point-reset")
-            .property("--hash", &head_hash);
+            .property("--hash", measured_hash.trim());
 
         for BencherThreshold {
             measure,

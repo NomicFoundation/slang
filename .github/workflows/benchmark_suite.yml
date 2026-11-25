@@ -105,7 +105,6 @@ jobs:
         env:
           MODE_FLAG: "${{ github.event_name == 'pull_request' && inputs.pr-benchmark-flag || (inputs.dry-run && '--dry-run' || '') }}"
           BENCHER_API_KEY: "${{ secrets.bencher-api-key }}"
-          BENCHER_PR_HEAD_HASH: "${{ github.event.pull_request.head.sha }}"
           BENCHER_START_POINT_HASH: "${{ steps.base-report.outputs.hash }}"
           GITHUB_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
 
