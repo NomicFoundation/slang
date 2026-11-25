@@ -30,7 +30,7 @@ esac
 testbed="ci"
 api="https://api.bencher.dev/v0/projects/${project}"
 
-base_ref="${GITHUB_BASE_REF:?}"
+base_ref="${BENCHER_BASE_REF:?}"
 repository="${GITHUB_REPOSITORY:?}"
 server_url="${GITHUB_SERVER_URL:?}"
 output="${GITHUB_OUTPUT:?}"
@@ -41,19 +41,23 @@ function fail() {
   exit 1
 }
 
-# The test merge commit's first parent is the base branch commit, and its second one the PR head:
+# The test merge commit's second parent is the PR head:
 merged_hash="$(git rev-parse --verify --quiet "HEAD^2" || true)"
 if [[ "${merged_hash}" != "${pr_head_hash}" ]]; then
   fail "Expected HEAD to be GitHub's test merge commit of the PR head ${pr_head_hash}, but its second parent is '${merged_hash}'."
 fi
 
+# Its first parent is what this PR is compared against: the base branch commit for a PR on 'main'. For a stacked PR,
+# GitHub builds it on the base PR's own test merge commit instead (the base PR head merged into 'main'), which is
+# exactly the commit the base PR's report measured, and is labeled with (see 'run_bench' in infra). So finding a report
+# for this hash also ensures both were merged into the same 'main' commit.
 base_hash="$(git rev-parse "HEAD^1")"
 echo "Comparing against '${base_ref}' at ${base_hash}."
 
-# The base commit's checks show its benchmark run, whether it is still running, failed, or was never started (e.g. a
-# base PR without the 'ci:perf' label).
+# The base branch's commits show the checks of its benchmark runs, whether still running, failed, or never started
+# (e.g. a base PR without the 'ci:perf' label).
 missing="'${base_ref}' has no '${testbed}' benchmark report on bencher for ${base_hash}, which this PR was merged with. \
-Wait for (or re-run) its benchmark at ${server_url}/${repository}/commit/${base_hash}, or rebase onto a benchmarked \
+Wait for (or re-run) its benchmark (see ${server_url}/${repository}/commits/${base_ref} ), or rebase onto a benchmarked \
 commit, then re-run this job."
 
 # The projects are public, so their reports can be listed without an API key. They are listed oldest first starting

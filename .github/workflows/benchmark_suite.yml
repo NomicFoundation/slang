@@ -83,6 +83,8 @@ jobs:
         if: "${{ github.event_name == 'pull_request' && inputs.pr-benchmark }}"
         run: './scripts/bencher/check-base-report.sh "${INFRA_COMMAND}" ${INFRA_SUITE:+"${INFRA_SUITE}"}'
         env:
+          # Not 'github.base_ref', which is 'main' even for stacked PRs:
+          BENCHER_BASE_REF: "${{ github.event.pull_request.base.ref }}"
           BENCHER_PR_HEAD_HASH: "${{ github.event.pull_request.head.sha }}"
 
       - name: "Setup"
@@ -105,6 +107,7 @@ jobs:
         env:
           MODE_FLAG: "${{ github.event_name == 'pull_request' && inputs.pr-benchmark-flag || (inputs.dry-run && '--dry-run' || '') }}"
           BENCHER_API_KEY: "${{ secrets.bencher-api-key }}"
+          BENCHER_BASE_REF: "${{ github.event.pull_request.base.ref }}"
           BENCHER_START_POINT_HASH: "${{ steps.base-report.outputs.hash }}"
           GITHUB_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
 
