@@ -1,0 +1,8 @@
+{
+  "expected_solc_divergence": [
+    {
+      "specifier": { "type": "From", "from": "0.8.0" },
+      "reason": "solc reads an exponent with a leading zero as octal (`1e010` is `1e8`) and accepts the literal. Slang does not lex an exponent with a leading zero at all."
+    }
+  ]
+}

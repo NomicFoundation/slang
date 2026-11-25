@@ -1,0 +1,11 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 1
+
+[TypeError 3383] Error: Out of bounds array access.
+    ╭─[input.sol:10:27]
+    │
+ 10 │         return a[1e010] + a[1e10];
+    │                           ───┬───  
+    │                              ╰───── Error occurred here.
+────╯

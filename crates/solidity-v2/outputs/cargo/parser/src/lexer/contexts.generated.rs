@@ -131,7 +131,7 @@ enum RejectSuffixDecimalLiteral1 {
 /// Rejects a `DecimalLiteral` match that ends with this suffix.
 #[derive(Logos)]
 enum RejectSuffixDecimalLiteral2 {
-    #[regex(r#"((_|\$|[a-z]|[A-Z])((_|\$|[a-z]|[A-Z])|[0-9])*)"#)]
+    #[regex(r#"((_|\$|[a-z]|[A-Z])((_|\$|[a-z]|[A-Z])|[0-9])*)|[0-9]"#)]
     Matched,
 }
 
@@ -140,7 +140,7 @@ enum RejectSuffixDecimalLiteral2 {
 #[logos(subpattern HexCharacter = r#"[0-9]|[a-f]|[A-F]"#)]
 #[logos(subpattern DecimalInteger = r#"0|([1-9][0-9]*(_[0-9]+)*)"#)]
 #[logos(subpattern DecimalDigits = r#"[0-9]+(_[0-9]+)*"#)]
-#[logos(subpattern DecimalExponent = r#"(e|E)-?(?&DecimalDigits)"#)]
+#[logos(subpattern DecimalExponent = r#"(e|E)-?(?&DecimalInteger)"#)]
 #[logos(subpattern EscapeSequence = r#"\\(\r\n|(?s:.))"#)]
 #[logos(subpattern HexStringContents = r#"(?&HexCharacter)(?&HexCharacter)(_?(?&HexCharacter)(?&HexCharacter))*"#)]
 #[logos(subpattern IdentifierStart = r#"_|\$|[a-z]|[A-Z]"#)]
