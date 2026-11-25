@@ -25,7 +25,7 @@ Bindings:
  4 │     function test() public {
    │              ──┬─  
    │                ╰─── name: 2
- 5 │         ripemd160(); // should bind correctly (Solidity context)
+ 5 │         ripemd160(""); // should bind correctly (Solidity context)
    │         ────┬────  
    │             ╰────── built-in
    │ 

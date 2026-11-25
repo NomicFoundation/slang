@@ -27,6 +27,7 @@ mod literal_too_large;
 mod missing_index;
 mod modifier_outside_function_header;
 mod named_arguments_in_conversion;
+mod named_arguments_to_built_in_function;
 mod partially_applied_function_used_as_value;
 mod receive_function_parameters;
 mod storage_layout_base_non_integer;
@@ -35,6 +36,7 @@ mod storage_layout_base_out_of_range;
 mod storage_layout_base_past_end;
 mod string_index_access;
 mod struct_with_mapping_constructed;
+mod too_few_arguments;
 mod type_too_large_for_storage;
 mod unknown_named_argument;
 mod write_to_calldata;
@@ -71,6 +73,7 @@ pub use literal_too_large::LiteralTooLarge;
 pub use missing_index::MissingIndex;
 pub use modifier_outside_function_header::ModifierOutsideFunctionHeader;
 pub use named_arguments_in_conversion::NamedArgumentsInConversion;
+pub use named_arguments_to_built_in_function::NamedArgumentsToBuiltInFunction;
 pub use partially_applied_function_used_as_value::PartiallyAppliedFunctionUsedAsValue;
 pub use receive_function_parameters::ReceiveFunctionParameters;
 use serde::Serialize;
@@ -80,6 +83,7 @@ pub use storage_layout_base_out_of_range::StorageLayoutBaseOutOfRange;
 pub use storage_layout_base_past_end::StorageLayoutBasePastEnd;
 pub use string_index_access::StringIndexAccess;
 pub use struct_with_mapping_constructed::StructWithMappingConstructed;
+pub use too_few_arguments::TooFewArguments;
 pub use type_too_large_for_storage::TypeTooLargeForStorage;
 pub use unknown_named_argument::UnknownNamedArgument;
 pub use write_to_calldata::{CalldataWriteKind, WriteToCalldata};
@@ -158,6 +162,9 @@ define_diagnostic_kind! {
         /// A call passes a different number of arguments than the callee
         /// declares parameters.
         WrongArgumentCount(WrongArgumentCount),
+        /// A call passes fewer arguments than the leading parameters of a
+        /// callee that takes any number of arguments after them.
+        TooFewArguments(TooFewArguments),
         /// An argument of a call does not implicitly convert to the type of its
         /// parameter.
         InvalidArgumentType(InvalidArgumentType),
@@ -167,6 +174,8 @@ define_diagnostic_kind! {
         WrongArgumentCountInConversion(WrongArgumentCountInConversion),
         /// An explicit type conversion is given named arguments.
         NamedArgumentsInConversion(NamedArgumentsInConversion),
+        /// A built-in function is given named arguments.
+        NamedArgumentsToBuiltInFunction(NamedArgumentsToBuiltInFunction),
         /// A struct containing a mapping is constructed.
         StructWithMappingConstructed(StructWithMappingConstructed),
         /// An expression in a position that requires a value names a built-in,

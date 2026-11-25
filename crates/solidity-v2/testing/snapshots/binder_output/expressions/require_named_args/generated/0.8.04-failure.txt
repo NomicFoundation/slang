@@ -1,0 +1,69 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics:
+[resolution/no-matching-callable-declaration] Error: No matching declaration found after argument-dependent lookup.
+    ╭─[input.sol:10:9]
+    │
+ 10 │         require(ok, Failure({severity: 100, cause: "Testing"}));
+    │         ───────────────────────────┬───────────────────────────  
+    │                                    ╰───────────────────────────── Error occurred here.
+────╯
+
+------------------------------------------------------------------------
+
+Definitions (6):
+- Def: #1 ["Test" @ input.sol:3:10] (contract)
+- Def: #2 ["Failure" @ input.sol:4:11] (error)
+- Def: #3 ["severity" @ input.sol:5:14] (parameter, type: uint256)
+- Def: #4 ["cause" @ input.sol:6:16] (parameter, type: string memory)
+- Def: #5 ["test" @ input.sol:9:14] (function, type: function (bool) returns ())
+- Def: #6 ["ok" @ input.sol:9:24] (parameter, type: bool)
+
+------------------------------------------------------------------------
+
+References (5):
+- Ref: ["require" @ input.sol:10:9] -> built-in
+- Ref: ["ok" @ input.sol:10:17] -> #6
+- Ref: ["Failure" @ input.sol:10:21] -> #2
+- Ref: ["severity" @ input.sol:10:30] -> #3
+- Ref: ["cause" @ input.sol:10:45] -> #4
+
+------------------------------------------------------------------------
+
+Unbound identifiers (0):
+
+------------------------------------------------------------------------
+
+Bindings: 
+    ╭─[input.sol:1:1]
+    │
+  3 │ contract Test {
+    │          ──┬─  
+    │            ╰─── name: 1
+  4 │     error Failure(
+    │           ───┬───  
+    │              ╰───── name: 2
+  5 │         uint severity,
+    │              ────┬───  
+    │                  ╰───── name: 3
+  6 │         string cause
+    │                ──┬──  
+    │                  ╰──── name: 4
+    │ 
+  9 │     function test(bool ok) public {
+    │              ──┬─      ─┬  
+    │                ╰─────────── name: 5
+    │                         │  
+    │                         ╰── name: 6
+ 10 │         require(ok, Failure({severity: 100, cause: "Testing"}));
+    │         ───┬─── ─┬  ───┬───  ────┬───       ──┬──  
+    │            ╰─────────────────────────────────────── built-in
+    │                  │     │         │            │    
+    │                  ╰───────────────────────────────── ref: 6
+    │                        │         │            │    
+    │                        ╰─────────────────────────── ref: 2
+    │                                  │            │    
+    │                                  ╰───────────────── ref: 3
+    │                                               │    
+    │                                               ╰──── ref: 4
+────╯
