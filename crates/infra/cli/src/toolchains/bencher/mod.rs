@@ -139,7 +139,10 @@ pub(crate) fn run_bench(
         let github_token =
             std::env::var("GITHUB_TOKEN").expect("GITHUB_TOKEN must be set for --pr-benchmark");
         command = command.property("--github-actions", &github_token);
-    } else if !dry_run {
+    }
+
+    // TEMP: also backdate PR uploads (same code path as main), to check the resulting report on a PR.
+    if !dry_run {
         // Main commits are benchmarked in parallel, so their reports can be uploaded out of order. Bencher numbers
         // versions in upload order (and backdating doesn't change that), but the dashboard plots are by date, which
         // follows the report's time. Dating it at the commit (its merge time on main) instead of the upload keeps
