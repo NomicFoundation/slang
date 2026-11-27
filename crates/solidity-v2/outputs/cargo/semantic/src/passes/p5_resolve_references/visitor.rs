@@ -4,7 +4,9 @@ use slang_solidity_v2_common::collections::{DefaultWithCapacity, Set};
 use slang_solidity_v2_common::diagnostics::kinds::resolution::{
     IdentifierNotFound, MemberNotFound,
 };
-use slang_solidity_v2_common::diagnostics::kinds::structure::DuplicateNamedArgument;
+use slang_solidity_v2_common::diagnostics::kinds::structure::{
+    DuplicateNamedArgument, ReturnValueInModifier,
+};
 use slang_solidity_v2_common::diagnostics::kinds::type_system::{
     CallOptionsAlreadySet, CallOptionsNotAllowed, CompoundAssignmentToTuple, EmptyArrayLiteral,
     ModifierOutsideFunctionHeader,
@@ -858,6 +860,9 @@ impl Visitor for Pass<'_> {
     fn leave_return_statement(&mut self, node: &ir::ReturnStatement) {
         if let Some(expression) = &node.expression {
             self.check_type_of_value_expression(expression);
+            if self.is_in_modifier_scope() {
+                self.push_diagnostic(node, ReturnValueInModifier);
+            }
         }
     }
 

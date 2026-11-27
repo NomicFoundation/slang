@@ -5130,6 +5130,33 @@ mod structure {
         }
     }
 
+    mod return_value_in_modifier {
+        use super::*;
+
+        #[test]
+        fn accepted_bare_return() -> Result<()> {
+            run("structure/return_value_in_modifier", "accepted_bare_return")
+        }
+
+        #[test]
+        fn accepted_return_in_function() -> Result<()> {
+            run(
+                "structure/return_value_in_modifier",
+                "accepted_return_in_function",
+            )
+        }
+
+        #[test]
+        fn nested_in_try() -> Result<()> {
+            run("structure/return_value_in_modifier", "nested_in_try")
+        }
+
+        #[test]
+        fn value_in_modifier() -> Result<()> {
+            run("structure/return_value_in_modifier", "value_in_modifier")
+        }
+    }
+
     #[test]
     fn storage_layout_for_abstract_contract() -> Result<()> {
         run("structure", "storage_layout_for_abstract_contract")

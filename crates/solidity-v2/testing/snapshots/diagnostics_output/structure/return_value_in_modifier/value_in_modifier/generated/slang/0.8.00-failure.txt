@@ -1,0 +1,11 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 1
+
+[structure/return-value-in-modifier] Error: Modifiers cannot return values.
+    ╭─[input.sol:10:9]
+    │
+ 10 │         return 1;
+    │         ────┬────  
+    │             ╰────── Error occurred here.
+────╯
