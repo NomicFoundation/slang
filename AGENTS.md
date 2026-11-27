@@ -199,6 +199,44 @@ override the individual fields it cares about.
     }
     ```
 
+## Diagnostics
+
+### Messages
+
+- A message puts source text and names in single quotes.
+- A message is one sentence saying what is wrong with the source, not what Slang does.
+
+### Structure
+
+- A field of a diagnostic never holds Slang's wording.
+- A field holding one of a fixed set of kinds or spellings is an enum.
+- A diagnostic has a field only for what its message needs.
+
+### Comments
+
+- A comment on a check states the rule of Solidity it enforces.
+- No Rust comment names solc. Agreement with solc is pinned by a diagnostics snapshot test instead.
+
+### Missing checks
+
+- A missing check is marked `TODO(validation) SDR[n]`, where `n` is the
+  `slang-diagnostics-research` issue it waits on, or `SDR[n,m]` for several.
+- The change that closes an issue removes it from every marker and deletes any marker left empty.
+- A change's description links each issue it works on by URL, after `Closes` when the change
+  closes it and `Part of` when it does not.
+
+### Tests
+
+- A change to a diagnostic has a diagnostics snapshot test for each of:
+    - every case the check distinguishes
+    - the accepted input nearest to a rejected one
+    - each numeric boundary of the check: the value at it, one below and one above
+    - each language version and EVM target that adds or removes the construct, and the supported
+      one before it
+    - a node to which another diagnostic also applies
+- Every diagnostic in a snapshot, from Slang or solc, comes from the construct under test.
+- The reason of an `expected_solc_divergence` says what solc does and why Slang differs.
+
 ## Important Gotchas
 
 - **Asking for help/more info**: If you need more context or have questions, use the `AskUserQuestion` tool to ask the user for clarification. Don't guess or make assumptions about project details.
