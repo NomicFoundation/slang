@@ -16,7 +16,7 @@ use crate::binder::{
     UsingDirective,
 };
 use crate::built_ins::InternalBuiltIn;
-use crate::passes::common::IdentifierPathTarget;
+use crate::passes::common::PathContext;
 use crate::types::{ContractType, DataLocation, EnumType, InterfaceType, LibraryType, Type};
 
 impl Visitor for Pass<'_> {
@@ -250,10 +250,7 @@ impl Visitor for Pass<'_> {
 
     fn enter_type_name(&mut self, node: &ir::TypeName) -> bool {
         if let ir::TypeName::IdentifierPath(identifier_path) = node {
-            self.resolve_and_check_identifier_path_as_type(
-                identifier_path,
-                IdentifierPathTarget::Type,
-            );
+            self.resolve_and_check_identifier_path(identifier_path, PathContext::Type);
             false
         } else {
             true
@@ -333,10 +330,7 @@ impl Visitor for Pass<'_> {
 
     fn enter_override_paths(&mut self, items: &ir::OverridePaths) -> bool {
         for identifier_path in items.iter() {
-            self.resolve_and_check_identifier_path_as_type(
-                identifier_path,
-                IdentifierPathTarget::Contract,
-            );
+            self.resolve_and_check_identifier_path(identifier_path, PathContext::Override);
         }
         false
     }
@@ -491,11 +485,14 @@ impl Visitor for Pass<'_> {
     fn enter_using_directive(&mut self, node: &ir::UsingDirective) -> bool {
         match &node.clause {
             ir::UsingClause::IdentifierPath(identifier_path) => {
-                self.resolve_identifier_path_as_type(identifier_path);
+                self.resolve_and_check_identifier_path(identifier_path, PathContext::UsingLibrary);
             }
             ir::UsingClause::UsingDeconstruction(using_deconstruction) => {
                 for symbol in using_deconstruction.symbols.iter() {
-                    self.resolve_identifier_path_as_type(&symbol.name);
+                    self.resolve_and_check_identifier_path(
+                        &symbol.name,
+                        PathContext::UsingFunction,
+                    );
                 }
             }
         }
@@ -516,14 +513,9 @@ impl Visitor for Pass<'_> {
                 };
                 match &node.clause {
                     ir::UsingClause::IdentifierPath(identifier_path) => {
-                        let scope_id =
-                            match self.find_library_scope_id_for_identifier_path(identifier_path) {
-                                Ok(scope_id) => scope_id,
-                                Err(kind) => {
-                                    self.push_diagnostic(identifier_path.last().unwrap(), kind);
-                                    return;
-                                }
-                            };
+                        let Some(scope_id) = self.library_scope_id(identifier_path) else {
+                            return;
+                        };
                         UsingDirective::new_single_type(scope_id, type_id)
                     }
                     ir::UsingClause::UsingDeconstruction(using_deconstruction) => {
@@ -539,10 +531,6 @@ impl Visitor for Pass<'_> {
                                     self.binder
                                         .follow_symbol_aliases(reference.resolution.clone())
                                 });
-
-                            if let Some(kind) = self.validate_using_directive_symbol(&resolution) {
-                                self.push_diagnostic(symbol_name, kind);
-                            }
 
                             let definition_ids = resolution.get_definition_ids();
                             if let Some(operator) = &symbol.alias {
@@ -579,13 +567,8 @@ impl Visitor for Pass<'_> {
                     // only libraries can be attached to all types
                     return;
                 };
-                let scope_id = match self.find_library_scope_id_for_identifier_path(identifier_path)
-                {
-                    Ok(scope_id) => scope_id,
-                    Err(kind) => {
-                        self.push_diagnostic(identifier_path.last().unwrap(), kind);
-                        return;
-                    }
+                let Some(scope_id) = self.library_scope_id(identifier_path) else {
+                    return;
                 };
                 UsingDirective::new_all(scope_id)
             }

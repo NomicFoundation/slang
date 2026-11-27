@@ -1,10 +1,6 @@
 use num_traits::Signed;
 use ruint::aliases::U256;
 use slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind;
-use slang_solidity_v2_common::diagnostics::kinds::resolution::{
-    IdentifierNotFunctionOrNotUnique, IdentifierNotLibraryName,
-    NonFreeOrLibraryFunctionInUsingDirective,
-};
 use slang_solidity_v2_common::diagnostics::kinds::type_system::{
     ArrayLengthFractional, ArrayLengthNegative, ArrayLengthNotConstant, ArrayLengthTooLarge,
     ArrayLengthZero, StorageLayoutBaseNonInteger, StorageLayoutBaseNotConstant,
@@ -15,26 +11,25 @@ use slang_solidity_v2_ir::ir;
 use slang_solidity_v2_ir::ir::{NodeIdentity, TextRange};
 
 use super::Pass;
-use crate::binder::{Definition, Resolution, Scope, ScopeId};
+use crate::binder::{Definition, Scope, ScopeId};
 use crate::passes::common::constant_evaluator::{
     ConstantResolver, EvaluationError, evaluate_compile_time_constant,
 };
-use crate::passes::common::{
-    IdentifierPathTarget, PathResolution, node_location, resolve_identifier_path_as_type_in_scope,
-};
+use crate::passes::common::{PathContext, PathResolution, node_location, resolve_identifier_path};
 use crate::types::{
     ArrayType, DataLocation, FixedSizeArrayType, FunctionType, MappingType, TupleType, Type, TypeId,
 };
 
 impl Pass<'_> {
-    /// Resolves an `IdentifierPath` in a type context starting at the current
-    /// lexical scope.  Returns the resolution of the last reference.
-    pub(super) fn resolve_identifier_path_as_type(
+    /// Resolves an `IdentifierPath` written in `context`, starting at the
+    /// current lexical scope.
+    pub(super) fn resolve_identifier_path(
         &mut self,
         identifier_path: &ir::IdentifierPath,
+        context: PathContext,
     ) -> PathResolution {
         let scope_id = self.type_name_scope_id();
-        resolve_identifier_path_as_type_in_scope(self.binder, identifier_path, scope_id)
+        resolve_identifier_path(self.binder, identifier_path, scope_id, context)
     }
 
     /// The scope type names resolve in. Same as the current lexical scope,
@@ -56,18 +51,15 @@ impl Pass<'_> {
         }
     }
 
-    /// Resolves an `IdentifierPath` in a type context starting at the current
-    /// lexical scope, and reports its first identifier that does not name a
-    /// single declaration, expecting it to name a `target`.
-    pub(super) fn resolve_and_check_identifier_path_as_type(
+    /// Resolves an `IdentifierPath` written in `context`, and reports its
+    /// first identifier that does not name a declaration the path can use.
+    pub(super) fn resolve_and_check_identifier_path(
         &mut self,
         identifier_path: &ir::IdentifierPath,
-        target: IdentifierPathTarget,
+        context: PathContext,
     ) {
-        let path_resolution = self.resolve_identifier_path_as_type(identifier_path);
-        if let Some((identifier, kind)) =
-            path_resolution.unresolved_identifier(identifier_path, target)
-        {
+        let path_resolution = self.resolve_identifier_path(identifier_path, context);
+        if let Some((identifier, kind)) = path_resolution.diagnostic(identifier_path) {
             self.push_diagnostic(identifier, kind);
         }
     }
@@ -268,70 +260,18 @@ impl Pass<'_> {
         }
     }
 
-    /// Resolves the library named in a `using L for ...` directive to its
-    /// scope, or returns the diagnostic to report when it is not a valid
-    /// library.
-    pub(super) fn find_library_scope_id_for_identifier_path(
-        &self,
-        identifier_path: &ir::IdentifierPath,
-    ) -> Result<ScopeId, DiagnosticKind> {
-        let resolution = identifier_path
-            .last()
-            .and_then(|identifier| {
-                self.binder
-                    .find_reference_by_identifier_node_id(identifier.id())
-            })
-            .map_or(Resolution::Unresolved, |reference| {
-                // reference may resolve to an imported library, so we need to
-                // follow aliases
-                self.binder
-                    .follow_symbol_aliases(reference.resolution.clone())
-            });
-
-        // Must resolve to a unique library.
-        match resolution.as_definition_id() {
-            Some(definition_id)
-                if matches!(
-                    self.binder.find_definition_by_id(definition_id),
-                    Some(Definition::Library(_))
-                ) =>
-            {
-                Ok(self.binder.scope_id_for_node_id(definition_id).unwrap())
-            }
-            _ => Err(IdentifierNotLibraryName.into()),
-        }
-    }
-
-    /// Validates a `using {...} for` symbol. Returns the diagnostic for why it is
-    /// rejected, or `None` if it resolves to a single free or library function.
-    pub(super) fn validate_using_directive_symbol(
-        &self,
-        resolution: &Resolution,
-    ) -> Option<DiagnosticKind> {
-        match resolution {
-            Resolution::Definition(id) => match self.binder.find_definition_by_id(*id) {
-                Some(Definition::Function(_)) => {
-                    // A free function has no enclosing definition. A library
-                    // function is enclosed by its library.
-                    let is_free_or_library = self
-                        .binder
-                        .enclosing_definition_node_id(*id)
-                        .is_none_or(|enclosing_id| {
-                            matches!(
-                                self.binder.find_definition_by_id(enclosing_id),
-                                Some(Definition::Library(_))
-                            )
-                        });
-                    (!is_free_or_library).then(|| NonFreeOrLibraryFunctionInUsingDirective.into())
-                }
-                _ => Some(IdentifierNotFunctionOrNotUnique.into()),
-            },
-            // Global built-ins are not visible in the scope where using
-            // directives resolve, so a built-in never reaches here.
-            Resolution::BuiltIn(_) => unreachable!("built-ins do not resolve in a using directive"),
-            Resolution::Unresolved | Resolution::Ambiguous(_) => {
-                Some(IdentifierNotFunctionOrNotUnique.into())
-            }
-        }
+    /// The scope of the library named in a `using L for ...` directive, or
+    /// `None` when it names none, which its resolution has reported.
+    pub(super) fn library_scope_id(&self, identifier_path: &ir::IdentifierPath) -> Option<ScopeId> {
+        let library = identifier_path.last()?;
+        let reference = self
+            .binder
+            .find_reference_by_identifier_node_id(library.id())?;
+        // The library may be imported, so aliases are followed.
+        let definition_id = self
+            .binder
+            .follow_symbol_aliases(reference.resolution.clone())
+            .as_definition_id()?;
+        self.binder.scope_id_for_node_id(definition_id)
     }
 }

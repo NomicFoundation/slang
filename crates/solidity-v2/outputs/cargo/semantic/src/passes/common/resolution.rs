@@ -3,49 +3,175 @@ use std::sync::Arc;
 
 use slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind;
 use slang_solidity_v2_common::diagnostics::kinds::resolution::{
-    AmbiguousReference, IdentifierNotFound, IdentifierNotNamespace, NamespaceMemberNotFound,
+    AmbiguousReference, IdentifierNotFound, IdentifierNotFunctionOrNotUnique,
+    IdentifierNotLibraryName, IdentifierNotNamespace, NamespaceMemberNotFound,
+    NonFreeOrLibraryFunctionInUsingDirective,
 };
 use slang_solidity_v2_common::diagnostics::kinds::semantic::OverridableKind;
+use slang_solidity_v2_common::diagnostics::kinds::type_system::InvalidBase;
 use slang_solidity_v2_common::nodes::NodeId;
 use slang_solidity_v2_ir::ir;
 
 use crate::binder::{Binder, Definition, DefinitionIds, Reference, Resolution, ScopeId, Typing};
 use crate::types::{FunctionType, Type, TypeId, TypeRegistry};
 
-/// The kind of declaration an `IdentifierPath` is expected to name. Mostly
-/// declarative for now with only some variants having semantic impact when
-/// reporting errors.
+/// What an `IdentifierPath` is written to name. Looking a name up does not
+/// depend on it: the nearest declaration wins, whatever its kind. The context
+/// then decides whether the declaration the path ends at is acceptable.
 #[derive(Clone, Copy)]
-pub(crate) enum IdentifierPathTarget {
-    /// A user-defined type, like a struct, an enum or a contract.
+pub(crate) enum PathContext {
+    /// A type name: a contract, interface, library, struct, enum or
+    /// user-defined value type.
     Type,
-    /// A contract or interface, as a base or in an `override` list.
-    Contract,
-    Error,
+    /// A base in an inheritance list.
+    Base,
+    /// An entry of an `override` list.
+    Override,
+    /// A modifier invocation: a modifier, or a base whose constructor is
+    /// invoked.
+    ModifierInvocation,
+    /// The library of a `using L for` directive.
+    UsingLibrary,
+    /// A function of a `using {f} for` directive.
+    UsingFunction,
+    /// The event of an `emit`.
     Event,
-    /// A modifier, or a base contract whose constructor is invoked.
-    Modifier,
+    /// The error of a `revert`.
+    Error,
+}
+
+impl PathContext {
+    /// How an identifier after the first is looked up in the namespace the
+    /// previous one names. An event or error is named as a member of a type
+    /// name used as a value, like `C.E` in an expression.
+    fn member_resolver(self) -> fn(&Binder, ScopeId, &str) -> Resolution {
+        match self {
+            Self::Event | Self::Error => Binder::resolve_in_scope_as_expression_member,
+            Self::Type
+            | Self::Base
+            | Self::Override
+            | Self::ModifierInvocation
+            | Self::UsingLibrary
+            | Self::UsingFunction => Binder::resolve_in_scope_as_namespace,
+        }
+    }
+
+    /// Whether the path may end at several declarations, which are narrowed
+    /// down later: the overloads of an event, by the arguments of the `emit`,
+    /// and the overrides of a virtual modifier, by the contract it runs in.
+    fn accepts_set(self, binder: &Binder, definition_ids: &[NodeId]) -> bool {
+        match self {
+            Self::Event => true,
+            Self::ModifierInvocation => definition_ids.iter().all(|definition_id| {
+                matches!(
+                    binder.find_definition_by_id(*definition_id),
+                    Some(Definition::Modifier(_))
+                )
+            }),
+            Self::Type
+            | Self::Base
+            | Self::Override
+            | Self::UsingLibrary
+            | Self::UsingFunction
+            | Self::Error => false,
+        }
+    }
+
+    /// Checks what the path ends at, returning the diagnostic to report when
+    /// this context cannot take it. Several declarations that are not a set
+    /// the context accepts are a redeclaration, reported on its own, but a
+    /// `using` directive cannot attach any of them either.
+    fn check_resolution(
+        self,
+        binder: &Binder,
+        resolution: &Resolution,
+    ) -> Result<(), DiagnosticKind> {
+        match resolution {
+            Resolution::Definition(definition_id) => self.check_definition(binder, *definition_id),
+            Resolution::Ambiguous(_) => self.unusable_name_diagnostic().map_or(Ok(()), Err),
+            Resolution::BuiltIn(_) | Resolution::Unresolved => Ok(()),
+        }
+    }
+
+    /// Checks a single declaration the path ends at.
+    fn check_definition(
+        self,
+        binder: &Binder,
+        definition_id: NodeId,
+    ) -> Result<(), DiagnosticKind> {
+        let definition = binder
+            .find_definition_by_id(definition_id)
+            .expect("a resolution names a registered definition");
+        match self {
+            Self::Base => match definition {
+                Definition::Contract(_) | Definition::Interface(_) => Ok(()),
+                _ => Err(InvalidBase.into()),
+            },
+            Self::UsingLibrary => match definition {
+                Definition::Library(_) => Ok(()),
+                _ => Err(IdentifierNotLibraryName.into()),
+            },
+            Self::UsingFunction => match definition {
+                Definition::Function(_) if is_free_or_library_function(binder, definition_id) => {
+                    Ok(())
+                }
+                Definition::Function(_) => Err(NonFreeOrLibraryFunctionInUsingDirective.into()),
+                _ => Err(IdentifierNotFunctionOrNotUnique.into()),
+            },
+            Self::Type | Self::Override | Self::ModifierInvocation | Self::Event | Self::Error => {
+                Ok(())
+            }
+        }
+    }
+
+    /// The diagnostic a `using` directive reports for a name it cannot attach,
+    /// in place of saying why the name failed to resolve.
+    fn unusable_name_diagnostic(self) -> Option<DiagnosticKind> {
+        match self {
+            Self::UsingLibrary => Some(IdentifierNotLibraryName.into()),
+            Self::UsingFunction => Some(IdentifierNotFunctionOrNotUnique.into()),
+            Self::Type
+            | Self::Base
+            | Self::Override
+            | Self::ModifierInvocation
+            | Self::Event
+            | Self::Error => None,
+        }
+    }
+}
+
+/// Whether the function `definition_id` is free, ie. has no enclosing
+/// definition, or is declared in a library.
+fn is_free_or_library_function(binder: &Binder, definition_id: NodeId) -> bool {
+    binder
+        .enclosing_definition_node_id(definition_id)
+        .is_none_or(|enclosing_id| {
+            matches!(
+                binder.find_definition_by_id(enclosing_id),
+                Some(Definition::Library(_))
+            )
+        })
 }
 
 /// The first identifier of an `IdentifierPath` that fails to resolve to a
-/// single declaration. The identifiers after it cannot resolve and are not
-/// considered.
+/// declaration the path can use. The identifiers after it cannot resolve and
+/// are not considered.
 pub(crate) enum PathResolutionFailure {
-    /// Every identifier resolves to a single declaration (or a built-in).
+    /// Every identifier resolves to a declaration the path can use.
     None,
     /// The identifier at this index resolves to nothing, or is reached
     /// through an alias that leads nowhere.
     Unresolved(usize),
     /// The identifier at this index names an overload set, or the overrides
-    /// of a virtual modifier. A redeclaration also names several
-    /// declarations, but is reported on its own.
-    Ambiguous {
-        index: usize,
-        is_modifier_override_set: bool,
-    },
+    /// of a virtual modifier, that its position cannot take. A redeclaration
+    /// also names several declarations, but is reported on its own.
+    Ambiguous(usize),
     /// The identifier at this index is a qualifier naming a declaration that
     /// has no members, like a variable or a struct.
     NotANamespace(usize),
+    /// The last identifier names a declaration of a kind the context cannot
+    /// take, reported with this diagnostic. Its reference is left unresolved.
+    WrongKind(DiagnosticKind),
 }
 
 /// The outcome of resolving an `IdentifierPath`.
@@ -53,25 +179,42 @@ pub(crate) struct PathResolution {
     /// The resolution of the last identifier, with symbol aliases followed.
     pub(crate) resolution: Resolution,
     pub(crate) failure: PathResolutionFailure,
+    context: PathContext,
 }
 
 impl PathResolution {
     /// The identifier that failed to resolve, with the diagnostic to report
     /// for it: the head of the path is undeclared, any later identifier is a
     /// member that the preceding one does not provide, a qualifier without
-    /// members is not a namespace, and an identifier naming several
-    /// declarations is ambiguous. The last identifier is expected to name a
-    /// `target`: an event, or the overrides of a modifier, may be ambiguous,
-    /// as they are narrowed down later.
-    pub(crate) fn unresolved_identifier<'a>(
+    /// members is not a namespace, an identifier naming several declarations
+    /// is ambiguous, and the last one may name the wrong kind of declaration.
+    pub(crate) fn diagnostic<'a>(
         &self,
         identifier_path: &'a ir::IdentifierPath,
-        target: IdentifierPathTarget,
     ) -> Option<(&'a ir::Identifier, DiagnosticKind)> {
-        let is_last = |index: usize| index == identifier_path.len() - 1;
-        match self.failure {
-            PathResolutionFailure::None => None,
+        let last = identifier_path
+            .last()
+            .expect("an identifier path has at least one identifier");
+        if let PathResolutionFailure::WrongKind(kind) = &self.failure {
+            return Some((last, kind.clone()));
+        }
+        let (identifier, kind) = self.resolution_diagnostic(identifier_path)?;
+        Some(match self.context.unusable_name_diagnostic() {
+            Some(kind) => (last, kind),
+            None => (identifier, kind),
+        })
+    }
+
+    /// The diagnostic for an identifier that does not resolve to a single
+    /// declaration.
+    fn resolution_diagnostic<'a>(
+        &self,
+        identifier_path: &'a ir::IdentifierPath,
+    ) -> Option<(&'a ir::Identifier, DiagnosticKind)> {
+        match &self.failure {
+            PathResolutionFailure::None | PathResolutionFailure::WrongKind(_) => None,
             PathResolutionFailure::Unresolved(index) => {
+                let index = *index;
                 let identifier = &identifier_path[index];
                 let kind = if index == 0 {
                     IdentifierNotFound.into()
@@ -80,19 +223,8 @@ impl PathResolution {
                 };
                 Some((identifier, kind))
             }
-            PathResolutionFailure::Ambiguous {
-                index,
-                is_modifier_override_set,
-            } => {
-                let may_be_ambiguous = match target {
-                    IdentifierPathTarget::Event => true,
-                    IdentifierPathTarget::Modifier => is_modifier_override_set,
-                    _ => false,
-                };
-                if may_be_ambiguous && is_last(index) {
-                    return None;
-                }
-                let identifier = &identifier_path[index];
+            PathResolutionFailure::Ambiguous(index) => {
+                let identifier = &identifier_path[*index];
                 let kind = AmbiguousReference {
                     name: identifier.unparse().to_owned(),
                 }
@@ -100,7 +232,7 @@ impl PathResolution {
                 Some((identifier, kind))
             }
             PathResolutionFailure::NotANamespace(index) => {
-                let identifier = &identifier_path[index];
+                let identifier = &identifier_path[*index];
                 let kind = IdentifierNotNamespace {
                     name: identifier.unparse().to_owned(),
                 }
@@ -108,17 +240,6 @@ impl PathResolution {
                 Some((identifier, kind))
             }
         }
-    }
-
-    /// Whether the last identifier names the overrides of a virtual modifier.
-    pub(crate) fn is_modifier_override_set(&self) -> bool {
-        matches!(
-            self.failure,
-            PathResolutionFailure::Ambiguous {
-                is_modifier_override_set: true,
-                ..
-            }
-        ) && matches!(self.resolution, Resolution::Ambiguous(_))
     }
 }
 
@@ -138,44 +259,18 @@ pub(crate) fn namespace_member_not_found(
     }
 }
 
-/// Resolves an `IdentifierPath` starting from the given scope, creating
-/// `Reference`s for all its elements. It will follow through
-/// contracts/interfaces/libraries as well as imports and treat them as
-/// namespaces. Returns the resolution of the last reference.
-pub(crate) fn resolve_identifier_path_as_type_in_scope(
+/// Resolves an `IdentifierPath` written in `context`, starting from the given
+/// scope, and creates `Reference`s for all its elements. The first identifier
+/// is looked up lexically, and each later one as a member of the namespace
+/// (contract, interface, library or import) the previous one names.
+pub(crate) fn resolve_identifier_path(
     binder: &mut Binder,
     identifier_path: &ir::IdentifierPath,
     starting_scope_id: ScopeId,
+    context: PathContext,
 ) -> PathResolution {
-    resolve_path_in_scope(
-        binder,
-        identifier_path,
-        starting_scope_id,
-        Binder::resolve_in_scope_as_namespace,
-    )
-}
-
-/// Resolves the event of an `emit` or the error of a `revert`, whose segments
-/// are members of a type name used as a value, like `C.E` in an expression.
-pub(crate) fn resolve_identifier_path_as_expression_in_scope(
-    binder: &mut Binder,
-    identifier_path: &ir::IdentifierPath,
-    starting_scope_id: ScopeId,
-) -> PathResolution {
-    resolve_path_in_scope(
-        binder,
-        identifier_path,
-        starting_scope_id,
-        Binder::resolve_in_scope_as_expression_member,
-    )
-}
-
-fn resolve_path_in_scope(
-    binder: &mut Binder,
-    identifier_path: &ir::IdentifierPath,
-    starting_scope_id: ScopeId,
-    resolve_member: fn(&Binder, ScopeId, &str) -> Resolution,
-) -> PathResolution {
+    let resolve_member = context.member_resolver();
+    let last_index = identifier_path.len() - 1;
     let mut scope_id = Some(starting_scope_id);
     let mut resolution = Resolution::Unresolved;
     let mut failure = PathResolutionFailure::None;
@@ -185,7 +280,6 @@ fn resolve_path_in_scope(
         let symbol = identifier.unparse();
         resolution = if let Some(scope_id) = scope_id {
             if index == 0 {
-                // we use lexical resolution only in the first segment of the identifier path
                 binder.resolve_in_scope(scope_id, symbol)
             } else {
                 resolve_member(binder, scope_id, symbol)
@@ -200,6 +294,19 @@ fn resolve_path_in_scope(
 
         resolution = binder.follow_symbol_aliases(resolution);
 
+        // A set the context narrows down later names the first declaration
+        // for now: the most derived override of a virtual modifier.
+        if index == last_index
+            && let Resolution::Ambiguous(definition_ids) = &resolution
+            && context.accepts_set(binder, definition_ids)
+        {
+            if matches!(context, PathContext::ModifierInvocation) {
+                resolution = Resolution::Definition(definition_ids[0]);
+                binder.fixup_reference(identifier.id(), resolution.clone());
+            }
+            break;
+        }
+
         // Only the first identifier not resolving to a single declaration is
         // reported. An alias leading nowhere is reported where it is
         // imported, so ambiguity is judged after following aliases but
@@ -210,15 +317,7 @@ fn resolve_path_in_scope(
             } else if let Resolution::Ambiguous(definition_ids) = &resolution
                 && is_overload_or_override_set(binder, definition_ids)
             {
-                failure = PathResolutionFailure::Ambiguous {
-                    index,
-                    is_modifier_override_set: definition_ids.iter().all(|definition_id| {
-                        matches!(
-                            binder.find_definition_by_id(*definition_id),
-                            Some(Definition::Modifier(_))
-                        )
-                    }),
-                };
+                failure = PathResolutionFailure::Ambiguous(index);
             }
             is_reportable &= matches!(resolution, Resolution::Definition(_));
         }
@@ -231,7 +330,7 @@ fn resolve_path_in_scope(
 
         // A qualifier with no scope to look its member up in. An import of a
         // file that could not be resolved is reported where it is imported.
-        if is_reportable && scope_id.is_none() && index + 1 < identifier_path.len() {
+        if is_reportable && scope_id.is_none() && index < last_index {
             let is_unresolved_import = resolution.as_definition_id().is_some_and(|definition_id| {
                 matches!(
                     binder.find_definition_by_id(definition_id),
@@ -244,9 +343,22 @@ fn resolve_path_in_scope(
             is_reportable = false;
         }
     }
+
+    // A path that resolves names declarations of some kind, which the
+    // context may not take. Its reference is then left unresolved.
+    if matches!(failure, PathResolutionFailure::None)
+        && let Err(kind) = context.check_resolution(binder, &resolution)
+    {
+        let last = &identifier_path[last_index];
+        binder.fixup_reference(last.id(), Resolution::Unresolved);
+        resolution = Resolution::Unresolved;
+        failure = PathResolutionFailure::WrongKind(kind);
+    }
+
     PathResolution {
         resolution,
         failure,
+        context,
     }
 }
 
