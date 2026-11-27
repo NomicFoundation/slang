@@ -5130,6 +5130,33 @@ mod structure {
         }
     }
 
+    mod return_value_in_modifier {
+        use super::*;
+
+        #[test]
+        fn accepted_bare_return() -> Result<()> {
+            run("structure/return_value_in_modifier", "accepted_bare_return")
+        }
+
+        #[test]
+        fn accepted_return_in_function() -> Result<()> {
+            run(
+                "structure/return_value_in_modifier",
+                "accepted_return_in_function",
+            )
+        }
+
+        #[test]
+        fn nested_in_try() -> Result<()> {
+            run("structure/return_value_in_modifier", "nested_in_try")
+        }
+
+        #[test]
+        fn value_in_modifier() -> Result<()> {
+            run("structure/return_value_in_modifier", "value_in_modifier")
+        }
+    }
+
     #[test]
     fn storage_layout_for_abstract_contract() -> Result<()> {
         run("structure", "storage_layout_for_abstract_contract")
@@ -9449,6 +9476,47 @@ mod type_system {
         #[test]
         fn too_many() -> Result<()> {
             run("type_system/wrong_encoded_argument_count", "too_many")
+        }
+    }
+
+    mod wrong_return_value_count {
+        use super::*;
+
+        #[test]
+        fn accepted_bare_return() -> Result<()> {
+            run(
+                "type_system/wrong_return_value_count",
+                "accepted_bare_return",
+            )
+        }
+
+        #[test]
+        fn accepted_matching_count() -> Result<()> {
+            run(
+                "type_system/wrong_return_value_count",
+                "accepted_matching_count",
+            )
+        }
+
+        #[test]
+        fn bare_return() -> Result<()> {
+            run("type_system/wrong_return_value_count", "bare_return")
+        }
+
+        #[test]
+        fn single_value_count_differs() -> Result<()> {
+            run(
+                "type_system/wrong_return_value_count",
+                "single_value_count_differs",
+            )
+        }
+
+        #[test]
+        fn tuple_count_differs() -> Result<()> {
+            run(
+                "type_system/wrong_return_value_count",
+                "tuple_count_differs",
+            )
         }
     }
 }

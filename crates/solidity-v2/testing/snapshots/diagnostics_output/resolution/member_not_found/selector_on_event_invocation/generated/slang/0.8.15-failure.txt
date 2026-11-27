@@ -1,6 +1,6 @@
 # This file is generated automatically by infrastructure scripts. Please don't edit by hand.
 
-Diagnostics: 1
+Diagnostics: 2
 
 [resolution/member-not-found] Error: Member 'selector' not found or not visible after argument-dependent lookup.
    ╭─[input.sol:9:21]
@@ -9,3 +9,11 @@ Diagnostics: 1
    │                     ────┬───  
    │                         ╰───── Error occurred here.
 ───╯
+
+[type-system/wrong-return-value-count] Error: Wrong return value count: 1 value given but expected 0.
+    ╭─[input.sol:13:9]
+    │
+ 13 │         return E.selector;
+    │         ─────────┬────────  
+    │                  ╰────────── Error occurred here.
+────╯

@@ -49,6 +49,7 @@ mod non_abstract_contract_internal_constructor;
 mod payable_internal_or_private_function;
 mod placeholder_in_unchecked_block;
 mod redefined_built_in_error;
+mod return_value_in_modifier;
 mod storage_layout_for_abstract_contract;
 mod trailing_switch_value_case;
 mod unchecked_block_not_in_regular_block;
@@ -117,6 +118,7 @@ pub use non_abstract_contract_internal_constructor::NonAbstractContractInternalC
 pub use payable_internal_or_private_function::PayableInternalOrPrivateFunction;
 pub use placeholder_in_unchecked_block::PlaceholderInUncheckedBlock;
 pub use redefined_built_in_error::RedefinedBuiltInError;
+pub use return_value_in_modifier::ReturnValueInModifier;
 use serde::Serialize;
 pub use storage_layout_for_abstract_contract::StorageLayoutForAbstractContract;
 pub use trailing_switch_value_case::TrailingSwitchValueCase;
@@ -284,6 +286,9 @@ define_diagnostic_kind! {
 
         /// A placeholder statement (`_`) appears inside an `unchecked` block.
         PlaceholderInUncheckedBlock(PlaceholderInUncheckedBlock),
+
+        /// A `return` statement in a modifier's body carries a value.
+        ReturnValueInModifier(ReturnValueInModifier),
 
         /// A free function is marked `virtual`.
         VirtualFreeFunction(VirtualFreeFunction),

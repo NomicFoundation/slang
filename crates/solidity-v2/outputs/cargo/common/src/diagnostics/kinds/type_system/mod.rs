@@ -48,6 +48,7 @@ mod write_to_constant;
 mod wrong_argument_count;
 mod wrong_argument_count_in_conversion;
 mod wrong_encoded_argument_count;
+mod wrong_return_value_count;
 
 pub use array_length_fractional::ArrayLengthFractional;
 pub use array_length_negative::ArrayLengthNegative;
@@ -100,6 +101,7 @@ pub use write_to_constant::WriteToConstant;
 pub use wrong_argument_count::WrongArgumentCount;
 pub use wrong_argument_count_in_conversion::WrongArgumentCountInConversion;
 pub use wrong_encoded_argument_count::WrongEncodedArgumentCount;
+pub use wrong_return_value_count::WrongReturnValueCount;
 
 use crate::diagnostics::kinds::DiagnosticKind;
 use crate::diagnostics::kinds::utils::define_diagnostic_kind;
@@ -199,6 +201,9 @@ define_diagnostic_kind! {
         /// An argument `abi.encodeCall` encodes a call with does not implicitly
         /// convert to the type of its parameter in the encoded function.
         InvalidEncodedArgumentType(InvalidEncodedArgumentType),
+        /// A `return` statement gives a different number of values than its
+        /// function declares.
+        WrongReturnValueCount(WrongReturnValueCount),
         /// A struct containing a mapping is constructed.
         StructWithMappingConstructed(StructWithMappingConstructed),
         /// An expression in a position that requires a value names a built-in,

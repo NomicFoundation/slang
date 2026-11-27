@@ -4,10 +4,12 @@ use slang_solidity_v2_common::collections::{DefaultWithCapacity, Set};
 use slang_solidity_v2_common::diagnostics::kinds::resolution::{
     IdentifierNotFound, MemberNotFound,
 };
-use slang_solidity_v2_common::diagnostics::kinds::structure::DuplicateNamedArgument;
+use slang_solidity_v2_common::diagnostics::kinds::structure::{
+    DuplicateNamedArgument, ReturnValueInModifier,
+};
 use slang_solidity_v2_common::diagnostics::kinds::type_system::{
     CallOptionsAlreadySet, CallOptionsNotAllowed, CompoundAssignmentToTuple, EmptyArrayLiteral,
-    ModifierOutsideFunctionHeader,
+    ModifierOutsideFunctionHeader, WrongReturnValueCount,
 };
 use slang_solidity_v2_ir::ir;
 use slang_solidity_v2_ir::ir::NodeIdentity;
@@ -856,8 +858,29 @@ impl Visitor for Pass<'_> {
     }
 
     fn leave_return_statement(&mut self, node: &ir::ReturnStatement) {
-        if let Some(expression) = &node.expression {
-            self.check_type_of_value_expression(expression);
+        let returned_type_id = if let Some(expression) = &node.expression {
+            let type_id = self.check_type_of_value_expression(expression);
+            if self.is_in_modifier_scope() {
+                self.push_diagnostic(node, ReturnValueInModifier);
+            }
+            type_id
+        } else {
+            Some(self.types.void())
+        };
+        if let Some(returned_type_id) = returned_type_id
+            && let Some(function_id) = self.current_function_node_id()
+            && let Some(type_id) = self.binder.node_typing(function_id).as_type_id()
+            && let Type::Function(function_type) = self.types.get_type_by_id(type_id)
+        {
+            let value_count = |type_id| match self.types.get_type_by_id(type_id) {
+                Type::Tuple(tuple) => tuple.types.len(),
+                _ => 1,
+            };
+            let given = value_count(returned_type_id);
+            let expected = value_count(function_type.return_type);
+            if given != expected {
+                self.push_diagnostic(node, WrongReturnValueCount { given, expected });
+            }
         }
     }
 
