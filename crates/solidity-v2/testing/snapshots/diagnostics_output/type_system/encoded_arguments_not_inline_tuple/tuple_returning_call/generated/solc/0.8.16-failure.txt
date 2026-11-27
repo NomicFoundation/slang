@@ -1,0 +1,11 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 1
+
+[TypeError 9062] Error: Expected an inline tuple, not an expression of a tuple type.
+   ╭─[input.sol:6:32]
+   │
+ 6 │         abi.encodeCall(this.g, t());
+   │                                ─┬─  
+   │                                 ╰─── Error occurred here.
+───╯

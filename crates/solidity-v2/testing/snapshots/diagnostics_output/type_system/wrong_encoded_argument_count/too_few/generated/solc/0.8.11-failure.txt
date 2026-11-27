@@ -1,0 +1,11 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 1
+
+[TypeError 7515] Error: Expected a tuple with 2 components instead of a single non-tuple parameter.
+   ╭─[input.sol:6:9]
+   │
+ 6 │         abi.encodeCall(this.g, (1));
+   │         ─────────────┬─────────────  
+   │                      ╰─────────────── Error occurred here.
+───╯

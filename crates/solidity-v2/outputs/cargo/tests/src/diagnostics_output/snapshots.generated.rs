@@ -6836,6 +6836,18 @@ mod type_system {
         }
     }
 
+    mod encoded_arguments_not_inline_tuple {
+        use super::*;
+
+        #[test]
+        fn tuple_returning_call() -> Result<()> {
+            run(
+                "type_system/encoded_arguments_not_inline_tuple",
+                "tuple_returning_call",
+            )
+        }
+    }
+
     mod explicit_conversion_not_allowed {
         use super::*;
 
@@ -7957,6 +7969,11 @@ mod type_system {
         use super::*;
 
         #[test]
+        fn abi_decode_data() -> Result<()> {
+            run("type_system/invalid_argument_type", "abi_decode_data")
+        }
+
+        #[test]
         fn base_constructor_invocation() -> Result<()> {
             run(
                 "type_system/invalid_argument_type",
@@ -7994,6 +8011,19 @@ mod type_system {
         }
 
         #[test]
+        fn built_in_bytes_concat() -> Result<()> {
+            run("type_system/invalid_argument_type", "built_in_bytes_concat")
+        }
+
+        #[test]
+        fn built_in_bytes_concat_number_literal() -> Result<()> {
+            run(
+                "type_system/invalid_argument_type",
+                "built_in_bytes_concat_number_literal",
+            )
+        }
+
+        #[test]
         fn built_in_erc7201() -> Result<()> {
             run("type_system/invalid_argument_type", "built_in_erc7201")
         }
@@ -8006,6 +8036,14 @@ mod type_system {
         #[test]
         fn built_in_selfdestruct() -> Result<()> {
             run("type_system/invalid_argument_type", "built_in_selfdestruct")
+        }
+
+        #[test]
+        fn built_in_string_concat() -> Result<()> {
+            run(
+                "type_system/invalid_argument_type",
+                "built_in_string_concat",
+            )
         }
 
         #[test]
@@ -8256,6 +8294,98 @@ mod type_system {
         #[test]
         fn library() -> Result<()> {
             run("type_system/invalid_base", "library")
+        }
+    }
+
+    mod invalid_decoded_types {
+        use super::*;
+
+        #[test]
+        fn nested_tuple() -> Result<()> {
+            run("type_system/invalid_decoded_types", "nested_tuple")
+        }
+
+        #[test]
+        fn parenthesized_tuple() -> Result<()> {
+            run("type_system/invalid_decoded_types", "parenthesized_tuple")
+        }
+
+        #[test]
+        fn parenthesized_type_name() -> Result<()> {
+            run(
+                "type_system/invalid_decoded_types",
+                "parenthesized_type_name",
+            )
+        }
+
+        #[test]
+        fn tuple_component_value() -> Result<()> {
+            run("type_system/invalid_decoded_types", "tuple_component_value")
+        }
+
+        #[test]
+        fn type_name_without_parentheses() -> Result<()> {
+            run(
+                "type_system/invalid_decoded_types",
+                "type_name_without_parentheses",
+            )
+        }
+
+        #[test]
+        fn value() -> Result<()> {
+            run("type_system/invalid_decoded_types", "value")
+        }
+    }
+
+    mod invalid_encoded_argument_type {
+        use super::*;
+
+        #[test]
+        fn component() -> Result<()> {
+            run("type_system/invalid_encoded_argument_type", "component")
+        }
+
+        #[test]
+        fn function_value_storage_to_calldata() -> Result<()> {
+            run(
+                "type_system/invalid_encoded_argument_type",
+                "function_value_storage_to_calldata",
+            )
+        }
+
+        #[test]
+        fn storage_to_calldata() -> Result<()> {
+            run(
+                "type_system/invalid_encoded_argument_type",
+                "storage_to_calldata",
+            )
+        }
+    }
+
+    mod invalid_encoded_function {
+        use super::*;
+
+        #[test]
+        fn function_through_interface_name() -> Result<()> {
+            run(
+                "type_system/invalid_encoded_function",
+                "function_through_interface_name",
+            )
+        }
+
+        #[test]
+        fn internal_function() -> Result<()> {
+            run("type_system/invalid_encoded_function", "internal_function")
+        }
+
+        #[test]
+        fn library_function() -> Result<()> {
+            run("type_system/invalid_encoded_function", "library_function")
+        }
+
+        #[test]
+        fn not_a_function() -> Result<()> {
+            run("type_system/invalid_encoded_function", "not_a_function")
         }
     }
 
@@ -9059,6 +9189,16 @@ mod type_system {
         use super::*;
 
         #[test]
+        fn abi_decode() -> Result<()> {
+            run("type_system/wrong_argument_count", "abi_decode")
+        }
+
+        #[test]
+        fn abi_encode_call() -> Result<()> {
+            run("type_system/wrong_argument_count", "abi_encode_call")
+        }
+
+        #[test]
         fn bare_modifier_invocation() -> Result<()> {
             run(
                 "type_system/wrong_argument_count",
@@ -9295,6 +9435,20 @@ mod type_system {
                 "type_system/wrong_argument_count_in_conversion",
                 "without_arguments",
             )
+        }
+    }
+
+    mod wrong_encoded_argument_count {
+        use super::*;
+
+        #[test]
+        fn too_few() -> Result<()> {
+            run("type_system/wrong_encoded_argument_count", "too_few")
+        }
+
+        #[test]
+        fn too_many() -> Result<()> {
+            run("type_system/wrong_encoded_argument_count", "too_many")
         }
     }
 }

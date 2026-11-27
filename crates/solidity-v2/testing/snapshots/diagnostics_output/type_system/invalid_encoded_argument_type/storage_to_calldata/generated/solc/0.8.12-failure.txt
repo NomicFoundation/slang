@@ -1,0 +1,11 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 1
+
+[TypeError 5407] Error: Cannot implicitly convert component at position 0 from "string" to "string".
+    ╭─[input.sol:12:29]
+    │
+ 12 │         abi.encodeCall(I.f, (s));
+    │                             ─┬─  
+    │                              ╰─── Error occurred here.
+────╯
