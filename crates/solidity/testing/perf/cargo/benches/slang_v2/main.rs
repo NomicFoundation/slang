@@ -171,5 +171,6 @@ main!(
     // We use the maximum possible value of `num-callers` to ensure DHAT values
     // are sensible
     config = benchmark_config_with_num_callers(500);
+    setup = tests::setup::prefetch_inputs();
     library_benchmark_groups = pipeline,
 );
