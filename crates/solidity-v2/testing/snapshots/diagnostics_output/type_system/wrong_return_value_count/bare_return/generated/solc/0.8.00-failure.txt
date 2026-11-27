@@ -1,0 +1,19 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 2
+
+[TypeError 6777] Error: Return arguments required.
+   ╭─[input.sol:9:9]
+   │
+ 9 │         return;
+   │         ───┬───  
+   │            ╰───── Error occurred here.
+───╯
+
+[TypeError 6777] Error: Return arguments required.
+    ╭─[input.sol:14:9]
+    │
+ 14 │         return;
+    │         ───┬───  
+    │            ╰───── Error occurred here.
+────╯

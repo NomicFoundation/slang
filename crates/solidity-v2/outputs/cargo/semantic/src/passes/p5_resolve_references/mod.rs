@@ -113,6 +113,18 @@ impl<'a> Pass<'a> {
         })
     }
 
+    fn current_function_scope_id(&self) -> Option<ScopeId> {
+        self.scope_stack
+            .structural_scopes()
+            .find(|scope_id| matches!(self.binder.get_scope_by_id(*scope_id), Scope::Function(_)))
+    }
+
+    /// The function definition the current function scope belongs to.
+    fn current_function_node_id(&self) -> Option<NodeId> {
+        let scope_id = self.current_function_scope_id()?;
+        Some(self.binder.get_scope_by_id(scope_id).node_id())
+    }
+
     fn current_contract_scope_id(&self) -> Option<ScopeId> {
         self.scope_stack
             .structural_scopes()

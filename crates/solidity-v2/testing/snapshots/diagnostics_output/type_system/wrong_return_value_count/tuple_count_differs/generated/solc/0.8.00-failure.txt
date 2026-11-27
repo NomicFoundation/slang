@@ -1,0 +1,27 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 3
+
+[TypeError 5132] Error: Different number of arguments in return statement than in returns declaration.
+    ╭─[input.sol:13:9]
+    │
+ 13 │         return (1, 2);
+    │         ──────┬──────  
+    │               ╰──────── Error occurred here.
+────╯
+
+[TypeError 5132] Error: Different number of arguments in return statement than in returns declaration.
+    ╭─[input.sol:17:9]
+    │
+ 17 │         return (1, 2, 3);
+    │         ────────┬───────  
+    │                 ╰───────── Error occurred here.
+────╯
+
+[TypeError 5132] Error: Different number of arguments in return statement than in returns declaration.
+    ╭─[input.sol:21:9]
+    │
+ 21 │         return pair();
+    │         ──────┬──────  
+    │               ╰──────── Error occurred here.
+────╯

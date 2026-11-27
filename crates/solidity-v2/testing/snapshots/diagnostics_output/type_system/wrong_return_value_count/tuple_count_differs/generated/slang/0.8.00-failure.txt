@@ -1,0 +1,27 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 3
+
+[type-system/wrong-return-value-count] Error: Wrong return value count: 2 values given but expected 1.
+    ╭─[input.sol:13:9]
+    │
+ 13 │         return (1, 2);
+    │         ───────┬──────  
+    │                ╰──────── Error occurred here.
+────╯
+
+[type-system/wrong-return-value-count] Error: Wrong return value count: 3 values given but expected 2.
+    ╭─[input.sol:17:9]
+    │
+ 17 │         return (1, 2, 3);
+    │         ────────┬────────  
+    │                 ╰────────── Error occurred here.
+────╯
+
+[type-system/wrong-return-value-count] Error: Wrong return value count: 2 values given but expected 1.
+    ╭─[input.sol:21:9]
+    │
+ 21 │         return pair();
+    │         ───────┬──────  
+    │                ╰──────── Error occurred here.
+────╯
