@@ -47,7 +47,7 @@ impl<F: SemanticFile> Pass<'_, F> {
             // wildcard `*` is only allowed inside a contract, library or interface.
             if at_file_level {
                 self.report(node, UsingForWildcardAtFileLevel);
-            } else if self.language_version >= LanguageVersion::V0_8_13
+            } else if self.binder.language_version() >= LanguageVersion::V0_8_13
                 && matches!(node.clause, ir::UsingClause::UsingDeconstruction(_))
             {
                 // Inside a contract, library or interface, the wildcard `*` is
@@ -266,7 +266,9 @@ impl<F: SemanticFile> Pass<'_, F> {
         // A modifier cannot be defined or declared in an interface. solc only
         // began rejecting this in 0.8.8 (error 6408); earlier versions accept
         // it, so gate the diagnostic accordingly.
-        if self.language_version >= LanguageVersion::V0_8_8 && self.current_scope_is_interface() {
+        if self.binder.language_version() >= LanguageVersion::V0_8_8
+            && self.current_scope_is_interface()
+        {
             self.report(node, ModifierInInterface);
         }
 
