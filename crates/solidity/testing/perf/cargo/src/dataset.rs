@@ -110,10 +110,13 @@ impl TryFrom<Metadata> for SolidityProject {
             .compilation
             .fully_qualified_name
             .rfind(':')
-            .ok_or(anyhow!(
-                "Not properly formatted qualified name {fq}",
-                fq = value.compilation.fully_qualified_name
-            ))?;
+            // Lazily: building the error captures a backtrace under `RUST_BACKTRACE`.
+            .ok_or_else(|| {
+                anyhow!(
+                    "Not properly formatted qualified name {fq}",
+                    fq = value.compilation.fully_qualified_name
+                )
+            })?;
         let name = value.compilation.fully_qualified_name[idx + 1..].to_string();
         let entrypoint = value.compilation.fully_qualified_name[..idx].to_string();
 
@@ -186,7 +189,8 @@ impl CompilationBuilderConfig for &SolidityProject {
         self.sources
             .get(file_id)
             .map(|s| Some(s.to_owned()))
-            .ok_or(anyhow!("Can't find {file_id}"))
+            // Lazily: building the error captures a backtrace under `RUST_BACKTRACE`.
+            .ok_or_else(|| anyhow!("Can't find {file_id}"))
     }
 
     /// Resolves an import of a solidity file.

@@ -98,7 +98,11 @@ pub struct SourceMap {
 
 impl SourceMap {
     fn matches_virtual_path(&self, virtual_path: &str) -> bool {
-        self.virtual_path == virtual_path || self.virtual_path.replace("//", "/") == virtual_path
+        // Only normalize paths that need it: this runs for every source on every lookup, and
+        // allocating a copy of each path dominates import resolution in the perf benchmarks.
+        self.virtual_path == virtual_path
+            || (self.virtual_path.contains("//")
+                && self.virtual_path.replace("//", "/") == virtual_path)
     }
 
     fn matches_source_id(&self, source_id: &str) -> bool {
@@ -172,9 +176,13 @@ impl ImportRemap {
 /// Resolve an import path that is relative to `source_path`.
 fn resolve_relative_import(source_path: &str, import_path: &str) -> Result<String> {
     let source_file_path = PathBuf::from_str(source_path)?;
-    let source_dir = source_file_path.parent().ok_or(Error::msg(format!(
-        "Could not get directory of source file {source_path}"
-    )))?;
+    // Lazily: the error captures a backtrace, which is costly when `RUST_BACKTRACE` is set (as in
+    // hermit's environment), and this runs inside the measured part of the perf benchmarks.
+    let source_dir = source_file_path.parent().ok_or_else(|| {
+        Error::msg(format!(
+            "Could not get directory of source file {source_path}"
+        ))
+    })?;
 
     let import_path = PathBuf::from_str(import_path)?;
 
