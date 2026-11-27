@@ -142,5 +142,6 @@ main!(
     // Slang v1 is quite slow, so we use a smaller `num-callers` value
     // and live with not so accurate DHAT measurements.
     config = benchmark_config_with_num_callers(12);
+    setup = tests::setup::prefetch_inputs();
     library_benchmark_groups = cst, bindings,
 );

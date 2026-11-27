@@ -89,7 +89,7 @@ Since we're measuring clock time, we cold-run a couple of times, and take the av
 
 ## Projects
 
-The configuration file [`projects.json`](./projects.json) contains the Solidity projects and files that are tested in the above benchmarks. The source for these projects correspond to contracts in Ethereum Mainnet, and they are downloaded from Sourcify (see [`fetch.rs`](./utils/src/fetch.rs)). It's split in two sections:
+The configuration file [`projects.json`](./projects.json) contains the Solidity projects and files that are tested in the above benchmarks. The source for these projects correspond to contracts in Ethereum Mainnet, and they are downloaded from Sourcify (see [`fetch.rs`](./utils/src/fetch.rs)) into `target/benchmarks-inputs`, the first time they are needed. It's split in two sections:
 
 - `projects`: This key contains full Solidity projects. The intention is to test the main entry point as defined by the project, and follow from there all of the dependencies.
 - `files`: This key contains specific files to be tested, that are intended to be self-contained. Each file might or might not be the entrypoint of the Solidity project referred by the hash; for that reason, the entrypoint it must be specified with the `entrypoint` key.
@@ -132,6 +132,7 @@ More information can be found in the [DHAT manual](https://valgrind.org/docs/man
 ### How gungraun works
 
 `gungraun` launches a new process for each benchmark, and runs the benchmark through `valgrind` (including any `setup` or `teardown` stages).
+The exception is the suite-wide `setup` given to `main!`, which `gungraun` runs once, natively, before any benchmark: that is where the benchmark inputs are downloaded (see below).
 It collects the output of the different tools and processes it, so that what we report reflects only the benchmark function and not the
 non-benchmark stages (like `setup`). Callgrind and DHAT achieve this in fundamentally different ways.
 
@@ -209,3 +210,8 @@ For example, in [this case](https://github.com/NomicFoundation/slang/pull/1858) 
 used when loading manifest dependencies, and dropped before
 the actual benchmark, would leave the free-list in different states, essentially affecting
 how the memory allocator behaves when the benchmark runs, and affecting the measurements.
+
+Similarly, once a process has started a second thread, glibc's allocator switches to atomic operations for the rest of its lifetime,
+so spawning threads in a `setup` stage inflates the benchmark's instruction count. This is why each suite downloads its inputs in the
+suite-wide `main!(setup = ...)`, outside of the measured processes, instead of letting the first benchmark's `setup` download them
+(with an HTTP client that spawns threads) whenever `target/benchmarks-inputs` is empty.
