@@ -1,0 +1,11 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 1
+
+[TypeError 9553] Error: Invalid type for argument in function call. Invalid implicit conversion from address[] memory to address payable[] memory requested.
+   ╭─[input.sol:7:9]
+   │
+ 7 │     pay(abi.decode(data, (address[])));
+   │         ──────────────┬──────────────  
+   │                       ╰──────────────── Error occurred here.
+───╯

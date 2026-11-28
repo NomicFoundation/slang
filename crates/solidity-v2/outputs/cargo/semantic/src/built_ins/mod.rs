@@ -654,7 +654,7 @@ impl<'a> BuiltInsResolver<'a> {
     pub(crate) fn decoded_type_of(&mut self, type_id: TypeId) -> Option<TypeId> {
         // `abi.decode(data, (T))`: a single-element tuple collapses to the
         // meta-type of `T`, which decodes to `T` itself.
-        if let Some(decoded) = self.type_denoted_by_meta_type(type_id) {
+        if let Some(decoded) = self.decoded_type_of_meta_type(type_id) {
             return Some(decoded);
         }
 
@@ -667,7 +667,7 @@ impl<'a> BuiltInsResolver<'a> {
         let element_ids = types.clone();
         let mut decoded = Vec::with_capacity(element_ids.len());
         for element_id in element_ids {
-            decoded.push(self.type_denoted_by_meta_type(element_id)?);
+            decoded.push(self.decoded_type_of_meta_type(element_id)?);
         }
         Some(
             self.types
@@ -675,12 +675,18 @@ impl<'a> BuiltInsResolver<'a> {
         )
     }
 
-    /// Returns the value type a meta-type denotes: `type(T)` unwraps to `T`,
-    /// and the meta-type of a named definition to the definition's type.
+    /// Returns the type a meta-type decodes to: `type(T)` unwraps to `T`, and
+    /// the meta-type of a named definition to the definition's type. An
+    /// `address` decodes as `address payable`, which a type argument cannot
+    /// spell.
     /// Returns `None` when `type_id` is not a meta-type.
-    fn type_denoted_by_meta_type(&mut self, type_id: TypeId) -> Option<TypeId> {
+    fn decoded_type_of_meta_type(&mut self, type_id: TypeId) -> Option<TypeId> {
         match self.types.get_type_by_id(type_id) {
-            Type::MetaType(MetaType { type_id }) => Some(*type_id),
+            Type::MetaType(MetaType { type_id }) => Some(if *type_id == self.types.address() {
+                self.types.address_payable()
+            } else {
+                *type_id
+            }),
             Type::UserMetaType(UserMetaType { definition_id }) => {
                 let definition_id = *definition_id;
                 let definition = self.binder.find_definition_by_id(definition_id)?;

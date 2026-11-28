@@ -1,0 +1,11 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 1
+
+[TypeError 9862] Error: "send" and "transfer" are only available for objects of type "address payable", not "address".
+   ╭─[input.sol:6:9]
+   │
+ 6 │         abi.decode(data, (address[]))[0].transfer(1);
+   │         ────────────────────┬────────────────────  
+   │                             ╰────────────────────── Error occurred here.
+───╯

@@ -273,6 +273,32 @@ fn test_abi_decode_tuple_of_types() {
 }
 
 #[test]
+fn test_abi_decode_address_is_payable() {
+    // A top-level `address` decodes as `address payable`, alone or as a tuple
+    // element, while an `address[]` keeps its element type.
+    let (decoded, types) = expression("abi.decode(b, (address))")
+        .with_members("bytes b;")
+        .into_resolved_type();
+    assert_eq!(decoded, *types.get_type_by_id(types.address_payable()));
+
+    let (decoded, types) = expression("abi.decode(b, (uint, address))")
+        .with_members("bytes b;")
+        .into_resolved_type();
+    let Type::Tuple(TupleType { types: element_ids }) = decoded else {
+        panic!("expected a tuple type, got {decoded:?}");
+    };
+    assert_eq!(element_ids[1], types.address_payable());
+
+    let (decoded, types) = expression("abi.decode(b, (address[]))")
+        .with_members("bytes b;")
+        .into_resolved_type();
+    let Type::Array(ArrayType { element_type, .. }) = decoded else {
+        panic!("expected an array type, got {decoded:?}");
+    };
+    assert_eq!(element_type, types.address());
+}
+
+#[test]
 fn test_tuple_of_type_names_is_a_tuple_of_meta_types() {
     // A tuple of type names is a *tuple of meta-types* (not a meta-type
     // itself): `(uint, bool)` types as `Tuple(type(uint256), type(bool))`.
