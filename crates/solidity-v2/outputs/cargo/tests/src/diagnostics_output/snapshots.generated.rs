@@ -2503,6 +2503,19 @@ mod resolution {
         }
 
         #[test]
+        fn transfer_on_decoded_address() -> Result<()> {
+            run("resolution/member_not_found", "transfer_on_decoded_address")
+        }
+
+        #[test]
+        fn transfer_on_decoded_address_array_element() -> Result<()> {
+            run(
+                "resolution/member_not_found",
+                "transfer_on_decoded_address_array_element",
+            )
+        }
+
+        #[test]
         fn unimplemented_function_via_super() -> Result<()> {
             run(
                 "resolution/member_not_found",
@@ -6908,6 +6921,14 @@ mod type_system {
         }
 
         #[test]
+        fn decoded_address_to_payable_contract() -> Result<()> {
+            run(
+                "type_system/explicit_conversion_not_allowed",
+                "decoded_address_to_payable_contract",
+            )
+        }
+
+        #[test]
         fn elementary_type_name_to_address() -> Result<()> {
             run(
                 "type_system/explicit_conversion_not_allowed",
@@ -8049,6 +8070,30 @@ mod type_system {
         #[test]
         fn built_in_unwrap() -> Result<()> {
             run("type_system/invalid_argument_type", "built_in_unwrap")
+        }
+
+        #[test]
+        fn decoded_address_array_to_payable_array_parameter() -> Result<()> {
+            run(
+                "type_system/invalid_argument_type",
+                "decoded_address_array_to_payable_array_parameter",
+            )
+        }
+
+        #[test]
+        fn decoded_address_to_payable_parameter() -> Result<()> {
+            run(
+                "type_system/invalid_argument_type",
+                "decoded_address_to_payable_parameter",
+            )
+        }
+
+        #[test]
+        fn decoded_address_to_payable_struct_member() -> Result<()> {
+            run(
+                "type_system/invalid_argument_type",
+                "decoded_address_to_payable_struct_member",
+            )
         }
 
         #[test]
